@@ -1,0 +1,7 @@
+{
+  "name": "Atlas Auditor Fiscal",
+  "description": "Auditoria fiscal para escritórios de contabilidade - Importação e estruturação de SPED Fiscal e XMLs (Phase 1)",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

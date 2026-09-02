@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+:root {
+  --font-display: "Fraunces", Georgia, serif;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  
+  --atlas-navy: #1e3a5f;
+  --atlas-navy-dark: #142c47;
+  --atlas-accent: #0f6e56;
+  --atlas-bg: #faf9f6;
+  --atlas-surface: #ffffff;
+  --atlas-border: #e5e2d9;
+  --atlas-text: #2c2c2a;
+  --atlas-text-secondary: #5f5e5a;
+  --atlas-text-muted: #8a8880;
+  --atlas-danger: #b13b2f;
+  --atlas-danger-bg: #fbeae7;
+  --atlas-warning: #a8711f;
+  --atlas-warning-bg: #faf1e0;
+  --atlas-success: #0f6e56;
+  --atlas-success-bg: #e6f2ee;
+}
+
+@theme {
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Fraunces", Georgia, serif;
+}
+
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+}
+
+.atlas-card {
+  background: var(--atlas-surface);
+  border: 1px solid var(--atlas-border);
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+@layer utilities {
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 8px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 8px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+
+  .custom-horizontal-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #a5b4fc #f1f5f9;
+  }
+  .custom-horizontal-scrollbar::-webkit-scrollbar {
+    height: 6px;
+  }
+  .custom-horizontal-scrollbar::-webkit-scrollbar-track {
+    background: #f8fafc;
+    border-radius: 9999px;
+  }
+  .custom-horizontal-scrollbar::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 9999px;
+  }
+  .custom-horizontal-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #6366f1;
+  }
+}
+
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
+

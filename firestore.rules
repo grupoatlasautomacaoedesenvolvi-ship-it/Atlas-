@@ -1,0 +1,68 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function meuDoc() {
+      return get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data;
+    }
+
+    function meuPapel() {
+      return isSignedIn() &&
+             exists(/databases/$(database)/documents/usuarios/$(request.auth.uid))
+             ? meuDoc().papel : '';
+    }
+
+    function meuEscritorio() {
+      return isSignedIn() &&
+             exists(/databases/$(database)/documents/usuarios/$(request.auth.uid))
+             ? (meuDoc().escritorioId != null && meuDoc().escritorioId != '' ? meuDoc().escritorioId : 'escritorio-default')
+             : 'escritorio-default';
+    }
+
+    function ehSuperAdmin() {
+      return meuPapel() == 'super_admin';
+    }
+
+    // Bloqueio padrão: nada é acessível a menos que uma regra abaixo permita.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Usuários: cada um lê o próprio doc; admins do escritório leem os do
+    // próprio escritório; super admin gerencia todos. Escrita de papel só
+    // via backend (Admin SDK), nunca client-side.
+    match /usuarios/{userId} {
+      allow read: if isSignedIn() && (
+        request.auth.uid == userId ||
+        ehSuperAdmin() ||
+        (meuPapel() == 'admin_escritorio' && resource.data.escritorioId == meuEscritorio())
+      );
+      allow write: if false; // só via Cloud Function / Admin SDK
+    }
+
+    // Escritórios e tudo dentro deles: só quem pertence ao escritório.
+    // Super admin gerencia o cadastro do escritório, mas NÃO lê os dados
+    // fiscais dentro dele.
+    match /escritorios/{escritorioId} {
+      allow read: if ehSuperAdmin() || (isSignedIn() && meuEscritorio() == escritorioId);
+      allow write: if ehSuperAdmin();
+
+      match /{subpath=**} {
+        // Dados fiscais (config, matriz, robô, clientes, arquivos, logs):
+        // só usuários do próprio escritório — super admin NÃO entra aqui.
+        allow read, write: if isSignedIn() && meuEscritorio() == escritorioId;
+      }
+    }
+
+    // Métricas de uso: escrita por quem é do escritório, leitura só super admin.
+    match /eventosUso/{eventoId} {
+      allow read: if ehSuperAdmin();
+      allow create: if isSignedIn() && request.resource.data.escritorioId == meuEscritorio();
+      allow update, delete: if false;
+    }
+  }
+}

@@ -1,0 +1,153 @@
+{
+  "entities": {
+    "Usuario": {
+      "title": "Usuario",
+      "description": "User profile with role and office association",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "papel": { "type": "string", "enum": ["super_admin", "admin_escritorio", "colaborador"] },
+        "escritorioId": { "type": "string" }
+      },
+      "required": ["email", "papel"]
+    },
+    "Escritorio": {
+      "title": "Escritorio",
+      "description": "Accounting office entity",
+      "type": "object",
+      "properties": {
+        "nome": { "type": "string" },
+        "cnpj": { "type": "string" },
+        "ativo": { "type": "boolean" },
+        "dataCriacao": { "type": "string" }
+      },
+      "required": ["nome", "cnpj", "ativo", "dataCriacao"]
+    },
+    "Cliente": {
+      "title": "Cliente",
+      "description": "Client company managed by the accounting office",
+      "type": "object",
+      "properties": {
+        "nome": { "type": "string" },
+        "cnpj": { "type": "string" },
+        "uf": { "type": "string" },
+        "ie": { "type": "string" },
+        "regimeTributario": { "type": "string" },
+        "email": { "type": "string" },
+        "telefone": { "type": "string" },
+        "observacoes": { "type": "string" },
+        "escritorioId": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["nome", "cnpj", "uf", "regimeTributario"]
+    },
+    "PastaCliente": {
+      "title": "PastaCliente",
+      "description": "Folder organizing client files and tax audits",
+      "type": "object",
+      "properties": {
+        "clienteId": { "type": "string" },
+        "nome": { "type": "string" },
+        "descricao": { "type": "string" },
+        "cor": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["clienteId", "nome"]
+    },
+    "ArquivoCliente": {
+      "title": "ArquivoCliente",
+      "description": "Saved SPED or XML audit session in cloud",
+      "type": "object",
+      "properties": {
+        "clienteId": { "type": "string" },
+        "pastaId": { "type": "string" },
+        "nome": { "type": "string" },
+        "tipo": { "type": "string" },
+        "periodo": { "type": "string" },
+        "dataUpload": { "type": "string" }
+      },
+      "required": ["clienteId", "nome", "tipo", "dataUpload"]
+    },
+    "RoboExecutionLog": {
+      "title": "RoboExecutionLog",
+      "description": "Robot execution log entry",
+      "type": "object",
+      "properties": {
+        "timestamp": { "type": "string" },
+        "clienteNome": { "type": "string" },
+        "tipoAcao": { "type": "string" },
+        "mensagem": { "type": "string" }
+      },
+      "required": ["timestamp", "mensagem"]
+    },
+    "LearnedTaxRule": {
+      "title": "LearnedTaxRule",
+      "description": "Learned tax rule from robot continuous learning",
+      "type": "object",
+      "properties": {
+        "uf": { "type": "string" },
+        "ncmPrefix": { "type": "string" },
+        "learnedCst": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["uf", "ncmPrefix", "learnedCst"]
+    },
+    "EventoUso": {
+      "title": "EventoUso",
+      "description": "Usage event log",
+      "type": "object",
+      "properties": {
+        "tipo": { "type": "string" },
+        "escritorioId": { "type": "string" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["tipo", "escritorioId", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/usuarios/{userId}": {
+      "schema": { "$ref": "#/entities/Usuario" },
+      "description": "User profiles and roles"
+    },
+    "/escritorios/{escritorioId}": {
+      "schema": { "$ref": "#/entities/Escritorio" },
+      "description": "Office record"
+    },
+    "/escritorios/{escritorioId}/clientes/{clienteId}": {
+      "schema": { "$ref": "#/entities/Cliente" },
+      "description": "Clients scoped by office"
+    },
+    "/escritorios/{escritorioId}/pastas_clientes/{pastaId}": {
+      "schema": { "$ref": "#/entities/PastaCliente" },
+      "description": "Folders scoped by office"
+    },
+    "/escritorios/{escritorioId}/arquivos_clientes/{arquivoId}": {
+      "schema": { "$ref": "#/entities/ArquivoCliente" },
+      "description": "Files scoped by office"
+    },
+    "/escritorios/{escritorioId}/robo_logs/{logId}": {
+      "schema": { "$ref": "#/entities/RoboExecutionLog" },
+      "description": "Robot logs scoped by office"
+    },
+    "/escritorios/{escritorioId}/robo_learned_rules/{ruleId}": {
+      "schema": { "$ref": "#/entities/LearnedTaxRule" },
+      "description": "Learned rules scoped by office"
+    },
+    "/escritorios/{escritorioId}/config/matriz_tributaria": {
+      "schema": { "$ref": "#/entities/Escritorio" },
+      "description": "Tax matrix config scoped by office"
+    },
+    "/escritorios/{escritorioId}/config/robo_fiscal": {
+      "schema": { "$ref": "#/entities/Escritorio" },
+      "description": "Robot config scoped by office"
+    },
+    "/escritorios/{escritorioId}/config/automacao": {
+      "schema": { "$ref": "#/entities/Escritorio" },
+      "description": "Automation config scoped by office"
+    },
+    "/eventosUso/{eventoId}": {
+      "schema": { "$ref": "#/entities/EventoUso" },
+      "description": "Platform usage events"
+    }
+  }
+}

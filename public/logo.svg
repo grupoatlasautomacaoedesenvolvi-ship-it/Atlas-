@@ -1,0 +1,51 @@
+<svg width="500" height="110" viewBox="0 0 500 110" xmlns="http://www.w3.org/2000/svg" role="img">
+  <title>Logo Atlas Auditor Fiscal</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800&amp;display=swap');
+  </style>
+  <defs>
+    <linearGradient id="globeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a5f" />
+      <stop offset="100%" stop-color="#0f294a" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f6e56" />
+      <stop offset="100%" stop-color="#0b5240" />
+    </linearGradient>
+  </defs>
+
+  <!-- Globe Emblem Container Badge -->
+  <rect x="4" y="10" width="90" height="90" rx="20" fill="url(#globeGrad)"/>
+
+  <!-- Globe Wireframe Structure -->
+  <circle cx="49" cy="55" r="31" stroke="#ffffff" stroke-width="2" fill="none" opacity="0.45"/>
+  <ellipse cx="49" cy="55" rx="14" ry="31" stroke="#ffffff" stroke-width="1.6" fill="none" opacity="0.35" />
+  <path d="M 20 44 Q 49 50 78 44" stroke="#38bdf8" stroke-width="1.6" fill="none" opacity="0.6" />
+  <path d="M 20 66 Q 49 60 78 66" stroke="#38bdf8" stroke-width="1.6" fill="none" opacity="0.6" />
+
+  <!-- Integrated "A" Vector in Globe Center -->
+  <path d="M 49 30 L 32 75 H 41 L 49 55 Z" fill="#ffffff" />
+  <path d="M 49 30 L 66 75 H 57 L 49 55 Z" fill="#cbd5e1" />
+
+  <!-- Audit Checkmark Crossbar -->
+  <path d="M 35 60 L 45 68 L 66 46" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  <!-- Shield Accent Emblem Badge at Bottom Right -->
+  <path d="M 64 64 L 84 64 L 84 78 C 84 89 74 95 74 95 C 74 95 64 89 64 78 Z" fill="url(#accentGrad)" stroke="#ffffff" stroke-width="1.6"/>
+  <path d="M 70 78 L 73 82 L 80 73" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Line 1: Atlas (Large Serif) -->
+  <text x="110" y="46" font-family="'Fraunces', Georgia, 'Times New Roman', serif" font-size="46" font-weight="800" fill="#1e3a5f" letter-spacing="-0.02em">
+    Atlas
+  </text>
+
+  <!-- Line 2: Auditor Fiscal (Separated, Prominent Green Accent) -->
+  <text x="111" y="78" font-family="'Fraunces', Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" fill="#0f6e56" letter-spacing="0.02em">
+    Auditor Fiscal
+  </text>
+
+  <!-- Line 3: Subtitle -->
+  <text x="112" y="99" font-family="'Fraunces', Georgia, 'Times New Roman', serif" font-size="12" font-weight="700" fill="#334155" letter-spacing="0.1em">
+    AUDITORIA &amp; CONFORMIDADE FISCAL
+  </text>
+</svg>
