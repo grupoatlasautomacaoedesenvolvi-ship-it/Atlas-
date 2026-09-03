@@ -295,16 +295,44 @@ export default function App() {
 
   const recalculateSpedHierarchy = (data: SpedData, modifiedDocIds: string[]): SpedData => {
     const newReconciliation = data.reconciliation ? [...data.reconciliation] : [];
-    const newC190Raw = data.c190Raw ? [...data.c190Raw] : [];
     const newDocuments = [...data.documents];
+    const modDocIdsSet = new Set(modifiedDocIds);
 
-    modifiedDocIds.forEach(docId => {
-      const docIndex = newDocuments.findIndex(d => d.id === docId);
+    // Single-pass global C190 Map keyed by `${docId}_${cstIcms}_${cfop}_${aliqIcms.toFixed(2)}`
+    const c190Map = new Map<string, any>();
+
+    // First, populate c190Map with existing C190 records that are NOT being modified
+    if (data.c190Raw) {
+      data.c190Raw.forEach(c => {
+        const docId = c.docId || 'doc';
+        const isModified = Array.from(modDocIdsSet).some(mId => {
+          const docObj = newDocuments.find(d => d.id === mId || d.numDoc === mId);
+          return docObj && (docObj.id === docId || docObj.numDoc === docId || mId === docId);
+        });
+        if (!isModified) {
+          const cst = (c.cstIcms || '000').toString().trim().padStart(3, '0');
+          const cfop = (c.cfop || '').toString().trim().padStart(4, '0');
+          const aliq = typeof c.aliqIcms === 'number' ? c.aliqIcms : (parseFloat(String(c.aliqIcms || 0)) || 0);
+          const k = `${docId}_${cst}_${cfop}_${aliq.toFixed(2)}`;
+          if (!c190Map.has(k)) {
+            c190Map.set(k, { ...c, docId, cstIcms: cst, cfop, aliqIcms: aliq });
+          } else {
+            const ex = c190Map.get(k)!;
+            ex.vlOpr = Math.round((ex.vlOpr + (c.vlOpr || 0)) * 100) / 100;
+            ex.vlBcIcms = Math.round((ex.vlBcIcms + (c.vlBcIcms || 0)) * 100) / 100;
+            ex.vlIcms = Math.round((ex.vlIcms + (c.vlIcms || 0)) * 100) / 100;
+          }
+        }
+      });
+    }
+
+    modDocIdsSet.forEach(docId => {
+      const docIndex = newDocuments.findIndex(d => d.id === docId || d.numDoc === docId);
       if (docIndex === -1) return;
       const doc = { ...newDocuments[docIndex] };
+      const actualDocId = doc.id;
 
-      const itemGroups = new Map<string, number>();
-      const itemC190Groups = new Map<string, any>();
+      const itemCstCfopSums = new Map<string, number>();
 
       if (doc.items && doc.items.length > 0) {
         doc.items.forEach(item => {
@@ -329,13 +357,13 @@ export default function App() {
           const vlBcIcms = typeof item.vlBcIcms === 'number' ? item.vlBcIcms : (parseFloat(String(item.vlBcIcms || 0).replace(',', '.')) || 0);
           const vlIcms = typeof item.vlIcms === 'number' ? item.vlIcms : (parseFloat(String(item.vlIcms || 0).replace(',', '.')) || 0);
 
-          const key = `${cstIcms}_${cfop}`;
-          itemGroups.set(key, (itemGroups.get(key) || 0) + vlItem);
+          const sumKey = `${cstIcms}_${cfop}`;
+          itemCstCfopSums.set(sumKey, (itemCstCfopSums.get(sumKey) || 0) + vlItem);
 
-          const c190Key = `${cstIcms}_${cfop}_${aliqIcms}`;
-          if (!itemC190Groups.has(c190Key)) {
-            itemC190Groups.set(c190Key, {
-              docId,
+          const c190Key = `${actualDocId}_${cstIcms}_${cfop}_${aliqIcms.toFixed(2)}`;
+          if (!c190Map.has(c190Key)) {
+            c190Map.set(c190Key, {
+              docId: actualDocId,
               cstIcms,
               cfop,
               aliqIcms,
@@ -344,98 +372,92 @@ export default function App() {
               vlIcms: 0
             });
           }
-          const c190 = itemC190Groups.get(c190Key);
+          const c190 = c190Map.get(c190Key)!;
           c190.vlOpr = Math.round((c190.vlOpr + vlItem) * 100) / 100;
           c190.vlBcIcms = Math.round((c190.vlBcIcms + vlBcIcms) * 100) / 100;
           c190.vlIcms = Math.round((c190.vlIcms + vlIcms) * 100) / 100;
         });
-
-        const newC190s = Array.from(itemC190Groups.values());
-        const filteredC190s = newC190Raw.filter(c => c.docId !== docId);
-        newC190Raw.length = 0;
-        newC190Raw.push(...filteredC190s, ...newC190s);
       } else {
-        // Documento sem itens (C170): Consolidar e deduplicar registros C190 raw do próprio documento
-        const rawDocC190s = newC190Raw.filter(c => c.docId === docId);
-        if (rawDocC190s.length > 0) {
-          const dedupMap = new Map<string, any>();
-          rawDocC190s.forEach(c190 => {
-            let cfop = (c190.cfop || '').toString().trim().padStart(4, '0');
-            if (doc.indOper === '1' && (cfop.startsWith('1') || cfop.startsWith('2') || cfop.startsWith('3'))) {
-              const firstDigit = cfop.charAt(0);
-              const rest = cfop.slice(1);
-              cfop = (firstDigit === '1' ? '5' : firstDigit === '2' ? '6' : '7') + rest;
-            } else if (doc.indOper === '0' && (cfop.startsWith('5') || cfop.startsWith('6') || cfop.startsWith('7'))) {
-              const firstDigit = cfop.charAt(0);
-              const rest = cfop.slice(1);
-              cfop = (firstDigit === '5' ? '1' : firstDigit === '6' ? '2' : '3') + rest;
-            }
+        // Documento sem itens (C170): Se houver c190Raw existente para o doc, mantemos/deduplicamos no mapa
+        const docRawC190s = data.c190Raw?.filter(c => c.docId === actualDocId || c.docId === docId) || [];
+        docRawC190s.forEach(c190 => {
+          let cfop = (c190.cfop || '').toString().trim().padStart(4, '0');
+          const cstIcms = (c190.cstIcms || '000').toString().trim().padStart(3, '0');
+          const aliqIcms = typeof c190.aliqIcms === 'number' ? c190.aliqIcms : (parseFloat(String(c190.aliqIcms || 0)) || 0);
+          const c190Key = `${actualDocId}_${cstIcms}_${cfop}_${aliqIcms.toFixed(2)}`;
+          const vlOpr = typeof c190.vlOpr === 'number' ? c190.vlOpr : (parseFloat(String(c190.vlOpr || 0)) || 0);
+          const vlBcIcms = typeof c190.vlBcIcms === 'number' ? c190.vlBcIcms : (parseFloat(String(c190.vlBcIcms || 0)) || 0);
+          const vlIcms = typeof c190.vlIcms === 'number' ? c190.vlIcms : (parseFloat(String(c190.vlIcms || 0)) || 0);
 
-            const cstIcms = (c190.cstIcms || '000').toString().trim().padStart(3, '0');
-            const aliqIcms = typeof c190.aliqIcms === 'number' ? c190.aliqIcms : (parseFloat(String(c190.aliqIcms || 0).replace(',', '.')) || 0);
-            const key = `${cstIcms}_${cfop}_${aliqIcms}`;
+          if (!c190Map.has(c190Key)) {
+            c190Map.set(c190Key, { docId: actualDocId, cstIcms, cfop, aliqIcms, vlOpr: 0, vlBcIcms: 0, vlIcms: 0 });
+          }
+          const ex = c190Map.get(c190Key)!;
+          ex.vlOpr = Math.round((ex.vlOpr + vlOpr) * 100) / 100;
+          ex.vlBcIcms = Math.round((ex.vlBcIcms + vlBcIcms) * 100) / 100;
+          ex.vlIcms = Math.round((ex.vlIcms + vlIcms) * 100) / 100;
 
-            const vlOpr = typeof c190.vlOpr === 'number' ? c190.vlOpr : (parseFloat(String(c190.vlOpr || 0).replace(',', '.')) || 0);
-            const vlBcIcms = typeof c190.vlBcIcms === 'number' ? c190.vlBcIcms : (parseFloat(String(c190.vlBcIcms || 0).replace(',', '.')) || 0);
-            const vlIcms = typeof c190.vlIcms === 'number' ? c190.vlIcms : (parseFloat(String(c190.vlIcms || 0).replace(',', '.')) || 0);
-
-            if (!dedupMap.has(key)) {
-              dedupMap.set(key, {
-                docId,
-                cstIcms,
-                cfop,
-                aliqIcms,
-                vlOpr: 0,
-                vlBcIcms: 0,
-                vlIcms: 0
-              });
-            }
-            const existing = dedupMap.get(key);
-            existing.vlOpr = Math.round((existing.vlOpr + vlOpr) * 100) / 100;
-            existing.vlBcIcms = Math.round((existing.vlBcIcms + vlBcIcms) * 100) / 100;
-            existing.vlIcms = Math.round((existing.vlIcms + vlIcms) * 100) / 100;
-          });
-
-          const dedupedC190s = Array.from(dedupMap.values());
-          const filteredC190s = newC190Raw.filter(c => c.docId !== docId);
-          newC190Raw.length = 0;
-          newC190Raw.push(...filteredC190s, ...dedupedC190s);
-        }
+          const sumKey = `${cstIcms}_${cfop}`;
+          itemCstCfopSums.set(sumKey, (itemCstCfopSums.get(sumKey) || 0) + vlOpr);
+        });
       }
 
-      const docC190s = newC190Raw.filter(c => c.docId === docId);
-      const reconMap = new Map<string, any>();
+      // Reconciliation calculation for this document
+      const docC190s = Array.from(c190Map.values()).filter(c => c.docId === actualDocId || c.docId === docId);
+      const c190CstCfopSums = new Map<string, number>();
       docC190s.forEach((c190: any) => {
-        const key = `${c190.cstIcms}_${c190.cfop}`;
-        if (!reconMap.has(key)) {
-          reconMap.set(key, { docId, cstIcms: c190.cstIcms, cfop: c190.cfop, somaItens: 0, vlOprC190: 0, status: 'CONCILIADO', diff: 0 });
-        }
-        const recon = reconMap.get(key);
-        recon.vlOprC190 += c190.vlOpr;
-        recon.somaItens += c190.vlOpr;
+        const cst = (c190.cstIcms || '000').toString().trim().padStart(3, '0');
+        const cfop = (c190.cfop || '').toString().trim().padStart(4, '0');
+        const k = `${cst}_${cfop}`;
+        const vl = typeof c190.vlOpr === 'number' ? c190.vlOpr : (parseFloat(String(c190.vlOpr || 0)) || 0);
+        c190CstCfopSums.set(k, (c190CstCfopSums.get(k) || 0) + vl);
       });
 
-      const filteredRecon = newReconciliation.filter(r => r.docId !== docId);
+      const reconMap = new Map<string, any>();
+      const allReconKeys = new Set([...itemCstCfopSums.keys(), ...c190CstCfopSums.keys()]);
+      allReconKeys.forEach(k => {
+        const somaItens = Math.round((itemCstCfopSums.get(k) || 0) * 100) / 100;
+        const vlOprC190 = Math.round((c190CstCfopSums.get(k) || 0) * 100) / 100;
+        const [cstIcms, cfop] = k.split('_');
+        const diff = Math.round((somaItens - vlOprC190) * 100) / 100;
+        const status = Math.abs(diff) <= 0.05 ? 'CONCILIADO' : (vlOprC190 === 0 ? 'C190_AUSENTE' : 'DIVERGENTE');
+
+        reconMap.set(k, {
+          docId: actualDocId,
+          cstIcms: cstIcms || '000',
+          cfop: cfop || '5102',
+          somaItens,
+          vlOprC190,
+          status,
+          diff
+        });
+      });
+
+      const filteredRecon = newReconciliation.filter(r => r.docId !== actualDocId && r.docId !== docId);
       newReconciliation.length = 0;
       newReconciliation.push(...filteredRecon, ...Array.from(reconMap.values()));
 
       let totMerc = 0;
       let totBcIcms = 0;
       let totIcms = 0;
-      doc.items.forEach(item => {
-        const vlItem = typeof item.vlItem === 'number' ? item.vlItem : (parseFloat(String(item.vlItem || 0).replace(',', '.')) || 0);
-        const vlBcIcms = typeof item.vlBcIcms === 'number' ? item.vlBcIcms : (parseFloat(String(item.vlBcIcms || 0).replace(',', '.')) || 0);
-        const vlIcms = typeof item.vlIcms === 'number' ? item.vlIcms : (parseFloat(String(item.vlIcms || 0).replace(',', '.')) || 0);
+      if (doc.items) {
+        doc.items.forEach(item => {
+          const vlItem = typeof item.vlItem === 'number' ? item.vlItem : (parseFloat(String(item.vlItem || 0).replace(',', '.')) || 0);
+          const vlBcIcms = typeof item.vlBcIcms === 'number' ? item.vlBcIcms : (parseFloat(String(item.vlBcIcms || 0).replace(',', '.')) || 0);
+          const vlIcms = typeof item.vlIcms === 'number' ? item.vlIcms : (parseFloat(String(item.vlIcms || 0).replace(',', '.')) || 0);
 
-        totMerc += vlItem;
-        totBcIcms += vlBcIcms;
-        totIcms += vlIcms;
-      });
-      doc.vlDoc = totMerc > 0 ? totMerc : doc.vlDoc;
-      doc.vlBcIcms = totBcIcms;
-      doc.vlIcms = totIcms;
+          totMerc += vlItem;
+          totBcIcms += vlBcIcms;
+          totIcms += vlIcms;
+        });
+      }
+      doc.vlDoc = totMerc > 0 ? Math.round(totMerc * 100) / 100 : doc.vlDoc;
+      doc.vlBcIcms = Math.round(totBcIcms * 100) / 100;
+      doc.vlIcms = Math.round(totIcms * 100) / 100;
       newDocuments[docIndex] = doc;
     });
+
+    const finalC190Raw = Array.from(c190Map.values());
 
     // Recalculate Apuração ICMS (Bloco E / E110) based on all updated C190 records
     let newApuracao = data.apuracao ? { ...data.apuracao } : null;
@@ -443,7 +465,7 @@ export default function App() {
     let totDeb = 0;
     let totCred = 0;
 
-    newC190Raw.forEach(c190 => {
+    finalC190Raw.forEach(c190 => {
       const cfop = (c190.cfop || '').toString().trim();
       const vlIcms = typeof c190.vlIcms === 'number' ? c190.vlIcms : (parseFloat(String(c190.vlIcms || 0).replace(',', '.')) || 0);
       if (cfop.startsWith('5') || cfop.startsWith('6') || cfop.startsWith('7')) {
@@ -504,7 +526,7 @@ export default function App() {
     return {
       ...data,
       documents: newDocuments,
-      c190Raw: newC190Raw,
+      c190Raw: finalC190Raw,
       reconciliation: newReconciliation,
       apuracao: newApuracao
     };
