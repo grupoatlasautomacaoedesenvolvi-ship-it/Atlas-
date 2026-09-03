@@ -31,7 +31,7 @@ export async function getRoboConfig(escritorioId: string): Promise<RoboConfig> {
       return { ...DEFAULT_ROBO_CONFIG, ...docSnap.data() };
     }
   } catch (error) {
-    console.error('Erro ao buscar configuração do Robô Fiscal:', error);
+    console.warn('Configuração do Robô Fiscal não encontrada ou offline, usando fallback local/default:', error);
   }
 
   const localSaved = localStorage.getItem(`atlas_robo_config_${eid}`);
@@ -66,7 +66,7 @@ export async function getRoboLogs(limitCount = 50, escritorioId: string): Promis
       return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as RoboExecutionLog));
     }
   } catch (error) {
-    console.error('Erro ao carregar logs do Robô do Firebase:', error);
+    console.warn('Logs do Robô indisponíveis ou offline, usando fallback local:', error);
   }
 
   const localSaved = localStorage.getItem(`atlas_robo_logs_${eid}`);
@@ -112,7 +112,7 @@ export async function getLearnedRules(escritorioId: string): Promise<LearnedTaxR
       return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as LearnedTaxRule));
     }
   } catch (error) {
-    console.error('Erro ao buscar regras aprendidas do Firebase:', error);
+    console.warn('Regras aprendidas do Robô indisponíveis ou offline, usando fallback local:', error);
   }
 
   const localSaved = localStorage.getItem(`atlas_robo_learned_rules_${eid}`);

@@ -140,6 +140,8 @@ export default function App() {
     return [];
   });
 
+  const [c190AuditLogs, setC190AuditLogs] = useState<any[]>([]);
+
   // Auto-sync SPED & XML to Cloud Firestore on change (debounced)
   React.useEffect(() => {
     if (!userData?.escritorioId) return;
@@ -434,6 +436,77 @@ export default function App() {
     });
 
     const finalC190Raw = Array.from(c190Map.values());
+
+    // Calculate Before Totals for C190
+    const oldC190s = data.c190Raw || [];
+    const beforeVlOpr = Math.round(oldC190s.reduce((acc, c) => acc + (c.vlOpr || 0), 0) * 100) / 100;
+    const beforeVlBcIcms = Math.round(oldC190s.reduce((acc, c) => acc + (c.vlBcIcms || 0), 0) * 100) / 100;
+    const beforeVlIcms = Math.round(oldC190s.reduce((acc, c) => acc + (c.vlIcms || 0), 0) * 100) / 100;
+
+    const afterVlOpr = Math.round(finalC190Raw.reduce((acc, c) => acc + (c.vlOpr || 0), 0) * 100) / 100;
+    const afterVlBcIcms = Math.round(finalC190Raw.reduce((acc, c) => acc + (c.vlBcIcms || 0), 0) * 100) / 100;
+    const afterVlIcms = Math.round(finalC190Raw.reduce((acc, c) => acc + (c.vlIcms || 0), 0) * 100) / 100;
+
+    const documentDeltas = modifiedDocIds.length > 0 ? modifiedDocIds.map(mId => {
+      const doc = newDocuments.find(d => d.id === mId || d.numDoc === mId);
+      const dId = doc ? doc.id : mId;
+      const numDoc = doc ? doc.numDoc : mId;
+
+      const oldDocC190s = oldC190s.filter(c => c.docId === dId || c.docId === numDoc);
+      const bOpr = oldDocC190s.reduce((acc, c) => acc + (c.vlOpr || 0), 0);
+      const bBc = oldDocC190s.reduce((acc, c) => acc + (c.vlBcIcms || 0), 0);
+      const bIcms = oldDocC190s.reduce((acc, c) => acc + (c.vlIcms || 0), 0);
+
+      const newDocC190s = finalC190Raw.filter(c => c.docId === dId || c.docId === numDoc);
+      const aOpr = newDocC190s.reduce((acc, c) => acc + (c.vlOpr || 0), 0);
+      const aBc = newDocC190s.reduce((acc, c) => acc + (c.vlBcIcms || 0), 0);
+      const aIcms = newDocC190s.reduce((acc, c) => acc + (c.vlIcms || 0), 0);
+
+      return {
+        docId: dId,
+        numDoc,
+        before: { vlOpr: Math.round(bOpr * 100) / 100, vlBcIcms: Math.round(bBc * 100) / 100, vlIcms: Math.round(bIcms * 100) / 100 },
+        after: { vlOpr: Math.round(aOpr * 100) / 100, vlBcIcms: Math.round(aBc * 100) / 100, vlIcms: Math.round(aIcms * 100) / 100 },
+        delta: {
+          vlOpr: Math.round((aOpr - bOpr) * 100) / 100,
+          vlBcIcms: Math.round((aBc - bBc) * 100) / 100,
+          vlIcms: Math.round((aIcms - bIcms) * 100) / 100
+        }
+      };
+    }) : [{
+      docId: 'GLOBAL_RECALC',
+      numDoc: 'TODOS',
+      before: { vlOpr: beforeVlOpr, vlBcIcms: beforeVlBcIcms, vlIcms: beforeVlIcms },
+      after: { vlOpr: afterVlOpr, vlBcIcms: afterVlBcIcms, vlIcms: afterVlIcms },
+      delta: {
+        vlOpr: Math.round((afterVlOpr - beforeVlOpr) * 100) / 100,
+        vlBcIcms: Math.round((afterVlBcIcms - beforeVlBcIcms) * 100) / 100,
+        vlIcms: Math.round((afterVlIcms - beforeVlIcms) * 100) / 100
+      }
+    }];
+
+    const auditReport = {
+      timestamp: new Date().toISOString(),
+      recalculatedDocIds: modifiedDocIds.length > 0 ? modifiedDocIds : ['GLOBAL'],
+      before: { vlOpr: beforeVlOpr, vlBcIcms: beforeVlBcIcms, vlIcms: beforeVlIcms },
+      after: { vlOpr: afterVlOpr, vlBcIcms: afterVlBcIcms, vlIcms: afterVlIcms },
+      delta: {
+        vlOpr: Math.round((afterVlOpr - beforeVlOpr) * 100) / 100,
+        vlBcIcms: Math.round((afterVlBcIcms - beforeVlBcIcms) * 100) / 100,
+        vlIcms: Math.round((afterVlIcms - beforeVlIcms) * 100) / 100
+      },
+      documentDeltas
+    };
+
+    console.group(`📋 [ATLAS AUDIT] Recálculo do Bloco C190 — ${new Date().toLocaleString()}`);
+    console.log(`Documentos Recalculados IDs:`, modifiedDocIds.length > 0 ? modifiedDocIds : ['[Global / Sincronização Geral]']);
+    console.table(documentDeltas);
+    console.log(`Totais Bloco C190 ANTES:  Vl.Opr: R$ ${beforeVlOpr.toFixed(2)} | BC ICMS: R$ ${beforeVlBcIcms.toFixed(2)} | ICMS: R$ ${beforeVlIcms.toFixed(2)}`);
+    console.log(`Totais Bloco C190 DEPOIS: Vl.Opr: R$ ${afterVlOpr.toFixed(2)} | BC ICMS: R$ ${afterVlBcIcms.toFixed(2)} | ICMS: R$ ${afterVlIcms.toFixed(2)}`);
+    console.log(`DELTA / VARIAÇÃO TOTAL:   Vl.Opr: R$ ${(afterVlOpr - beforeVlOpr).toFixed(2)} | BC ICMS: R$ ${(afterVlBcIcms - beforeVlBcIcms).toFixed(2)} | ICMS: R$ ${(afterVlIcms - beforeVlIcms).toFixed(2)}`);
+    console.groupEnd();
+
+    setC190AuditLogs(prev => [auditReport, ...prev].slice(0, 20));
 
     // Recalculate Apuração ICMS (Bloco E / E110) based on all updated C190 records
     let newApuracao = data.apuracao ? { ...data.apuracao } : null;
@@ -1522,6 +1595,7 @@ export default function App() {
             xmlNfce={xmlNfce}
             escritorioId={userData?.escritorioId}
             addNotification={addNotification}
+            c190AuditLogs={c190AuditLogs}
           />
         )}
 

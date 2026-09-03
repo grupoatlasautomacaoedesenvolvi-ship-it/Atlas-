@@ -42,11 +42,15 @@ export function MinhasRotinasView({ escritorioId, userId, userNome, papel, clien
   const [newChecklistItem, setNewChecklistItem] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const effectiveEscritorioId = escritorioId || 'escritorio_default';
+  const effectiveUserId = userId || 'user_default';
+  const effectiveUserNome = userNome || 'Usuário';
+  const effectivePapel = papel || 'admin_escritorio';
+
   const recarregar = async () => {
-    if (!escritorioId || !userId || !papel) { setLoading(false); return; }
     setLoading(true);
     try {
-      const lista = await fetchRotinas(escritorioId, userId, papel);
+      const lista = await fetchRotinas(effectiveEscritorioId, effectiveUserId, effectivePapel);
       setRotinas(lista);
     } catch (e) {
       console.error('Erro ao carregar rotinas:', e);
@@ -55,7 +59,7 @@ export function MinhasRotinasView({ escritorioId, userId, userNome, papel, clien
     }
   };
 
-  useEffect(() => { recarregar(); }, [escritorioId, userId, papel]);
+  useEffect(() => { recarregar(); }, [effectiveEscritorioId, effectiveUserId, effectivePapel]);
 
   const handleDownloadTemplate = () => {
     const templateData = [
@@ -78,7 +82,7 @@ export function MinhasRotinasView({ escritorioId, userId, userNome, papel, clien
 
   const handleImportExcel = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const uploadedFile = e.target.files?.[0];
-    if (!uploadedFile || !escritorioId || !userId || !userNome || !papel) return;
+    if (!uploadedFile) return;
 
     const reader = new FileReader();
     reader.onload = async (evt) => {
@@ -104,10 +108,10 @@ export function MinhasRotinasView({ escritorioId, userId, userNome, papel, clien
 
           return {
             id: `imported_${Date.now()}_${index}`,
-            escritorioId,
-            userId,
-            userNome,
-            creatorRole: papel,
+            escritorioId: effectiveEscritorioId,
+            userId: effectiveUserId,
+            userNome: effectiveUserNome,
+            creatorRole: effectivePapel,
             empresaId: clienteEncontrado?.id,
             empresaNome: clienteEncontrado?.nome,
             titulo: row['Titulo'] || row['Título'] || 'Nova Rotina Importada',
@@ -124,7 +128,7 @@ export function MinhasRotinasView({ escritorioId, userId, userNome, papel, clien
         });
 
         for (const rotina of novasRotinas) {
-          await saveRotina(escritorioId, rotina);
+          await saveRotina(effectiveEscritorioId, rotina);
         }
         await recarregar();
         addNotification?.('Rotinas Importadas', `${novasRotinas.length} rotina(s) importada(s) da planilha.`, 'import');
@@ -151,17 +155,17 @@ export function MinhasRotinasView({ escritorioId, userId, userNome, papel, clien
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.titulo || !escritorioId || !userId || !userNome || !papel) return;
+    if (!formData.titulo) return;
 
     const existente = editingId ? rotinas.find(r => r.id === editingId) : null;
     const agora = new Date().toISOString();
 
     const rotina: Rotina = {
       id: editingId || `rot_${Date.now()}`,
-      escritorioId,
-      userId: existente?.userId || userId,
-      userNome: existente?.userNome || userNome,
-      creatorRole: existente?.creatorRole || papel,
+      escritorioId: effectiveEscritorioId,
+      userId: existente?.userId || effectiveUserId,
+      userNome: existente?.userNome || effectiveUserNome,
+      creatorRole: existente?.creatorRole || effectivePapel,
       empresaId: formData.empresaId,
       empresaNome: formData.empresaNome,
       titulo: formData.titulo,
@@ -176,21 +180,19 @@ export function MinhasRotinasView({ escritorioId, userId, userNome, papel, clien
       atualizadoEm: agora
     };
 
-    await saveRotina(escritorioId, rotina);
+    await saveRotina(effectiveEscritorioId, rotina);
     await recarregar();
     setIsModalOpen(false);
   };
 
   const handleDelete = async (id: string) => {
-    if (!escritorioId) return;
     if (!confirm('Tem certeza que deseja excluir esta rotina?')) return;
-    await deleteRotina(escritorioId, id);
+    await deleteRotina(effectiveEscritorioId, id);
     await recarregar();
   };
 
   const toggleConcluida = async (rotina: Rotina) => {
-    if (!escritorioId) return;
-    await saveRotina(escritorioId, { ...rotina, concluida: !rotina.concluida });
+    await saveRotina(effectiveEscritorioId, { ...rotina, concluida: !rotina.concluida });
     await recarregar();
   };
 

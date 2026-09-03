@@ -3,7 +3,8 @@ import { SpedData, AuditConfig, Achado, XmlRecord, StatusRevisao, NotificationTy
 import { executarAuditoriaUnificada, salvarStatusRevisao } from '../lib/auditEngine';
 import { fetchGlobalStateTaxMatrix } from '../lib/matrizService';
 import { saveLearnedRule } from '../lib/roboFiscalService';
-import { Database, ShieldAlert, Search, Filter, CheckCircle2, XCircle, Clock, AlertTriangle, FileText, Copy, Check, Download, ArrowRightLeft, Settings, PlayCircle, X } from 'lucide-react';
+import { Database, ShieldAlert, Search, Filter, CheckCircle2, XCircle, Clock, AlertTriangle, FileText, Copy, Check, Download, ArrowRightLeft, Settings, PlayCircle, X, Calculator } from 'lucide-react';
+import { AuditLogViewer } from './AuditLogViewer';
 import { isAutoCrosscheckEnabled, setAutoCrosscheckEnabled, getAutomationLogs, logAutomationRun, AutomationLog } from '../lib/automationService';
 
 interface AdvancedAuditViewProps {
@@ -14,6 +15,7 @@ interface AdvancedAuditViewProps {
   xmlNfce?: XmlRecord[];
   escritorioId?: string;
   addNotification?: (title: string, message: string, type: NotificationType, actionUrl?: string) => void;
+  c190AuditLogs?: any[];
 }
 
 const AUDIT_FILTERS_STORAGE_KEY = 'atlas_advanced_audit_filters_v1';
@@ -38,7 +40,8 @@ export function AdvancedAuditView({
   xmlProprio = [],
   xmlNfce = [],
   escritorioId,
-  addNotification
+  addNotification,
+  c190AuditLogs = []
 }: AdvancedAuditViewProps) {
   const [selectedFilter, setSelectedFilter] = useState<string>(() => getAuditSavedString('selectedFilter', 'ALL'));
   const [statusFilter, setStatusFilter] = useState<string>(() => getAuditSavedString('statusFilter', 'ALL'));
@@ -48,6 +51,7 @@ export function AdvancedAuditView({
   const [ncmFilter, setNcmFilter] = useState<string>(() => getAuditSavedString('ncmFilter', ''));
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
+  const [showC190AuditModal, setShowC190AuditModal] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'achados' | 'interestadual' | 'automacao' | 'xml_faltantes'>(
     () => (getAuditSavedString('activeTab', 'achados') as any)
   );
@@ -438,6 +442,14 @@ export function AdvancedAuditView({
           >
             <Database className="w-4 h-4" />
             <span>{isFinalizing ? 'Finalizando...' : 'Finalizar Conferência'}</span>
+          </button>
+          <button
+            onClick={() => setShowC190AuditModal(true)}
+            className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-4 py-2 rounded-lg text-xs font-semibold flex items-center space-x-2 shadow-sm transition-all cursor-pointer"
+            title="Ver histórico de recálculo e deltas do Bloco C190"
+          >
+            <Calculator className="w-4 h-4 text-indigo-600" />
+            <span>Auditoria C190 {c190AuditLogs.length > 0 ? `(${c190AuditLogs.length})` : ''}</span>
           </button>
           {filteredFindings.some(f => f.tipo === 'NOTA_SPED_SEM_XML') && (
             <button
@@ -1275,6 +1287,15 @@ export function AdvancedAuditView({
         )}
       </div>
       </>
+      )}
+
+      {showC190AuditModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <AuditLogViewer
+            c190AuditLogs={c190AuditLogs}
+            onClose={() => setShowC190AuditModal(false)}
+          />
+        </div>
       )}
     </div>
   );
