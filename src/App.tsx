@@ -301,38 +301,17 @@ export default function App() {
     // Single-pass global C190 Map keyed by `${docId}_${cstIcms}_${cfop}_${aliqIcms.toFixed(2)}`
     const c190Map = new Map<string, any>();
 
-    // First, populate c190Map with existing C190 records that are NOT being modified
-    if (data.c190Raw) {
-      data.c190Raw.forEach(c => {
-        const docId = c.docId || 'doc';
-        const isModified = Array.from(modDocIdsSet).some(mId => {
-          const docObj = newDocuments.find(d => d.id === mId || d.numDoc === mId);
-          return docObj && (docObj.id === docId || docObj.numDoc === docId || mId === docId);
-        });
-        if (!isModified) {
-          const cst = (c.cstIcms || '000').toString().trim().padStart(3, '0');
-          const cfop = (c.cfop || '').toString().trim().padStart(4, '0');
-          const aliq = typeof c.aliqIcms === 'number' ? c.aliqIcms : (parseFloat(String(c.aliqIcms || 0)) || 0);
-          const k = `${docId}_${cst}_${cfop}_${aliq.toFixed(2)}`;
-          if (!c190Map.has(k)) {
-            c190Map.set(k, { ...c, docId, cstIcms: cst, cfop, aliqIcms: aliq });
-          } else {
-            const ex = c190Map.get(k)!;
-            ex.vlOpr = Math.round((ex.vlOpr + (c.vlOpr || 0)) * 100) / 100;
-            ex.vlBcIcms = Math.round((ex.vlBcIcms + (c.vlBcIcms || 0)) * 100) / 100;
-            ex.vlIcms = Math.round((ex.vlIcms + (c.vlIcms || 0)) * 100) / 100;
-          }
-        }
-      });
-    }
-
-    modDocIdsSet.forEach(docId => {
-      const docIndex = newDocuments.findIndex(d => d.id === docId || d.numDoc === docId);
-      if (docIndex === -1) return;
-      const doc = { ...newDocuments[docIndex] };
+    // Single loop over all documents in newDocuments for maximum temporal efficiency
+    newDocuments.forEach((doc, docIndex) => {
       const actualDocId = doc.id;
+      const isModified = modDocIdsSet.has(actualDocId) || modDocIdsSet.has(doc.numDoc) || modifiedDocIds.length === 0;
+
+      let totMerc = 0;
+      let totBcIcms = 0;
+      let totIcms = 0;
 
       const itemCstCfopSums = new Map<string, number>();
+      const docItemC190Groups = new Map<string, any>();
 
       if (doc.items && doc.items.length > 0) {
         doc.items.forEach(item => {
@@ -357,12 +336,16 @@ export default function App() {
           const vlBcIcms = typeof item.vlBcIcms === 'number' ? item.vlBcIcms : (parseFloat(String(item.vlBcIcms || 0).replace(',', '.')) || 0);
           const vlIcms = typeof item.vlIcms === 'number' ? item.vlIcms : (parseFloat(String(item.vlIcms || 0).replace(',', '.')) || 0);
 
+          totMerc += vlItem;
+          totBcIcms += vlBcIcms;
+          totIcms += vlIcms;
+
           const sumKey = `${cstIcms}_${cfop}`;
           itemCstCfopSums.set(sumKey, (itemCstCfopSums.get(sumKey) || 0) + vlItem);
 
           const c190Key = `${actualDocId}_${cstIcms}_${cfop}_${aliqIcms.toFixed(2)}`;
-          if (!c190Map.has(c190Key)) {
-            c190Map.set(c190Key, {
+          if (!docItemC190Groups.has(c190Key)) {
+            docItemC190Groups.set(c190Key, {
               docId: actualDocId,
               cstIcms,
               cfop,
@@ -372,14 +355,22 @@ export default function App() {
               vlIcms: 0
             });
           }
-          const c190 = c190Map.get(c190Key)!;
+          const c190 = docItemC190Groups.get(c190Key)!;
           c190.vlOpr = Math.round((c190.vlOpr + vlItem) * 100) / 100;
           c190.vlBcIcms = Math.round((c190.vlBcIcms + vlBcIcms) * 100) / 100;
           c190.vlIcms = Math.round((c190.vlIcms + vlIcms) * 100) / 100;
         });
+
+        doc.vlDoc = totMerc > 0 ? Math.round(totMerc * 100) / 100 : doc.vlDoc;
+        doc.vlBcIcms = Math.round(totBcIcms * 100) / 100;
+        doc.vlIcms = Math.round(totIcms * 100) / 100;
+
+        docItemC190Groups.forEach((val, k) => {
+          c190Map.set(k, val);
+        });
       } else {
         // Documento sem itens (C170): Se houver c190Raw existente para o doc, mantemos/deduplicamos no mapa
-        const docRawC190s = data.c190Raw?.filter(c => c.docId === actualDocId || c.docId === docId) || [];
+        const docRawC190s = data.c190Raw?.filter(c => c.docId === actualDocId || c.docId === doc.numDoc) || [];
         docRawC190s.forEach(c190 => {
           let cfop = (c190.cfop || '').toString().trim().padStart(4, '0');
           const cstIcms = (c190.cstIcms || '000').toString().trim().padStart(3, '0');
@@ -402,59 +393,44 @@ export default function App() {
         });
       }
 
-      // Reconciliation calculation for this document
-      const docC190s = Array.from(c190Map.values()).filter(c => c.docId === actualDocId || c.docId === docId);
-      const c190CstCfopSums = new Map<string, number>();
-      docC190s.forEach((c190: any) => {
-        const cst = (c190.cstIcms || '000').toString().trim().padStart(3, '0');
-        const cfop = (c190.cfop || '').toString().trim().padStart(4, '0');
-        const k = `${cst}_${cfop}`;
-        const vl = typeof c190.vlOpr === 'number' ? c190.vlOpr : (parseFloat(String(c190.vlOpr || 0)) || 0);
-        c190CstCfopSums.set(k, (c190CstCfopSums.get(k) || 0) + vl);
-      });
-
-      const reconMap = new Map<string, any>();
-      const allReconKeys = new Set([...itemCstCfopSums.keys(), ...c190CstCfopSums.keys()]);
-      allReconKeys.forEach(k => {
-        const somaItens = Math.round((itemCstCfopSums.get(k) || 0) * 100) / 100;
-        const vlOprC190 = Math.round((c190CstCfopSums.get(k) || 0) * 100) / 100;
-        const [cstIcms, cfop] = k.split('_');
-        const diff = Math.round((somaItens - vlOprC190) * 100) / 100;
-        const status = Math.abs(diff) <= 0.05 ? 'CONCILIADO' : (vlOprC190 === 0 ? 'C190_AUSENTE' : 'DIVERGENTE');
-
-        reconMap.set(k, {
-          docId: actualDocId,
-          cstIcms: cstIcms || '000',
-          cfop: cfop || '5102',
-          somaItens,
-          vlOprC190,
-          status,
-          diff
-        });
-      });
-
-      const filteredRecon = newReconciliation.filter(r => r.docId !== actualDocId && r.docId !== docId);
-      newReconciliation.length = 0;
-      newReconciliation.push(...filteredRecon, ...Array.from(reconMap.values()));
-
-      let totMerc = 0;
-      let totBcIcms = 0;
-      let totIcms = 0;
-      if (doc.items) {
-        doc.items.forEach(item => {
-          const vlItem = typeof item.vlItem === 'number' ? item.vlItem : (parseFloat(String(item.vlItem || 0).replace(',', '.')) || 0);
-          const vlBcIcms = typeof item.vlBcIcms === 'number' ? item.vlBcIcms : (parseFloat(String(item.vlBcIcms || 0).replace(',', '.')) || 0);
-          const vlIcms = typeof item.vlIcms === 'number' ? item.vlIcms : (parseFloat(String(item.vlIcms || 0).replace(',', '.')) || 0);
-
-          totMerc += vlItem;
-          totBcIcms += vlBcIcms;
-          totIcms += vlIcms;
-        });
-      }
-      doc.vlDoc = totMerc > 0 ? Math.round(totMerc * 100) / 100 : doc.vlDoc;
-      doc.vlBcIcms = Math.round(totBcIcms * 100) / 100;
-      doc.vlIcms = Math.round(totIcms * 100) / 100;
       newDocuments[docIndex] = doc;
+
+      // Reconciliation calculation for this document
+      if (isModified) {
+        const docC190s = Array.from(c190Map.values()).filter(c => c.docId === actualDocId);
+        const c190CstCfopSums = new Map<string, number>();
+        docC190s.forEach((c190: any) => {
+          const cst = (c190.cstIcms || '000').toString().trim().padStart(3, '0');
+          const cfop = (c190.cfop || '').toString().trim().padStart(4, '0');
+          const k = `${cst}_${cfop}`;
+          const vl = typeof c190.vlOpr === 'number' ? c190.vlOpr : (parseFloat(String(c190.vlOpr || 0)) || 0);
+          c190CstCfopSums.set(k, (c190CstCfopSums.get(k) || 0) + vl);
+        });
+
+        const reconMap = new Map<string, any>();
+        const allReconKeys = new Set([...itemCstCfopSums.keys(), ...c190CstCfopSums.keys()]);
+        allReconKeys.forEach(k => {
+          const somaItens = Math.round((itemCstCfopSums.get(k) || 0) * 100) / 100;
+          const vlOprC190 = Math.round((c190CstCfopSums.get(k) || 0) * 100) / 100;
+          const [cstIcms, cfop] = k.split('_');
+          const diff = Math.round((somaItens - vlOprC190) * 100) / 100;
+          const status = Math.abs(diff) <= 0.05 ? 'CONCILIADO' : (vlOprC190 === 0 ? 'C190_AUSENTE' : 'DIVERGENTE');
+
+          reconMap.set(k, {
+            docId: actualDocId,
+            cstIcms: cstIcms || '000',
+            cfop: cfop || '5102',
+            somaItens,
+            vlOprC190,
+            status,
+            diff
+          });
+        });
+
+        const filteredRecon = newReconciliation.filter(r => r.docId !== actualDocId);
+        newReconciliation.length = 0;
+        newReconciliation.push(...filteredRecon, ...Array.from(reconMap.values()));
+      }
     });
 
     const finalC190Raw = Array.from(c190Map.values());
