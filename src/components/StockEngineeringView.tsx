@@ -50,7 +50,7 @@ export function StockEngineeringView({
   addNotification,
   escritorioId
 }: StockEngineeringViewProps) {
-  const effectiveEscritorioId = escritorioId || 'escritorio-default';
+  const effectiveEscritorioId = escritorioId;
   // Theme state: defaults to Light Mode (isDarkTheme = false) so users get a clean, high-contrast light background screen
   const [isDarkTheme, setIsDarkTheme] = useState<boolean>(() => {
     const saved = localStorage.getItem('atlas_stock_theme_dark');

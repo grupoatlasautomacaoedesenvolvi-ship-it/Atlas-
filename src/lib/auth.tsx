@@ -3,7 +3,6 @@ import {
   User,
   onIdTokenChanged,
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
   sendPasswordResetEmail,
   updatePassword
@@ -51,15 +50,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             if (freshToken) localStorage.setItem('atlas_auth_token', freshToken);
           } catch (tokenErr) {
             console.warn('Aviso: falha ao obter ID token em rede, usando cache:', tokenErr);
-            freshToken = token || localStorage.getItem('atlas_auth_token') || 'offline-token-fallback';
+            freshToken = token || localStorage.getItem('atlas_auth_token') || null;
             setToken(freshToken);
           }
 
           let userParsed: UserData | null = {
-            email: firebaseUser.email || 'usuario@sistema.com',
-            nome: firebaseUser.displayName || 'Administrador',
-            papel: 'super_admin',
-            escritorioId: 'escritorio-default',
+            email: firebaseUser.email || '',
+            nome: firebaseUser.displayName || '',
+            papel: 'colaborador',
+            escritorioId: '',
             ativo: true
           };
           try {
@@ -94,10 +93,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } catch (e) {
           console.error('Erro ao carregar dados do usuário:', e);
           setUserData({
-            email: firebaseUser.email || 'usuario@sistema.com',
-            nome: firebaseUser.displayName || 'Administrador',
-            papel: 'super_admin',
-            escritorioId: 'escritorio-default',
+            email: firebaseUser.email || '',
+            nome: firebaseUser.displayName || '',
+            papel: 'colaborador',
+            escritorioId: '',
             ativo: true
           });
         }
@@ -112,7 +111,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const getIdToken = async (forceRefresh = false): Promise<string | null> => {
-    if (!auth.currentUser) return token || localStorage.getItem('atlas_auth_token') || 'offline-token-fallback';
+    if (!auth.currentUser) return token || localStorage.getItem('atlas_auth_token') || null;
     try {
       const freshToken = await auth.currentUser.getIdToken(forceRefresh);
       setToken(freshToken);
@@ -120,31 +119,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return freshToken;
     } catch (e: any) {
       console.warn('Aviso: Erro ao obter ID Token (usando cache local):', e?.message || e);
-      const cached = token || localStorage.getItem('atlas_auth_token') || 'offline-token-fallback';
+      const cached = token || localStorage.getItem('atlas_auth_token') || null;
       return cached;
     }
   };
 
   const signIn = async (email: string, pass: string) => {
-    try {
-      await signInWithEmailAndPassword(auth, email, pass);
-    } catch (err: any) {
-      if (
-        err?.code === 'auth/invalid-credential' ||
-        err?.code === 'auth/user-not-found' ||
-        err?.code === 'auth/wrong-password' ||
-        err?.message?.includes('invalid-credential')
-      ) {
-        try {
-          await createUserWithEmailAndPassword(auth, email, pass);
-          return;
-        } catch (createErr) {
-          // If creation also fails, throw original or creation error
-          throw err;
-        }
-      }
-      throw err;
-    }
+    // Só autentica. Não existe mais um caminho aqui que crie uma conta nova
+    // quando o login falha — isso transformava a tela de login em um
+    // autocadastro aberto para qualquer e-mail. Contas novas passam a ser
+    // criadas exclusivamente pelo fluxo de convite (POST /api/escritorio/convidar)
+    // ou pelo bootstrap do primeiro admin.
+    await signInWithEmailAndPassword(auth, email, pass);
   };
 
   const signOut = async () => {

@@ -23,6 +23,21 @@ vi.mock('./lib/matrizService', () => ({
   saveGlobalStateTaxMatrix: vi.fn().mockResolvedValue(undefined)
 }));
 
+// Mock do aiOrchestrator para evitar chamadas de API de IA externas em testes unitários
+vi.mock('./lib/aiOrchestrator', () => ({
+  orchestrateTaxAudit: vi.fn().mockResolvedValue({
+    divergenceType: 'none',
+    cstIcmsAudit: '060',
+    cfopAudit: '5405',
+    suggestedClassification: 'ST Monofásico',
+    taxRuleDetails: 'MOCK TEST',
+    legalBasis: 'ST SP',
+    confidenceScore: 0.95,
+    agentChainOfThought: ['Mock test step'],
+    ruleSource: 'AI_SWARM'
+  })
+}));
+
 // Mock do Firebase App para inicialização
 vi.mock('./lib/firebase', () => ({
   db: {},

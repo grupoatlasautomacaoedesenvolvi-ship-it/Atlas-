@@ -1089,7 +1089,7 @@ export default function App() {
 
   React.useEffect(() => {
     if (!user) return;
-    const effectiveEscritorioId = userData?.escritorioId || 'escritorio-default';
+    const effectiveEscritorioId = userData?.escritorioId;
     async function loadGlobalMatrix() {
       try {
         const { fetchGlobalStateTaxMatrix } = await import('./lib/matrizService');
@@ -1097,18 +1097,18 @@ export default function App() {
         if (rules && rules.length > 0) {
           setStateTaxRules(rules);
           try {
-            localStorage.setItem(`atlas_state_tax_matrix_${effectiveEscritorioId}`, JSON.stringify(rules));
+            if (effectiveEscritorioId) localStorage.setItem(`atlas_state_tax_matrix_${effectiveEscritorioId}`, JSON.stringify(rules));
             localStorage.setItem('atlas_state_tax_matrix', JSON.stringify(rules));
           } catch (err) {
             console.warn('Could not save to localStorage, it might be full:', err);
           }
         } else {
-          const saved = localStorage.getItem(`atlas_state_tax_matrix_${effectiveEscritorioId}`) || localStorage.getItem('atlas_state_tax_matrix');
+          const saved = (effectiveEscritorioId && localStorage.getItem(`atlas_state_tax_matrix_${effectiveEscritorioId}`)) || localStorage.getItem('atlas_state_tax_matrix');
           if (saved) setStateTaxRules(JSON.parse(saved));
         }
       } catch (e) {
         console.error('Error loading global matrix', e);
-        const saved = localStorage.getItem(`atlas_state_tax_matrix_${effectiveEscritorioId}`) || localStorage.getItem('atlas_state_tax_matrix');
+        const saved = (effectiveEscritorioId && localStorage.getItem(`atlas_state_tax_matrix_${effectiveEscritorioId}`)) || localStorage.getItem('atlas_state_tax_matrix');
         if (saved) setStateTaxRules(JSON.parse(saved));
       }
     }
@@ -1120,7 +1120,8 @@ export default function App() {
     if (!user) return;
 
     const runAutoImportScanner = async () => {
-      const eid = userData?.escritorioId || 'escritorio-default';
+      const eid = userData?.escritorioId;
+      if (!eid) return;
       try {
         await verificarEProcessarArquivosSalvos({
           matrizRules: stateTaxRules,
@@ -1154,10 +1155,10 @@ export default function App() {
 
   const handleSaveStateTaxRules = async (rules: StateTaxRule[]) => {
     setStateTaxRules(rules);
-    const effectiveEscritorioId = userData?.escritorioId || 'escritorio-default';
+    const effectiveEscritorioId = userData?.escritorioId;
     try {
       localStorage.setItem('atlas_state_tax_matrix', JSON.stringify(rules));
-      localStorage.setItem(`atlas_state_tax_matrix_${effectiveEscritorioId}`, JSON.stringify(rules));
+      if (effectiveEscritorioId) localStorage.setItem(`atlas_state_tax_matrix_${effectiveEscritorioId}`, JSON.stringify(rules));
     } catch (err) {
       console.warn('Could not save rules to localStorage:', err);
     }

@@ -1,104 +1,101 @@
-import { collection, doc, getDocs, setDoc, deleteDoc } from 'firebase/firestore';
-import { db, safeWrite } from './firebase';
 import { Rotina } from '../types';
 
-function exigirEscritorio(escritorioId: string | undefined): string {
-  if (!escritorioId) {
-    throw new Error('escritorioId é obrigatório — operação bloqueada para evitar vazamento entre escritórios.');
-  }
-  return escritorioId;
+function getToken(): string | null {
+  return localStorage.getItem('atlas_auth_token');
 }
 
 /**
- * Busca todas as rotinas do escritório que o usuário atual tem permissão de
- * ver, aplicando o filtro de visibilidade no servidor-side da função (nunca
- * confiar só no filtro da UI): 'Privado' só para quem criou; 'Todos' para
- * qualquer um do escritório; 'Administradores' só para admin_escritorio e
- * super_admin. Colaborador nunca vê rotina privada de outro colaborador.
+ * Busca as rotinas que o usuário atual tem permissão de ver. O filtro de
+ * visibilidade ('Privado'/'Todos'/'Administradores') é aplicado no servidor
+ * — nunca só no cliente — porque o servidor já resolve o escritório, o uid e
+ * o papel a partir do token autenticado. O cliente não manda mais esses
+ * dados na requisição nem recebe rotinas que não devia ver.
  */
-export async function fetchRotinas(
-  escritorioId: string,
-  usuarioAtualId: string,
-  papelAtual: 'super_admin' | 'admin_escritorio' | 'colaborador'
-): Promise<Rotina[]> {
-  const eid = exigirEscritorio(escritorioId);
-  let todas: Rotina[] = [];
-
+export async function fetchRotinas(escritorioId: string): Promise<Rotina[]> {
+  const token = getToken();
   try {
-    const ref = collection(db, 'escritorios', eid, 'rotinas');
-    const snap = await getDocs(ref);
-    if (!snap.empty) {
-      todas = snap.docs.map(d => ({ id: d.id, ...d.data() } as Rotina));
-      localStorage.setItem(`atlas_rotinas_${eid}`, JSON.stringify(todas));
-    }
-  } catch (e) {
-    console.warn('Erro fetchRotinas no Firestore (modo offline/fallback local):', e);
-  }
-
-  if (todas.length === 0) {
-    const localSaved = localStorage.getItem(`atlas_rotinas_${eid}`);
-    if (localSaved) {
-      try {
-        todas = JSON.parse(localSaved);
-      } catch (err) {
-        console.error('Erro ao ler rotinas locais:', err);
+    const res = await fetch('/api/escritorio/rotinas', {
+      headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success && Array.isArray(data.rotinas)) {
+        localStorage.setItem(`atlas_rotinas_${escritorioId}`, JSON.stringify(data.rotinas));
+        return data.rotinas;
       }
     }
+  } catch (e) {
+    console.warn('Erro fetchRotinas via API (modo offline/fallback local):', e);
   }
 
-  return todas.filter(r => {
-    if (r.userId === usuarioAtualId) return true; // sempre vê o que criou
-    if (r.visibilidade === 'Privado') return false;
-    if (r.visibilidade === 'Todos') return true;
-    if (r.visibilidade === 'Administradores') {
-      return papelAtual === 'admin_escritorio' || papelAtual === 'super_admin';
+  const localSaved = localStorage.getItem(`atlas_rotinas_${escritorioId}`);
+  if (localSaved) {
+    try {
+      return JSON.parse(localSaved);
+    } catch (err) {
+      console.error('Erro ao ler rotinas locais:', err);
     }
-    return false;
-  });
+  }
+  return [];
 }
 
 export async function saveRotina(escritorioId: string, rotina: Rotina): Promise<void> {
-  const eid = exigirEscritorio(escritorioId);
-  const updatedRotina = { ...rotina, escritorioId: eid, atualizadoEm: new Date().toISOString() };
+  const token = getToken();
 
-  // LocalStorage update
-  const localSaved = localStorage.getItem(`atlas_rotinas_${eid}`);
-  let rotinas: Rotina[] = localSaved ? JSON.parse(localSaved) : [];
-  const idx = rotinas.findIndex(r => r.id === rotina.id);
-  if (idx >= 0) {
-    rotinas[idx] = updatedRotina;
-  } else {
-    rotinas.unshift(updatedRotina);
+  // LocalStorage update (cache local otimista)
+  try {
+    const localSaved = localStorage.getItem(`atlas_rotinas_${escritorioId}`);
+    const rotinas: Rotina[] = localSaved ? JSON.parse(localSaved) : [];
+    const idx = rotinas.findIndex(r => r.id === rotina.id);
+    const updatedLocal = { ...rotina, escritorioId };
+    if (idx >= 0) rotinas[idx] = updatedLocal; else rotinas.unshift(updatedLocal);
+    localStorage.setItem(`atlas_rotinas_${escritorioId}`, JSON.stringify(rotinas));
+  } catch (err) {
+    console.warn('Could not update local rotinas cache:', err);
   }
-  localStorage.setItem(`atlas_rotinas_${eid}`, JSON.stringify(rotinas));
 
-  await safeWrite(async () => {
-    const ref = doc(db, 'escritorios', eid, 'rotinas', rotina.id);
-    await setDoc(ref, updatedRotina);
+  // O servidor decide o userId/creatorRole reais (nunca confia nos que o
+  // cliente mandar) e bloqueia a edição de rotina que não seja do autor
+  // (a menos que quem está editando seja admin do escritório/super admin).
+  const res = await fetch('/api/escritorio/rotinas', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+    },
+    body: JSON.stringify({ rotina })
   });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || 'Não foi possível salvar a rotina.');
+  }
 }
 
 export async function deleteRotina(escritorioId: string, rotinaId: string): Promise<void> {
-  const eid = exigirEscritorio(escritorioId);
+  const token = getToken();
 
-  // LocalStorage update
-  const localSaved = localStorage.getItem(`atlas_rotinas_${eid}`);
-  if (localSaved) {
-    let rotinas: Rotina[] = JSON.parse(localSaved);
-    rotinas = rotinas.filter(r => r.id !== rotinaId);
-    localStorage.setItem(`atlas_rotinas_${eid}`, JSON.stringify(rotinas));
+  try {
+    const localSaved = localStorage.getItem(`atlas_rotinas_${escritorioId}`);
+    if (localSaved) {
+      const rotinas: Rotina[] = JSON.parse(localSaved).filter((r: Rotina) => r.id !== rotinaId);
+      localStorage.setItem(`atlas_rotinas_${escritorioId}`, JSON.stringify(rotinas));
+    }
+  } catch (err) {
+    console.warn('Could not update local rotinas cache:', err);
   }
 
-  await safeWrite(async () => {
-    const ref = doc(db, 'escritorios', eid, 'rotinas', rotinaId);
-    await deleteDoc(ref);
+  const res = await fetch(`/api/escritorio/rotinas/${rotinaId}`, {
+    method: 'DELETE',
+    headers: token ? { 'Authorization': `Bearer ${token}` } : {}
   });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || 'Não foi possível excluir a rotina.');
+  }
 }
 
 export async function saveRotinasEmLote(escritorioId: string, rotinas: Rotina[]): Promise<void> {
-  const eid = exigirEscritorio(escritorioId);
   for (const rotina of rotinas) {
-    await saveRotina(eid, rotina);
+    await saveRotina(escritorioId, rotina);
   }
 }
-

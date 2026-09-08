@@ -52,7 +52,7 @@ export async function backupLocalStorageToCloud(escritorioId?: string): Promise<
     return { success: false };
   }
 
-  const effectiveEscritorioId = escritorioId || localStorage.getItem('atlas_escritorio_id') || 'default-escritorio';
+  const effectiveEscritorioId = escritorioId || localStorage.getItem('atlas_escritorio_id') || '';
   const path = `escritorios/${effectiveEscritorioId}/backups/${user.uid}`;
 
   try {
@@ -99,7 +99,7 @@ export async function restoreLocalStorageFromCloud(escritorioId?: string): Promi
   const user = auth.currentUser;
   if (!user) return { success: false };
 
-  const effectiveEscritorioId = escritorioId || localStorage.getItem('atlas_escritorio_id') || 'default-escritorio';
+  const effectiveEscritorioId = escritorioId || localStorage.getItem('atlas_escritorio_id') || '';
   const path = `escritorios/${effectiveEscritorioId}/backups/${user.uid}`;
 
   try {

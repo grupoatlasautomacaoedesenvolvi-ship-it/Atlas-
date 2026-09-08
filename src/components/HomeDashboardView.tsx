@@ -87,10 +87,10 @@ export function HomeDashboardView({ clientes, logs, spedData, setActiveTab, user
   const diaHoje = hoje.getDate();
 
   function getStatusPrazo(diaVencimento: number) {
-    if (!isMesAtual) return { status: 'FUTURO', label: 'Agendado', color: 'bg-slate-100 text-slate-700 border-slate-200' };
-    if (diaHoje > diaVencimento) return { status: 'VENCIDO', label: 'Prazo Vencido', color: 'bg-rose-100 text-rose-800 border-rose-300' };
-    if (diaVencimento - diaHoje <= 3) return { status: 'URGENTE', label: 'Vence em Breve', color: 'bg-amber-100 text-amber-800 border-amber-300' };
-    return { status: 'EM_DIA', label: 'No Prazo', color: 'bg-emerald-100 text-[#0f6e56] border-emerald-300' };
+    if (!isMesAtual) return { status: 'FUTURO', label: 'Agendado', color: 'bg-[var(--atlas-bg)] text-[var(--atlas-text-secondary)] border-[var(--atlas-border)]' };
+    if (diaHoje > diaVencimento) return { status: 'VENCIDO', label: 'Prazo Vencido', color: 'atlas-alert-danger' };
+    if (diaVencimento - diaHoje <= 3) return { status: 'URGENTE', label: 'Vence em Breve', color: 'atlas-alert-warning' };
+    return { status: 'EM_DIA', label: 'No Prazo', color: 'atlas-alert-success' };
   }
 
   const statusNormal = getStatusPrazo(prazoNormal.diaAjustado);

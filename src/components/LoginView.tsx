@@ -13,14 +13,10 @@ import {
   Eye,
   EyeOff,
   CheckCircle2,
-  LockKeyhole,
   ArrowRight,
   Server,
-  Zap,
-  Check,
   Layers,
-  User,
-  UserPlus
+  Check
 } from 'lucide-react';
 
 export function LoginView() {
@@ -87,9 +83,9 @@ export function LoginView() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#f8fafc] flex flex-col lg:flex-row font-sans text-slate-800 selection:bg-[#1e3a5f] selection:text-white">
+    <div className="min-h-screen w-full flex flex-col lg:flex-row font-sans text-[var(--atlas-text)] selection:bg-[var(--atlas-navy)] selection:text-white" style={{ background: 'var(--atlas-bg)' }}>
       {/* Left Column: Official Brand & High Impact Product Showcase */}
-      <div className="lg:w-7/12 p-8 lg:p-16 xl:p-20 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-200 bg-white relative">
+      <div className="lg:w-7/12 p-8 lg:p-16 xl:p-20 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-[var(--atlas-border)] relative" style={{ background: 'var(--atlas-surface)' }}>
         <div className="max-w-2xl">
           {/* Prominent Logo Header */}
           <div className="mb-10 flex items-center justify-between">
@@ -98,46 +94,46 @@ export function LoginView() {
               alt="Atlas Auditor Fiscal" 
               className="h-24 lg:h-28 w-auto object-contain max-w-full"
             />
-            <span className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-semibold bg-[#1e3a5f]/5 text-[#1e3a5f] border border-[#1e3a5f]/20 shadow-xs">
-              <ShieldCheck className="w-4 h-4 text-[#1e3a5f]" />
+            <span className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-semibold text-[var(--atlas-navy)] border border-[var(--atlas-navy)]/20" style={{ background: 'rgba(30,58,95,0.05)' }}>
+              <ShieldCheck className="w-4 h-4 text-[var(--atlas-navy)]" />
               Plataforma Homologada
             </span>
           </div>
 
           {/* Product Headline & Positioning */}
           <div className="space-y-4 mb-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-slate-100 border border-slate-200/80 text-xs font-bold text-[#1e3a5f] uppercase tracking-wider">
-              <Layers className="w-3.5 h-3.5 text-[#1e3a5f]" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md border border-[var(--atlas-border)] text-xs font-bold text-[var(--atlas-navy)] uppercase tracking-wider" style={{ background: 'var(--atlas-bg)' }}>
+              <Layers className="w-3.5 h-3.5 text-[var(--atlas-navy)]" />
               Auditoria EFD ICMS/IPI & NF-e
             </div>
-            <h1 className="text-3xl lg:text-4xl font-extrabold text-[#1e3a5f] tracking-tight leading-snug">
+            <h1 className="text-3xl lg:text-4xl font-extrabold text-[var(--atlas-navy)] tracking-tight leading-snug">
               Conformidade fiscal e auditoria SPED com máxima segurança e precisão.
             </h1>
-            <p className="text-slate-600 text-sm lg:text-base leading-relaxed">
-              O <strong className="text-[#1e3a5f] font-semibold">Atlas Auditor Fiscal</strong> realiza o cruzamento automatizado dos seus arquivos SPED com documentos fiscais eletrônicos e regras estaduais, identificando divergências com rapidez e garantindo total conformidade antes do envio à Receita Federal.
+            <p className="text-[var(--atlas-text-secondary)] text-sm lg:text-base leading-relaxed">
+              O <strong className="text-[var(--atlas-navy)] font-semibold">Atlas Auditor Fiscal</strong> realiza o cruzamento automatizado dos seus arquivos SPED com documentos fiscais eletrônicos e regras estaduais, identificando divergências com rapidez e garantindo total conformidade antes do envio à Receita Federal.
             </p>
           </div>
 
           {/* Product Operational Highlights Panel */}
-          <div className="mb-10 p-5 rounded-lg bg-slate-50 border border-slate-200/80 shadow-xs">
-            <p className="text-xs font-bold text-[#1e3a5f] uppercase tracking-wider mb-3">
+          <div className="mb-10 p-5 rounded-lg border border-[var(--atlas-border)]" style={{ background: 'var(--atlas-bg)' }}>
+            <p className="text-xs font-bold text-[var(--atlas-navy)] uppercase tracking-wider mb-3">
               Módulos e Recursos em Destaque
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-              <div className="flex items-center gap-2 text-slate-700">
-                <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+              <div className="flex items-center gap-2 text-[var(--atlas-text)]">
+                <Check className="w-4 h-4 text-[var(--atlas-accent)] shrink-0" />
                 <span>Conciliação SPED x XML de NF-e/NFC-e</span>
               </div>
-              <div className="flex items-center gap-2 text-slate-700">
-                <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+              <div className="flex items-center gap-2 text-[var(--atlas-text)]">
+                <Check className="w-4 h-4 text-[var(--atlas-accent)] shrink-0" />
                 <span>Conferência de NCM, CEST e MVA por UF</span>
               </div>
-              <div className="flex items-center gap-2 text-slate-700">
-                <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+              <div className="flex items-center gap-2 text-[var(--atlas-text)]">
+                <Check className="w-4 h-4 text-[var(--atlas-accent)] shrink-0" />
                 <span>Mapeamento de Notas Omissas e Não Escrituradas</span>
               </div>
-              <div className="flex items-center gap-2 text-slate-700">
-                <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+              <div className="flex items-center gap-2 text-[var(--atlas-text)]">
+                <Check className="w-4 h-4 text-[var(--atlas-accent)] shrink-0" />
                 <span>Exportação Direta de SPED Retificado em TXT</span>
               </div>
             </div>
@@ -145,37 +141,37 @@ export function LoginView() {
 
           {/* Feature Details */}
           <div className="space-y-4 mb-10">
-            <div className="flex items-start gap-3.5 pb-3.5 border-b border-slate-100">
-              <div className="p-2 rounded-lg bg-[#1e3a5f]/10 text-[#1e3a5f] shrink-0 mt-0.5">
+            <div className="flex items-start gap-3.5 pb-3.5 border-b border-[var(--atlas-border)]">
+              <div className="p-2 rounded-lg text-[var(--atlas-navy)] shrink-0 mt-0.5" style={{ background: 'rgba(30,58,95,0.1)' }}>
                 <FileCheck2 className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-xs font-bold text-[#1e3a5f] uppercase tracking-wider">Cruzamento Automatizado</h3>
-                <p className="text-xs text-slate-500 leading-relaxed mt-0.5">
+                <h3 className="text-xs font-bold text-[var(--atlas-navy)] uppercase tracking-wider">Cruzamento Automatizado</h3>
+                <p className="text-xs text-[var(--atlas-text-muted)] leading-relaxed mt-0.5">
                   Análise detalhada de consistência entre livros fiscais e chaves de acesso de documentos emitidos e recebidos.
                 </p>
               </div>
             </div>
 
-            <div className="flex items-start gap-3.5 pb-3.5 border-b border-slate-100">
-              <div className="p-2 rounded-lg bg-[#1e3a5f]/10 text-[#1e3a5f] shrink-0 mt-0.5">
+            <div className="flex items-start gap-3.5 pb-3.5 border-b border-[var(--atlas-border)]">
+              <div className="p-2 rounded-lg text-[var(--atlas-navy)] shrink-0 mt-0.5" style={{ background: 'rgba(30,58,95,0.1)' }}>
                 <SlidersHorizontal className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-xs font-bold text-[#1e3a5f] uppercase tracking-wider">Regras Tributárias Estaduais</h3>
-                <p className="text-xs text-slate-500 leading-relaxed mt-0.5">
+                <h3 className="text-xs font-bold text-[var(--atlas-navy)] uppercase tracking-wider">Regras Tributárias Estaduais</h3>
+                <p className="text-xs text-[var(--atlas-text-muted)] leading-relaxed mt-0.5">
                   Validação automatizada de alíquotas internas de ICMS, substituição tributária e benefícios fiscais vigentes.
                 </p>
               </div>
             </div>
 
             <div className="flex items-start gap-3.5">
-              <div className="p-2 rounded-lg bg-[#1e3a5f]/10 text-[#1e3a5f] shrink-0 mt-0.5">
+              <div className="p-2 rounded-lg text-[var(--atlas-navy)] shrink-0 mt-0.5" style={{ background: 'rgba(30,58,95,0.1)' }}>
                 <BarChart3 className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-xs font-bold text-[#1e3a5f] uppercase tracking-wider">Relatórios e Edição em Lote</h3>
-                <p className="text-xs text-slate-500 leading-relaxed mt-0.5">
+                <h3 className="text-xs font-bold text-[var(--atlas-navy)] uppercase tracking-wider">Relatórios e Edição em Lote</h3>
+                <p className="text-xs text-[var(--atlas-text-muted)] leading-relaxed mt-0.5">
                   Painel intuitivo com apontamento de erros por severidade e recursos de retificação ágil de registros.
                 </p>
               </div>
@@ -184,40 +180,40 @@ export function LoginView() {
         </div>
 
         {/* Footer info */}
-        <div className="pt-6 border-t border-slate-200 flex flex-wrap items-center justify-between text-xs text-slate-500 gap-4">
+        <div className="pt-6 border-t border-[var(--atlas-border)] flex flex-wrap items-center justify-between text-xs text-[var(--atlas-text-muted)] gap-4">
           <p>© {new Date().getFullYear()} Grupo Atlas Automação e Desenvolvimento. Todos os direitos reservados.</p>
           <div className="flex items-center gap-5">
-            <span className="flex items-center gap-1.5 text-slate-700 font-semibold">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Compatível com PVA RFB
+            <span className="flex items-center gap-1.5 text-[var(--atlas-text)] font-semibold">
+              <CheckCircle2 className="w-3.5 h-3.5 text-[var(--atlas-accent)]" /> Compatível com PVA RFB
             </span>
-            <span className="flex items-center gap-1.5 text-slate-700 font-semibold">
-              <Building2 className="w-3.5 h-3.5 text-[#1e3a5f]" /> Multi-Escritório
+            <span className="flex items-center gap-1.5 text-[var(--atlas-text)] font-semibold">
+              <Building2 className="w-3.5 h-3.5 text-[var(--atlas-navy)]" /> Multi-Escritório
             </span>
           </div>
         </div>
       </div>
 
       {/* Right Column: Integrated Form */}
-      <div className="lg:w-5/12 p-8 lg:p-16 xl:p-20 flex flex-col justify-between bg-[#f8fafc]">
+      <div className="lg:w-5/12 p-8 lg:p-16 xl:p-20 flex flex-col justify-between">
         <div className="w-full max-w-sm mx-auto space-y-8 my-auto">
           {/* Header */}
           <div>
-            <div className="flex items-center space-x-2 border-b border-slate-200 pb-3 mb-6">
+            <div className="flex items-center space-x-2 border-b border-[var(--atlas-border)] pb-3 mb-6">
               <button
                 type="button"
                 onClick={() => { setMode('login'); setError(''); setMessage(''); }}
-                className={`text-xs font-bold pb-3 -mb-3 transition-colors text-[#1e3a5f] border-b-2 border-[#1e3a5f]`}
+                className="text-xs font-bold pb-3 -mb-3 transition-colors text-[var(--atlas-navy)] border-b-2 border-[var(--atlas-navy)]"
               >
                 Acessar Conta
               </button>
             </div>
 
-            <h2 className="text-xl font-bold text-[#1e3a5f] tracking-tight">
+            <h2 className="text-xl font-bold text-[var(--atlas-navy)] tracking-tight">
               {mode === 'forgot'
                 ? 'Recuperação de Senha'
                 : 'Autenticação de Usuário'}
             </h2>
-            <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+            <p className="text-xs text-[var(--atlas-text-muted)] mt-1 leading-relaxed">
               {mode === 'forgot'
                 ? 'Informe seu e-mail corporativo para receber as instruções de redefinição.'
                 : 'Insira suas credenciais corporativas para acessar o painel de auditoria.'}
@@ -228,26 +224,26 @@ export function LoginView() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="block text-xs font-semibold text-slate-700">
+                <label className="block text-xs font-semibold text-[var(--atlas-text-secondary)]">
                   E-mail Corporativo
                 </label>
                 <button
                   type="button"
                   onClick={applyAtlasDomain}
-                  className="text-[11px] text-[#3d5876] hover:text-[#1e3a5f] transition font-medium underline"
+                  className="text-[11px] text-[var(--atlas-navy)]/80 hover:text-[var(--atlas-navy)] transition font-medium underline"
                 >
                   Usar @atlas.com
                 </button>
               </div>
               <div className="relative">
-                <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                <Mail className="w-4 h-4 text-[var(--atlas-text-muted)] absolute left-3.5 top-3.5" />
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => handleEmailChange(e.target.value)}
                   placeholder="usuario@atlas.com"
-                  className="w-full pl-10 pr-4 py-3 bg-white border border-slate-300 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:border-[#1e3a5f] focus:ring-2 focus:ring-[#1e3a5f]/15 outline-none transition duration-150 shadow-sm"
+                  className="atlas-input pl-10"
                 />
               </div>
             </div>
@@ -255,31 +251,31 @@ export function LoginView() {
             {mode !== 'forgot' && (
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label className="block text-xs font-semibold text-slate-700">Senha</label>
+                  <label className="block text-xs font-semibold text-[var(--atlas-text-secondary)]">Senha</label>
                   {mode === 'login' && (
                     <button
                       type="button"
                       onClick={() => { setMode('forgot'); setError(''); setMessage(''); }}
-                      className="text-[11px] text-[#3d5876] hover:text-[#1e3a5f] transition font-semibold"
+                      className="text-[11px] text-[var(--atlas-navy)]/80 hover:text-[var(--atlas-navy)] transition font-semibold"
                     >
                       Esqueceu a senha?
                     </button>
                   )}
                 </div>
                 <div className="relative">
-                  <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                  <Lock className="w-4 h-4 text-[var(--atlas-text-muted)] absolute left-3.5 top-3.5" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full pl-10 pr-10 py-3 bg-white border border-slate-300 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:border-[#1e3a5f] focus:ring-2 focus:ring-[#1e3a5f]/15 outline-none transition duration-150 shadow-sm"
+                    className="atlas-input pl-10 pr-10"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-600 transition"
+                    className="absolute right-3.5 top-3.5 text-[var(--atlas-text-muted)] hover:text-[var(--atlas-text-secondary)] transition"
                     aria-label={showPassword ? "Ocultar senha" : "Exibir senha"}
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -289,13 +285,13 @@ export function LoginView() {
             )}
 
             {error && (
-              <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-medium">
+              <div className="atlas-alert atlas-alert-danger" role="alert">
                 {error}
               </div>
             )}
 
             {message && (
-              <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs font-medium">
+              <div className="atlas-alert atlas-alert-success" role="status">
                 {message}
               </div>
             )}
@@ -303,7 +299,7 @@ export function LoginView() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#1e3a5f] hover:bg-[#162b47] active:bg-[#0f2137] text-white font-semibold py-3 rounded-xl text-xs transition duration-200 flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 mt-2"
+              className="atlas-btn atlas-btn-primary w-full mt-2"
             >
               {loading ? (
                 <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
@@ -326,7 +322,7 @@ export function LoginView() {
                 <button
                   type="button"
                   onClick={() => { setMode('login'); setError(''); setMessage(''); }}
-                  className="text-xs text-slate-500 hover:text-[#1e3a5f] transition underline font-medium"
+                  className="text-xs text-[var(--atlas-text-muted)] hover:text-[var(--atlas-navy)] transition underline font-medium"
                 >
                   Voltar para a tela de login
                 </button>
@@ -334,12 +330,12 @@ export function LoginView() {
             )}
           </form>
 
-          <div className="pt-6 border-t border-slate-200 text-center space-y-2">
-            <p className="text-[11px] text-slate-500">
+          <div className="pt-6 border-t border-[var(--atlas-border)] text-center space-y-2">
+            <p className="text-[11px] text-[var(--atlas-text-muted)]">
               Autenticação corporativa com criptografia TLS 1.3 e controle de acessos por perfil.
             </p>
-            <div className="flex items-center justify-center gap-2 text-[10px] text-slate-400 font-mono">
-              <Server className="w-3 h-3 text-slate-400" />
+            <div className="flex items-center justify-center gap-2 text-[10px] text-[var(--atlas-text-muted)] font-mono">
+              <Server className="w-3 h-3 text-[var(--atlas-text-muted)]" />
               <span>Servidores Ativos • EFD Schema RFB v2.4</span>
             </div>
           </div>

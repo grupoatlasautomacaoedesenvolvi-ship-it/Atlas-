@@ -17,10 +17,16 @@ service cloud.firestore {
     }
 
     function meuEscritorio() {
+      // Nunca cair para um ID padrão ('escritorio-default') quando o usuário
+      // não tem escritorioId definido — isso permitia que qualquer usuário
+      // sem vínculo enxergasse/editasse um escritório real que por acaso
+      // tivesse esse ID. Sem escritorioId, o retorno é null e nenhuma regra
+      // abaixo casa com ele.
       return isSignedIn() &&
-             exists(/databases/$(database)/documents/usuarios/$(request.auth.uid))
-             ? (meuDoc().escritorioId != null && meuDoc().escritorioId != '' ? meuDoc().escritorioId : 'escritorio-default')
-             : 'escritorio-default';
+             exists(/databases/$(database)/documents/usuarios/$(request.auth.uid)) &&
+             meuDoc().escritorioId != null && meuDoc().escritorioId != ''
+             ? meuDoc().escritorioId
+             : null;
     }
 
     function ehSuperAdmin() {

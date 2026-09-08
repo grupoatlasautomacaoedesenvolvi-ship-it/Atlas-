@@ -496,19 +496,19 @@ export function Navbar({ activeTab, setActiveTab, hasSped, hasXmlTerceiros, hasX
             </div>
 
             {/* Cloud Backup & Sync Badge/Buttons */}
-            <div className="p-2 rounded-lg bg-indigo-50/60 border border-indigo-100 space-y-1.5">
-              <div className="flex items-center justify-between text-[11px] font-semibold text-indigo-900">
+            <div className="p-2 rounded-lg border border-[var(--atlas-border)] space-y-1.5" style={{ background: 'var(--atlas-surface)' }}>
+              <div className="flex items-center justify-between text-[11px] font-semibold text-[var(--atlas-navy)]">
                 <span className="flex items-center gap-1">
-                  <Cloud className="w-3.5 h-3.5 text-indigo-600 animate-pulse" />
+                  <Cloud className="w-3.5 h-3.5 text-[var(--atlas-navy)] animate-pulse" />
                   <span>Backup Firestore</span>
                 </span>
-                {syncMsg && <span className="text-[10px] text-indigo-700 font-bold">{syncMsg}</span>}
+                {syncMsg && <span className="text-[10px] text-[var(--atlas-accent)] font-bold">{syncMsg}</span>}
               </div>
               <div className="grid grid-cols-2 gap-1">
                 <button
                   onClick={handleManualBackup}
                   disabled={syncing}
-                  className="flex items-center justify-center space-x-1 px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded text-[10px] font-bold shadow-2xs transition-colors cursor-pointer disabled:opacity-50"
+                  className="atlas-btn atlas-btn-primary px-2 py-1 text-[10px] cursor-pointer"
                   title="Salvar backup imediato na nuvem"
                 >
                   <Upload className="w-3 h-3" />
@@ -517,7 +517,7 @@ export function Navbar({ activeTab, setActiveTab, hasSped, hasXmlTerceiros, hasX
                 <button
                   onClick={handleManualRestore}
                   disabled={syncing}
-                  className="flex items-center justify-center space-x-1 px-2 py-1 bg-white hover:bg-indigo-100 text-indigo-800 border border-indigo-200 rounded text-[10px] font-bold transition-colors cursor-pointer disabled:opacity-50"
+                  className="atlas-btn atlas-btn-secondary px-2 py-1 text-[10px] cursor-pointer"
                   title="Restaurar dados do Firestore"
                 >
                   <Download className="w-3 h-3" />

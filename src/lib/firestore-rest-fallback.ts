@@ -85,12 +85,9 @@ export async function fetchDocWithFallback(path: string, token?: string): Promis
           // ignore rest error
         }
       }
-      if (path.startsWith('usuarios/')) {
-        return {
-          id: path.split('/')[1],
-          data: { email: 'usuario@sistema.com', nome: 'Administrador', papel: 'super_admin', escritorioId: 'escritorio-default', ativo: true }
-        };
-      }
+      // Nunca fabricar um documento (e muito menos com papel super_admin)
+      // quando a leitura falha. Falha de leitura deve significar "não
+      // encontrado/indisponível", nunca "acesso total liberado".
       return null;
     }
     throw err;
@@ -162,12 +159,10 @@ export async function queryCollectionWithFallback(path: string, token?: string):
           // ignore rest error
         }
       }
-      if (path === 'escritorios') {
-        return [{ id: 'escritorio-default', data: { nome: 'Escritório Padrão (Modo Offline)', ativo: true } }];
-      }
-      if (path === 'usuarios') {
-        return [{ id: 'user-default', data: { email: 'usuario@sistema.com', nome: 'Administrador', papel: 'super_admin', escritorioId: 'escritorio-default', ativo: true } }];
-      }
+      // Idem: nunca inventar um escritório ou usuário (muito menos um
+      // super_admin) quando a consulta falha. Lista vazia é o resultado
+      // seguro — o chamador deve tratar isso como "indisponível", não como
+      // "sistema vazio, pode virar admin".
       return [];
     }
     throw err;

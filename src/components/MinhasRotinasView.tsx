@@ -42,15 +42,20 @@ export function MinhasRotinasView({ escritorioId, userId, userNome, papel, clien
   const [newChecklistItem, setNewChecklistItem] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const effectiveEscritorioId = escritorioId || 'escritorio_default';
-  const effectiveUserId = userId || 'user_default';
+  const effectiveEscritorioId = escritorioId;
+  const effectiveUserId = userId || '';
   const effectiveUserNome = userNome || 'Usuário';
-  const effectivePapel = papel || 'admin_escritorio';
+  const effectivePapel = papel || 'colaborador';
 
   const recarregar = async () => {
+    if (!effectiveEscritorioId) {
+      setRotinas([]);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
-      const lista = await fetchRotinas(effectiveEscritorioId, effectiveUserId, effectivePapel);
+      const lista = await fetchRotinas(effectiveEscritorioId);
       setRotinas(lista);
     } catch (e) {
       console.error('Erro ao carregar rotinas:', e);
@@ -83,6 +88,10 @@ export function MinhasRotinasView({ escritorioId, userId, userNome, papel, clien
   const handleImportExcel = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const uploadedFile = e.target.files?.[0];
     if (!uploadedFile) return;
+    if (!effectiveEscritorioId) {
+      alert('Você não tem um escritório vinculado para importar rotinas.');
+      return;
+    }
 
     const reader = new FileReader();
     reader.onload = async (evt) => {
@@ -156,6 +165,10 @@ export function MinhasRotinasView({ escritorioId, userId, userNome, papel, clien
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.titulo) return;
+    if (!effectiveEscritorioId) {
+      alert('Você não tem um escritório vinculado para salvar rotinas.');
+      return;
+    }
 
     const existente = editingId ? rotinas.find(r => r.id === editingId) : null;
     const agora = new Date().toISOString();
@@ -180,20 +193,37 @@ export function MinhasRotinasView({ escritorioId, userId, userNome, papel, clien
       atualizadoEm: agora
     };
 
-    await saveRotina(effectiveEscritorioId, rotina);
-    await recarregar();
-    setIsModalOpen(false);
+    try {
+      await saveRotina(effectiveEscritorioId, rotina);
+      await recarregar();
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error('Erro ao salvar rotina:', err);
+      alert(err instanceof Error ? err.message : 'Erro ao salvar rotina.');
+    }
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm('Tem certeza que deseja excluir esta rotina?')) return;
-    await deleteRotina(effectiveEscritorioId, id);
-    await recarregar();
+    if (!effectiveEscritorioId) return;
+    try {
+      await deleteRotina(effectiveEscritorioId, id);
+      await recarregar();
+    } catch (err) {
+      console.error('Erro ao excluir rotina:', err);
+      alert(err instanceof Error ? err.message : 'Erro ao excluir rotina.');
+    }
   };
 
   const toggleConcluida = async (rotina: Rotina) => {
-    await saveRotina(effectiveEscritorioId, { ...rotina, concluida: !rotina.concluida });
-    await recarregar();
+    if (!effectiveEscritorioId) return;
+    try {
+      await saveRotina(effectiveEscritorioId, { ...rotina, concluida: !rotina.concluida });
+      await recarregar();
+    } catch (err) {
+      console.error('Erro ao atualizar rotina:', err);
+      alert(err instanceof Error ? err.message : 'Erro ao atualizar rotina.');
+    }
   };
 
   const handleAddChecklistItem = (e: React.KeyboardEvent | React.MouseEvent) => {

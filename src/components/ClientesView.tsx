@@ -93,7 +93,7 @@ export function ClientesView({
   addNotification,
   escritorioId
 }: ClientesViewProps) {
-  const effectiveEscritorioId = escritorioId || 'escritorio-default';
+  const effectiveEscritorioId = escritorioId || '';
   const { userData } = useAuth();
   
   // Hierarchy permission: Registration and import allowed for level superior to colaborador (admin_escritorio and super_admin)
@@ -147,10 +147,16 @@ export function ClientesView({
 
   // Initial Data Load
   useEffect(() => {
+    if (!effectiveEscritorioId) {
+      setClientes([]);
+      setLoading(false);
+      return;
+    }
     loadClientes();
   }, [effectiveEscritorioId]);
 
   const loadClientes = async () => {
+    if (!effectiveEscritorioId) return;
     setLoading(true);
     try {
       const [escData, data] = await Promise.all([
@@ -183,6 +189,7 @@ export function ClientesView({
   }, [selectedCliente]);
 
   const loadPastasEArquivos = async (clienteId: string) => {
+    if (!effectiveEscritorioId) return;
     try {
       const pData = await ensureStandardFiscalFolders(clienteId, ['2025', '2024'], effectiveEscritorioId);
       const aData = await fetchArquivosCliente(clienteId, effectiveEscritorioId);
@@ -303,12 +310,18 @@ export function ClientesView({
       cancelLabel: 'Manter Cadastro',
       variant: 'danger',
       onConfirm: async () => {
-        await deleteCliente(cliente.id, effectiveEscritorioId);
-        if (activeClienteId === cliente.id) setActiveClienteId(null);
-        if (selectedCliente?.id === cliente.id) setSelectedCliente(null);
-        addNotification('Cliente Removido', `O cliente "${cliente.nome}" foi excluído do sistema.`, 'system');
-        await loadClientes();
-        setConfirmModal(prev => ({ ...prev, isOpen: false }));
+        try {
+          await deleteCliente(cliente.id, effectiveEscritorioId);
+          if (activeClienteId === cliente.id) setActiveClienteId(null);
+          if (selectedCliente?.id === cliente.id) setSelectedCliente(null);
+          addNotification('Cliente Removido', `O cliente "${cliente.nome}" foi excluído do sistema.`, 'system');
+          await loadClientes();
+        } catch (err) {
+          console.error('Erro ao excluir cliente:', err);
+          alert('Erro ao excluir cliente.');
+        } finally {
+          setConfirmModal(prev => ({ ...prev, isOpen: false }));
+        }
       }
     });
   };
@@ -424,10 +437,16 @@ export function ClientesView({
       cancelLabel: 'Manter Arquivo',
       variant: 'danger',
       onConfirm: async () => {
-        await deleteArquivoCliente(arq.id, effectiveEscritorioId);
-        addNotification('Arquivo Excluído', `"${arq.nome}" foi removido do armazenamento.`, 'system');
-        if (selectedCliente) await loadPastasEArquivos(selectedCliente.id);
-        setConfirmModal(prev => ({ ...prev, isOpen: false }));
+        try {
+          await deleteArquivoCliente(arq.id, effectiveEscritorioId);
+          addNotification('Arquivo Excluído', `"${arq.nome}" foi removido do armazenamento.`, 'system');
+          if (selectedCliente) await loadPastasEArquivos(selectedCliente.id);
+        } catch (err) {
+          console.error('Erro ao excluir arquivo:', err);
+          alert('Erro ao excluir arquivo.');
+        } finally {
+          setConfirmModal(prev => ({ ...prev, isOpen: false }));
+        }
       }
     });
   };

@@ -416,46 +416,54 @@ async function startServer() {
   });
 
   // API para buscar a Matriz Tributária do Escritório via Admin SDK com Fallback
-  app.get('/api/escritorio/matriz', async (req: AuthRequest, res) => {
+  app.get('/api/escritorio/matriz', requireAuth, async (req: AuthRequest, res) => {
     try {
-      const escritorioId = (req.query.escritorioId as string) || req.escritorioId || 'escritorio-default';
-      const path = `escritorios/${escritorioId}/config/matriz_tributaria`;
+      // O escritório vem sempre do papel/documento do usuário autenticado —
+      // nunca de query/body — e nunca cai para um valor padrão. Isso evita
+      // vazamento de dados fiscais entre escritórios diferentes.
+      if (!req.escritorioId) {
+        return res.status(403).json({ error: 'Usuário sem escritório vinculado.' });
+      }
+      const path = `escritorios/${req.escritorioId}/config/matriz_tributaria`;
       const docResult = await fetchDocWithFallback(path, req.token);
       if (docResult && docResult.data) {
         return res.json({ success: true, rules: docResult.data.rules || [] });
       }
       res.json({ success: true, rules: [] });
     } catch (err: any) {
-      console.warn('Error fetching matriz tributaria via API (fallback to empty):', err?.message);
-      res.json({ success: true, rules: [] });
+      console.warn('Error fetching matriz tributaria via API:', err?.message);
+      res.status(503).json({ error: 'Não foi possível carregar a matriz tributária.' });
     }
   });
 
   // API para salvar a Matriz Tributária do Escritório via Admin SDK com Fallback
-  app.post('/api/escritorio/matriz', async (req: AuthRequest, res) => {
+  app.post('/api/escritorio/matriz', requireAuth, async (req: AuthRequest, res) => {
     try {
-      const { rules, escritorioId: escritorioIdBody } = req.body;
-      const escritorioId = escritorioIdBody || req.escritorioId || 'escritorio-default';
+      if (!req.escritorioId) {
+        return res.status(403).json({ error: 'Usuário sem escritório vinculado.' });
+      }
+      const { rules } = req.body;
       if (!Array.isArray(rules)) {
         return res.status(400).json({ error: 'Formato de regras inválido.' });
       }
 
-      const path = `escritorios/${escritorioId}/config/matriz_tributaria`;
+      const path = `escritorios/${req.escritorioId}/config/matriz_tributaria`;
       await setDocWithFallback(path, { rules, updatedAt: new Date().toISOString() }, req.token, true);
 
       res.json({ success: true, count: rules.length });
     } catch (err: any) {
       console.error('Error saving matriz tributaria via API:', err);
-      // Even if fallback fails, respond success so client-side localStorage state remains consistent
-      res.json({ success: true, count: rules.length, warning: err.message });
+      res.status(503).json({ error: 'Não foi possível salvar a matriz tributária.' });
     }
   });
 
   // API para buscar dados de SPED e XMLs do escritório via Admin SDK com Fallback
-  app.get('/api/escritorio/sped-xml', async (req: AuthRequest, res) => {
+  app.get('/api/escritorio/sped-xml', requireAuth, async (req: AuthRequest, res) => {
     try {
-      const escritorioId = (req.query.escritorioId as string) || req.escritorioId || 'escritorio-default';
-      const path = `escritorios/${escritorioId}/config/sped_xml_data`;
+      if (!req.escritorioId) {
+        return res.status(403).json({ error: 'Usuário sem escritório vinculado.' });
+      }
+      const path = `escritorios/${req.escritorioId}/config/sped_xml_data`;
       const docResult = await fetchDocWithFallback(path, req.token);
       if (docResult && docResult.data) {
         return res.json({ success: true, data: docResult.data });
@@ -463,17 +471,19 @@ async function startServer() {
       res.json({ success: true, data: null });
     } catch (err: any) {
       console.warn('Error fetching sped-xml via API:', err?.message);
-      res.json({ success: true, data: null });
+      res.status(503).json({ error: 'Não foi possível carregar os dados de SPED/XML.' });
     }
   });
 
   // API para salvar dados de SPED e XMLs do escritório via Admin SDK com Fallback
-  app.post('/api/escritorio/sped-xml', async (req: AuthRequest, res) => {
+  app.post('/api/escritorio/sped-xml', requireAuth, async (req: AuthRequest, res) => {
     try {
-      const { spedData, xmlTerceiros, xmlProprio, xmlNfce, escritorioId: escritorioIdBody } = req.body;
-      const escritorioId = escritorioIdBody || req.escritorioId || 'escritorio-default';
+      if (!req.escritorioId) {
+        return res.status(403).json({ error: 'Usuário sem escritório vinculado.' });
+      }
+      const { spedData, xmlTerceiros, xmlProprio, xmlNfce } = req.body;
 
-      const path = `escritorios/${escritorioId}/config/sped_xml_data`;
+      const path = `escritorios/${req.escritorioId}/config/sped_xml_data`;
       const payload = {
         spedData: spedData || null,
         xmlTerceiros: xmlTerceiros || [],
@@ -487,17 +497,116 @@ async function startServer() {
       res.json({ success: true });
     } catch (err: any) {
       console.error('Error saving sped-xml via API:', err);
-      res.json({ success: true, warning: err.message });
+      res.status(503).json({ error: 'Não foi possível salvar os dados de SPED/XML.' });
+    }
+  });
+
+  // Rotinas do escritório: a leitura filtra visibilidade no servidor (nunca
+  // confiar no filtro client-side — 'Privado' precisa ser de verdade privado)
+  // e a escrita/exclusão só é permitida para o autor ou para admin do
+  // escritório/super admin. userId e creatorRole nunca vêm do corpo da
+  // requisição — sempre do usuário autenticado.
+  app.get('/api/escritorio/rotinas', requireAuth, async (req: AuthRequest, res) => {
+    try {
+      if (!req.escritorioId) {
+        return res.status(403).json({ error: 'Usuário sem escritório vinculado.' });
+      }
+      const todas = await queryCollectionWithFallback(`escritorios/${req.escritorioId}/rotinas`, req.token);
+      const uid = req.user!.uid;
+      const papel = req.papel;
+      const visiveis = todas
+        .map(d => ({ id: d.id, ...d.data }))
+        .filter((r: any) => {
+          if (r.userId === uid) return true;
+          if (r.visibilidade === 'Privado') return false;
+          if (r.visibilidade === 'Todos') return true;
+          if (r.visibilidade === 'Administradores') {
+            return papel === 'admin_escritorio' || papel === 'super_admin';
+          }
+          return false;
+        });
+      res.json({ success: true, rotinas: visiveis });
+    } catch (err: any) {
+      console.error('Error fetching rotinas:', err);
+      res.status(503).json({ error: 'Não foi possível carregar as rotinas.' });
+    }
+  });
+
+  app.post('/api/escritorio/rotinas', requireAuth, async (req: AuthRequest, res) => {
+    try {
+      if (!req.escritorioId) {
+        return res.status(403).json({ error: 'Usuário sem escritório vinculado.' });
+      }
+      const { rotina } = req.body;
+      if (!rotina || !rotina.id) {
+        return res.status(400).json({ error: 'Rotina inválida.' });
+      }
+
+      const path = `escritorios/${req.escritorioId}/rotinas/${rotina.id}`;
+      const existing = await fetchDocWithFallback(path, req.token);
+      const ehDono = existing?.data?.userId === req.user!.uid;
+      const ehAdmin = req.papel === 'admin_escritorio' || req.papel === 'super_admin';
+
+      if (existing && !ehDono && !ehAdmin) {
+        return res.status(403).json({ error: 'Você só pode editar suas próprias rotinas.' });
+      }
+
+      const payload = {
+        ...rotina,
+        escritorioId: req.escritorioId,
+        userId: existing ? existing.data.userId : req.user!.uid,
+        creatorRole: existing ? existing.data.creatorRole : req.papel,
+        atualizadoEm: new Date().toISOString()
+      };
+
+      await setDocWithFallback(path, payload, req.token, false);
+      res.json({ success: true });
+    } catch (err: any) {
+      console.error('Error saving rotina:', err);
+      res.status(503).json({ error: 'Não foi possível salvar a rotina.' });
+    }
+  });
+
+  app.delete('/api/escritorio/rotinas/:id', requireAuth, async (req: AuthRequest, res) => {
+    try {
+      if (!req.escritorioId) {
+        return res.status(403).json({ error: 'Usuário sem escritório vinculado.' });
+      }
+      const path = `escritorios/${req.escritorioId}/rotinas/${req.params.id}`;
+      const existing = await fetchDocWithFallback(path, req.token);
+      if (!existing) {
+        return res.json({ success: true });
+      }
+      const ehDono = existing.data?.userId === req.user!.uid;
+      const ehAdmin = req.papel === 'admin_escritorio' || req.papel === 'super_admin';
+      if (!ehDono && !ehAdmin) {
+        return res.status(403).json({ error: 'Você só pode excluir suas próprias rotinas.' });
+      }
+      await deleteDocWithFallback(path, req.token);
+      res.json({ success: true });
+    } catch (err: any) {
+      console.error('Error deleting rotina:', err);
+      res.status(503).json({ error: 'Não foi possível excluir a rotina.' });
     }
   });
 
   // Orquestrador de IA Multi-Agente para Auditoria Tributária
-  app.post('/api/ai/orchestrate', async (req, res) => {
+  // Exige autenticação: sem isso, qualquer pessoa na internet consumia a
+  // chave Gemini do servidor (process.env.GEMINI_API_KEY) de graça.
+  app.post('/api/ai/orchestrate', requireAuth, async (req: AuthRequest, res) => {
     try {
+      if (!req.escritorioId) {
+        return res.status(403).json({ error: 'Usuário sem escritório vinculado.' });
+      }
+
       const { item, items, apiKeys } = req.body;
       const { orchestrateTaxAudit } = await import('./src/lib/aiOrchestrator.ts');
 
       if (items && Array.isArray(items)) {
+        const MAX_BATCH = 50; // limite defensivo contra abuso de billing/custo de IA
+        if (items.length > MAX_BATCH) {
+          return res.status(400).json({ error: `Lote muito grande. Máximo de ${MAX_BATCH} itens por requisição.` });
+        }
         const results = [];
         for (const singleItem of items) {
           const resAudit = await orchestrateTaxAudit(singleItem, apiKeys);
@@ -518,7 +627,7 @@ async function startServer() {
     }
   });
 
-  app.get('/api/ai/memory-stats', async (req, res) => {
+  app.get('/api/ai/memory-stats', requireAuth, async (req: AuthRequest, res) => {
     try {
       const { getMemoryStats } = await import('./src/lib/aiOrchestrator.ts');
       const stats = getMemoryStats();

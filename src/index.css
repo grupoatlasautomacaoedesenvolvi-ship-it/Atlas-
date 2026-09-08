@@ -40,6 +40,50 @@
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
+/* Botões — use estes em vez de bg-blue-600/bg-indigo-600/etc. */
+.atlas-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  transition: background-color 150ms ease, opacity 150ms ease, box-shadow 150ms ease;
+}
+.atlas-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.atlas-btn-primary { background: var(--atlas-navy); color: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+.atlas-btn-primary:hover:not(:disabled) { background: var(--atlas-navy-dark); }
+
+.atlas-btn-secondary { background: var(--atlas-surface); color: var(--atlas-navy); border: 1px solid var(--atlas-border); }
+.atlas-btn-secondary:hover:not(:disabled) { background: var(--atlas-bg); }
+
+.atlas-btn-danger { background: var(--atlas-danger); color: #fff; }
+.atlas-btn-danger:hover:not(:disabled) { filter: brightness(0.92); }
+
+/* Campos — use em vez de border-slate-300/rounded-xl */
+.atlas-input {
+  width: 100%;
+  background: var(--atlas-surface);
+  border: 1px solid var(--atlas-border);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.75rem;
+  color: var(--atlas-text);
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+.atlas-input::placeholder { color: var(--atlas-text-muted); }
+.atlas-input:focus { border-color: var(--atlas-navy); box-shadow: 0 0 0 3px rgba(30,58,95,0.12); }
+
+/* Avisos inline — use em vez de bg-red-50/bg-emerald-50 soltos */
+.atlas-alert { border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.75rem; font-weight: 500; border: 1px solid; }
+.atlas-alert-danger { background: var(--atlas-danger-bg); border-color: var(--atlas-danger); color: var(--atlas-danger); }
+.atlas-alert-success { background: var(--atlas-success-bg); border-color: var(--atlas-success); color: var(--atlas-success); }
+.atlas-alert-warning { background: var(--atlas-warning-bg); border-color: var(--atlas-warning); color: var(--atlas-warning); }
+
 @layer utilities {
   .hide-scrollbar::-webkit-scrollbar {
     display: none;

@@ -1,11 +1,13 @@
 import { SpedData, XmlRecord } from '../types';
 
 export async function fetchSpedXmlCloud(escritorioId?: string): Promise<{ spedData: SpedData | null; xmlTerceiros: XmlRecord[]; xmlProprio: XmlRecord[]; xmlNfce: XmlRecord[] } | null> {
-  const eid = escritorioId || localStorage.getItem('atlas_escritorio_id') || 'escritorio-default';
   const token = localStorage.getItem('atlas_auth_token');
 
   try {
-    const res = await fetch(`/api/escritorio/sped-xml?escritorioId=${eid}`, {
+    // O servidor resolve o escritório a partir do usuário autenticado — nunca
+    // mandamos mais escritorioId (e nunca um ID sentinela como
+    // 'escritorio-default').
+    const res = await fetch('/api/escritorio/sped-xml', {
       headers: token ? { 'Authorization': `Bearer ${token}` } : {}
     });
     if (res.ok) {
@@ -34,7 +36,6 @@ export async function saveSpedXmlCloud(
   },
   escritorioId?: string
 ): Promise<boolean> {
-  const eid = escritorioId || localStorage.getItem('atlas_escritorio_id') || 'escritorio-default';
   const token = localStorage.getItem('atlas_auth_token');
 
   try {
@@ -44,10 +45,7 @@ export async function saveSpedXmlCloud(
         'Content-Type': 'application/json',
         ...(token ? { 'Authorization': `Bearer ${token}` } : {})
       },
-      body: JSON.stringify({
-        escritorioId: eid,
-        ...payload
-      })
+      body: JSON.stringify(payload)
     });
     if (res.ok) {
       const data = await res.json();

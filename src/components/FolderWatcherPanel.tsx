@@ -133,12 +133,17 @@ export function FolderWatcherPanel({ clientes, activeClienteId, addNotification,
     }
   };
 
-  const effectiveEscritorioId = escritorioId || 'escritorio-default';
+  const effectiveEscritorioId = escritorioId || '';
 
   const processNewFileFromFolder = async (file: File, fileName: string) => {
+    if (!effectiveEscritorioId) return;
     try {
       const clienteObj = clientes.find(c => c.id === selectedClienteId) || clientes[0] || null;
-      const clienteIdToUse = clienteObj?.id || 'cliente_default';
+      if (!clienteObj) {
+        console.warn('Nenhum cliente cadastrado para associar o arquivo importado — pulando.');
+        return;
+      }
+      const clienteIdToUse = clienteObj.id;
 
       let parsedSped = null;
       let parsedXmls: XmlRecord[] = [];
