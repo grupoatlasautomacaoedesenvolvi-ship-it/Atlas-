@@ -426,110 +426,135 @@ export function AdvancedAuditView({
   };
 
   return (
-    <div className="max-w-7xl w-full mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-        <div>
-          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Central de Auditoria</h1>
-          <p className="text-sm text-slate-500 mt-1">Revisão automatizada e orientada para redução de 70% do trabalho manual em SPED</p>
+    <div className="space-y-6 pb-16 text-xs font-sans">
+      {/* Breadcrumb Bar */}
+      <div className="atlas-breadcrumb-bar">
+        <div className="flex items-center space-x-2 text-[13px]">
+          <span className="text-[var(--atlas-text-muted)] font-medium">Atlas</span>
+          <span className="text-[var(--atlas-text-muted)]">/</span>
+          <span className="text-[var(--atlas-text)] font-semibold">Central de Auditoria</span>
         </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          
-          <button
-            onClick={handleFinalizarConferencia}
-            disabled={isFinalizing}
-            className="bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-400 text-white px-4 py-2 rounded-lg text-xs font-semibold flex items-center space-x-2 shadow-sm transition-all cursor-pointer"
-          >
-            <Database className="w-4 h-4" />
-            <span>{isFinalizing ? 'Finalizando...' : 'Finalizar Conferência'}</span>
-          </button>
-          <button
-            onClick={() => setShowC190AuditModal(true)}
-            className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-4 py-2 rounded-lg text-xs font-semibold flex items-center space-x-2 shadow-sm transition-all cursor-pointer"
-            title="Ver histórico de recálculo e deltas do Bloco C190"
-          >
-            <Calculator className="w-4 h-4 text-indigo-600" />
-            <span>Auditoria C190 {c190AuditLogs.length > 0 ? `(${c190AuditLogs.length})` : ''}</span>
-          </button>
-          {filteredFindings.some(f => f.tipo === 'NOTA_SPED_SEM_XML') && (
-            <button
-              onClick={handleExportMissingKeys}
-              className="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-4 py-2 rounded-lg text-xs font-semibold flex items-center space-x-2 shadow-sm transition-all cursor-pointer"
-              title="Baixar chaves que constam no SPED mas faltam no XML importado"
-            >
-              <FileText className="w-4 h-4" />
-              <span>Chaves Faltantes</span>
-            </button>
-          )}
-          <button
-            onClick={handleExportCsv}
-            className="bg-[#1e3a5f] hover:bg-[#142c47] text-white px-4 py-2 rounded-lg text-xs font-semibold flex items-center space-x-2 shadow-sm transition-all cursor-pointer"
-          >
-            <Download className="w-4 h-4" />
-            <span>Exportar CSV</span>
-          </button>
-          <div className="bg-[#f1efe8] border border-[#e5e2d9] rounded-lg px-4 py-2 flex items-center space-x-2">
-            <CheckCircle2 className="w-5 h-5 text-[#0f6e56]" />
-            <span className="text-xs font-semibold text-[#1e3a5f]">
-              {withCorrectionCount} com Correção Pronta ({Math.round((withCorrectionCount / (totalFindings || 1)) * 100)}% automação)
-            </span>
-          </div>
-          <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-2 flex items-center space-x-2">
-            <AlertTriangle className="w-5 h-5 text-amber-600" />
-            <span className="text-xs font-semibold text-amber-950">
-              {requiresInvestigationCount} Exigem Investigação
-            </span>
-          </div>
+        <div className="text-[12px] text-[var(--atlas-text-secondary)] font-medium">
+          Revisão Automatizada, Cruzamento SPED x XML e Apuração
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex space-x-4 mb-6 border-b border-slate-200">
+      <div className="px-6 space-y-6 max-w-7xl mx-auto">
+        {/* Header Title & Actions */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-[var(--atlas-text)] font-serif tracking-tight">
+              Central de Auditoria Fiscal
+            </h1>
+            <p className="text-xs text-[var(--atlas-text-secondary)] mt-1">
+              Revisão automatizada e orientada para redução de 70% do trabalho manual em SPED
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={handleFinalizarConferencia}
+              disabled={isFinalizing}
+              className="atlas-btn atlas-btn-accent px-4 py-2 text-xs"
+            >
+              <Database className="w-4 h-4" />
+              <span>{isFinalizing ? 'Finalizando...' : 'Finalizar Conferência'}</span>
+            </button>
+            <button
+              onClick={() => setShowC190AuditModal(true)}
+              className="atlas-btn atlas-btn-secondary px-3.5 py-2 text-xs"
+              title="Ver histórico de recálculo e deltas do Bloco C190"
+            >
+              <Calculator className="w-4 h-4 text-[var(--atlas-navy)]" />
+              <span>Auditoria C190 {c190AuditLogs.length > 0 ? `(${c190AuditLogs.length})` : ''}</span>
+            </button>
+            {filteredFindings.some(f => f.tipo === 'NOTA_SPED_SEM_XML') && (
+              <button
+                onClick={handleExportMissingKeys}
+                className="atlas-btn atlas-btn-secondary px-3.5 py-2 text-xs"
+                title="Baixar chaves que constam no SPED mas faltam no XML importado"
+              >
+                <FileText className="w-4 h-4" />
+                <span>Chaves Faltantes</span>
+              </button>
+            )}
+            <button
+              onClick={handleExportCsv}
+              className="atlas-btn atlas-btn-primary px-3.5 py-2 text-xs"
+            >
+              <Download className="w-4 h-4" />
+              <span>Exportar CSV</span>
+            </button>
+          </div>
+        </div>
+
+        {/* STAT STRIP: Resumo de Inconsistências e Automação */}
+        <div className="atlas-stat-strip">
+          <div className="atlas-stat-item">
+            <span className="atlas-stat-label">Total de Achados</span>
+            <span className="atlas-stat-value">{totalFindings}</span>
+          </div>
+          <div className="atlas-stat-item">
+            <span className="atlas-stat-label text-[var(--atlas-warning)]">Pendentes de Revisão</span>
+            <span className="atlas-stat-value text-[var(--atlas-warning)]">{pendingCount}</span>
+          </div>
+          <div className="atlas-stat-item">
+            <span className="atlas-stat-label text-[var(--atlas-accent)]">Aprovados</span>
+            <span className="atlas-stat-value text-[var(--atlas-accent)]">{approvedCount}</span>
+          </div>
+          <div className="atlas-stat-item">
+            <span className="atlas-stat-label text-[var(--atlas-danger)]">Rejeitados</span>
+            <span className="atlas-stat-value text-[var(--atlas-danger)]">{rejectedCount}</span>
+          </div>
+          <div className="atlas-stat-item">
+            <span className="atlas-stat-label text-[var(--atlas-info)]">Automação Pronta</span>
+            <span className="atlas-stat-value text-[var(--atlas-info)]">
+              {withCorrectionCount} <span className="text-xs font-medium text-[var(--atlas-text-muted)]">({Math.round((withCorrectionCount / (totalFindings || 1)) * 100)}%)</span>
+            </span>
+          </div>
+        </div>
+
+      {/* Tabs Nav */}
+      <div className="flex space-x-2 border-b border-[var(--atlas-border)] pb-2">
         <button
           onClick={() => setActiveTab('achados')}
-          className={`pb-3 px-1 border-b-2 text-sm font-medium transition-colors cursor-pointer ${
-            activeTab === 'achados' ? 'border-[#1e3a5f] text-[#1e3a5f]' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+          className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors cursor-pointer flex items-center space-x-2 ${
+            activeTab === 'achados' ? 'bg-[var(--atlas-navy)] text-white' : 'bg-transparent text-[var(--atlas-text-secondary)] hover:bg-[var(--atlas-navy-tint)]'
           }`}
         >
-          <div className="flex items-center space-x-2">
-            <ShieldAlert className="w-4 h-4" />
-            <span>Achados de Auditoria</span>
-          </div>
+          <ShieldAlert className="w-4 h-4" />
+          <span>Achados de Auditoria</span>
         </button>
         
         <button
           onClick={() => setActiveTab('interestadual')}
-          className={`pb-3 px-1 border-b-2 text-sm font-medium transition-colors cursor-pointer ${
-            activeTab === 'interestadual' ? 'border-[#1e3a5f] text-[#1e3a5f]' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+          className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors cursor-pointer flex items-center space-x-2 ${
+            activeTab === 'interestadual' ? 'bg-[var(--atlas-navy)] text-white' : 'bg-transparent text-[var(--atlas-text-secondary)] hover:bg-[var(--atlas-navy-tint)]'
           }`}
         >
-          <div className="flex items-center space-x-2">
-            <ArrowRightLeft className="w-4 h-4" />
-            <span>ICMS Interestadual (NCM x CST)</span>
-          </div>
+          <ArrowRightLeft className="w-4 h-4" />
+          <span>ICMS Interestadual (NCM x CST)</span>
         </button>
+
         <button
           onClick={() => setActiveTab('automacao')}
-          className={`pb-3 px-1 border-b-2 text-sm font-medium transition-colors cursor-pointer ${
-            activeTab === 'automacao' ? 'border-[#1e3a5f] text-[#1e3a5f]' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+          className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors cursor-pointer flex items-center space-x-2 ${
+            activeTab === 'automacao' ? 'bg-[var(--atlas-navy)] text-white' : 'bg-transparent text-[var(--atlas-text-secondary)] hover:bg-[var(--atlas-navy-tint)]'
           }`}
         >
-          <div className="flex items-center space-x-2">
-            <Settings className="w-4 h-4" />
-            <span>Automação & Logs</span>
-          </div>
+          <Settings className="w-4 h-4" />
+          <span>Automação & Logs</span>
         </button>
 
         <button
           onClick={() => setActiveTab('xml_faltantes')}
-          className={`pb-3 px-1 border-b-2 text-sm font-medium transition-colors cursor-pointer ${activeTab === 'xml_faltantes' ? 'border-[#1e3a5f] text-[#1e3a5f]' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'}`}
+          className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors cursor-pointer flex items-center space-x-2 ${
+            activeTab === 'xml_faltantes' ? 'bg-[var(--atlas-navy)] text-white' : 'bg-transparent text-[var(--atlas-text-secondary)] hover:bg-[var(--atlas-navy-tint)]'
+          }`}
         >
-          <div className="flex items-center space-x-2">
-            <FileText className="w-4 h-4" />
-            <span>XMLs Faltantes</span>
-          </div>
+          <FileText className="w-4 h-4" />
+          <span>XMLs Faltantes</span>
         </button>
-
       </div>
 
       {activeTab === 'interestadual' ? (
@@ -753,21 +778,21 @@ export function AdvancedAuditView({
 
         <>
           {/* Painel de Diagnóstico Rápido por Gravidade */}
-          <div className="bg-white rounded-lg p-5 mb-6 text-slate-900 border border-slate-200 shadow-sm">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 pb-4 border-b border-slate-100">
+          <div className="atlas-card p-5 space-y-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-3 border-b border-[var(--atlas-border)]">
               <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-[#1e3a5f] block mb-1">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--atlas-navy)] block mb-0.5">
                   Painel de Diagnóstico Rápido de Divergências
                 </span>
-                <h2 className="text-lg font-bold text-slate-900">Triagem Automática por Nível de Risco Fiscal</h2>
+                <h2 className="text-base font-bold text-[var(--atlas-text)] font-serif">Triagem Automática por Nível de Risco Fiscal</h2>
               </div>
 
-              <div className="flex items-center space-x-2 text-xs text-slate-500">
+              <div className="flex items-center space-x-2 text-xs text-[var(--atlas-text-secondary)]">
                 <span>Filtrar por gravidade:</span>
                 <button
                   onClick={() => setSeverityFilter('ALL')}
                   className={`px-3 py-1 rounded-lg transition font-bold cursor-pointer ${
-                    severityFilter === 'ALL' ? 'bg-[#1e3a5f] text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                    severityFilter === 'ALL' ? 'bg-[var(--atlas-navy)] text-white' : 'atlas-btn-secondary'
                   }`}
                 >
                   Todos ({totalFindings})
@@ -779,20 +804,20 @@ export function AdvancedAuditView({
               {/* Crítico / Alto Risco */}
               <button
                 onClick={() => setSeverityFilter('alta')}
-                className={`p-4 rounded-lg border text-left transition-all cursor-pointer ${
+                className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
                   severityFilter === 'alta'
                     ? 'bg-rose-50 border-rose-400 ring-2 ring-rose-300'
-                    : 'bg-slate-50 border-slate-200 hover:border-rose-300'
+                    : 'bg-[var(--atlas-bg)] border-[var(--atlas-border)] hover:border-rose-300'
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="inline-flex items-center text-xs font-bold uppercase text-rose-700 tracking-wider">
-                    <ShieldAlert className="w-4 h-4 mr-1 text-rose-600" />
+                  <span className="atlas-pill atlas-pill-danger">
+                    <ShieldAlert className="w-3.5 h-3.5 mr-1" />
                     Crítico (Alto Risco)
                   </span>
-                  <span className="text-xl font-bold text-rose-700 font-mono">{highSeverityCount}</span>
+                  <span className="text-xl font-bold text-[var(--atlas-danger)] font-mono">{highSeverityCount}</span>
                 </div>
-                <p className="text-[11px] text-slate-600">
+                <p className="text-[11px] text-[var(--atlas-text-secondary)]">
                   Divergências de ICMS, escrituração omissa, desalinhamento C100 x XML e apuração.
                 </p>
               </button>
@@ -800,20 +825,20 @@ export function AdvancedAuditView({
               {/* Aviso / Risco Médio */}
               <button
                 onClick={() => setSeverityFilter('media')}
-                className={`p-4 rounded-lg border text-left transition-all cursor-pointer ${
+                className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
                   severityFilter === 'media'
                     ? 'bg-amber-50 border-amber-400 ring-2 ring-amber-300'
-                    : 'bg-slate-50 border-slate-200 hover:border-amber-300'
+                    : 'bg-[var(--atlas-bg)] border-[var(--atlas-border)] hover:border-amber-300'
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="inline-flex items-center text-xs font-bold uppercase text-amber-800 tracking-wider">
-                    <AlertTriangle className="w-4 h-4 mr-1 text-amber-600" />
+                  <span className="atlas-pill atlas-pill-warning">
+                    <AlertTriangle className="w-3.5 h-3.5 mr-1" />
                     Aviso (Risco Médio)
                   </span>
-                  <span className="text-xl font-bold text-amber-800 font-mono">{mediumSeverityCount}</span>
+                  <span className="text-xl font-bold text-[var(--atlas-warning)] font-mono">{mediumSeverityCount}</span>
                 </div>
-                <p className="text-[11px] text-slate-600">
+                <p className="text-[11px] text-[var(--atlas-text-secondary)]">
                   Incompatibilidades de MVA/CFOP, CST e divergência parcial de aliquotas.
                 </p>
               </button>
@@ -821,20 +846,20 @@ export function AdvancedAuditView({
               {/* Informativo / Otimização */}
               <button
                 onClick={() => setSeverityFilter('baixa')}
-                className={`p-4 rounded-lg border text-left transition-all cursor-pointer ${
+                className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
                   severityFilter === 'baixa'
-                    ? 'bg-[#f1efe8] border-[#1e3a5f] ring-2 ring-[#1e3a5f]/30'
-                    : 'bg-slate-50 border-slate-200 hover:border-slate-300'
+                    ? 'bg-[var(--atlas-navy-tint)] border-[var(--atlas-navy)] ring-2 ring-[var(--atlas-navy)]/30'
+                    : 'bg-[var(--atlas-bg)] border-[var(--atlas-border)] hover:border-[var(--atlas-navy)]'
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="inline-flex items-center text-xs font-bold uppercase text-[#1e3a5f] tracking-wider">
-                    <CheckCircle2 className="w-4 h-4 mr-1 text-[#1e3a5f]" />
+                  <span className="atlas-pill atlas-pill-navy">
+                    <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
                     Informativo (Otimização)
                   </span>
-                  <span className="text-xl font-bold text-[#1e3a5f] font-mono">{lowSeverityCount}</span>
+                  <span className="text-xl font-bold text-[var(--atlas-navy)] font-mono">{lowSeverityCount}</span>
                 </div>
-                <p className="text-[11px] text-slate-600">
+                <p className="text-[11px] text-[var(--atlas-text-secondary)]">
                   Falta de cBenef exigido na UF, notas de ajuste sem chave vinculada.
                 </p>
               </button>
@@ -843,12 +868,12 @@ export function AdvancedAuditView({
 
           {/* Batch Operations Floating Bar if items selected */}
           {selectedFindingIds.size > 0 && (
-            <div className="sticky top-4 z-30 bg-[#1e3a5f] text-white rounded-lg p-4 border border-[#142c47] shadow-md flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
+            <div className="sticky top-4 z-30 bg-[var(--atlas-navy)] text-white rounded-xl p-4 border border-[var(--atlas-navy)] shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center space-x-3">
-                <span className="bg-[#0f6e56] text-white font-black text-xs px-2.5 py-1 rounded-lg font-mono">
+                <span className="atlas-pill atlas-pill-accent font-mono">
                   {selectedFindingIds.size} selecionado(s)
                 </span>
-                <span className="text-xs text-slate-200 font-semibold">
+                <span className="text-xs text-[var(--atlas-bg)] font-semibold">
                   Ações em Lote para Apontamentos Selecionados:
                 </span>
               </div>
@@ -856,7 +881,7 @@ export function AdvancedAuditView({
               <div className="flex flex-wrap items-center gap-2">
                 <button
                   onClick={() => handleBatchStatusUpdate('aprovado')}
-                  className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center space-x-1 shadow-sm transition cursor-pointer"
+                  className="atlas-btn atlas-btn-accent px-3 py-1.5 text-xs"
                 >
                   <CheckCircle2 className="w-4 h-4 mr-1" />
                   <span>Aprovar Lote Selecionado</span>
@@ -864,7 +889,7 @@ export function AdvancedAuditView({
 
                 <button
                   onClick={() => handleBatchStatusUpdate('rejeitado')}
-                  className="bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center space-x-1 shadow-sm transition cursor-pointer"
+                  className="atlas-btn atlas-btn-danger px-3 py-1.5 text-xs"
                 >
                   <XCircle className="w-4 h-4 mr-1" />
                   <span>Rejeitar Lote Selecionado</span>
@@ -872,7 +897,7 @@ export function AdvancedAuditView({
 
                 <button
                   onClick={() => handleBatchStatusUpdate('pendente')}
-                  className="bg-[#142c47] hover:bg-[#1e3a5f] text-slate-200 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-600 transition cursor-pointer"
+                  className="atlas-btn atlas-btn-secondary px-3 py-1.5 text-xs"
                 >
                   <span>Marcar como Pendente</span>
                 </button>
@@ -887,63 +912,43 @@ export function AdvancedAuditView({
             </div>
           )}
 
-          {/* Metrics Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm hover:border-slate-300 transition-all">
-          <div className="text-xs text-slate-500 font-semibold tracking-wide uppercase">Total de Achados</div>
-          <div className="text-3xl font-bold text-slate-800 mt-2">{totalFindings}</div>
-        </div>
-        <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm hover:border-amber-300 transition-all">
-          <div className="text-xs text-amber-600 font-semibold tracking-wide uppercase">Pendentes de Revisão</div>
-          <div className="text-3xl font-bold text-amber-600 mt-2">{pendingCount}</div>
-        </div>
-        <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm hover:border-emerald-300 transition-all">
-          <div className="text-xs text-emerald-600 font-semibold tracking-wide uppercase">Aprovados</div>
-          <div className="text-3xl font-bold text-emerald-600 mt-2">{approvedCount}</div>
-        </div>
-        <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm hover:border-rose-300 transition-all">
-          <div className="text-xs text-rose-600 font-semibold tracking-wide uppercase">Rejeitados</div>
-          <div className="text-3xl font-bold text-rose-600 mt-2">{rejectedCount}</div>
-        </div>
-      </div>
+          {/* Filters Bar */}
+          <div className="atlas-card p-4 flex flex-col md:flex-row gap-4 justify-between items-center">
+            <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+              <select
+                value={selectedFilter}
+                onChange={(e) => setSelectedFilter(e.target.value)}
+                className="px-3 py-2 text-xs font-medium border border-[var(--atlas-border)] rounded-lg bg-[var(--atlas-bg)] text-[var(--atlas-text)] focus:outline-none focus:ring-2 focus:ring-[var(--atlas-navy)]"
+              >
+                <option value="ALL">Todos os Tipos de Achado</option>
+                <option value="BASE_ICMS_INCONSISTENTE">Base ICMS Inconsistente</option>
+                <option value="CST_INCOMPATIVEL_NCM">CST Incompatível com NCM</option>
+                <option value="CFOP_INCOMPATIVEL">CFOP Incompatível</option>
+                <option value="CREDITO_USO_CONSUMO_VEDADO">Crédito Uso e Consumo Vedado</option>
+                <option value="CREDITO_ATIVO_IMOBILIZADO_REQUER_HISTORICO">Crédito Ativo Imobilizado (CIAP)</option>
+                <option value="CST_SEM_DIREITO_CREDITO">CST sem Direito a Crédito</option>
+                <option value="VALOR_DIVERGENTE_XML_SPED">Valor Divergente XML x SPED</option>
+                <option value="CNPJ_DIVERGENTE_XML_SPED">CNPJ Divergente XML x SPED</option>
+                <option value="CHAVE_DUPLICADA">Chave Duplicada</option>
+                <option value="NOTA_ENTRADA_NAO_ESCRITURADA">Nota de Entrada não Escriturada</option>
+                <option value="NOTA_SPED_SEM_XML">Nota no SPED sem XML</option>
+                <option value="NOTA_SAIDA_NAO_ESCRITURADA">Nota de Saída não Escriturada</option>
+                <option value="APURACAO_MATEMATICA_INCONSISTENTE">Apuração: Matemática Inconsistente (E110)</option>
+                <option value="APURACAO_DEBITO_DIVERGENTE_C190">Apuração: Débito Divergente C190</option>
+                <option value="APURACAO_CREDITO_DIVERGENTE_C190">Apuração: Crédito Divergente C190</option>
+                <option value="CST_CFOP_INCOMPATIVEL">CST 100/300 em Operação Normal (CFOP 1102)</option>
+              </select>
 
-      {/* Filters */}
-      <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-4 mb-6 flex flex-col md:flex-row gap-4 justify-between items-center">
-        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-          <select
-            value={selectedFilter}
-            onChange={(e) => setSelectedFilter(e.target.value)}
-            className="px-3 py-2 text-xs font-medium border border-slate-200 rounded-lg bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
-          >
-            <option value="ALL">Todos os Tipos de Achado</option>
-            <option value="BASE_ICMS_INCONSISTENTE">Base ICMS Inconsistente</option>
-            <option value="CST_INCOMPATIVEL_NCM">CST Incompatível com NCM</option>
-            <option value="CFOP_INCOMPATIVEL">CFOP Incompatível</option>
-            <option value="CREDITO_USO_CONSUMO_VEDADO">Crédito Uso e Consumo Vedado</option>
-            <option value="CREDITO_ATIVO_IMOBILIZADO_REQUER_HISTORICO">Crédito Ativo Imobilizado (CIAP)</option>
-            <option value="CST_SEM_DIREITO_CREDITO">CST sem Direito a Crédito</option>
-            <option value="VALOR_DIVERGENTE_XML_SPED">Valor Divergente XML x SPED</option>
-            <option value="CNPJ_DIVERGENTE_XML_SPED">CNPJ Divergente XML x SPED</option>
-            <option value="CHAVE_DUPLICADA">Chave Duplicada</option>
-            <option value="NOTA_ENTRADA_NAO_ESCRITURADA">Nota de Entrada não Escriturada</option>
-            <option value="NOTA_SPED_SEM_XML">Nota no SPED sem XML</option>
-            <option value="NOTA_SAIDA_NAO_ESCRITURADA">Nota de Saída não Escriturada</option>
-            <option value="APURACAO_MATEMATICA_INCONSISTENTE">Apuração: Matemática Inconsistente (E110)</option>
-            <option value="APURACAO_DEBITO_DIVERGENTE_C190">Apuração: Débito Divergente C190</option>
-            <option value="APURACAO_CREDITO_DIVERGENTE_C190">Apuração: Crédito Divergente C190</option>
-            <option value="CST_CFOP_INCOMPATIVEL">CST 100/300 em Operação Normal (CFOP 1102)</option>
-          </select>
-
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 text-xs font-medium border border-slate-200 rounded-lg bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
-          >
-            <option value="ALL">Todos os Status</option>
-            <option value="pendente">Pendente</option>
-            <option value="aprovado">Aprovado</option>
-            <option value="rejeitado">Rejeitado</option>
-          </select>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="px-3 py-2 text-xs font-medium border border-[var(--atlas-border)] rounded-lg bg-[var(--atlas-bg)] text-[var(--atlas-text)] focus:outline-none focus:ring-2 focus:ring-[var(--atlas-navy)]"
+              >
+                <option value="ALL">Todos os Status</option>
+                <option value="pendente">Pendente</option>
+                <option value="aprovado">Aprovado</option>
+                <option value="rejeitado">Rejeitado</option>
+              </select>
 
 
           <input
@@ -1138,14 +1143,14 @@ export function AdvancedAuditView({
             return (
               <div
                 key={finding.id}
-                className={`bg-white rounded-lg border shadow-sm p-6 transition-all relative ${
+                className={`atlas-card p-5 transition-all relative ${
                   isSelected
-                    ? 'ring-2 ring-[#1e3a5f] border-[#1e3a5f] bg-[#f1efe8]/30'
+                    ? 'ring-2 ring-[var(--atlas-navy)] border-[var(--atlas-navy)] bg-[var(--atlas-navy-tint)]/40'
                     : finding.statusRevisao === 'aprovado'
                     ? 'border-emerald-200 bg-emerald-50/20'
                     : finding.statusRevisao === 'rejeitado'
                     ? 'border-rose-200 bg-rose-50/20'
-                    : 'border-slate-200 hover:border-slate-300'
+                    : 'border-[var(--atlas-border)] hover:border-slate-300'
                 }`}
               >
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
@@ -1154,62 +1159,62 @@ export function AdvancedAuditView({
                       type="checkbox"
                       checked={isSelected}
                       onChange={() => handleToggleSelectFinding(finding.id)}
-                      className="mt-1 w-4 h-4 text-[#1e3a5f] rounded border-slate-300 focus:ring-[#1e3a5f] cursor-pointer"
+                      className="mt-1 w-4 h-4 text-[var(--atlas-navy)] rounded border-slate-300 focus:ring-[var(--atlas-navy)] cursor-pointer"
                     />
 
                     <div className="space-y-2 flex-1">
-                      <div className="flex items-center space-x-3">
+                      <div className="flex flex-wrap items-center gap-2">
                       <span
-                        className={`px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider ${
+                        className={`atlas-pill ${
                           finding.severidade === 'alta'
-                            ? 'bg-rose-100 text-rose-700'
+                            ? 'atlas-pill-danger'
                             : finding.severidade === 'media'
-                            ? 'bg-amber-100 text-amber-700'
-                            : 'bg-slate-100 text-slate-700'
+                            ? 'atlas-pill-warning'
+                            : 'atlas-pill-navy'
                         }`}
                       >
-                        {finding.severidade}
+                        {finding.severidade.toUpperCase()}
                       </span>
-                      <span className="text-xs font-mono text-slate-500">
+                      <span className="text-xs font-mono text-[var(--atlas-text-secondary)]">
                         Doc: {finding.numDoc} {finding.serie ? `(Série ${finding.serie})` : ''} {finding.numItem ? `| Item: ${finding.numItem} - ${finding.codItem || ''}` : ''}
                       </span>
                       <span
-                        className={`px-2 py-0.5 rounded text-xs font-medium ${
+                        className={`atlas-pill ${
                           finding.statusRevisao === 'aprovado'
-                            ? 'bg-emerald-100 text-emerald-800'
+                            ? 'atlas-pill-accent'
                             : finding.statusRevisao === 'rejeitado'
-                            ? 'bg-rose-100 text-rose-800'
-                            : 'bg-slate-100 text-slate-600'
+                            ? 'atlas-pill-danger'
+                            : 'atlas-pill-warning'
                         }`}
                       >
                         {(finding.statusRevisao || 'pendente').toUpperCase()}
                       </span>
                     </div>
 
-                    <h2 className="text-lg font-bold text-slate-900">{finding.titulo}</h2>
-                    <p className="text-sm text-slate-600 leading-relaxed">{finding.descricao}</p>
+                    <h2 className="text-base font-bold text-[var(--atlas-text)] font-serif">{finding.titulo}</h2>
+                    <p className="text-xs text-[var(--atlas-text-secondary)] leading-relaxed">{finding.descricao}</p>
                     {finding.baseLegal && (
-                      <p className="text-xs text-slate-500 font-medium">
-                        <strong className="text-slate-700">Base Legal / Observação:</strong> {finding.baseLegal}
+                      <p className="text-xs text-[var(--atlas-text-muted)] font-medium">
+                        <strong className="text-[var(--atlas-text)]">Base Legal / Observação:</strong> {finding.baseLegal}
                       </p>
                     )}
 
                     {/* Suggested Corrections section */}
                     {hasCorrection && (
-                      <div className="mt-4 p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-3">
-                        <div className="text-xs font-semibold text-slate-700 uppercase tracking-wide flex items-center space-x-1.5">
-                          <CheckCircle2 className="w-4 h-4 text-[#1e3a5f]" />
+                      <div className="mt-4 p-4 bg-[var(--atlas-navy-tint)] rounded-xl border border-[var(--atlas-border)] space-y-3">
+                        <div className="text-xs font-semibold text-[var(--atlas-navy)] uppercase tracking-wide flex items-center space-x-1.5 font-serif">
+                          <CheckCircle2 className="w-4 h-4 text-[var(--atlas-navy)]" />
                           <span>Sugestão de Correção Determinística</span>
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           {finding.correcaoSugerida!.map((corr, idx) => (
-                            <div key={idx} className="bg-white p-3 rounded-lg border border-slate-200 shadow-xs space-y-1">
-                              <div className="text-xs text-slate-400 font-medium">Campo: <span className="font-mono text-slate-700">{corr.campo}</span></div>
-                              <div className="flex items-center justify-between text-sm">
-                                <span className="text-rose-600 font-semibold">Declarado: {String(corr.valorDeclarado)}</span>
-                                <span className="text-emerald-600 font-bold">Sugerido: {String(corr.valorSugerido)}</span>
+                            <div key={idx} className="bg-white p-3 rounded-lg border border-[var(--atlas-border)] space-y-1">
+                              <div className="text-xs text-[var(--atlas-text-muted)] font-medium">Campo: <span className="font-mono text-[var(--atlas-text)]">{corr.campo}</span></div>
+                              <div className="flex items-center justify-between text-xs">
+                                <span className="text-[var(--atlas-danger)] font-semibold">Declarado: {String(corr.valorDeclarado)}</span>
+                                <span className="text-[var(--atlas-accent)] font-bold">Sugerido: {String(corr.valorSugerido)}</span>
                               </div>
-                              <div className="text-xs text-slate-500 italic mt-1">Origem: {corr.origemSugestao}</div>
+                              <div className="text-[11px] text-[var(--atlas-text-muted)] italic mt-1">Origem: {corr.origemSugestao}</div>
                             </div>
                           ))}
                         </div>
@@ -1288,6 +1293,7 @@ export function AdvancedAuditView({
       </div>
       </>
       )}
+      </div>
 
       {showC190AuditModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">

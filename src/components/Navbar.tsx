@@ -37,6 +37,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../lib/auth';
 import { backupLocalStorageToCloud, restoreLocalStorageFromCloud } from '../lib/syncBackupService';
+import { ThemeSelector } from './ThemeSelector';
 
 interface NavbarProps {
   activeTab: string;
@@ -128,42 +129,42 @@ export function Navbar({ activeTab, setActiveTab, hasSped, hasXmlTerceiros, hasX
 
     const items: NavItem[] = [
       // INÍCIO / PAINEL GERAL
-      { id: 'home', label: 'Painel Inicial', icon: LayoutDashboard, iconColor: 'text-[#1e3a5f]', category: 'inicio', badge: { text: 'Início', color: 'bg-[#f1efe8] text-[#1e3a5f] border border-[#e5e2d9]' } },
-      { id: 'minhas_rotinas', label: 'Minhas Rotinas', icon: CheckCircle2, iconColor: 'text-[#0f6e56]', category: 'inicio' },
+      { id: 'home', label: 'Painel Inicial', icon: LayoutDashboard, iconColor: 'text-[var(--atlas-navy)]', category: 'inicio', badge: { text: 'Início', color: 'atlas-pill atlas-pill-navy' } },
+      { id: 'minhas_rotinas', label: 'Minhas Rotinas', icon: CheckCircle2, iconColor: 'text-[var(--atlas-accent)]', category: 'inicio' },
 
       // CLIENTES & PASTA & ROBÔ
-      { id: 'clientes', label: 'Clientes & Pastas', icon: Building2, iconColor: 'text-[#0f6e56]', category: 'sped', badge: { text: 'Nuvem', color: 'bg-emerald-100 text-[#0f6e56] border border-emerald-200' } },
-      { id: 'robo_fiscal', label: 'Robô Fiscal IA', icon: Bot, iconColor: 'text-[#1e3a5f]', category: 'sped', badge: { text: 'Automação', color: 'bg-sky-100 text-[#1e3a5f] border border-sky-200' } },
-      { id: 'aprendizado', label: 'Aprendizado & Aprovações', icon: BrainCircuit, iconColor: 'text-[#0f6e56]', category: 'sped', badge: { text: 'Auditor', color: 'bg-emerald-100 text-[#0f6e56] border border-emerald-200' } },
-      { id: 'ai_orchestrator', label: 'Projeto A.R.C.A. (Orquestrador)', icon: BrainCircuit, iconColor: 'text-[#1e3a5f]', category: 'sped', badge: { text: 'Multi-IA', color: 'bg-[#f1efe8] text-[#1e3a5f] border border-[#e5e2d9]' } },
+      { id: 'clientes', label: 'Clientes & Pastas', icon: Building2, iconColor: 'text-[var(--atlas-accent)]', category: 'sped', badge: { text: 'Nuvem', color: 'atlas-pill atlas-pill-accent' } },
+      { id: 'robo_fiscal', label: 'Robô Fiscal IA', icon: Bot, iconColor: 'text-[var(--atlas-info)]', category: 'sped', badge: { text: 'Automação', color: 'atlas-pill atlas-pill-info' } },
+      { id: 'aprendizado', label: 'Aprendizado & Aprovações', icon: BrainCircuit, iconColor: 'text-[var(--atlas-accent)]', category: 'sped', badge: { text: 'Auditor', color: 'atlas-pill atlas-pill-accent' } },
+      { id: 'ai_orchestrator', label: 'Projeto A.R.C.A. (Orquestrador)', icon: BrainCircuit, iconColor: 'text-[var(--atlas-info)]', category: 'sped', badge: { text: 'Multi-IA', color: 'atlas-pill atlas-pill-info' } },
       
       // SPED
-      { id: 'upload', label: 'Importação Fiscal', icon: FileText, iconColor: 'text-slate-500', category: 'sped', badge: hasSped ? { text: 'Ativo', color: 'bg-emerald-100 text-[#0f6e56] border border-emerald-200' } : undefined },
-      { id: 'advanced_audit', label: 'Central de Auditoria', icon: BarChart3, iconColor: 'text-slate-500', category: 'sped', requiresSped: true },
-      { id: 'all_items', label: 'Itens C170', icon: Layers, iconColor: 'text-slate-500', category: 'sped', requiresSped: true },
-      { id: 'sequence_gaps', label: 'Quebra de Sequência', icon: ListOrdered, iconColor: 'text-amber-600', category: 'sped', requiresSped: true },
-      { id: 'omissas', label: 'Notas Omissas', icon: FileText, iconColor: 'text-rose-600', category: 'sped' },
-      { id: 'sped_raw', label: 'Arquivo SPED Bruto', icon: Database, iconColor: 'text-slate-500', category: 'sped', requiresSped: true },
-      { id: 'reports', label: 'Relatório Final', icon: FileSpreadsheet, iconColor: 'text-slate-500', category: 'sped', requiresSped: true },
-      ...(hasXmlTerceiros ? [{ id: 'xml_terceiros', label: 'XML Terceiros', icon: Archive, iconColor: 'text-amber-600', category: 'sped' as const, badge: { text: 'XML', color: 'bg-amber-100 text-amber-800' } }] : []),
-      ...(hasXmlProprio ? [{ id: 'xml_proprio', label: 'XML Próprio', icon: Archive, iconColor: 'text-slate-500', category: 'sped' as const, badge: { text: 'XML', color: 'bg-slate-100 text-slate-700' } }] : []),
-      ...(hasXmlNfce ? [{ id: 'xml_nfce', label: 'XML NFC-e', icon: Archive, iconColor: 'text-emerald-600', category: 'sped' as const, badge: { text: 'NFCe', color: 'bg-emerald-100 text-[#0f6e56]' } }] : []),
+      { id: 'upload', label: 'Importação Fiscal', icon: FileText, iconColor: 'text-[var(--atlas-text-muted)]', category: 'sped', badge: hasSped ? { text: 'Ativo', color: 'atlas-pill atlas-pill-accent' } : undefined },
+      { id: 'advanced_audit', label: 'Central de Auditoria', icon: BarChart3, iconColor: 'text-[var(--atlas-text-muted)]', category: 'sped', requiresSped: true },
+      { id: 'all_items', label: 'Itens C170', icon: Layers, iconColor: 'text-[var(--atlas-text-muted)]', category: 'sped', requiresSped: true },
+      { id: 'sequence_gaps', label: 'Quebra de Sequência', icon: ListOrdered, iconColor: 'text-[var(--atlas-warning)]', category: 'sped', requiresSped: true },
+      { id: 'omissas', label: 'Notas Omissas', icon: FileText, iconColor: 'text-[var(--atlas-danger)]', category: 'sped' },
+      { id: 'sped_raw', label: 'Arquivo SPED Bruto', icon: Database, iconColor: 'text-[var(--atlas-text-muted)]', category: 'sped', requiresSped: true },
+      { id: 'reports', label: 'Relatório Final', icon: FileSpreadsheet, iconColor: 'text-[var(--atlas-text-muted)]', category: 'sped', requiresSped: true },
+      ...(hasXmlTerceiros ? [{ id: 'xml_terceiros', label: 'XML Terceiros', icon: Archive, iconColor: 'text-[var(--atlas-warning)]', category: 'sped' as const, badge: { text: 'XML', color: 'atlas-pill atlas-pill-warning' } }] : []),
+      ...(hasXmlProprio ? [{ id: 'xml_proprio', label: 'XML Próprio', icon: Archive, iconColor: 'text-[var(--atlas-text-muted)]', category: 'sped' as const, badge: { text: 'XML', color: 'atlas-pill atlas-pill-navy' } }] : []),
+      ...(hasXmlNfce ? [{ id: 'xml_nfce', label: 'XML NFC-e', icon: Archive, iconColor: 'text-[var(--atlas-accent)]', category: 'sped' as const, badge: { text: 'NFCe', color: 'atlas-pill atlas-pill-accent' } }] : []),
 
       // ESTOQUE
-      { id: 'stock_engineering', label: 'Estoque & Bloco H', icon: Boxes, iconColor: 'text-emerald-600', category: 'estoque', badge: { text: 'Bloco H', color: 'bg-emerald-100 text-[#0f6e56] border border-emerald-200' } },
+      { id: 'stock_engineering', label: 'Estoque & Bloco H', icon: Boxes, iconColor: 'text-[var(--atlas-accent)]', category: 'estoque', badge: { text: 'Bloco H', color: 'atlas-pill atlas-pill-accent' } },
 
       // CONSULTAS
-      { id: 'state_tax_matrix', label: 'Matriz Tributária UF/NCM', icon: Database, iconColor: 'text-slate-500', category: 'consultas' },
-      { id: 'ncm_lookup', label: 'Consulta NCM', icon: Search, iconColor: 'text-slate-500', category: 'consultas' },
-      { id: 'difal_calculator', label: 'Calculadora DIFAL', icon: Calculator, iconColor: 'text-slate-500', category: 'consultas' },
-      { id: 'regime_simulator', label: 'Simulador de Regime', icon: TrendingUp, iconColor: 'text-emerald-600', category: 'consultas' },
+      { id: 'state_tax_matrix', label: 'Matriz Tributária UF/NCM', icon: Database, iconColor: 'text-[var(--atlas-text-muted)]', category: 'consultas' },
+      { id: 'ncm_lookup', label: 'Consulta NCM', icon: Search, iconColor: 'text-[var(--atlas-text-muted)]', category: 'consultas' },
+      { id: 'difal_calculator', label: 'Calculadora DIFAL', icon: Calculator, iconColor: 'text-[var(--atlas-text-muted)]', category: 'consultas' },
+      { id: 'regime_simulator', label: 'Simulador de Regime', icon: TrendingUp, iconColor: 'text-[var(--atlas-accent)]', category: 'consultas' },
     ];
 
     // CONFIG & ADMIN (Restricted by role - adm e super_admin)
     if (isSuperAdmin || isAdminEscritorio) {
-      items.push({ id: 'config', label: 'Regras de Auditoria', icon: Sliders, iconColor: 'text-slate-500', category: 'admin' });
-      items.push({ id: 'user_management', label: 'Gestão de Usuários (RBAC)', icon: Users, iconColor: 'text-emerald-600', category: 'admin', badge: { text: 'RBAC', color: 'bg-emerald-100 text-emerald-800 border border-emerald-200' } });
-      items.push({ id: 'admin_panel', label: 'Painel & Relatórios (ADM)', icon: Shield, iconColor: 'text-[#1e3a5f]', category: 'admin', badge: { text: 'ADM', color: 'bg-[#f1efe8] text-[#1e3a5f] border border-[#e5e2d9]' } });
+      items.push({ id: 'config', label: 'Regras de Auditoria', icon: Sliders, iconColor: 'text-[var(--atlas-text-muted)]', category: 'admin' });
+      items.push({ id: 'user_management', label: 'Gestão de Usuários (RBAC)', icon: Users, iconColor: 'text-[var(--atlas-accent)]', category: 'admin', badge: { text: 'RBAC', color: 'atlas-pill atlas-pill-accent' } });
+      items.push({ id: 'admin_panel', label: 'Painel & Relatórios (ADM)', icon: Shield, iconColor: 'text-[var(--atlas-navy)]', category: 'admin', badge: { text: 'ADM', color: 'atlas-pill atlas-pill-navy' } });
     }
 
     return items;
@@ -216,15 +217,15 @@ export function Navbar({ activeTab, setActiveTab, hasSped, hasXmlTerceiros, hasX
       <button
         key={item.id}
         onClick={() => setActiveTab(item.id)}
-        className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all duration-150 group relative ${
+        className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-[13.5px] font-medium transition-all duration-150 group relative ${
           isActive
-            ? 'bg-[#1e3a5f] text-white font-semibold shadow-2xs'
-            : 'text-slate-600 hover:bg-white hover:text-slate-900 border border-transparent hover:border-[#e5e2d9]/80'
+            ? 'bg-[var(--atlas-navy)] text-white font-semibold shadow-xs'
+            : 'text-slate-700 hover:bg-white hover:text-slate-900 border border-transparent hover:border-[#e5e2d9]/80'
         }`}
       >
         {/* Active Pill Indicator */}
         {isActive && (
-          <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-[#0f6e56] rounded-r" />
+          <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-5 bg-[var(--atlas-accent)] rounded-r" />
         )}
 
         <div className="flex items-center space-x-2.5 truncate">
@@ -233,7 +234,7 @@ export function Navbar({ activeTab, setActiveTab, hasSped, hasXmlTerceiros, hasX
         </div>
 
         {item.badge && (
-          <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded-md font-mono shrink-0 ml-1.5 ${item.badge.color}`}>
+          <span className={`shrink-0 ml-1.5 ${item.badge.color}`}>
             {item.badge.text}
           </span>
         )}
@@ -470,30 +471,23 @@ export function Navbar({ activeTab, setActiveTab, hasSped, hasXmlTerceiros, hasX
       <div className="p-2.5 border-t border-[#e5e2d9] bg-white/60 space-y-2 shrink-0">
         {!isCollapsed ? (
           <>
-            {/* User Card */}
-            <div className="p-2 rounded-lg bg-white border border-[#e5e2d9] shadow-2xs space-y-1.5">
-              <div className="flex items-center space-x-2.5 min-w-0">
-                <div className="w-7 h-7 rounded-md bg-[#1e3a5f] text-white flex items-center justify-center shrink-0 font-bold text-xs">
-                  <User className="w-4 h-4" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs font-bold text-slate-800 truncate">
-                    {userData?.nome || 'Usuário Auditor'}
-                  </p>
-                  <p className="text-[10px] text-slate-500 truncate">
-                    {userData?.papel === 'super_admin' ? 'Super Administrador' : 'Auditor Fiscal'}
-                  </p>
-                </div>
+            {/* User Row (sem card/sombra) */}
+            <div className="py-2 px-1 flex items-center space-x-2.5 min-w-0 border-b border-[var(--atlas-border)] mb-1">
+              <div className="w-8 h-8 rounded-full bg-[var(--atlas-navy)] text-white flex items-center justify-center shrink-0 font-bold text-xs shadow-xs">
+                <User className="w-4 h-4" />
               </div>
-
-              {/* Escritório Badge */}
-              <div className="pt-1 border-t border-slate-100 flex items-center space-x-1.5 text-[10px] text-slate-600 font-medium">
-                <Building2 className="w-3 h-3 text-[#1e3a5f] shrink-0" />
-                <span className="truncate">
-                  {userData?.escritorioId ? `Escritório: ${userData.escritorioId}` : 'Escritório Modelo Contabilidade'}
-                </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-[13px] font-bold text-[var(--atlas-text)] truncate leading-tight">
+                  {userData?.nome || 'Usuário Auditor'}
+                </p>
+                <p className="text-[11px] text-[var(--atlas-text-secondary)] truncate">
+                  {userData?.papel === 'super_admin' ? 'Super Administrador' : 'Auditor Fiscal'}
+                </p>
               </div>
             </div>
+
+            {/* Seletor de Tema Compacto */}
+            <ThemeSelector compact />
 
             {/* Cloud Backup & Sync Badge/Buttons */}
             <div className="p-2 rounded-lg border border-[var(--atlas-border)] space-y-1.5" style={{ background: 'var(--atlas-surface)' }}>

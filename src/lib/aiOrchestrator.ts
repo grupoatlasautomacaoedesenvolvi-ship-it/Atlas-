@@ -18,7 +18,7 @@ export interface TaxItemInput {
 export interface AgentPerspectiveResult {
   agentName: string;
   modelUsed: string;
-  perspective: 'Classificação NCM/CST/CEST' | 'Operação & CFOP/Regime' | 'Consenso & Juiz Final';
+  perspective: 'Classificação NCM/CST/CEST' | 'Operação & CFOP/Regime' | 'Consenso & Parecer Sugerido';
   approved: boolean;
   notes: string;
   suggestedNcm?: string;
@@ -109,12 +109,12 @@ export const DEFAULT_ARCA_CONFIG: ArcaPipelineConfig = {
     },
     agent3: {
       id: 'agent3',
-      name: 'Conselho Técnico & Veredito',
+      name: 'Conselho Técnico & Parecer Sugerido',
       moduleCode: 'Módulo T3 - Revisão Superior',
       provider: 'claude',
       modelName: 'claude-3-5-sonnet',
       criticality: 'Alta',
-      priorityFocus: 'Consenso & Juiz Final',
+      priorityFocus: 'Consenso & Parecer Sugerido',
       active: true,
     },
   },
@@ -465,7 +465,7 @@ export async function orchestrateTaxAudit(
   let agent3Result: AgentPerspectiveResult = {
     agentName: `Agente ${cfg3.moduleCode} (${cfg3.provider.toUpperCase()} - Criticidade ${cfg3.criticality})`,
     modelUsed: `${cfg3.provider} (${cfg3.modelName})`,
-    perspective: 'Consenso & Juiz Final',
+    perspective: 'Consenso & Parecer Sugerido',
     approved: localEval.risk === 'Baixo',
     notes: localEval.notes.length > 0 ? `Inconsistências encontradas: ${localEval.notes.join('; ')}` : 'Validação cruzada sem divergências. Risco fiscal mínimo.',
     confidenceScore: 92,
@@ -556,15 +556,15 @@ Responda ESTRITAMENTE em JSON com o formato:
         }
       }
 
-      // Prompt Agente 3 - Consenso Final
+      // Prompt Agente 3 - Consenso
       if (cfg3.active) {
-        const sysAgent3 = `Você é o AGENTE 3 - ${cfg3.moduleCode}: Auditor Chefe e Juiz Conselheiro de Riscos Tributários do Projeto A.R.C.A.
+        const sysAgent3 = `Você é o AGENTE 3 - ${cfg3.moduleCode}: Auditor Chefe e Conselheiro de Riscos Tributários do Projeto A.R.C.A.
 Provedor Selecionado: ${cfg3.provider.toUpperCase()} | Criticidade do Consenso: ${cfg3.criticality} | Rigor Global: ${arcaConfig.globalStrictness}.
 Sintetize os pareceres do Agente 1 (${agent1Result.notes}) e Agente 2 (${agent2Result.notes}).
 Responda ESTRITAMENTE em JSON com o formato:
 {
   "overallRisk": "Baixo" | "Médio" | "Alto",
-  "finalVerdict": "parecer conclusivo em 1-2 frases para o contador",
+  "finalVerdict": "parecer de sugestão técnica em 1-2 frases para revisão do contador",
   "suggestedNcm": "NCM final",
   "suggestedCst": "CST final",
   "suggestedCfop": "CFOP final",

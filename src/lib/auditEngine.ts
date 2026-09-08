@@ -1,5 +1,5 @@
 import { SpedData, AuditConfig, Achado, TipoAchado, SeveridadeAchado, StatusRevisao, XmlRecord } from '../types';
-import { findMatchingXmlItem, findBestFuzzyXmlItemMatch } from './cfopUtils';
+import { findMatchingXmlItem, findBestFuzzyXmlItemMatch, matchAllSpedAndXmlItemsFuzzy } from './cfopUtils';
 
 // Casamento entre SPED e XML deve SEMPRE usar a chave de acesso de 44 dígitos,
 // nunca número de nota (colide facilmente entre fornecedores diferentes) e
@@ -240,6 +240,10 @@ export function executarAuditoriaUnificada(
       }
     }
 
+    const docItemMatches = (matchedXml?.items && doc.items.length > 0)
+      ? matchAllSpedAndXmlItemsFuzzy(doc.items, matchedXml.items)
+      : new Map<number, import('./fuzzyMatcher').ItemMatchDetails>();
+
     for (const [itemIndex, item] of doc.items.entries()) {
       const ncm = (item.ncm || '').trim();
       const cfop = (item.cfop || '').trim();
@@ -300,8 +304,8 @@ export function executarAuditoriaUnificada(
         });
       }
 
-      const fuzzyMatchDetails = matchedXml?.items ? findBestFuzzyXmlItemMatch(matchedXml.items, item, itemIndex) : null;
-      const matchedXmlItem = fuzzyMatchDetails?.xmlItem || (matchedXml?.items ? findMatchingXmlItem(matchedXml.items, item, itemIndex) : undefined);
+      const fuzzyMatchDetails = docItemMatches.get(itemIndex) || null;
+      const matchedXmlItem = fuzzyMatchDetails?.xmlItem;
 
       if (fuzzyMatchDetails && fuzzyMatchDetails.isSequenceMismatch) {
         const id = gerarIdAchado('INCONSISTENCIA_SEQUENCIA_SPED_XML', doc.id, itemId);

@@ -419,25 +419,37 @@ Foram identificados um total de ${totalFindings} apontamentos de divergência. A
   }
 
   return (
-    <div className="max-w-7xl w-full mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8">
-      
-      {/* Header Banner */}
-      <div className="bg-slate-900 rounded-lg p-6 sm:p-8 text-white shadow-xs border border-slate-800">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <div className="inline-flex items-center space-x-2 bg-slate-800 text-slate-200 border border-slate-700 px-3 py-1 rounded-md text-xs font-semibold tracking-wide uppercase">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span>Parecer Técnico do Analista Fiscal Senior</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-              Relatório de Auditoria & Correções Fiscais
-            </h1>
-            <p className="text-slate-300 text-sm max-w-2xl">
-              Consolidação técnica oficial contendo a sanitização do SPED TXT, resgate de notas omissas, readequação da Matriz Fiscal da UF <span className="font-bold text-white">{companyUf}</span> e reconciliação dos saldos de ICMS.
-            </p>
-          </div>
+    <div className="space-y-6 pb-16 text-xs font-sans">
+      {/* Breadcrumb Bar */}
+      <div className="atlas-breadcrumb-bar">
+        <div className="flex items-center space-x-2 text-[13px]">
+          <span className="text-[var(--atlas-text-muted)] font-medium">Atlas</span>
+          <span className="text-[var(--atlas-text-muted)]">/</span>
+          <span className="text-[var(--atlas-text)] font-semibold">Relatório Final</span>
+        </div>
+        <div className="text-[12px] text-[var(--atlas-text-secondary)] font-medium">
+          Parecer Técnico Oficial e Resumo Executivo
+        </div>
+      </div>
 
-          <div className="flex flex-wrap items-center gap-3 no-print">
+      <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        {/* Header Banner */}
+        <div className="bg-[var(--atlas-navy)] rounded-2xl p-6 sm:p-8 text-white shadow-md border border-[var(--atlas-border)]">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="space-y-2">
+              <div className="inline-flex items-center space-x-2 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-semibold">
+                <ShieldCheck className="w-4 h-4 text-emerald-300" />
+                <span>Parecer Técnico do Analista Fiscal Senior</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-serif">
+                Relatório de Auditoria & Correções Fiscais
+              </h1>
+              <p className="text-slate-200 text-sm max-w-2xl leading-relaxed">
+                Consolidação técnica oficial contendo a sanitização do SPED TXT, resgate de notas omissas, readequação da Matriz Fiscal da UF <span className="font-bold text-white">{companyUf}</span> e reconciliação dos saldos de ICMS.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 no-print">
             <button
               onClick={() => window.print()}
               className="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2.5 rounded-lg border border-slate-700 text-sm font-medium transition-colors"
@@ -818,9 +830,9 @@ Foram identificados um total de ${totalFindings} apontamentos de divergência. A
           </div>
         </div>
       </div>
-        </>
-      )}
-
+    </>
+  )}
+      </div>
     </div>
   );
 }

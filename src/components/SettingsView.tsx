@@ -5,6 +5,7 @@ import { Key, Users, UserPlus, Building2, Plus, Check, Shield } from 'lucide-rea
 import { db } from '../lib/firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { UserHierarchyCard } from './UserHierarchyCard';
+import { ThemeSelector } from './ThemeSelector';
 
 export function SettingsView() {
   const { changePassword, user, userData, getIdToken } = useAuth();
@@ -174,9 +175,12 @@ export function SettingsView() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
       <div className="mb-2">
-        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Configurações & Gestão</h2>
-        <p className="text-slate-500 mt-1">Gerencie sua conta, cadastros de escritórios e equipe de usuários</p>
+        <h2 className="text-2xl font-bold text-[var(--atlas-text)] tracking-tight font-serif">Configurações & Gestão</h2>
+        <p className="text-[var(--atlas-text-secondary)] mt-1 text-sm">Gerencie sua conta, preferências visuais, cadastros de escritórios e equipe de usuários</p>
       </div>
+
+      {/* Seção de Preferências / Tema Visual */}
+      <ThemeSelector />
 
       {/* Cadastro de Escritório (Restrito a Super Admin) */}
       {userData?.papel === 'super_admin' ? (

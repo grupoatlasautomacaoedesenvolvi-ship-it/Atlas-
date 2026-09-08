@@ -192,7 +192,7 @@ export function calculateAgentPerformanceMetrics(results: MultiAgentAuditResult[
         corrections: Math.round(autoCorrections * 0.38)
       },
       agent3: {
-        name: 'Agente 3 - Consenso & Veredito Final',
+        name: 'Agente 3 - Consenso & Parecer Sugerido',
         analyzed: totalAudited,
         alerts: errorsFound,
         corrections: autoCorrections

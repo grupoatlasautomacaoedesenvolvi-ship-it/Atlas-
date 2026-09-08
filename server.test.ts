@@ -11,6 +11,12 @@ app.use(express.json());
 app.get('/api/ncm-referencia/buscar/2710', requireAuth, (req, res) => res.json({ ok: true }));
 app.post('/api/ncm-referencia/importar', requireAuth, (req: AuthRequest, res) => res.json({ escritorioIdReal: req.escritorioId }));
 app.get('/api/fiscal/ncm-referencia', requireAuth, (req, res) => res.json({ ok: true }));
+app.get('/api/admin/escritorios', requireAuth, (req: AuthRequest, res) => {
+  if (req.papel !== 'super_admin') {
+    return res.status(403).json({ error: 'Acesso negado. Requer papel de super_admin.' });
+  }
+  return res.json({ success: true, escritorios: [] });
+});
 
 // Mock Firebase Admin
 vi.mock('./src/lib/firebase-admin.ts', () => ({
@@ -60,5 +66,26 @@ describe('middleware de autenticação (Cloud SQL)', () => {
     
     expect(res.status).toBe(403);
     expect(res.body.error).toBe('Super admin não acessa dados fiscais de escritórios');
+  });
+
+  it('bloqueia acesso a /api/admin/escritorios para colaborador e admin_escritorio com 403, e permite para super_admin', async () => {
+    const tokenColaborador = 'valid-B';
+    const resColab = await request(app)
+      .get('/api/admin/escritorios')
+      .set('Authorization', `Bearer ${tokenColaborador}`);
+    expect(resColab.status).toBe(403);
+
+    const tokenAdminEscritorio = 'valid-A';
+    const resAdmin = await request(app)
+      .get('/api/admin/escritorios')
+      .set('Authorization', `Bearer ${tokenAdminEscritorio}`);
+    expect(resAdmin.status).toBe(403);
+
+    const tokenSuperAdmin = 'valid-super';
+    const resSuper = await request(app)
+      .get('/api/admin/escritorios')
+      .set('Authorization', `Bearer ${tokenSuperAdmin}`);
+    expect(resSuper.status).toBe(200);
+    expect(resSuper.body.success).toBe(true);
   });
 });

@@ -3,22 +3,163 @@
 :root {
   --font-display: "Fraunces", Georgia, serif;
   --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
-  
+
+  /* Standard Navy Light Default Variables */
   --atlas-navy: #1e3a5f;
   --atlas-navy-dark: #142c47;
   --atlas-accent: #0f6e56;
+  --atlas-accent-dark: #0b5240;
   --atlas-bg: #faf9f6;
   --atlas-surface: #ffffff;
   --atlas-border: #e5e2d9;
   --atlas-text: #2c2c2a;
   --atlas-text-secondary: #5f5e5a;
   --atlas-text-muted: #8a8880;
+
   --atlas-danger: #b13b2f;
   --atlas-danger-bg: #fbeae7;
   --atlas-warning: #a8711f;
   --atlas-warning-bg: #faf1e0;
+  --atlas-info: #3b6ea5;
+  --atlas-info-bg: #eaf1f8;
   --atlas-success: #0f6e56;
   --atlas-success-bg: #e6f2ee;
+
+  /* Calculated dynamic tints using color-mix() */
+  --atlas-navy-tint: color-mix(in srgb, var(--atlas-navy) 12%, var(--atlas-surface));
+  --atlas-accent-tint: color-mix(in srgb, var(--atlas-accent) 14%, var(--atlas-surface));
+  --atlas-info-tint: color-mix(in srgb, var(--atlas-info) 14%, var(--atlas-surface));
+
+  --atlas-shadow-card: 0 1px 2px rgba(30,26,14,.04), 0 10px 28px -12px rgba(30,26,14,.14);
+  --atlas-shadow-btn: 0 1px 2px rgba(20,44,71,.18);
+}
+
+/* PALETTES & MODES SETUP */
+
+/* 1. NAVY Light (Default) */
+:root, [data-palette="navy"][data-mode="light"], html:not([data-palette]) {
+  --atlas-navy: #1e3a5f;
+  --atlas-navy-dark: #142c47;
+  --atlas-accent: #0f6e56;
+  --atlas-accent-dark: #0b5240;
+  --atlas-bg: #faf9f6;
+  --atlas-surface: #ffffff;
+  --atlas-border: #e5e2d9;
+  --atlas-text: #2c2c2a;
+  --atlas-text-secondary: #5f5e5a;
+  --atlas-text-muted: #8a8880;
+
+  --atlas-danger: #b13b2f;
+  --atlas-danger-bg: #fbeae7;
+  --atlas-warning: #a8711f;
+  --atlas-warning-bg: #faf1e0;
+  --atlas-info: #3b6ea5;
+  --atlas-info-bg: #eaf1f8;
+}
+
+/* 2. NAVY Dark */
+[data-palette="navy"][data-mode="dark"], [data-mode="dark"]:not([data-palette="grafite"]):not([data-palette="vinho"]) {
+  --atlas-navy: #6a93bd;
+  --atlas-navy-dark: #4c729c;
+  --atlas-accent: #34b092;
+  --atlas-accent-dark: #2a8f76;
+  --atlas-bg: #12161c;
+  --atlas-surface: #181f27;
+  --atlas-border: #2a323d;
+  --atlas-text: #eceef0;
+  --atlas-text-secondary: #aab2bc;
+  --atlas-text-muted: #7c8792;
+
+  --atlas-danger: #d9695a;
+  --atlas-danger-bg: #3a1e1a;
+  --atlas-warning: #e0b464;
+  --atlas-warning-bg: #3a2f1c;
+  --atlas-info: #6fa3d1;
+  --atlas-info-bg: #1c2a38;
+}
+
+/* 3. GRAFITE Light */
+[data-palette="grafite"][data-mode="light"], [data-palette="grafite"]:not([data-mode="dark"]) {
+  --atlas-navy: #2f3b47;
+  --atlas-navy-dark: #222a33;
+  --atlas-accent: #0e7c86;
+  --atlas-accent-dark: #0b636b;
+  --atlas-bg: #f6f7f7;
+  --atlas-surface: #ffffff;
+  --atlas-border: #e2e5e6;
+  --atlas-text: #21262b;
+  --atlas-text-secondary: #565d63;
+  --atlas-text-muted: #8a9096;
+
+  --atlas-danger: #b13b2f;
+  --atlas-danger-bg: #fbeae7;
+  --atlas-warning: #a8711f;
+  --atlas-warning-bg: #faf1e0;
+  --atlas-info: #3b6ea5;
+  --atlas-info-bg: #eaf1f8;
+}
+
+/* 4. GRAFITE Dark */
+[data-palette="grafite"][data-mode="dark"] {
+  --atlas-navy: #7c93a8;
+  --atlas-navy-dark: #5c7789;
+  --atlas-accent: #35c2ca;
+  --atlas-accent-dark: #269aa1;
+  --atlas-bg: #12161a;
+  --atlas-surface: #181e22;
+  --atlas-border: #262d33;
+  --atlas-text: #e7eaec;
+  --atlas-text-secondary: #a3aab0;
+  --atlas-text-muted: #7d848a;
+
+  --atlas-danger: #d9695a;
+  --atlas-danger-bg: #3a1e1a;
+  --atlas-warning: #e0b464;
+  --atlas-warning-bg: #3a2f1c;
+  --atlas-info: #6fa3d1;
+  --atlas-info-bg: #1c2a38;
+}
+
+/* 5. VINHO Light */
+[data-palette="vinho"][data-mode="light"], [data-palette="vinho"]:not([data-mode="dark"]) {
+  --atlas-navy: #6b2737;
+  --atlas-navy-dark: #521e2a;
+  --atlas-accent: #a97d2f;
+  --atlas-accent-dark: #8a6423;
+  --atlas-bg: #faf7f0;
+  --atlas-surface: #ffffff;
+  --atlas-border: #e9e0d2;
+  --atlas-text: #2a201c;
+  --atlas-text-secondary: #6b5f56;
+  --atlas-text-muted: #9c9184;
+
+  --atlas-danger: #b13b2f;
+  --atlas-danger-bg: #fbeae7;
+  --atlas-warning: #a8711f;
+  --atlas-warning-bg: #faf1e0;
+  --atlas-info: #3b6ea5;
+  --atlas-info-bg: #eaf1f8;
+}
+
+/* 6. VINHO Dark */
+[data-palette="vinho"][data-mode="dark"] {
+  --atlas-navy: #c47f8f;
+  --atlas-navy-dark: #a3596b;
+  --atlas-accent: #d9ab5c;
+  --atlas-accent-dark: #b98a3f;
+  --atlas-bg: #1a1210;
+  --atlas-surface: #241a17;
+  --atlas-border: #362721;
+  --atlas-text: #efe6df;
+  --atlas-text-secondary: #c2b4aa;
+  --atlas-text-muted: #93857c;
+
+  --atlas-danger: #d9695a;
+  --atlas-danger-bg: #3a1e1a;
+  --atlas-warning: #e0b464;
+  --atlas-warning-bg: #3a2f1c;
+  --atlas-info: #6fa3d1;
+  --atlas-info-bg: #1c2a38;
 }
 
 @theme {
@@ -27,6 +168,11 @@
 }
 
 @layer base {
+  body {
+    background-color: var(--atlas-bg);
+    color: var(--atlas-text);
+    font-family: var(--font-sans);
+  }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
     letter-spacing: -0.01em;
@@ -36,26 +182,29 @@
 .atlas-card {
   background: var(--atlas-surface);
   border: 1px solid var(--atlas-border);
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  border-radius: 16px;
+  box-shadow: var(--atlas-shadow-card);
+  padding: 1.5rem;
 }
 
-/* Botões — use estes em vez de bg-blue-600/bg-indigo-600/etc. */
 .atlas-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  border-radius: 8px;
+  border-radius: 9px;
   font-weight: 600;
-  font-size: 0.75rem;
-  padding: 0.75rem 1.25rem;
-  transition: background-color 150ms ease, opacity 150ms ease, box-shadow 150ms ease;
+  font-size: 0.8125rem;
+  padding: 11px 20px;
+  transition: background-color 150ms ease, opacity 150ms ease, box-shadow 150ms ease, transform 100ms ease;
 }
 .atlas-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-.atlas-btn-primary { background: var(--atlas-navy); color: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+.atlas-btn-primary { background: var(--atlas-navy); color: #fff; box-shadow: var(--atlas-shadow-btn); }
 .atlas-btn-primary:hover:not(:disabled) { background: var(--atlas-navy-dark); }
+
+.atlas-btn-accent { background: var(--atlas-accent); color: #fff; box-shadow: var(--atlas-shadow-btn); }
+.atlas-btn-accent:hover:not(:disabled) { background: var(--atlas-accent-dark); }
 
 .atlas-btn-secondary { background: var(--atlas-surface); color: var(--atlas-navy); border: 1px solid var(--atlas-border); }
 .atlas-btn-secondary:hover:not(:disabled) { background: var(--atlas-bg); }
@@ -63,14 +212,13 @@
 .atlas-btn-danger { background: var(--atlas-danger); color: #fff; }
 .atlas-btn-danger:hover:not(:disabled) { filter: brightness(0.92); }
 
-/* Campos — use em vez de border-slate-300/rounded-xl */
 .atlas-input {
   width: 100%;
   background: var(--atlas-surface);
   border: 1px solid var(--atlas-border);
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
-  font-size: 0.75rem;
+  border-radius: 10px;
+  padding: 13px 16px;
+  font-size: 0.8125rem;
   color: var(--atlas-text);
   outline: none;
   transition: border-color 150ms ease, box-shadow 150ms ease;
@@ -78,11 +226,102 @@
 .atlas-input::placeholder { color: var(--atlas-text-muted); }
 .atlas-input:focus { border-color: var(--atlas-navy); box-shadow: 0 0 0 3px rgba(30,58,95,0.12); }
 
-/* Avisos inline — use em vez de bg-red-50/bg-emerald-50 soltos */
-.atlas-alert { border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.75rem; font-weight: 500; border: 1px solid; }
+.atlas-alert { border-radius: 10px; padding: 0.875rem 1.25rem; font-size: 0.8125rem; font-weight: 500; border: 1px solid; }
 .atlas-alert-danger { background: var(--atlas-danger-bg); border-color: var(--atlas-danger); color: var(--atlas-danger); }
-.atlas-alert-success { background: var(--atlas-success-bg); border-color: var(--atlas-success); color: var(--atlas-success); }
+.atlas-alert-success { background: var(--atlas-accent-tint); border-color: var(--atlas-accent); color: var(--atlas-accent); }
 .atlas-alert-warning { background: var(--atlas-warning-bg); border-color: var(--atlas-warning); color: var(--atlas-warning); }
+
+/* Badges e Etiquetas Padronizadas */
+.atlas-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 11px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+
+.atlas-pill-navy {
+  background: var(--atlas-navy-tint);
+  color: var(--atlas-navy);
+  border-color: rgba(30, 58, 95, 0.2);
+}
+
+.atlas-pill-accent {
+  background: var(--atlas-accent-tint);
+  color: var(--atlas-accent-dark);
+  border-color: rgba(15, 110, 86, 0.2);
+}
+
+.atlas-pill-info {
+  background: var(--atlas-info-tint);
+  color: var(--atlas-info);
+  border-color: rgba(59, 110, 165, 0.2);
+}
+
+.atlas-pill-warning {
+  background: var(--atlas-warning-bg);
+  color: var(--atlas-warning);
+  border-color: rgba(168, 113, 31, 0.25);
+}
+
+.atlas-pill-danger {
+  background: var(--atlas-danger-bg);
+  color: var(--atlas-danger);
+  border-color: rgba(177, 59, 47, 0.25);
+}
+
+/* Faixa de Indicadores (Stat Strip) */
+.atlas-stat-strip {
+  background: var(--atlas-surface);
+  border: 1px solid var(--atlas-border);
+  border-radius: 16px;
+  box-shadow: var(--atlas-shadow-card);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  overflow: hidden;
+}
+
+.atlas-stat-item {
+  flex: 1 1 160px;
+  padding: 20px 24px;
+  position: relative;
+}
+
+.atlas-stat-item:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 20%;
+  height: 60%;
+  width: 1px;
+  background-color: var(--atlas-border);
+}
+
+/* Linha de Lista */
+.atlas-list-row {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--atlas-border);
+  transition: background-color 150ms ease;
+}
+.atlas-list-row:last-child {
+  border-bottom: none;
+}
+
+/* Barra de Breadcrumb */
+.atlas-breadcrumb-bar {
+  padding: 16px 32px;
+  border-bottom: 1px solid var(--atlas-border);
+  background: var(--atlas-surface);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
 
 @layer utilities {
   .hide-scrollbar::-webkit-scrollbar {
@@ -98,34 +337,15 @@
     height: 6px;
   }
   .custom-scrollbar::-webkit-scrollbar-track {
-    background: #f1f5f9;
+    background: var(--atlas-bg);
     border-radius: 8px;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
+    background: var(--atlas-border);
     border-radius: 8px;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
-  }
-
-  .custom-horizontal-scrollbar {
-    scrollbar-width: thin;
-    scrollbar-color: #a5b4fc #f1f5f9;
-  }
-  .custom-horizontal-scrollbar::-webkit-scrollbar {
-    height: 6px;
-  }
-  .custom-horizontal-scrollbar::-webkit-scrollbar-track {
-    background: #f8fafc;
-    border-radius: 9999px;
-  }
-  .custom-horizontal-scrollbar::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 9999px;
-  }
-  .custom-horizontal-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #6366f1;
+    background: var(--atlas-text-muted);
   }
 }
 
@@ -140,4 +360,3 @@
     display: none !important;
   }
 }
-
