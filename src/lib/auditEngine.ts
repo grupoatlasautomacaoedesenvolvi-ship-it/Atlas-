@@ -20,14 +20,26 @@ function getRevisoesKey(escritorioId?: string): string {
 
 export function salvarStatusRevisao(achadoId: string, status: StatusRevisao, escritorioId?: string): void {
   const key = getRevisoesKey(escritorioId);
-  const todos = JSON.parse(localStorage.getItem(key) || '{}');
+  let todos: Record<string, any> = {};
+  try {
+    todos = JSON.parse(localStorage.getItem(key) || '{}');
+  } catch (e) {
+    todos = {};
+  }
   todos[achadoId] = { status, revisadoEm: new Date().toISOString() };
-  localStorage.setItem(key, JSON.stringify(todos));
+  try {
+    localStorage.setItem(key, JSON.stringify(todos));
+  } catch (e) {}
 }
 
 export function carregarStatusRevisao(achadoId: string, escritorioId?: string): { statusRevisao: StatusRevisao; revisadoEm?: string } {
   const key = getRevisoesKey(escritorioId);
-  const todos = JSON.parse(localStorage.getItem(key) || '{}');
+  let todos: Record<string, any> = {};
+  try {
+    todos = JSON.parse(localStorage.getItem(key) || '{}');
+  } catch (e) {
+    todos = {};
+  }
   const stored = todos[achadoId];
   if (stored) {
     return {

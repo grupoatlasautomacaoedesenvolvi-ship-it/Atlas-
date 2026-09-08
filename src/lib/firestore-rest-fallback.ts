@@ -1,5 +1,7 @@
-import firebaseConfig from '../../firebase-applet-config.json';
 import { adminDb } from './firebase-admin.ts';
+
+const FIREBASE_PROJECT_ID = process.env.FIREBASE_PROJECT_ID as string;
+const FIREBASE_DATABASE_ID = process.env.FIREBASE_DATABASE_ID as string;
 
 export function convertRestFields(fields: Record<string, any>): Record<string, any> {
   if (!fields) return {};
@@ -72,7 +74,7 @@ export async function fetchDocWithFallback(path: string, token?: string): Promis
     if ((errStr.includes('PERMISSION_DENIED') || errStr.includes('7') || errStr.includes('RESOURCE_EXHAUSTED') || errStr.includes('Quota exceeded'))) {
       if (token) {
         try {
-          const url = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/${firebaseConfig.firestoreDatabaseId}/documents/${path}`;
+          const url = `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/${FIREBASE_DATABASE_ID}/documents/${path}`;
           const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
           if (res.ok) {
             const json = await res.json();
@@ -101,7 +103,7 @@ export async function setDocWithFallback(path: string, data: Record<string, any>
     const errStr = String(err?.message || err);
     if (token) {
       try {
-        const url = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/${firebaseConfig.firestoreDatabaseId}/documents/${path}`;
+        const url = `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/${FIREBASE_DATABASE_ID}/documents/${path}`;
         const fields = convertToRestFields(data);
         const res = await fetch(url, {
           method: 'PATCH',
@@ -144,7 +146,7 @@ export async function queryCollectionWithFallback(path: string, token?: string):
     if ((errStr.includes('PERMISSION_DENIED') || errStr.includes('7') || errStr.includes('RESOURCE_EXHAUSTED') || errStr.includes('Quota exceeded'))) {
       if (token) {
         try {
-          const url = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/${firebaseConfig.firestoreDatabaseId}/documents/${path}`;
+          const url = `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/${FIREBASE_DATABASE_ID}/documents/${path}`;
           const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
           if (res.ok) {
             const json = await res.json();

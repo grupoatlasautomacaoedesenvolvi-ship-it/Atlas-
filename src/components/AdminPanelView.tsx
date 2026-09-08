@@ -26,6 +26,15 @@ export interface EscritorioItem {
   clientes?: Cliente[];
 }
 
+function safeParseLocal<T = any[]>(key: string, fallback: T): T {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 export function AdminPanelView() {
   const { userData, getIdToken } = useAuth();
   const [escritorios, setEscritorios] = useState<EscritorioItem[]>([]);
@@ -101,14 +110,14 @@ export function AdminPanelView() {
       let rawEscritorios: EscritorioItem[] = [];
 
       if (localStorage.getItem('atlas_demo_admin') === 'true') {
-        const savedEsc = JSON.parse(localStorage.getItem('atlas_demo_escritorios') || JSON.stringify([
+        const savedEsc = safeParseLocal('atlas_demo_escritorios', [
           { id: "demo-1", nome: "Escritório Modelo Contabilidade", cnpj: "12.345.678/0001-99", ativo: true, emailAdmin: "admin@modelo.com", nomeAdmin: "Admin Modelo" },
           { id: "demo-2", nome: "Contabilidade Silva & Associados", cnpj: "98.765.432/0001-11", ativo: true, emailAdmin: "silva@contab.com", nomeAdmin: "Carlos Silva" }
-        ]));
-        const savedEv = JSON.parse(localStorage.getItem('atlas_demo_eventos') || JSON.stringify([
+        ]);
+        const savedEv = safeParseLocal('atlas_demo_eventos', [
           { id: "ev-1", tipo: "login", escritorioId: "demo-1", data: new Date().toISOString() },
           { id: "ev-2", tipo: "sped_importado", escritorioId: "demo-1", data: new Date().toISOString() }
-        ]));
+        ]);
         rawEscritorios = savedEsc;
         setEventos(savedEv);
       } else {
@@ -120,9 +129,9 @@ export function AdminPanelView() {
           setEventos(evSnap.docs.map(d => ({ id: d.id, ...d.data() })));
         } catch (err) {
           console.warn('Carregando do cache/demo local:', err);
-          const savedEsc = JSON.parse(localStorage.getItem('atlas_demo_escritorios') || JSON.stringify([
+          const savedEsc = safeParseLocal('atlas_demo_escritorios', [
             { id: "demo-1", nome: "Escritório Modelo Contabilidade", cnpj: "12.345.678/0001-99", ativo: true, emailAdmin: "admin@modelo.com", nomeAdmin: "Admin Modelo" }
-          ]));
+          ]);
           rawEscritorios = savedEsc;
         }
       }
@@ -351,7 +360,7 @@ export function AdminPanelView() {
       await updateDoc(escRef, { ativo: newStatus });
     });
 
-    const currentEscs = JSON.parse(localStorage.getItem('atlas_demo_escritorios') || '[]');
+    const currentEscs = safeParseLocal<any[]>('atlas_demo_escritorios', []);
     const idx = currentEscs.findIndex((e: any) => e.id === esc.id);
     if (idx >= 0) {
       currentEscs[idx].ativo = newStatus;
@@ -368,7 +377,7 @@ export function AdminPanelView() {
       await deleteDoc(doc(db, 'escritorios', escId));
     });
 
-    const currentEscs = JSON.parse(localStorage.getItem('atlas_demo_escritorios') || '[]');
+    const currentEscs = safeParseLocal<any[]>('atlas_demo_escritorios', []);
     const filtered = currentEscs.filter((e: any) => e.id !== escId);
     localStorage.setItem('atlas_demo_escritorios', JSON.stringify(filtered));
 
@@ -426,7 +435,7 @@ export function AdminPanelView() {
           await updateDoc(doc(db, 'escritorios', editingEscritorio.id), updatedDoc);
         });
 
-        const currentEscs = JSON.parse(localStorage.getItem('atlas_demo_escritorios') || '[]');
+        const currentEscs = safeParseLocal<any[]>('atlas_demo_escritorios', []);
         const idx = currentEscs.findIndex((x: any) => x.id === editingEscritorio.id);
         if (idx >= 0) {
           currentEscs[idx] = { ...currentEscs[idx], ...updatedDoc };
@@ -446,7 +455,7 @@ export function AdminPanelView() {
             ativo: true,
             dataCriacao: new Date().toISOString()
           };
-          const currentEscs = JSON.parse(localStorage.getItem('atlas_demo_escritorios') || '[]');
+          const currentEscs = safeParseLocal<any[]>('atlas_demo_escritorios', []);
           localStorage.setItem('atlas_demo_escritorios', JSON.stringify([...currentEscs, newEsc]));
           setEscMsg('Escritório registrado.');
         } else {

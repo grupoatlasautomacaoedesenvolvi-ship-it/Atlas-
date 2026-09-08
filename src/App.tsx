@@ -1104,12 +1104,24 @@ export default function App() {
           }
         } else {
           const saved = (effectiveEscritorioId && localStorage.getItem(`atlas_state_tax_matrix_${effectiveEscritorioId}`)) || localStorage.getItem('atlas_state_tax_matrix');
-          if (saved) setStateTaxRules(JSON.parse(saved));
+          if (saved) {
+            try {
+              setStateTaxRules(JSON.parse(saved));
+            } catch (e) {
+              console.error('Error parsing state tax rules:', e);
+            }
+          }
         }
       } catch (e) {
         console.error('Error loading global matrix', e);
         const saved = (effectiveEscritorioId && localStorage.getItem(`atlas_state_tax_matrix_${effectiveEscritorioId}`)) || localStorage.getItem('atlas_state_tax_matrix');
-        if (saved) setStateTaxRules(JSON.parse(saved));
+        if (saved) {
+          try {
+            setStateTaxRules(JSON.parse(saved));
+          } catch (err) {
+            console.error('Error parsing state tax rules fallback:', err);
+          }
+        }
       }
     }
     loadGlobalMatrix();

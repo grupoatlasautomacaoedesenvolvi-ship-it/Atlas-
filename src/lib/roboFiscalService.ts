@@ -92,7 +92,14 @@ export async function addRoboLog(logData: Omit<RoboExecutionLog, 'id'>, escritor
   };
 
   const existingStr = localStorage.getItem(`atlas_robo_logs_${eid}`);
-  const existing: RoboExecutionLog[] = existingStr ? JSON.parse(existingStr) : [];
+  let existing: RoboExecutionLog[] = [];
+  if (existingStr) {
+    try {
+      existing = JSON.parse(existingStr);
+    } catch (e) {
+      existing = [];
+    }
+  }
   existing.unshift(newLog);
   localStorage.setItem(`atlas_robo_logs_${eid}`, JSON.stringify(existing.slice(0, 100)));
 
@@ -133,7 +140,14 @@ export async function getLearnedRules(escritorioId: string): Promise<LearnedTaxR
 export async function saveLearnedRule(rule: LearnedTaxRule, escritorioId: string): Promise<void> {
   const eid = exigirEscritorio(escritorioId);
   const existingStr = localStorage.getItem(`atlas_robo_learned_rules_${eid}`);
-  const existing: LearnedTaxRule[] = existingStr ? JSON.parse(existingStr) : [];
+  let existing: LearnedTaxRule[] = [];
+  if (existingStr) {
+    try {
+      existing = JSON.parse(existingStr);
+    } catch (e) {
+      existing = [];
+    }
+  }
   
   const idx = existing.findIndex(r => r.id === rule.id || (r.uf === rule.uf && r.ncmPrefix === rule.ncmPrefix));
   if (idx >= 0) {
