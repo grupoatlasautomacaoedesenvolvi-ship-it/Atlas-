@@ -1968,75 +1968,94 @@ export function AllItemsView({
 
         {/* Data Table */}
         <div className="overflow-x-auto custom-scrollbar pb-2">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-[var(--atlas-border)] bg-[var(--atlas-surface)] text-[11px] font-bold text-[var(--atlas-navy)] uppercase tracking-wider">
-                <th className="p-3 w-10 text-center">
-                  <button onClick={toggleSelectAll} className="text-slate-500 hover:text-slate-700">
-                    {selectedKeys.size > 0 && selectedKeys.size === filteredItems.length ? (
-                      <CheckSquare className="w-4 h-4 text-[var(--atlas-navy)]" />
-                    ) : (
-                      <Square className="w-4 h-4" />
-                    )}
-                  </button>
-                </th>
-                <th className="p-3">Status</th>
-                <th className="p-3">Doc / Série</th>
-                <th className="p-3" style={{ fontFamily: 'var(--font-display)' }}>Item (C170)</th>
-                <th className="p-3">
-                  <div className="flex items-center space-x-1">
-                    <span>NCM (SPED / XML / Matriz)</span>
-                    <FiscalTooltip
-                      title="Nomenclatura Comum do Mercosul (NCM)"
-                      description="Código fiscal de 8 dígitos. Define enquadramento em substituição tributária (ICMS-ST), alíquota de IPI e tributação de PIS/COFINS (monofásico/alíquota zero)."
-                      lawRef="Decreto nº 11.158/2022 (TIPI)"
-                      badge="Mercosul"
-                    />
-                  </div>
-                </th>
-                <th className="p-3">
-                  <div className="flex items-center space-x-1">
-                    <span>CFOP (SPED / XML)</span>
-                    <FiscalTooltip
-                      title="Código Fiscal de Operações e Prestações (CFOP)"
-                      description="Identifica a natureza da circulação da mercadoria. O sistema valida o de-para entre a nota emitida pelo fornecedor (5.xxx/6.xxx) e a escrituração de entrada na empresa (1.xxx/2.xxx)."
-                      lawRef="Ajuste SINIEF 07/1971"
-                      badge="SINIEF"
-                    />
-                  </div>
-                </th>
-                <th className="p-3">
-                  <div className="flex items-center space-x-1">
-                    <span>CST (SPED / XML / Matriz)</span>
-                    <FiscalTooltip
-                      title="Código de Situação Tributária (CST ICMS)"
-                      description="Composto por 3 dígitos: 1º Dígito = Origem da Mercadoria (0 = Nacional, 1/2 = Importada); 2º e 3º Dígitos = Regra de Tributação (00 = Tributado, 60 = ST, 40 = Isento)."
-                      lawRef="Convênio s/nº de 15/12/1970 - Tabela B"
-                      badge="Regra CST"
-                    />
-                  </div>
-                </th>
-                <th className="p-3 text-right">Valor Item</th>
-                <th className="p-3 text-right">
-                  <div className="flex items-center justify-end space-x-1">
-                    <span>Tributação ICMS</span>
-                    <FiscalTooltip
-                      title="Destaque de ICMS & Base de Cálculo"
-                      description="Confronta a Base de Cálculo e o Valor do ICMS informados no SPED com a nota fiscal XML e com a matriz de alíquotas da UF."
-                      lawRef="Regulamento do ICMS (RICMS)"
-                    />
-                  </div>
-                </th>
-                <th className="p-3 text-center">Ações</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[var(--atlas-border)] text-xs">
+          <div className="min-w-[1280px]">
+            {/* Header */}
+            <div className="c170-header-row border-b border-[var(--atlas-border)] bg-[var(--atlas-surface)] text-xs text-[var(--atlas-navy)] uppercase tracking-wider whitespace-nowrap">
+              <div className="px-3 py-2.5 text-center">
+                <button onClick={toggleSelectAll} className="text-slate-500 hover:text-slate-700">
+                  {selectedKeys.size > 0 && selectedKeys.size === filteredItems.length ? (
+                    <CheckSquare className="w-4 h-4 text-[var(--atlas-navy)]" />
+                  ) : (
+                    <Square className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
+              <div className="px-3 py-2.5">Status</div>
+              <div className="px-3 py-2.5">Doc / Série</div>
+              <div className="px-3 py-2.5" style={{ fontFamily: 'var(--font-display)' }}>Item (C170)</div>
+               <div className="px-3 py-2.5">
+                <div className="flex items-center justify-between gap-1">
+                  <span className="whitespace-normal leading-tight text-[11px]">NCM (SPED / XML / Matriz)</span>
+                  <FiscalTooltip
+                    className="shrink-0"
+                    side="bottom"
+                    title="Nomenclatura Comum do Mercosul (NCM)"
+                    description="Código fiscal de 8 dígitos. Define enquadramento em substituição tributária (ICMS-ST), alíquota de IPI e tributação de PIS/COFINS (monofásico/alíquota zero)."
+                    lawRef="Decreto nº 11.158/2022 (TIPI)"
+                    badge="Mercosul"
+                  />
+                </div>
+              </div>
+              <div className="px-3 py-2.5">
+                <div className="flex items-center justify-between gap-1">
+                  <span className="whitespace-normal leading-tight text-[11px]">CFOP (SPED / XML)</span>
+                  <FiscalTooltip
+                    className="shrink-0"
+                    side="bottom"
+                    title="Código Fiscal de Operações e Prestações (CFOP)"
+                    description="Identifica a natureza da circulação da mercadoria. O sistema valida o de-para entre a nota emitida pelo fornecedor (5.xxx/6.xxx) e a escrituração de entrada na empresa (1.xxx/2.xxx)."
+                    lawRef="Ajuste SINIEF 07/1971"
+                    badge="SINIEF"
+                  />
+                </div>
+              </div>
+              <div className="px-3 py-2.5">
+                <div className="flex items-center justify-between gap-1">
+                  <span className="whitespace-normal leading-tight text-[11px]">CST (SPED / XML / Matriz)</span>
+                  <FiscalTooltip
+                    className="shrink-0"
+                    side="bottom"
+                    title="Código de Situação Tributária (CST ICMS)"
+                    description="Composto por 3 dígitos: 1º Dígito = Origem da Mercadoria (0 = Nacional, 1/2 = Importada); 2º e 3º Dígitos = Regra de Tributação (00 = Tributado, 60 = ST, 40 = Isento)."
+                    lawRef="Convênio s/nº de 15/12/1970 - Tabela B"
+                    badge="Regra CST"
+                  />
+                </div>
+              </div>
+              <div className="px-3 py-2.5 text-right">Valor Item</div>
+              <div className="px-3 py-2.5 text-right">
+                <div className="flex items-center justify-end gap-1">
+                  <span className="whitespace-normal leading-tight text-[11px]">Tributação ICMS</span>
+                  <FiscalTooltip
+                    className="shrink-0"
+                    side="bottom"
+                    title="Destaque de ICMS & Base de Cálculo"
+                    description="Confronta a Base de Cálculo e o Valor do ICMS informados no SPED com a nota fiscal XML e com a matriz de alíquotas da UF."
+                    lawRef="Regulamento do ICMS (RICMS)"
+                  />
+                </div>
+              </div>
+              <div className="px-3 py-2.5 text-center">
+                <div className="flex items-center justify-center gap-1">
+                  <span className="whitespace-normal leading-tight text-[11px]">Ações</span>
+                  <FiscalTooltip
+                    className="shrink-0"
+                    side="bottom"
+                    title="Ações e Auditoria de Itens"
+                    description="Gerencie cada item escriturado no Registro C170, visualize divergências entre SPED e XML, realize re-processamento tributário ou consulte detalhes fiscais."
+                    lawRef="Guia Prático EFD ICMS/IPI"
+                    badge="C170"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Body */}
+            <div className="divide-y divide-[var(--atlas-border)] text-xs">
               {paginatedItems.length === 0 ? (
-                <tr>
-                  <td colSpan={10} className="text-center py-12 text-[var(--atlas-text-muted)]">
-                    Nenhum item encontrado com os filtros selecionados.
-                  </td>
-                </tr>
+                <div className="text-center py-12 text-[var(--atlas-text-muted)]">
+                  Nenhum item encontrado com os filtros selecionados.
+                </div>
               ) : (
                 paginatedItems.map(({ doc, item, status, reason, xmlItem, fuzzyMatch, matrizRule, matrizDiff, matrizDiffReason }) => {
                   const key = `${doc.id}_${item.numItem}`;
@@ -2063,13 +2082,13 @@ export function AllItemsView({
                   const isMatrizAliqDiff = expAliq !== undefined && expAliq !== null ? Math.abs(curAliq - expAliq) > 0.01 : false;
 
                   return (
-                    <tr key={key} className={`c170-item-row atlas-list-row transition-colors ${rowBg}`}>
-                      <td className="p-3 text-center">
+                    <div key={key} className={`c170-item-row atlas-list-row transition-colors ${rowBg}`}>
+                      <div className="px-3 py-3 text-center">
                         <button onClick={() => toggleSelectItem(doc.id, item.numItem)} className="text-slate-500 hover:text-slate-700">
                           {isSelected ? <CheckSquare className="w-4 h-4 text-[var(--atlas-navy)]" /> : <Square className="w-4 h-4 text-slate-400" />}
                         </button>
-                      </td>
-                      <td className="p-3 whitespace-nowrap space-y-1">
+                      </div>
+                      <div className="px-3 py-3 whitespace-nowrap space-y-1">
                         <div className="flex items-center gap-1.5">
                           {status === 'OK' && !matrizDiff && (
                             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-800">
@@ -2127,8 +2146,8 @@ export function AllItemsView({
                             Reportar Erro Agente
                           </button>
                         </div>
-                      </td>
-                      <td className="p-3 text-[var(--atlas-text)] font-medium whitespace-nowrap">
+                      </div>
+                      <div className="px-3 py-3 text-[var(--atlas-text)] font-medium whitespace-nowrap">
                         <div className="text-xs font-semibold text-[var(--atlas-text)]">Doc: {doc.numDoc} <span className="text-[11px] font-normal text-[var(--atlas-text-muted)]">(Sér. {doc.serie || '0'})</span></div>
                         <div className="text-xs font-mono text-[var(--atlas-text-secondary)] truncate max-w-[120px]">{doc.cnpjEmit}</div>
                         {['02', '03', '04', '05'].includes(doc.codSit) && (
@@ -2145,8 +2164,8 @@ export function AllItemsView({
                             </span>
                           </div>
                         )}
-                      </td>
-                      <td className="p-3 min-w-[280px]">
+                      </div>
+                      <div className="px-3 py-3">
                         <div className="font-bold text-[var(--atlas-navy)] text-sm whitespace-nowrap c170-item-title" style={{ fontFamily: 'var(--font-display)' }}>
                           #{item.numItem} - {item.codItem}
                         </div>
@@ -2164,10 +2183,10 @@ export function AllItemsView({
                             <span>Fuzzy Match XML #{fuzzyMatch.xmlNItem} ({fuzzyMatch.score}%)</span>
                           </div>
                         )}
-                      </td>
+                      </div>
                       
                       {/* NCM Column */}
-                      <td className="p-3 font-mono text-sm whitespace-nowrap">
+                      <div className="px-3 py-3 font-mono text-sm whitespace-nowrap">
                         <div className="text-[var(--atlas-text)] font-bold text-sm" title="NCM cadastrado no arquivo SPED">SPED: {item.ncm || '-'}</div>
                         {xmlItem ? (
                           <div className={`mt-1 px-2 py-0.5 rounded inline-block text-xs font-semibold ${ncmDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-slate-100 text-slate-700'}`} title="NCM na Nota Fiscal XML">
@@ -2183,10 +2202,10 @@ export function AllItemsView({
                         ) : (
                           <div className="text-xs text-slate-400 italic mt-0.5">Sem cadastro na matriz</div>
                         )}
-                      </td>
+                      </div>
 
                       {/* CFOP Column */}
-                      <td className="p-3 font-mono text-sm whitespace-nowrap">
+                      <div className="px-3 py-3 font-mono text-sm whitespace-nowrap">
                         {inlineEditingKey === key ? (
                           <div>
                             <input
@@ -2207,10 +2226,10 @@ export function AllItemsView({
                         ) : (
                           <div className="text-xs text-slate-400 italic mt-0.5">XML não vinculado</div>
                         )}
-                      </td>
+                      </div>
 
                       {/* CST Column */}
-                      <td className="p-3 font-mono text-sm whitespace-nowrap">
+                      <div className="px-3 py-3 font-mono text-sm whitespace-nowrap">
                         {inlineEditingKey === key ? (
                           <div>
                             <input
@@ -2234,10 +2253,10 @@ export function AllItemsView({
                             Matriz: {matrizRule.expectedCst}
                           </div>
                         )}
-                      </td>
+                      </div>
 
                       {/* Valor Item Column */}
-                      <td className="p-3 text-right whitespace-nowrap font-mono text-sm">
+                      <div className="px-3 py-3 text-right whitespace-nowrap font-mono text-sm">
                         {inlineEditingKey === key ? (
                           <div className="flex justify-end">
                             <input
@@ -2258,10 +2277,10 @@ export function AllItemsView({
                         ) : (
                           <div className="text-xs text-slate-400 italic mt-0.5">XML não vinculado</div>
                         )}
-                      </td>
+                      </div>
 
                       {/* ICMS Column */}
-                      <td className="p-3 text-right whitespace-nowrap font-mono text-sm">
+                      <div className="px-3 py-3 text-right whitespace-nowrap font-mono text-sm">
                         {inlineEditingKey === key ? (
                           <div className="space-y-1">
                             <div className="flex items-center justify-end gap-1">
@@ -2322,10 +2341,10 @@ export function AllItemsView({
                             Matriz: {matrizRule.expectedAliqIcms}%
                           </div>
                         )}
-                      </td>
+                      </div>
 
                       {/* Actions */}
-                      <td className="p-3 text-center whitespace-nowrap">
+                      <div className="px-3 py-3 text-center whitespace-nowrap">
                         {inlineEditingKey === key ? (
                           <div className="flex items-center justify-center gap-1">
                             {xmlItem && (
@@ -2370,13 +2389,13 @@ export function AllItemsView({
                             </button>
                           </div>
                         )}
-                      </td>
-                    </tr>
+                      </div>
+                    </div>
                   );
                 })
               )}
-            </tbody>
-          </table>
+            </div>
+          </div>
         </div>
 
         {/* Pagination Footer */}

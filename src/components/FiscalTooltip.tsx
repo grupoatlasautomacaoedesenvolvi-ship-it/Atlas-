@@ -71,15 +71,14 @@ export function FiscalTooltip({
       {/* Popover Tooltip Panel */}
       {isOpen && (
         <div
-          onMouseLeave={() => setIsOpen(false)}
-          className={`absolute z-50 w-72 sm:w-80 p-4 bg-slate-900 text-white rounded-lg shadow-sm border border-slate-700 text-xs space-y-2.5 animate-in fade-in zoom-in-95 duration-150 ${sideClasses[side]}`}
-          style={{ pointerEvents: 'auto' }}
+          className={`absolute z-50 w-80 sm:w-96 p-4 text-white rounded-lg shadow-2xl border border-slate-700 text-xs space-y-2.5 animate-in fade-in zoom-in-95 duration-150 ${sideClasses[side]}`}
+          style={{ backgroundColor: '#0f172a', opacity: 1, pointerEvents: 'auto' }}
         >
           {/* Header */}
           <div className="flex items-start justify-between gap-2 border-b border-slate-800 pb-2">
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 flex-1 min-w-0">
               <Scale className="w-4 h-4 text-sky-400 shrink-0" />
-              <h4 className="font-bold text-white leading-tight">{title}</h4>
+              <h4 className="font-bold text-white leading-tight whitespace-normal break-words">{title}</h4>
             </div>
             {badge && (
               <span className="bg-[#1e3a5f]/40 text-sky-200 border border-[#1e3a5f] text-[10px] font-mono px-2 py-0.5 rounded-md shrink-0">
@@ -92,14 +91,14 @@ export function FiscalTooltip({
                 e.stopPropagation();
                 setIsOpen(false);
               }}
-              className="text-slate-400 hover:text-white transition p-0.5 rounded-md"
+              className="text-slate-400 hover:text-white transition p-0.5 rounded-md shrink-0"
             >
               <X className="w-3.5 h-3.5" />
             </button>
           </div>
 
           {/* Description */}
-          <p className="text-slate-300 leading-relaxed text-[11px]">
+          <p className="text-slate-300 leading-relaxed text-[11px] whitespace-normal break-words">
             {description}
           </p>
 
@@ -117,9 +116,9 @@ export function FiscalTooltip({
 
           {/* Legal Reference */}
           {lawRef && (
-            <div className="flex items-center space-x-1.5 text-[10px] text-sky-300 font-mono pt-1 border-t border-slate-800">
-              <BookOpen className="w-3 h-3 text-sky-400 shrink-0" />
-              <span className="truncate">Embasa: {lawRef}</span>
+            <div className="flex items-start space-x-1.5 text-[10px] text-sky-300 font-mono pt-1 border-t border-slate-800">
+              <BookOpen className="w-3 h-3 text-sky-400 shrink-0 mt-0.5" />
+              <span className="whitespace-normal break-words">Embasa: {lawRef}</span>
             </div>
           )}
         </div>

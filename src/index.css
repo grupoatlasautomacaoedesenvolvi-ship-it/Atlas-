@@ -445,8 +445,31 @@ html[data-palette="roxo"][data-mode="dark"] {
   transition: background-color 150ms ease;
 }
 
+.c170-header-row {
+  display: grid;
+  grid-template-columns: 48px minmax(90px, 0.8fr) minmax(110px, 1fr) minmax(140px, 1.2fr) minmax(170px, 1.5fr) minmax(120px, 1fr) minmax(170px, 1.5fr) minmax(110px, 1fr) minmax(200px, 1.8fr) minmax(48px, 70px);
+  align-items: center;
+  width: 100%;
+  min-width: 1300px;
+}
+
 .c170-item-row {
+  display: grid;
+  grid-template-columns: 48px minmax(90px, 0.8fr) minmax(110px, 1fr) minmax(140px, 1.2fr) minmax(170px, 1.5fr) minmax(120px, 1fr) minmax(170px, 1.5fr) minmax(110px, 1fr) minmax(200px, 1.8fr) minmax(48px, 70px);
+  align-items: center;
+  width: 100%;
+  min-width: 1300px;
   border-bottom: 1px solid var(--atlas-border);
+  transition: background-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+  transform-origin: center;
+}
+
+.c170-item-row:hover {
+  background-color: var(--atlas-surface-hover);
+  transform: scale(1.01);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  position: relative;
+  z-index: 10;
 }
 
 .c170-item-title {
