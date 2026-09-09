@@ -2,6 +2,13 @@ import { db, auth, isFirestoreQuotaExceeded, handleFirestoreWriteError } from '.
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { UserData } from './auth';
 
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => setTimeout(() => reject(new Error('firestore_write_timeout')), ms))
+  ]);
+}
+
 export interface ConferenciaParams {
   empresaNome: string;
   arquivoNome: string;
@@ -45,7 +52,7 @@ export async function trackLoginEvent(userData?: UserData | null) {
 
   try {
     if (!isFirestoreQuotaExceeded()) {
-      await addDoc(collection(db, 'eventosUso'), payload);
+      await withTimeout(addDoc(collection(db, 'eventosUso'), payload), 5000);
     }
   } catch (err) {
     handleFirestoreWriteError(err);
@@ -97,7 +104,7 @@ export async function trackConferenciaEvent({
 
   try {
     if (!isFirestoreQuotaExceeded()) {
-      await addDoc(collection(db, 'eventosUso'), payload);
+      await withTimeout(addDoc(collection(db, 'eventosUso'), payload), 5000);
     }
   } catch (err) {
     handleFirestoreWriteError(err);
@@ -130,7 +137,7 @@ export async function trackEvent(tipo: string, details?: Record<string, any>) {
 
   try {
     if (!isFirestoreQuotaExceeded()) {
-      await addDoc(collection(db, 'eventosUso'), payload);
+      await withTimeout(addDoc(collection(db, 'eventosUso'), payload), 5000);
     }
   } catch (err) {
     handleFirestoreWriteError(err);
