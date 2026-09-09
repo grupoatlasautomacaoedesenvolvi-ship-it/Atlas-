@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Sun, Moon, Palette } from 'lucide-react';
 
-export type PaletteType = 'navy' | 'grafite' | 'vinho' | 'rosa';
+export type PaletteType = 'navy' | 'grafite' | 'vinho' | 'rosa' | 'roxo';
 export type ModeType = 'light' | 'dark';
 
 interface ThemeSelectorProps {
@@ -53,6 +53,7 @@ export function ThemeSelector({ compact = true, className = '' }: ThemeSelectorP
           <option value="grafite">Tema: Atlas Grafite</option>
           <option value="vinho">Tema: Atlas Vinho</option>
           <option value="rosa">Tema: Atlas Rosa</option>
+          <option value="roxo">Tema: Atlas Roxo</option>
         </select>
       </div>
 

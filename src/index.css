@@ -69,7 +69,7 @@ html[data-palette="navy"][data-mode="light"], html[data-palette="navy"]:not([dat
   --atlas-text-muted: #8a8880;
 }
 
-html[data-palette="navy"][data-mode="dark"], html[data-mode="dark"]:not([data-palette="grafite"]):not([data-palette="vinho"]):not([data-palette="rosa"]) {
+html[data-palette="navy"][data-mode="dark"], html[data-mode="dark"]:not([data-palette="grafite"]):not([data-palette="vinho"]):not([data-palette="rosa"]):not([data-palette="roxo"]) {
   --atlas-navy: #6a93bd;
   --atlas-navy-dark: #4c729c;
   --atlas-accent: #34b092;
@@ -170,6 +170,37 @@ html[data-palette="rosa"][data-mode="dark"] {
   --atlas-text: #fce7f3;
   --atlas-text-secondary: #f472b6;
   --atlas-text-muted: #be185d;
+}
+
+/* PALETTE 5: ROXO (ATLAS PURPLE) */
+html[data-palette="roxo"][data-mode="light"], html[data-palette="roxo"]:not([data-mode="dark"]) {
+  --atlas-navy: #4c1d95;
+  --atlas-navy-dark: #3b0764;
+  --atlas-accent: #6d28d9;
+  --atlas-accent-dark: #4c1d95;
+  --atlas-purple: #4c1d95;
+  --atlas-bg: #f5f3ff;
+  --atlas-surface: #ffffff;
+  --atlas-surface-hover: #ede9fe;
+  --atlas-border: #ddd6fe;
+  --atlas-text: #1e1b4b;
+  --atlas-text-secondary: #4c1d95;
+  --atlas-text-muted: #6d28d9;
+}
+
+html[data-palette="roxo"][data-mode="dark"] {
+  --atlas-navy: #a78bfa;
+  --atlas-navy-dark: #8b5cf6;
+  --atlas-accent: #a78bfa;
+  --atlas-accent-dark: #8b5cf6;
+  --atlas-purple: #a78bfa;
+  --atlas-bg: #0f0d24;
+  --atlas-surface: #181538;
+  --atlas-surface-hover: #252152;
+  --atlas-border: #352f6b;
+  --atlas-text: #ede9fe;
+  --atlas-text-secondary: #a78bfa;
+  --atlas-text-muted: #8b5cf6;
 }
 
 @theme {
