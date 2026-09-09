@@ -1371,7 +1371,7 @@ export function AllItemsView({
   };
 
   return (
-    <div className="p-6 max-w-[1600px] mx-auto space-y-6">
+    <div className="p-6 max-w-[1780px] mx-auto space-y-6">
       {/* Header Banner */}
       <div className="atlas-card p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -1967,8 +1967,8 @@ export function AllItemsView({
         </div>
 
         {/* Data Table */}
-        <div className="overflow-x-auto custom-scrollbar pb-2">
-          <div className="min-w-[1280px]">
+        <div className="overflow-x-auto custom-scrollbar pb-2 px-4">
+          <div className="min-w-[1500px]">
             {/* Header */}
             <div className="c170-header-row border-b border-[var(--atlas-border)] bg-[var(--atlas-surface)] text-xs text-[var(--atlas-navy)] uppercase tracking-wider whitespace-nowrap">
               <div className="px-3 py-2.5 text-center">
@@ -2082,7 +2082,7 @@ export function AllItemsView({
                   const isMatrizAliqDiff = expAliq !== undefined && expAliq !== null ? Math.abs(curAliq - expAliq) > 0.01 : false;
 
                   return (
-                    <div key={key} className={`c170-item-row atlas-list-row transition-colors ${rowBg}`}>
+                    <div key={key} className={`c170-item-row transition-colors ${rowBg}`}>
                       <div className="px-3 py-3 text-center">
                         <button onClick={() => toggleSelectItem(doc.id, item.numItem)} className="text-slate-500 hover:text-slate-700">
                           {isSelected ? <CheckSquare className="w-4 h-4 text-[var(--atlas-navy)]" /> : <Square className="w-4 h-4 text-slate-400" />}
@@ -2106,7 +2106,7 @@ export function AllItemsView({
                             </span>
                           )}
                         </div>
-                        <div className="flex flex-col gap-1">
+                        <div className="flex flex-col gap-1.5">
                           {(item.isModified || item.correctedByRobot) && (
                             <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-100 text-blue-800 border border-blue-200" title="Este produto/item já foi alterado ou corrigido. Evite alterar novamente por engano.">
                               Item Alterado
@@ -2140,7 +2140,7 @@ export function AllItemsView({
                               });
                               setReportModalOpen(true);
                             }}
-                            className="inline-flex items-center justify-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200 transition-colors mt-0.5"
+                            className="inline-flex items-center justify-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200 transition-colors mt-0.5 pt-0.5"
                             title="Reportar equívoco do Agente AI para refinamento do prompt"
                           >
                             Reportar Erro Agente
@@ -2280,7 +2280,7 @@ export function AllItemsView({
                       </div>
 
                       {/* ICMS Column */}
-                      <div className="px-3 py-3 text-right whitespace-nowrap font-mono text-sm">
+                      <div className="px-3 py-3 text-right whitespace-normal min-w-[170px] font-mono text-sm">
                         {inlineEditingKey === key ? (
                           <div className="space-y-1">
                             <div className="flex items-center justify-end gap-1">
@@ -2344,7 +2344,7 @@ export function AllItemsView({
                       </div>
 
                       {/* Actions */}
-                      <div className="px-3 py-3 text-center whitespace-nowrap">
+                      <div className="px-3 py-3 text-center whitespace-nowrap pl-4">
                         {inlineEditingKey === key ? (
                           <div className="flex items-center justify-center gap-1">
                             {xmlItem && (

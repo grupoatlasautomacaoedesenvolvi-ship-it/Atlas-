@@ -447,21 +447,33 @@ html[data-palette="roxo"][data-mode="dark"] {
 
 .c170-header-row {
   display: grid;
-  grid-template-columns: 48px minmax(90px, 0.8fr) minmax(110px, 1fr) minmax(140px, 1.2fr) minmax(170px, 1.5fr) minmax(120px, 1fr) minmax(170px, 1.5fr) minmax(110px, 1fr) minmax(200px, 1.8fr) minmax(48px, 70px);
+  grid-template-columns: 44px minmax(90px, 0.8fr) minmax(110px, 1fr) minmax(260px, 2.5fr) minmax(170px, 1.3fr) minmax(120px, 1fr) minmax(170px, 1.3fr) minmax(120px, 1fr) minmax(200px, 1.8fr) minmax(120px, 130px);
+  gap: 8px;
   align-items: center;
   width: 100%;
-  min-width: 1300px;
+  min-width: 1520px;
+}
+
+.c170-header-row > * {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
 }
 
 .c170-item-row {
   display: grid;
-  grid-template-columns: 48px minmax(90px, 0.8fr) minmax(110px, 1fr) minmax(140px, 1.2fr) minmax(170px, 1.5fr) minmax(120px, 1fr) minmax(170px, 1.5fr) minmax(110px, 1fr) minmax(200px, 1.8fr) minmax(48px, 70px);
+  grid-template-columns: 44px minmax(90px, 0.8fr) minmax(110px, 1fr) minmax(260px, 2.5fr) minmax(170px, 1.3fr) minmax(120px, 1fr) minmax(170px, 1.3fr) minmax(120px, 1fr) minmax(200px, 1.8fr) minmax(120px, 130px);
+  gap: 8px;
   align-items: center;
   width: 100%;
-  min-width: 1300px;
+  min-width: 1520px;
   border-bottom: 1px solid var(--atlas-border);
   transition: background-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
   transform-origin: center;
+}
+
+.c170-item-row > * {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
 }
 
 .c170-item-row:hover {
