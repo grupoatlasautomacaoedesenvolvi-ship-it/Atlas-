@@ -2166,7 +2166,7 @@ export function AllItemsView({
                         )}
                       </div>
                       <div className="px-3 py-3">
-                        <div className="font-bold text-[var(--atlas-navy)] text-sm whitespace-nowrap c170-item-title" style={{ fontFamily: 'var(--font-display)' }}>
+                        <div className="font-bold text-[var(--atlas-navy)] text-xs whitespace-nowrap c170-item-title" style={{ fontFamily: 'var(--font-display)' }}>
                           #{item.numItem} - {item.codItem}
                         </div>
                         <div className="text-xs text-[var(--atlas-text)] font-medium leading-relaxed whitespace-normal break-words mt-0.5 c170-item-title" style={{ fontFamily: 'var(--font-display)' }} title={item.descrItem}>
@@ -2186,8 +2186,8 @@ export function AllItemsView({
                       </div>
                       
                       {/* NCM Column */}
-                      <div className="px-3 py-3 font-mono text-sm whitespace-nowrap">
-                        <div className="text-[var(--atlas-text)] font-bold text-sm" title="NCM cadastrado no arquivo SPED">SPED: {item.ncm || '-'}</div>
+                      <div className="px-3 py-3 font-mono text-xs whitespace-nowrap">
+                        <div className="text-[var(--atlas-text)] font-bold text-xs" title="NCM cadastrado no arquivo SPED">SPED: {item.ncm || '-'}</div>
                         {xmlItem ? (
                           <div className={`mt-1 px-2 py-0.5 rounded inline-block text-xs font-semibold ${ncmDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-slate-100 text-slate-700'}`} title="NCM na Nota Fiscal XML">
                             XML: {xmlItem.ncm || '-'}
@@ -2205,7 +2205,7 @@ export function AllItemsView({
                       </div>
 
                       {/* CFOP Column */}
-                      <div className="px-3 py-3 font-mono text-sm whitespace-nowrap">
+                      <div className="px-3 py-3 font-mono text-xs whitespace-nowrap">
                         {inlineEditingKey === key ? (
                           <div>
                             <input
@@ -2217,7 +2217,7 @@ export function AllItemsView({
                             />
                           </div>
                         ) : (
-                          <div className="text-[var(--atlas-text)] font-bold text-sm">SPED: {item.cfop || '-'}</div>
+                          <div className="text-[var(--atlas-text)] font-bold text-xs">SPED: {item.cfop || '-'}</div>
                         )}
                         {xmlItem ? (
                           <div className={`mt-1 px-2 py-0.5 rounded inline-block text-xs font-semibold ${cfopDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-slate-100 text-slate-700'}`}>
@@ -2229,7 +2229,7 @@ export function AllItemsView({
                       </div>
 
                       {/* CST Column */}
-                      <div className="px-3 py-3 font-mono text-sm whitespace-nowrap">
+                      <div className="px-3 py-3 font-mono text-xs whitespace-nowrap">
                         {inlineEditingKey === key ? (
                           <div>
                             <input
@@ -2241,7 +2241,7 @@ export function AllItemsView({
                             />
                           </div>
                         ) : (
-                          <div className="text-[var(--atlas-text)] font-bold text-sm">SPED: {item.cstIcms ? item.cstIcms.padStart(3, '0') : '-'}</div>
+                          <div className="text-[var(--atlas-text)] font-bold text-xs">SPED: {item.cstIcms ? item.cstIcms.padStart(3, '0') : '-'}</div>
                         )}
                         {xmlItem && (
                           <div className={`mt-1 px-2 py-0.5 rounded inline-block text-xs font-semibold ${cstDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-slate-100 text-slate-700'}`}>
@@ -2256,7 +2256,7 @@ export function AllItemsView({
                       </div>
 
                       {/* Valor Item Column */}
-                      <div className="px-3 py-3 text-right whitespace-nowrap font-mono text-sm">
+                      <div className="px-3 py-3 text-right whitespace-nowrap font-mono text-xs">
                         {inlineEditingKey === key ? (
                           <div className="flex justify-end">
                             <input
@@ -2268,7 +2268,7 @@ export function AllItemsView({
                             />
                           </div>
                         ) : (
-                          <div className="text-[var(--atlas-navy)] font-bold text-sm">SPED: R$ {item.vlItem.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                          <div className="text-[var(--atlas-navy)] font-bold text-xs">SPED: R$ {item.vlItem.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
                         )}
                         {xmlItem ? (
                           <div className={`mt-1 px-2 py-0.5 rounded inline-block text-xs font-semibold ${valDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-slate-100 text-slate-700'}`}>
@@ -2280,7 +2280,7 @@ export function AllItemsView({
                       </div>
 
                       {/* ICMS Column */}
-                      <div className="px-3 py-3 text-right whitespace-normal min-w-[170px] font-mono text-sm">
+                      <div className="px-3 py-3 text-right whitespace-nowrap min-w-[200px] font-mono text-xs">
                         {inlineEditingKey === key ? (
                           <div className="space-y-1">
                             <div className="flex items-center justify-end gap-1">
@@ -2327,7 +2327,7 @@ export function AllItemsView({
                             </div>
                           </div>
                         ) : (
-                          <div className="text-[var(--atlas-navy)] font-bold text-sm" title="Base de Cálculo, Alíquota e Valor do ICMS no SPED">
+                          <div className="text-[var(--atlas-navy)] font-bold text-xs" title="Base de Cálculo, Alíquota e Valor do ICMS no SPED">
                             <span className="text-[var(--atlas-text-secondary)] font-medium text-xs">SPED:</span> BC R$ {(item.vlBcIcms || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-[var(--atlas-text-muted)] font-normal">|</span> {item.aliqIcms}% <span className="text-[var(--atlas-text-muted)] font-normal">|</span> R$ {(item.vlIcms || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                           </div>
                         )}
