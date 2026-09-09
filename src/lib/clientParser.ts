@@ -410,6 +410,16 @@ export async function parseSpedContent(
     }
   });
 
+  // Agrupa C190 por docId uma única vez (O(n)) em vez de filtrar c190RawList
+  // dentro do forEach de documentos (o que era O(documentos x c190), ou seja,
+  // quadrático - a causa da lentidão em SPEDs grandes).
+  const c190ByDoc = new Map<string, typeof c190RawList>();
+  for (const c190 of c190RawList) {
+    const list = c190ByDoc.get(c190.docId);
+    if (list) list.push(c190);
+    else c190ByDoc.set(c190.docId, [c190]);
+  }
+
   const reconciliation: SpedC190Reconciliation[] = [];
   documents.forEach(doc => {
     const itemGroups = new Map<string, number>();
@@ -418,7 +428,7 @@ export async function parseSpedContent(
       itemGroups.set(key, (itemGroups.get(key) || 0) + item.vlItem);
     });
 
-    const docC190s = c190RawList.filter(c => c.docId === doc.id);
+    const docC190s = c190ByDoc.get(doc.id) || [];
     docC190s.forEach(c190 => {
       const key = `${c190.cstIcms}_${c190.cfop}`;
       const somaItens = itemGroups.get(key) || 0;
