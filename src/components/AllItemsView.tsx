@@ -1309,7 +1309,7 @@ export function AllItemsView({
     }
 
     const confirmRun = window.confirm(
-      `🤖 Robô C170: O robô identificou ${divergentItems.length} item(ns) com divergência de CST e/ou CFOP em relação à Matriz Tributária. Deseja realizar a correção automática e registrar na base de aprendizagem constante?`
+      `Robô C170: O robô identificou ${divergentItems.length} item(ns) com divergência de CST e/ou CFOP em relação à Matriz Tributária. Deseja realizar a correção automática e registrar na base de aprendizagem constante?`
     );
 
     if (confirmRun) {
@@ -1328,7 +1328,7 @@ export function AllItemsView({
       setLearnedPatternsCount(newCount);
       localStorage.setItem('atlas_learned_patterns_count', String(newCount));
 
-      alert(`✅ Robô C170 executado com sucesso!\n- ${divergentItems.length} itens corrigidos (CST e CFOP).\n- Aprendizagem Constante: Padrões tributários assimilados e memorizados (${newCount} regras ativas na IA).`);
+      alert(`Robô C170 executado com sucesso!\n- ${divergentItems.length} itens corrigidos (CST e CFOP).\n- Aprendizagem Constante: Padrões tributários assimilados e memorizados (${newCount} regras ativas na IA).`);
     }
   };
 
@@ -1373,15 +1373,15 @@ export function AllItemsView({
   return (
     <div className="p-6 max-w-[1600px] mx-auto space-y-6">
       {/* Header Banner */}
-      <div className="bg-white rounded-lg p-6 border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="atlas-card p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2">
-            <Layers className="w-6 h-6 text-[#1e3a5f]" />
-            <h1 className="text-xl font-extrabold text-[#1e3a5f] tracking-tight">
+            <Layers className="w-6 h-6 text-[var(--atlas-navy)]" />
+            <h1 className="text-xl font-extrabold text-[var(--atlas-navy)] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
               Todos os Itens & Comparativo SPED vs XML vs Matriz Fiscal
             </h1>
           </div>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-[var(--atlas-text-secondary)] mt-1">
             Confronto minucioso entre o SPED EFD (C170), os arquivos XML das notas e o Banco de Dados de Regras Tributárias estaduais.
           </p>
         </div>
@@ -1390,7 +1390,7 @@ export function AllItemsView({
           {hasHistory && onUndoChanges && (
             <button
               onClick={onUndoChanges}
-              className="px-3.5 py-2 border border-slate-200 text-slate-700 bg-white hover:bg-slate-50 rounded-xl text-xs font-semibold transition-colors flex items-center space-x-1.5 shadow-xs"
+              className="atlas-btn atlas-btn-secondary py-2 px-3.5 text-xs"
             >
               <span>Desfazer Alterações</span>
             </button>
@@ -1398,19 +1398,19 @@ export function AllItemsView({
 
           <button
             onClick={handleFixIcmsBaseAll}
-            className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-colors flex items-center space-x-1.5 shadow-xs"
+            className="atlas-btn atlas-btn-primary py-2 px-3.5 text-xs font-bold"
             title="Ajustar automaticamente todas as diferenças de base e valor de ICMS com base nos arquivos XML"
           >
-            <RefreshCw className="w-4 h-4 text-white" />
+            <RefreshCw className="w-3.5 h-3.5" />
             <span>Ajustar Bases ICMS pelo XML</span>
           </button>
 
           {onExportSped && (
             <button
               onClick={onExportSped}
-              className="px-3.5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-semibold transition-colors flex items-center space-x-1.5 shadow-xs"
+              className="atlas-btn atlas-btn-primary py-2 px-3.5 text-xs font-bold"
             >
-              <FileText className="w-4 h-4" />
+              <FileText className="w-3.5 h-3.5" />
               <span>Exportar SPED Ajustado TXT</span>
             </button>
           )}
@@ -1418,32 +1418,32 @@ export function AllItemsView({
           {onRecalculateStructure && (
             <button
               onClick={onRecalculateStructure}
-              className="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-colors flex items-center space-x-1.5 shadow-xs"
+              className="atlas-btn atlas-btn-primary py-2 px-3.5 text-xs font-bold"
               title="Sincronizar Estrutura C100/C190: Força o recálculo dos totais dos blocos C190 baseados nos itens atuais do SPED, corrigindo eventuais duplicidades de registros órfãos"
             >
-              <RefreshCw className="w-4 h-4 text-white" />
+              <RefreshCw className="w-3.5 h-3.5" />
               <span>Sincronizar Estrutura C100/C190</span>
             </button>
           )}
 
           <button
             onClick={handleRunRobotC170Correction}
-            className="px-3.5 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold transition-colors flex items-center space-x-1.5 shadow-sm"
+            className="atlas-btn atlas-btn-primary py-2 px-3.5 text-xs font-bold"
             title="Atuação do Robô C170: Corrige automaticamente CST e CFOP divergentes com base na Matriz Tributária e Aprendizagem Constante"
           >
-            <RefreshCw className="w-4 h-4 text-white animate-spin-slow" />
-            <span>🤖 Executar Robô C170 (CST/CFOP)</span>
+            <RefreshCw className="w-3.5 h-3.5 animate-spin-slow" />
+            <span>Executar Robô C170 (CST/CFOP)</span>
           </button>
 
           <button
             onClick={handleExportMissingXmlPDF}
-            className="px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold transition-colors flex items-center space-x-1.5 shadow-xs"
+            className="atlas-btn atlas-btn-primary py-2 px-3.5 text-xs font-bold"
             title="Exportar relatório em PDF das notas fiscais e XMLs faltantes/omissos"
           >
-            <FileText className="w-4 h-4 text-white" />
+            <FileText className="w-3.5 h-3.5" />
             <span>Exportar Notas Faltantes</span>
             {totalMissingXmlCount > 0 && (
-              <span className="bg-[#1e3a5f] text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded-full ml-1">
+              <span className="atlas-pill atlas-pill-navy bg-white/20 text-white ml-1 border-white/30">
                 {totalMissingXmlCount}
               </span>
             )}
@@ -1451,9 +1451,9 @@ export function AllItemsView({
 
           <button
             onClick={handleExportCsv}
-            className="px-3.5 py-2 border border-slate-200 text-slate-700 bg-white hover:bg-slate-50 rounded-xl text-xs font-semibold transition-colors flex items-center space-x-1.5 shadow-xs"
+            className="atlas-btn atlas-btn-primary py-2 px-3.5 text-xs font-bold"
           >
-            <Download className="w-4 h-4 text-slate-500" />
+            <Download className="w-3.5 h-3.5" />
             <span>Exportar CSV</span>
           </button>
         </div>
@@ -1461,17 +1461,17 @@ export function AllItemsView({
 
       {/* Lembrete Discreto: XMLs Faltantes ou Omissos */}
       {totalMissingXmlCount > 0 && (
-        <div className="bg-amber-50/80 border border-amber-200/90 rounded-xl px-4 py-2.5 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+        <div className="bg-[var(--atlas-warning-bg)] border-b-2 border-[var(--atlas-warning)] rounded-xl px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
           <div className="flex items-center space-x-2.5 min-w-0">
-            <span className="inline-flex items-center justify-center p-1 bg-amber-100 text-amber-800 rounded-md shrink-0">
-              <AlertTriangle className="w-4 h-4 text-amber-700" />
+            <span className="inline-flex items-center justify-center p-1.5 bg-[var(--atlas-surface)] text-[var(--atlas-warning)] rounded-md shrink-0 border border-[var(--atlas-border)]">
+              <AlertTriangle className="w-4 h-4 text-[var(--atlas-warning)]" />
             </span>
-            <div className="flex items-center space-x-2 flex-wrap text-slate-800">
-              <span className="font-bold text-amber-950">Notas Faltantes:</span>
-              <span className="bg-amber-200/80 text-amber-950 font-extrabold px-2 py-0.5 rounded-md text-[11px] border border-amber-300/50">
+            <div className="flex items-center space-x-2 flex-wrap text-[var(--atlas-text)]">
+              <span className="font-bold text-[var(--atlas-text)]" style={{ fontFamily: 'var(--font-display)' }}>Notas Faltantes Mapeadas:</span>
+              <span className="atlas-pill atlas-pill-warning font-bold">
                 {totalMissingXmlCount} pendência(s)
               </span>
-              <span className="text-slate-600 hidden md:inline">
+              <span className="text-[var(--atlas-text-secondary)] hidden md:inline">
                 ({missingXmlDocs.length} SPED sem XML | {omissaXmls.length} XMLs sem SPED)
               </span>
             </div>
@@ -1480,15 +1480,15 @@ export function AllItemsView({
           <div className="flex items-center space-x-2 shrink-0 self-end sm:self-auto">
             <button
               onClick={() => setMissingXmlModalOpen(true)}
-              className="px-2.5 py-1 bg-white hover:bg-amber-100/60 text-amber-900 border border-amber-300/80 rounded-lg font-bold text-[11px] transition-colors flex items-center space-x-1 cursor-pointer"
+              className="atlas-btn atlas-btn-primary py-1 px-2.5 text-xs cursor-pointer"
             >
-              <Eye className="w-3.5 h-3.5 text-amber-700" />
+              <Eye className="w-3.5 h-3.5" />
               <span>Ver Detalhes</span>
             </button>
 
             <button
               onClick={handleExportMissingXmlPDF}
-              className="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-bold text-[11px] transition-colors flex items-center space-x-1 shadow-2xs cursor-pointer"
+              className="atlas-btn atlas-btn-primary py-1 px-2.5 text-xs cursor-pointer"
               title="Baixar relatório PDF das notas faltantes"
             >
               <FileText className="w-3.5 h-3.5" />
@@ -1497,7 +1497,7 @@ export function AllItemsView({
 
             <button
               onClick={handleExportMissingXmlCSV}
-              className="px-2.5 py-1 bg-[#1e3a5f] hover:bg-[#142c47] text-white rounded-lg font-bold text-[11px] transition-colors flex items-center space-x-1 shadow-2xs cursor-pointer"
+              className="atlas-btn atlas-btn-primary py-1 px-2.5 text-xs cursor-pointer"
               title="Baixar planilha CSV das notas faltantes"
             >
               <Download className="w-3.5 h-3.5" />
@@ -1507,29 +1507,32 @@ export function AllItemsView({
         </div>
       )}
 
-      {/* Aprendizagem Constante & Status Banner */}
-      <div className="bg-gradient-to-r from-purple-900 via-[#1e3a5f] to-slate-900 text-white rounded-2xl p-5 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4 border border-purple-800/50">
+      {/* Aprendizagem Constante & Status Banner (Card Executivo Marinho de Alto Contraste) */}
+      <div 
+        className="atlas-card p-5 shadow-md flex flex-col md:flex-row items-center justify-between gap-4 border-0 text-white"
+        style={{ background: 'linear-gradient(135deg, var(--atlas-navy) 0%, var(--atlas-navy-dark) 100%)' }}
+      >
         <div className="flex items-center space-x-3.5">
-          <div className="p-3 bg-white/10 rounded-xl backdrop-blur-sm">
-            <RefreshCw className="w-6 h-6 text-purple-300 animate-spin-slow" />
+          <div className="p-3 bg-white/10 rounded-xl backdrop-blur-sm shrink-0 border border-white/10">
+            <RefreshCw className="w-5 h-5 text-emerald-300 animate-spin-slow" />
           </div>
           <div>
-            <h2 className="text-sm font-extrabold flex items-center gap-2">
+            <h2 className="text-sm font-bold text-white flex items-center gap-2" style={{ fontFamily: 'var(--font-display)' }}>
               <span>Módulo Robô C170 & Aprendizagem Constante Ativa</span>
-              <span className="text-[10px] bg-emerald-500 text-white px-2 py-0.5 rounded-full font-mono uppercase tracking-wider">IA Ativa</span>
+              <span className="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 px-2 py-0.5 rounded-full font-mono uppercase tracking-wider font-semibold">IA Ativa</span>
             </h2>
-            <p className="text-xs text-purple-200 mt-0.5">
-              O robô atua no painel C170 validando e corrigindo autonomamente divergências de **CST e CFOP** com confirmação da Matriz. Cada conferência e ajuste alimenta o motor de **aprendizagem constante** para auditorias futuras.
+            <p className="text-xs text-blue-100/90 mt-0.5">
+              O robô atua no painel C170 validando e corrigindo autonomamente divergências de <strong>CST e CFOP</strong> com confirmação da Matriz. Cada conferência alimenta o motor de aprendizagem para auditorias futuras.
             </p>
           </div>
         </div>
         <div className="flex items-center gap-4 bg-white/10 px-5 py-2.5 rounded-xl backdrop-blur-sm text-xs font-mono shrink-0 border border-white/10">
           <div>
-            <span className="block text-[10px] text-purple-300 uppercase tracking-wider">Padrões Aprendidos:</span>
+            <span className="block text-[10px] text-blue-200 uppercase tracking-wider font-sans font-semibold">Padrões Aprendidos</span>
             <span className="font-bold text-white text-sm">{learnedPatternsCount} regras</span>
           </div>
           <div className="border-l border-white/20 pl-4">
-            <span className="block text-[10px] text-purple-300 uppercase tracking-wider">Conferência Analista:</span>
+            <span className="block text-[10px] text-blue-200 uppercase tracking-wider font-sans font-semibold">Conferência Analista</span>
             <span className="font-bold text-emerald-300 text-sm">
               {enrichedItems.filter(i => i.item.analystConfirmed).length} / {counts.total} conferidos
             </span>
@@ -1540,10 +1543,10 @@ export function AllItemsView({
       {/* Dynamic Totalizers (Recalculated automatically on filter changes) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Card 1: Valor Total dos Produtos / Itens */}
-        <div className="bg-white rounded-lg p-5 border border-slate-200 shadow-xs flex flex-col justify-between">
+        <div className="atlas-card p-5 flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-              <Calculator className="w-4 h-4 text-blue-600" />
+            <span className="text-xs font-bold text-[var(--atlas-navy)] uppercase tracking-wider flex items-center gap-1.5" style={{ fontFamily: 'var(--font-display)' }}>
+              <Calculator className="w-4 h-4 text-[var(--atlas-navy)]" />
               <span>Valor Total dos Produtos (vlItem)</span>
               <FiscalTooltip
                 title="Valor Total dos Produtos (Registro C170 / XML)"
@@ -1552,25 +1555,25 @@ export function AllItemsView({
                 badge="C170 vs XML"
               />
             </span>
-            <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600">
+            <span className="atlas-pill atlas-pill-navy">
               {totals.itemCount} item(ns)
             </span>
           </div>
           <div className="mt-4 space-y-2">
             <div className="flex justify-between items-baseline text-xs">
-              <span className="text-slate-600 font-medium">SPED (C170):</span>
-              <span className="font-bold font-mono text-slate-900 text-sm">
+              <span className="text-[var(--atlas-text-secondary)] font-medium">SPED (C170):</span>
+              <span className="font-bold font-mono text-[var(--atlas-navy)] text-sm">
                 {totals.spedVlItem.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               </span>
             </div>
             <div className="flex justify-between items-baseline text-xs">
-              <span className="text-slate-600 font-medium">XML (Notas):</span>
-              <span className="font-bold font-mono text-slate-900 text-sm">
+              <span className="text-[var(--atlas-text-secondary)] font-medium">XML (Notas):</span>
+              <span className="font-bold font-mono text-[var(--atlas-text)] text-sm">
                 {totals.xmlVlItem.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               </span>
             </div>
-            <div className="pt-2 border-t border-slate-100 flex justify-between items-center text-xs">
-              <span className="text-slate-500 font-semibold">Diferença SPED - XML:</span>
+            <div className="pt-2 border-t border-[var(--atlas-border)] flex justify-between items-center text-xs">
+              <span className="text-[var(--atlas-text-muted)] font-semibold">Diferença SPED - XML:</span>
               <span className={`font-bold font-mono px-2 py-0.5 rounded-md text-xs ${
                 Math.abs(totals.diffVlItem) <= 0.05
                   ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
@@ -1583,10 +1586,10 @@ export function AllItemsView({
         </div>
 
         {/* Card 2: Base de Cálculo do ICMS */}
-        <div className="bg-white rounded-lg p-5 border border-slate-200 shadow-xs flex flex-col justify-between">
+        <div className="atlas-card p-5 flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-              <Scale className="w-4 h-4 text-indigo-600" />
+            <span className="text-xs font-bold text-[var(--atlas-navy)] uppercase tracking-wider flex items-center gap-1.5" style={{ fontFamily: 'var(--font-display)' }}>
+              <Scale className="w-4 h-4 text-[var(--atlas-navy)]" />
               <span>Base de Cálculo ICMS (vlBcIcms)</span>
               <FiscalTooltip
                 title="Base de Cálculo do ICMS (Regra de Entrada/Saída)"
@@ -1595,25 +1598,25 @@ export function AllItemsView({
                 badge="LC 87/96"
               />
             </span>
-            <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700">
+            <span className="atlas-pill atlas-pill-accent">
               {totals.itemsWithXmlCount} c/ XML
             </span>
           </div>
           <div className="mt-4 space-y-2">
             <div className="flex justify-between items-baseline text-xs">
-              <span className="text-slate-600 font-medium">SPED (C170):</span>
-              <span className="font-bold font-mono text-slate-900 text-sm">
+              <span className="text-[var(--atlas-text-secondary)] font-medium">SPED (C170):</span>
+              <span className="font-bold font-mono text-[var(--atlas-navy)] text-sm">
                 {totals.spedVlBcIcms.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               </span>
             </div>
             <div className="flex justify-between items-baseline text-xs">
-              <span className="text-slate-600 font-medium">XML (Notas):</span>
-              <span className="font-bold font-mono text-slate-900 text-sm">
+              <span className="text-[var(--atlas-text-secondary)] font-medium">XML (Notas):</span>
+              <span className="font-bold font-mono text-[var(--atlas-text)] text-sm">
                 {totals.xmlVlBcIcms.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               </span>
             </div>
-            <div className="pt-2 border-t border-slate-100 flex justify-between items-center text-xs">
-              <span className="text-slate-500 font-semibold">Diferença SPED - XML:</span>
+            <div className="pt-2 border-t border-[var(--atlas-border)] flex justify-between items-center text-xs">
+              <span className="text-[var(--atlas-text-muted)] font-semibold">Diferença SPED - XML:</span>
               <span className={`font-bold font-mono px-2 py-0.5 rounded-md text-xs ${
                 Math.abs(totals.diffVlBcIcms) <= 0.05
                   ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
@@ -1626,10 +1629,10 @@ export function AllItemsView({
         </div>
 
         {/* Card 3: Valor do ICMS */}
-        <div className="bg-white rounded-lg p-5 border border-slate-200 shadow-xs flex flex-col justify-between">
+        <div className="atlas-card p-5 flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-              <FileText className="w-4 h-4 text-emerald-600" />
+            <span className="text-xs font-bold text-[var(--atlas-navy)] uppercase tracking-wider flex items-center gap-1.5" style={{ fontFamily: 'var(--font-display)' }}>
+              <FileText className="w-4 h-4 text-[var(--atlas-navy)]" />
               <span>Valor do ICMS (vlIcms)</span>
               <FiscalTooltip
                 title="Imposto Debitado ou Creditado"
@@ -1638,25 +1641,25 @@ export function AllItemsView({
                 badge="Crédito / Débito"
               />
             </span>
-            <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700">
-              {activeFiltersCount > 0 ? `${activeFiltersCount} filtro(s)` : 'Todos os registros'}
+            <span className="atlas-pill atlas-pill-navy">
+              {activeFiltersCount > 0 ? `${activeFiltersCount} filtro(s)` : 'Todos'}
             </span>
           </div>
           <div className="mt-4 space-y-2">
             <div className="flex justify-between items-baseline text-xs">
-              <span className="text-slate-600 font-medium">SPED (C170):</span>
-              <span className="font-bold font-mono text-slate-900 text-sm">
+              <span className="text-[var(--atlas-text-secondary)] font-medium">SPED (C170):</span>
+              <span className="font-bold font-mono text-[var(--atlas-navy)] text-sm">
                 {totals.spedVlIcms.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               </span>
             </div>
             <div className="flex justify-between items-baseline text-xs">
-              <span className="text-slate-600 font-medium">XML (Notas):</span>
-              <span className="font-bold font-mono text-slate-900 text-sm">
+              <span className="text-[var(--atlas-text-secondary)] font-medium">XML (Notas):</span>
+              <span className="font-bold font-mono text-[var(--atlas-text)] text-sm">
                 {totals.xmlVlIcms.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               </span>
             </div>
-            <div className="pt-2 border-t border-slate-100 flex justify-between items-center text-xs">
-              <span className="text-slate-500 font-semibold">Diferença SPED - XML:</span>
+            <div className="pt-2 border-t border-[var(--atlas-border)] flex justify-between items-center text-xs">
+              <span className="text-[var(--atlas-text-muted)] font-semibold">Diferença SPED - XML:</span>
               <span className={`font-bold font-mono px-2 py-0.5 rounded-md text-xs ${
                 Math.abs(totals.diffVlIcms) <= 0.05
                   ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
@@ -1670,9 +1673,9 @@ export function AllItemsView({
       </div>
 
       {/* Main Table Container */}
-      <div className="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden">
+      <div className="atlas-card p-0 overflow-hidden">
         {/* Filters and Controls */}
-        <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-col space-y-3">
+        <div className="p-4 border-b border-[var(--atlas-border)] bg-[var(--atlas-surface)] flex flex-col space-y-3">
           {/* Row 1: Status pills & Search */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
@@ -1768,8 +1771,8 @@ export function AllItemsView({
             <MultiSelectDropdown
               label="Analista"
               options={[
-                { value: 'CONFIRMED', label: '✅ Conferido pelo Analista' },
-                { value: 'PENDING', label: '⏳ Pendente de Conferência' }
+                { value: 'CONFIRMED', label: 'Conferido pelo Analista' },
+                { value: 'PENDING', label: 'Pendente de Conferência' }
               ]}
               selectedValues={analystFilter}
               onChange={(val) => { setAnalystFilter(val); setCurrentPage(1); }}
@@ -1779,7 +1782,7 @@ export function AllItemsView({
             <MultiSelectDropdown
               label="Robô C170"
               options={[
-                { value: 'ROBOT_CORRECTED', label: '🤖 Corrigido pelo Robô' }
+                { value: 'ROBOT_CORRECTED', label: 'Corrigido pelo Robô' }
               ]}
               selectedValues={robotFilter}
               onChange={(val) => { setRobotFilter(val); setCurrentPage(1); }}
@@ -1964,14 +1967,14 @@ export function AllItemsView({
         </div>
 
         {/* Data Table */}
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto custom-scrollbar pb-2">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-slate-200 bg-slate-50/80 text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+              <tr className="border-b border-[var(--atlas-border)] bg-[var(--atlas-surface)] text-[11px] font-bold text-[var(--atlas-navy)] uppercase tracking-wider">
                 <th className="p-3 w-10 text-center">
                   <button onClick={toggleSelectAll} className="text-slate-500 hover:text-slate-700">
                     {selectedKeys.size > 0 && selectedKeys.size === filteredItems.length ? (
-                      <CheckSquare className="w-4 h-4 text-[#1e3a5f]" />
+                      <CheckSquare className="w-4 h-4 text-[var(--atlas-navy)]" />
                     ) : (
                       <Square className="w-4 h-4" />
                     )}
@@ -1979,7 +1982,7 @@ export function AllItemsView({
                 </th>
                 <th className="p-3">Status</th>
                 <th className="p-3">Doc / Série</th>
-                <th className="p-3">Item (C170)</th>
+                <th className="p-3" style={{ fontFamily: 'var(--font-display)' }}>Item (C170)</th>
                 <th className="p-3">
                   <div className="flex items-center space-x-1">
                     <span>NCM (SPED / XML / Matriz)</span>
@@ -2027,10 +2030,10 @@ export function AllItemsView({
                 <th className="p-3 text-center">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 text-xs">
+            <tbody className="divide-y divide-[var(--atlas-border)] text-xs">
               {paginatedItems.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="text-center py-12 text-slate-500">
+                  <td colSpan={10} className="text-center py-12 text-[var(--atlas-text-muted)]">
                     Nenhum item encontrado com os filtros selecionados.
                   </td>
                 </tr>
@@ -2044,7 +2047,7 @@ export function AllItemsView({
                     ? 'bg-red-50/60 hover:bg-red-100/60'
                     : status === 'DIVERGENT' || matrizDiff
                     ? 'bg-amber-50/60 hover:bg-amber-100/60'
-                    : 'hover:bg-slate-50';
+                    : 'hover:bg-[var(--atlas-surface-hover)]';
 
                   const ncmDiff = xmlItem && xmlItem.ncm && xmlItem.ncm !== item.ncm;
                   const cstDiff = xmlItem && xmlItem.cst && xmlItem.cst !== item.cstIcms;
@@ -2060,10 +2063,10 @@ export function AllItemsView({
                   const isMatrizAliqDiff = expAliq !== undefined && expAliq !== null ? Math.abs(curAliq - expAliq) > 0.01 : false;
 
                   return (
-                    <tr key={key} className={`transition-colors ${rowBg}`}>
+                    <tr key={key} className={`c170-item-row atlas-list-row transition-colors ${rowBg}`}>
                       <td className="p-3 text-center">
                         <button onClick={() => toggleSelectItem(doc.id, item.numItem)} className="text-slate-500 hover:text-slate-700">
-                          {isSelected ? <CheckSquare className="w-4 h-4 text-[#1e3a5f]" /> : <Square className="w-4 h-4 text-slate-400" />}
+                          {isSelected ? <CheckSquare className="w-4 h-4 text-[var(--atlas-navy)]" /> : <Square className="w-4 h-4 text-slate-400" />}
                         </button>
                       </td>
                       <td className="p-3 whitespace-nowrap space-y-1">
@@ -2092,7 +2095,7 @@ export function AllItemsView({
                           )}
                           {item.correctedByRobot && (
                             <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-purple-100 text-purple-800 border border-purple-200" title={item.robotCorrectionReason || 'Corrigido pelo Robô com base na Matriz'}>
-                              🤖 Corrigido pelo Robô
+                              Corrigido pelo Robô
                             </span>
                           )}
                           <button
@@ -2104,7 +2107,7 @@ export function AllItemsView({
                             }`}
                             title="Clique para alternar o status de conferência do analista fiscal"
                           >
-                            {item.analystConfirmed ? '✅ Conferido' : '⏳ Pendente'}
+                            {item.analystConfirmed ? 'Conferido' : 'Pendente'}
                           </button>
                           <button
                             onClick={() => {
@@ -2121,144 +2124,148 @@ export function AllItemsView({
                             className="inline-flex items-center justify-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200 transition-colors mt-0.5"
                             title="Reportar equívoco do Agente AI para refinamento do prompt"
                           >
-                            ⚠️ Reportar Erro Agente
+                            Reportar Erro Agente
                           </button>
                         </div>
                       </td>
-                      <td className="p-3 text-slate-800 font-medium whitespace-nowrap">
-                        <div>Doc: {doc.numDoc} <span className="text-[10px] text-slate-500">(Sér. {doc.serie || '0'})</span></div>
-                        <div className="text-[10px] font-mono text-slate-400 truncate max-w-[120px]">{doc.cnpjEmit}</div>
+                      <td className="p-3 text-[var(--atlas-text)] font-medium whitespace-nowrap">
+                        <div className="text-xs font-semibold text-[var(--atlas-text)]">Doc: {doc.numDoc} <span className="text-[11px] font-normal text-[var(--atlas-text-muted)]">(Sér. {doc.serie || '0'})</span></div>
+                        <div className="text-xs font-mono text-[var(--atlas-text-secondary)] truncate max-w-[120px]">{doc.cnpjEmit}</div>
                         {['02', '03', '04', '05'].includes(doc.codSit) && (
                           <div className="mt-1">
-                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-100 text-rose-800 border border-rose-200" title={`Documento Cancelado no SPED (COD_SIT ${doc.codSit})`}>
-                              🚫 Cancelado SPED ({doc.codSit})
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-200" title={`Documento Cancelado no SPED (COD_SIT ${doc.codSit})`}>
+                              Cancelado SPED ({doc.codSit})
                             </span>
                           </div>
                         )}
                         {xmlItem && xmlItem.isCancelada && (
                           <div className="mt-1">
-                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-rose-600 text-white shadow-xs" title={xmlItem.xMotivo || 'XML consta como CANCELADO na SEFAZ'}>
-                              🚨 XML Cancelado SEFAZ
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-600 text-white shadow-xs" title={xmlItem.xMotivo || 'XML consta como CANCELADO na SEFAZ'}>
+                              XML Cancelado SEFAZ
                             </span>
                           </div>
                         )}
                       </td>
-                      <td className="p-3">
-                        <div className="font-semibold text-slate-800">#{item.numItem} - {item.codItem}</div>
-                        <div className="text-[11px] text-slate-500 max-w-xs truncate" title={item.descrItem}>{item.descrItem}</div>
+                      <td className="p-3 min-w-[280px]">
+                        <div className="font-bold text-[var(--atlas-navy)] text-sm whitespace-nowrap c170-item-title" style={{ fontFamily: 'var(--font-display)' }}>
+                          #{item.numItem} - {item.codItem}
+                        </div>
+                        <div className="text-xs text-[var(--atlas-text)] font-medium leading-relaxed whitespace-normal break-words mt-0.5 c170-item-title" style={{ fontFamily: 'var(--font-display)' }} title={item.descrItem}>
+                          {item.descrItem}
+                        </div>
                         {fuzzyMatch && fuzzyMatch.isSequenceMismatch && (
-                          <div className="mt-1 inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-100 text-amber-900 border border-amber-200" title={`Desalinhamento de Sequência: Mapeado para o item ${fuzzyMatch.xmlNItem} do XML (cProd: ${fuzzyMatch.xmlItem?.cProd || 'N/A'}) com ${fuzzyMatch.score}% de similaridade`}>
-                            <span>🔄 Item XML #{fuzzyMatch.xmlNItem}</span>
-                            <span className="text-[9px] bg-amber-200/80 px-1 rounded font-bold">{fuzzyMatch.score}% match</span>
+                          <div className="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-amber-100 text-amber-900 border border-amber-200" title={`Desalinhamento de Sequência: Mapeado para o item ${fuzzyMatch.xmlNItem} do XML (cProd: ${fuzzyMatch.xmlItem?.cProd || 'N/A'}) com ${fuzzyMatch.score}% de similaridade`}>
+                            <span>Item XML #{fuzzyMatch.xmlNItem}</span>
+                            <span className="text-[10px] bg-amber-200/80 px-1 rounded font-bold">{fuzzyMatch.score}% match</span>
                           </div>
                         )}
                         {fuzzyMatch && !fuzzyMatch.isSequenceMismatch && fuzzyMatch.score >= 40 && (
-                          <div className="mt-0.5 inline-flex items-center gap-1 text-[9px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100" title={`Fuzzy match: ${fuzzyMatch.reasons.join(', ')}`}>
+                          <div className="mt-0.5 inline-flex items-center gap-1 text-[10px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100" title={`Fuzzy match: ${fuzzyMatch.reasons.join(', ')}`}>
                             <span>Fuzzy Match XML #{fuzzyMatch.xmlNItem} ({fuzzyMatch.score}%)</span>
                           </div>
                         )}
                       </td>
                       
                       {/* NCM Column */}
-                      <td className="p-3 font-mono text-[11px] whitespace-nowrap">
-                        <div className="text-slate-800 font-semibold" title="NCM cadastrado no arquivo SPED">SPED: {item.ncm || '-'}</div>
+                      <td className="p-3 font-mono text-sm whitespace-nowrap">
+                        <div className="text-[var(--atlas-text)] font-bold text-sm" title="NCM cadastrado no arquivo SPED">SPED: {item.ncm || '-'}</div>
                         {xmlItem ? (
-                          <div className={`mt-0.5 px-1.5 py-0.5 rounded inline-block text-[10px] ${ncmDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-slate-100 text-slate-700'}`} title="NCM na Nota Fiscal XML">
-                            XML: {xmlItem.ncm || '-'} {ncmDiff && '⚠️'}
+                          <div className={`mt-1 px-2 py-0.5 rounded inline-block text-xs font-semibold ${ncmDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-slate-100 text-slate-700'}`} title="NCM na Nota Fiscal XML">
+                            XML: {xmlItem.ncm || '-'}
                           </div>
                         ) : (
-                          <div className="text-[10px] text-slate-400 italic mt-0.5">XML não vinculado</div>
+                          <div className="text-xs text-slate-400 italic mt-0.5">XML não vinculado</div>
                         )}
                         {matrizRule ? (
-                          <div className="mt-0.5 text-[10px] font-sans text-indigo-700 bg-indigo-50 border border-indigo-100 px-1.5 py-0.5 rounded block truncate max-w-[160px]" title={`Regra Matriz NCM ${matrizRule.ncmPrefix}: ${matrizRule.description || ''}`}>
+                          <div className="mt-1 text-xs font-sans font-medium text-indigo-700 bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded block truncate max-w-[170px]" title={`Regra Matriz NCM ${matrizRule.ncmPrefix}: ${matrizRule.description || ''}`}>
                             Matriz: {matrizRule.ncmPrefix}
                           </div>
                         ) : (
-                          <div className="text-[10px] text-slate-400 italic mt-0.5">Sem cadastro na matriz</div>
+                          <div className="text-xs text-slate-400 italic mt-0.5">Sem cadastro na matriz</div>
                         )}
                       </td>
 
                       {/* CFOP Column */}
-                      <td className="p-3 font-mono text-[11px] whitespace-nowrap">
+                      <td className="p-3 font-mono text-sm whitespace-nowrap">
                         {inlineEditingKey === key ? (
                           <div>
                             <input
                               type="text"
                               value={inlineCfop}
                               onChange={(e) => setInlineCfop(e.target.value)}
-                              className="w-20 px-1.5 py-1 border border-indigo-400 rounded text-xs font-mono bg-white text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500/20"
+                              className="w-20 px-2 py-1 border border-indigo-400 rounded text-sm font-mono bg-white text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500/20"
                               placeholder="CFOP"
                             />
                           </div>
                         ) : (
-                          <div className="text-slate-800 font-semibold">SPED: {item.cfop || '-'}</div>
+                          <div className="text-[var(--atlas-text)] font-bold text-sm">SPED: {item.cfop || '-'}</div>
                         )}
                         {xmlItem ? (
-                          <div className={`mt-0.5 px-1.5 py-0.5 rounded inline-block text-[10px] ${cfopDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-slate-100 text-slate-700'}`}>
-                            XML: {xmlItem.cfop || '-'} {cfopDiff && '⚠️'}
+                          <div className={`mt-1 px-2 py-0.5 rounded inline-block text-xs font-semibold ${cfopDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-slate-100 text-slate-700'}`}>
+                            XML: {xmlItem.cfop || '-'}
                           </div>
                         ) : (
-                          <div className="text-[10px] text-slate-400 italic mt-0.5">XML não vinculado</div>
+                          <div className="text-xs text-slate-400 italic mt-0.5">XML não vinculado</div>
                         )}
                       </td>
 
                       {/* CST Column */}
-                      <td className="p-3 font-mono text-[11px] whitespace-nowrap">
+                      <td className="p-3 font-mono text-sm whitespace-nowrap">
                         {inlineEditingKey === key ? (
                           <div>
                             <input
                               type="text"
                               value={inlineCst}
                               onChange={(e) => setInlineCst(e.target.value)}
-                              className="w-16 px-1.5 py-1 border border-indigo-400 rounded text-xs font-mono bg-white text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500/20"
+                              className="w-16 px-2 py-1 border border-indigo-400 rounded text-sm font-mono bg-white text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500/20"
                               placeholder="CST"
                             />
                           </div>
                         ) : (
-                          <div className="text-slate-800 font-semibold">SPED: {item.cstIcms ? item.cstIcms.padStart(3, '0') : '-'}</div>
+                          <div className="text-[var(--atlas-text)] font-bold text-sm">SPED: {item.cstIcms ? item.cstIcms.padStart(3, '0') : '-'}</div>
                         )}
                         {xmlItem && (
-                          <div className={`mt-0.5 px-1.5 py-0.5 rounded inline-block text-[10px] ${cstDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-slate-100 text-slate-700'}`}>
-                            XML: {xmlItem.cst ? xmlItem.cst.padStart(3, '0') : '-'} {cstDiff && '⚠️'}
+                          <div className={`mt-1 px-2 py-0.5 rounded inline-block text-xs font-semibold ${cstDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-slate-100 text-slate-700'}`}>
+                            XML: {xmlItem.cst ? xmlItem.cst.padStart(3, '0') : '-'}
                           </div>
                         )}
                         {matrizRule?.expectedCst && (
-                          <div className={`mt-0.5 px-1.5 py-0.5 rounded block text-[10px] font-sans ${isMatrizCstDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-emerald-50 text-emerald-800'}`} title="CST esperado no Banco de Dados Cadastrado">
-                            Matriz: {matrizRule.expectedCst} {isMatrizCstDiff && '⚠️'}
+                          <div className={`mt-1 px-2 py-0.5 rounded block text-xs font-semibold font-sans ${isMatrizCstDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-emerald-50 text-emerald-800'}`} title="CST esperado no Banco de Dados Cadastrado">
+                            Matriz: {matrizRule.expectedCst}
                           </div>
                         )}
                       </td>
 
                       {/* Valor Item Column */}
-                      <td className="p-3 text-right whitespace-nowrap font-mono text-[11px]">
+                      <td className="p-3 text-right whitespace-nowrap font-mono text-sm">
                         {inlineEditingKey === key ? (
                           <div className="flex justify-end">
                             <input
                               type="text"
                               value={inlineVlItem}
                               onChange={(e) => setInlineVlItem(e.target.value)}
-                              className="w-24 px-1.5 py-1 border border-indigo-400 rounded text-xs font-mono bg-white text-slate-900 outline-none text-right"
+                              className="w-28 px-2 py-1 border border-indigo-400 rounded text-sm font-mono bg-white text-slate-900 outline-none text-right"
                               placeholder="0.00"
                             />
                           </div>
                         ) : (
-                          <div className="text-slate-800 font-semibold">SPED: R$ {item.vlItem.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                          <div className="text-[var(--atlas-navy)] font-bold text-sm">SPED: R$ {item.vlItem.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
                         )}
                         {xmlItem ? (
-                          <div className={`mt-0.5 px-1.5 py-0.5 rounded inline-block text-[10px] ${valDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-slate-100 text-slate-700'}`}>
-                            XML: R$ {(xmlItem.vProd || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} {valDiff && '⚠️'}
+                          <div className={`mt-1 px-2 py-0.5 rounded inline-block text-xs font-semibold ${valDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-slate-100 text-slate-700'}`}>
+                            XML: R$ {(xmlItem.vProd || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                           </div>
                         ) : (
-                          <div className="text-[10px] text-slate-400 italic mt-0.5">XML não vinculado</div>
+                          <div className="text-xs text-slate-400 italic mt-0.5">XML não vinculado</div>
                         )}
                       </td>
 
                       {/* ICMS Column */}
-                      <td className="p-3 text-right whitespace-nowrap font-mono text-[11px]">
+                      <td className="p-3 text-right whitespace-nowrap font-mono text-sm">
                         {inlineEditingKey === key ? (
                           <div className="space-y-1">
                             <div className="flex items-center justify-end gap-1">
-                              <span className="text-[10px] text-slate-500">BC:</span>
+                              <span className="text-xs text-slate-500">BC:</span>
                               <input
                                 type="text"
                                 value={inlineVlBc}
@@ -2269,12 +2276,12 @@ export function AllItemsView({
                                   const a = parseFloat(inlineAliq.replace(',', '.')) || 0;
                                   setInlineVlIcms(((bc * a) / 100).toFixed(2));
                                 }}
-                                className="w-16 px-1 py-0.5 border border-indigo-400 rounded text-xs font-mono bg-white text-slate-900 outline-none"
+                                className="w-20 px-1.5 py-0.5 border border-indigo-400 rounded text-xs font-mono bg-white text-slate-900 outline-none"
                                 placeholder="BC"
                               />
                             </div>
                             <div className="flex items-center justify-end gap-1">
-                              <span className="text-[10px] text-slate-500">Alíq%:</span>
+                              <span className="text-xs text-slate-500">Alíq%:</span>
                               <input
                                 type="text"
                                 value={inlineAliq}
@@ -2285,34 +2292,34 @@ export function AllItemsView({
                                   const bc = parseFloat(inlineVlBc.replace(',', '.')) || item.vlItem || 0;
                                   setInlineVlIcms(((bc * a) / 100).toFixed(2));
                                 }}
-                                className="w-14 px-1 py-0.5 border border-indigo-400 rounded text-xs font-mono bg-white text-slate-900 outline-none"
+                                className="w-16 px-1.5 py-0.5 border border-indigo-400 rounded text-xs font-mono bg-white text-slate-900 outline-none"
                                 placeholder="%"
                               />
                             </div>
                             <div className="flex items-center justify-end gap-1">
-                              <span className="text-[10px] text-slate-500">VlIcms:</span>
+                              <span className="text-xs text-slate-500">VlIcms:</span>
                               <input
                                 type="text"
                                 value={inlineVlIcms}
                                 onChange={(e) => setInlineVlIcms(e.target.value)}
-                                className="w-16 px-1 py-0.5 border border-indigo-400 rounded text-xs font-mono bg-white text-slate-900 outline-none"
+                                className="w-20 px-1.5 py-0.5 border border-indigo-400 rounded text-xs font-mono bg-white text-slate-900 outline-none"
                                 placeholder="0.00"
                               />
                             </div>
                           </div>
                         ) : (
-                          <div className="text-slate-800 font-semibold" title="Base de Cálculo, Alíquota e Valor do ICMS no SPED">
-                            SPED: BC R$ {(item.vlBcIcms || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} | {item.aliqIcms}% | R$ {(item.vlIcms || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                          <div className="text-[var(--atlas-navy)] font-bold text-sm" title="Base de Cálculo, Alíquota e Valor do ICMS no SPED">
+                            <span className="text-[var(--atlas-text-secondary)] font-medium text-xs">SPED:</span> BC R$ {(item.vlBcIcms || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-[var(--atlas-text-muted)] font-normal">|</span> {item.aliqIcms}% <span className="text-[var(--atlas-text-muted)] font-normal">|</span> R$ {(item.vlIcms || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                           </div>
                         )}
                         {xmlItem && (
-                          <div className="text-[10px] text-slate-600 mt-0.5 bg-slate-100 px-1.5 py-0.5 rounded inline-block" title="Base de Cálculo, Alíquota e Valor do ICMS no XML">
-                            XML: BC R$ {((xmlItem.vBc ?? xmlItem.vBC ?? 0)).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} | {xmlItem.pIcms ?? 0}% | R$ {(xmlItem.vIcms || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                          <div className="text-xs font-semibold text-[var(--atlas-text)] mt-1 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] px-2 py-0.5 rounded inline-block" title="Base de Cálculo, Alíquota e Valor do ICMS no XML">
+                            <span className="text-[var(--atlas-text-secondary)] font-normal">XML:</span> BC R$ {((xmlItem.vBc ?? xmlItem.vBC ?? 0)).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} | {xmlItem.pIcms ?? 0}% | R$ {(xmlItem.vIcms || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                           </div>
                         )}
                         {matrizRule?.expectedAliqIcms !== undefined && (
-                          <div className={`mt-0.5 px-1.5 py-0.5 rounded inline-block text-[10px] font-sans ${isMatrizAliqDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-emerald-50 text-emerald-800'}`} title="Alíquota cadastrada no Banco de Dados">
-                            Matriz: {matrizRule.expectedAliqIcms}% {isMatrizAliqDiff && '⚠️'}
+                          <div className={`mt-1 px-2 py-0.5 rounded inline-block text-xs font-semibold font-sans ${isMatrizAliqDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-emerald-50 text-emerald-800'}`} title="Alíquota cadastrada no Banco de Dados">
+                            Matriz: {matrizRule.expectedAliqIcms}%
                           </div>
                         )}
                       </td>
@@ -2491,11 +2498,11 @@ export function AllItemsView({
 
             <button
               onClick={() => handleBulkAnalystConfirm(true)}
-              className="px-3.5 py-1.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold rounded-lg shadow-2xs transition-colors flex items-center space-x-1.5"
+              className="atlas-btn atlas-btn-primary py-1.5 px-3.5 text-xs font-bold"
               title="Confirmar conferência para todos os itens selecionados"
             >
               <Check className="w-3.5 h-3.5" />
-              <span>✅ Confirmar Conferência</span>
+              <span>Confirmar Conferência</span>
             </button>
           </div>
 
@@ -2814,7 +2821,7 @@ export function AllItemsView({
                     <span>Excelente! Todas as notas escrituradas no SPED possuem seus respectivos XMLs na base.</span>
                   </div>
                 ) : (
-                  <div className="overflow-x-auto border border-slate-200 rounded-xl">
+                  <div className="overflow-x-auto custom-scrollbar border border-slate-200 rounded-xl">
                     <table className="w-full text-xs text-left text-slate-700">
                       <thead className="bg-slate-100 text-slate-800 font-bold border-b border-slate-200">
                         <tr>
@@ -2854,7 +2861,7 @@ export function AllItemsView({
                     <span>Nenhum XML de terceiro pendente de escrituração encontrado.</span>
                   </div>
                 ) : (
-                  <div className="overflow-x-auto border border-slate-200 rounded-xl">
+                  <div className="overflow-x-auto custom-scrollbar border border-slate-200 rounded-xl">
                     <table className="w-full text-xs text-left text-slate-700">
                       <thead className="bg-slate-100 text-slate-800 font-bold border-b border-slate-200">
                         <tr>

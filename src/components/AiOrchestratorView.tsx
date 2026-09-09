@@ -662,7 +662,7 @@ export function AiOrchestratorView({
             </div>
             <div className="flex items-center space-x-3 text-xs font-bold text-slate-700">
               <span className={`w-2 h-2 rounded-full ${simStep >= 3 ? 'bg-[#0f6e56] animate-ping' : 'bg-slate-300'}`} />
-              <span>3. Agente 3 (Consenso & Auditor Chefe) unificando parecer sugerido...</span>
+              <span>3. Agente 3 (Consenso & Auditor Chefe) unificando veredito...</span>
             </div>
           </div>
         )}
@@ -742,7 +742,7 @@ export function AiOrchestratorView({
                       {simItem.ncm === simResult.suggestedNcm ? (
                         <span className="text-[#0f6e56] font-bold">✓ Conforme</span>
                       ) : (
-                        <span className="text-rose-700 font-bold">⚠️ Recomenda Alteração</span>
+                        <span className="text-rose-700 font-bold">Recomenda Alteração</span>
                       )}
                     </td>
                   </tr>
@@ -755,7 +755,7 @@ export function AiOrchestratorView({
                       {simItem.cstIcms === simResult.suggestedCst ? (
                         <span className="text-[#0f6e56] font-bold">✓ Conforme</span>
                       ) : (
-                        <span className="text-rose-700 font-bold">⚠️ Recomenda Alteração</span>
+                        <span className="text-rose-700 font-bold">Recomenda Alteração</span>
                       )}
                     </td>
                   </tr>
@@ -768,7 +768,7 @@ export function AiOrchestratorView({
                       {simItem.cfop === simResult.suggestedCfop ? (
                         <span className="text-[#0f6e56] font-bold">✓ Conforme</span>
                       ) : (
-                        <span className="text-rose-700 font-bold">⚠️ Recomenda Alteração</span>
+                        <span className="text-rose-700 font-bold">Recomenda Alteração</span>
                       )}
                     </td>
                   </tr>
@@ -884,7 +884,7 @@ export function AiOrchestratorView({
                     <th className="p-3">NCM Atual vs Sugerido</th>
                     <th className="p-3">CST Atual vs Sugerido</th>
                     <th className="p-3">Risco</th>
-                    <th className="p-3">Parecer Sugerido do Orquestrador</th>
+                    <th className="p-3">Veredito do Orquestrador</th>
                     <th className="p-3 text-right">Ações de Refinamento</th>
                   </tr>
                 </thead>
@@ -1328,7 +1328,7 @@ export function AiOrchestratorView({
                       onChange={(e) => updateAgentSetting('agent3', 'priorityFocus', e.target.value)}
                       className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold focus:ring-2 focus:ring-[#1e3a5f]"
                     >
-                      <option value="Consenso & Parecer Sugerido">Síntese de Consenso & Parecer Sugerido (Padrão)</option>
+                      <option value="Consenso & Juiz Final">Síntese de Consenso & Veredito Final (Padrão)</option>
                       <option value="Blindagem Antiautuação Fiscal">Blindagem Preventiva para Malha Fina</option>
                       <option value="Relatório Orientativo para o Contador">Relatório Orientativo Detalhado para Contabilidade</option>
                     </select>

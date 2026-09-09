@@ -354,24 +354,12 @@ export function matchAllSpedAndXmlItemsFuzzy(
     }
   }
 
-  // Para itens do SPED que sobraram sem pares, tenta alocar dentre os itens do XML ainda não utilizados
-  const unusedXmlIndices = Array.from({ length: xmlItems.length }, (_, i) => i).filter(i => !usedXml.has(i));
+  // Para itens do SPED que sobrou sem pares, preenche com o melhor disponível ou por índice
   for (let sIdx = 0; sIdx < spedItems.length; sIdx++) {
-    if (!resultMap.has(sIdx) && unusedXmlIndices.length > 0) {
-      let bestMatch: ItemMatchDetails | null = null;
-      let bestXmlIdx = -1;
-      for (const xIdx of unusedXmlIndices) {
-        const match = calculateItemMatchScore(spedItems[sIdx], xmlItems[xIdx], sIdx, xIdx);
-        if (!bestMatch || match.score > bestMatch.score) {
-          bestMatch = match;
-          bestXmlIdx = xIdx;
-        }
-      }
-      if (bestMatch && bestXmlIdx !== -1) {
-        usedXml.add(bestXmlIdx);
-        resultMap.set(sIdx, bestMatch);
-        const pos = unusedXmlIndices.indexOf(bestXmlIdx);
-        if (pos >= 0) unusedXmlIndices.splice(pos, 1);
+    if (!resultMap.has(sIdx)) {
+      const best = findBestFuzzyXmlItemMatch(xmlItems, spedItems[sIdx], sIdx);
+      if (best) {
+        resultMap.set(sIdx, best);
       }
     }
   }

@@ -1,7 +1,5 @@
 import express from 'express';
 import path from 'path';
-import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
 import { adminAuth, adminDb } from './src/lib/firebase-admin.ts';
 import { createServer as createViteServer } from "vite";
 import { requireAuth, requireInviteAuth, AuthRequest } from './src/middleware/auth.ts';
@@ -11,39 +9,7 @@ import { fetchDocWithFallback, setDocWithFallback, deleteDocWithFallback, queryC
 async function startServer() {
   const app = express();
   const PORT = 3000;
-
-  // Trust proxy when behind reverse proxy / Cloud Run
-  app.set('trust proxy', 1);
-
-  // Security Headers (Helmet)
-  app.use(helmet({
-    contentSecurityPolicy: false, // Compatibilidade com Vite dev / iframe
-  }));
-
-  // Rate limiter estrito para rotas sensíveis de autenticação/bootstrap (10 requisições / 15 min por IP)
-  const authRateLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 10,
-    message: { error: 'Muitas tentativas de autenticação ou convite. Tente novamente em 15 minutos.' },
-    standardHeaders: true,
-    legacyHeaders: false,
-  });
-
-  // Rate limiter geral mais permissivo para demais rotas da API (1000 requisições / 15 min por IP)
-  const apiRateLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 1000,
-    message: { error: 'Limite de requisições excedido. Tente novamente mais tarde.' },
-    standardHeaders: true,
-    legacyHeaders: false,
-  });
-  app.use('/api', apiRateLimiter);
-
-  // Limite global de payload JSON para requisições antes de autenticação (2mb)
-  app.use(express.json({ limit: '2mb' }));
-
-  // Parser para payloads grandes (SPED/XML) aplicado apenas em rotas específicas após autenticação
-  const largeJsonParser = express.json({ limit: '50mb' });
+  app.use(express.json({ limit: '50mb' }));
 
   // Super Admin: Criar Escritório
   app.post('/api/admin/escritorios', requireAuth, async (req: AuthRequest, res) => {
@@ -120,7 +86,7 @@ async function startServer() {
   });
 
   // Convidar Colaborador ou Admin de Escritório (Admin de Escritório ou Super Admin)
-  app.post('/api/escritorio/convidar', authRateLimiter, requireAuth, requireInviteAuth, async (req: AuthRequest, res) => {
+  app.post('/api/escritorio/convidar', requireAuth, requireInviteAuth, async (req: AuthRequest, res) => {
     try {
       const ehAdminEscritorio = req.papel === 'admin_escritorio' && req.escritorioId;
       const ehSuperAdmin = req.papel === 'super_admin';
@@ -197,9 +163,6 @@ async function startServer() {
   // Listar Escritórios
   app.get('/api/admin/escritorios', requireAuth, async (req: AuthRequest, res) => {
     try {
-      if (req.papel !== 'super_admin') {
-        return res.status(403).json({ error: 'Acesso negado. Requer papel de super_admin.' });
-      }
       const allEscritorios = await queryCollectionWithFallback('escritorios', req.token);
       const escritorios = allEscritorios.map(d => ({
         id: d.id,
@@ -399,7 +362,7 @@ async function startServer() {
   });
 
   // Setup initial super_admin for development/testing if needed (Client creates Auth, Backend assigns Role)
-  app.post('/api/auth/setup-admin', authRateLimiter, async (req: AuthRequest, res) => {
+  app.post('/api/auth/setup-admin', async (req: AuthRequest, res) => {
     // Manually verify token here instead of using requireAuth since user role doesn't exist yet
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) return res.status(401).json({ error: 'Token ausente' });
@@ -513,7 +476,7 @@ async function startServer() {
   });
 
   // API para salvar dados de SPED e XMLs do escritório via Admin SDK com Fallback
-  app.post('/api/escritorio/sped-xml', requireAuth, largeJsonParser, async (req: AuthRequest, res) => {
+  app.post('/api/escritorio/sped-xml', requireAuth, async (req: AuthRequest, res) => {
     try {
       if (!req.escritorioId) {
         return res.status(403).json({ error: 'Usuário sem escritório vinculado.' });

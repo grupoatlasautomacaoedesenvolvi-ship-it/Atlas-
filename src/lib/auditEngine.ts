@@ -1,5 +1,5 @@
 import { SpedData, AuditConfig, Achado, TipoAchado, SeveridadeAchado, StatusRevisao, XmlRecord } from '../types';
-import { findMatchingXmlItem, findBestFuzzyXmlItemMatch, matchAllSpedAndXmlItemsFuzzy } from './cfopUtils';
+import { findMatchingXmlItem, findBestFuzzyXmlItemMatch } from './cfopUtils';
 
 // Casamento entre SPED e XML deve SEMPRE usar a chave de acesso de 44 dígitos,
 // nunca número de nota (colide facilmente entre fornecedores diferentes) e
@@ -20,26 +20,14 @@ function getRevisoesKey(escritorioId?: string): string {
 
 export function salvarStatusRevisao(achadoId: string, status: StatusRevisao, escritorioId?: string): void {
   const key = getRevisoesKey(escritorioId);
-  let todos: Record<string, any> = {};
-  try {
-    todos = JSON.parse(localStorage.getItem(key) || '{}');
-  } catch (e) {
-    todos = {};
-  }
+  const todos = JSON.parse(localStorage.getItem(key) || '{}');
   todos[achadoId] = { status, revisadoEm: new Date().toISOString() };
-  try {
-    localStorage.setItem(key, JSON.stringify(todos));
-  } catch (e) {}
+  localStorage.setItem(key, JSON.stringify(todos));
 }
 
 export function carregarStatusRevisao(achadoId: string, escritorioId?: string): { statusRevisao: StatusRevisao; revisadoEm?: string } {
   const key = getRevisoesKey(escritorioId);
-  let todos: Record<string, any> = {};
-  try {
-    todos = JSON.parse(localStorage.getItem(key) || '{}');
-  } catch (e) {
-    todos = {};
-  }
+  const todos = JSON.parse(localStorage.getItem(key) || '{}');
   const stored = todos[achadoId];
   if (stored) {
     return {
@@ -252,10 +240,6 @@ export function executarAuditoriaUnificada(
       }
     }
 
-    const docItemMatches = (matchedXml?.items && doc.items.length > 0)
-      ? matchAllSpedAndXmlItemsFuzzy(doc.items, matchedXml.items)
-      : new Map<number, import('./fuzzyMatcher').ItemMatchDetails>();
-
     for (const [itemIndex, item] of doc.items.entries()) {
       const ncm = (item.ncm || '').trim();
       const cfop = (item.cfop || '').trim();
@@ -316,8 +300,8 @@ export function executarAuditoriaUnificada(
         });
       }
 
-      const fuzzyMatchDetails = docItemMatches.get(itemIndex) || null;
-      const matchedXmlItem = fuzzyMatchDetails?.xmlItem;
+      const fuzzyMatchDetails = matchedXml?.items ? findBestFuzzyXmlItemMatch(matchedXml.items, item, itemIndex) : null;
+      const matchedXmlItem = fuzzyMatchDetails?.xmlItem || (matchedXml?.items ? findMatchingXmlItem(matchedXml.items, item, itemIndex) : undefined);
 
       if (fuzzyMatchDetails && fuzzyMatchDetails.isSequenceMismatch) {
         const id = gerarIdAchado('INCONSISTENCIA_SEQUENCIA_SPED_XML', doc.id, itemId);

@@ -85,64 +85,55 @@ export function LoginView() {
   return (
     <div className="min-h-screen w-full flex flex-col lg:flex-row font-sans text-[var(--atlas-text)] selection:bg-[var(--atlas-navy)] selection:text-white" style={{ background: 'var(--atlas-bg)' }}>
       {/* Left Column: Official Brand & High Impact Product Showcase */}
-      <div className="lg:w-7/12 p-8 lg:p-16 xl:px-20 xl:py-16 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-[var(--atlas-border)] relative overflow-hidden bg-[var(--atlas-navy)] text-white">
-        {/* Textura sutil em baixa opacidade */}
-        <div 
-          className="absolute inset-0 opacity-10 pointer-events-none" 
-          style={{
-            backgroundImage: 'radial-gradient(rgba(255, 255, 255, 0.5) 1px, transparent 1px)',
-            backgroundSize: '20px 20px'
-          }}
-        />
-
-        <div className="max-w-2xl relative z-10">
+      <div className="lg:w-7/12 p-8 lg:p-16 xl:p-20 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-[var(--atlas-border)] relative" style={{ background: 'var(--atlas-surface)' }}>
+        <div className="max-w-2xl">
           {/* Prominent Logo Header */}
           <div className="mb-10 flex items-center justify-between">
             <img 
               src="/logo.svg" 
               alt="Atlas Auditor Fiscal" 
-              className="h-24 lg:h-28 w-auto object-contain max-w-full drop-shadow-md"
+              className="h-24 lg:h-28 w-auto object-contain max-w-full"
             />
-            <span className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold text-emerald-300 border border-emerald-500/30 bg-emerald-500/10">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <span className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-semibold text-[var(--atlas-navy)] border border-[var(--atlas-navy)]/20" style={{ background: 'rgba(30,58,95,0.05)' }}>
+              <ShieldCheck className="w-4 h-4 text-[var(--atlas-navy)]" />
               Plataforma Homologada
             </span>
           </div>
 
           {/* Product Headline & Positioning */}
           <div className="space-y-4 mb-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/20 text-xs font-bold text-white uppercase tracking-wider bg-white/10 backdrop-blur-md">
-              <Layers className="w-3.5 h-3.5 text-emerald-300" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md border border-[var(--atlas-border)] text-xs font-bold text-[var(--atlas-navy)] uppercase tracking-wider" style={{ background: 'var(--atlas-bg)' }}>
+              <Layers className="w-3.5 h-3.5 text-[var(--atlas-navy)]" />
               Auditoria EFD ICMS/IPI & NF-e
             </div>
-            <h1 className="text-3xl lg:text-[38px] font-bold text-white font-serif tracking-tight leading-snug">
+            <h1 className="text-3xl lg:text-4xl font-extrabold text-[var(--atlas-navy)] tracking-tight leading-snug">
               Conformidade fiscal e auditoria SPED com máxima segurança e precisão.
             </h1>
-            <p className="text-slate-200 text-sm lg:text-base leading-relaxed">
-              O <strong className="text-white font-semibold">Atlas Auditor Fiscal</strong> realiza o cruzamento automatizado dos seus arquivos SPED com documentos fiscais eletrônicos e regras estaduais, identificando divergências com rapidez e garantindo total conformidade antes do envio à Receita Federal.
+            <p className="text-[var(--atlas-text-secondary)] text-sm lg:text-base leading-relaxed">
+              O <strong className="text-[var(--atlas-navy)] font-semibold">Atlas Auditor Fiscal</strong> realiza o cruzamento automatizado dos seus arquivos SPED com documentos fiscais eletrônicos e regras estaduais, identificando divergências com rapidez e garantindo total conformidade antes do envio à Receita Federal.
             </p>
           </div>
 
           {/* Product Operational Highlights Panel */}
-          <div className="mb-10 p-5 rounded-2xl border border-white/15 bg-white/10 backdrop-blur-md">
-            <p className="text-xs font-bold text-emerald-300 uppercase tracking-wider mb-3">
+          <div className="mb-10 p-5 rounded-lg border border-[var(--atlas-border)]" style={{ background: 'var(--atlas-bg)' }}>
+            <p className="text-xs font-bold text-[var(--atlas-navy)] uppercase tracking-wider mb-3">
               Módulos e Recursos em Destaque
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-              <div className="flex items-center gap-2 text-white">
-                <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+              <div className="flex items-center gap-2 text-[var(--atlas-text)]">
+                <Check className="w-4 h-4 text-[var(--atlas-accent)] shrink-0" />
                 <span>Conciliação SPED x XML de NF-e/NFC-e</span>
               </div>
-              <div className="flex items-center gap-2 text-white">
-                <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+              <div className="flex items-center gap-2 text-[var(--atlas-text)]">
+                <Check className="w-4 h-4 text-[var(--atlas-accent)] shrink-0" />
                 <span>Conferência de NCM, CEST e MVA por UF</span>
               </div>
-              <div className="flex items-center gap-2 text-white">
-                <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+              <div className="flex items-center gap-2 text-[var(--atlas-text)]">
+                <Check className="w-4 h-4 text-[var(--atlas-accent)] shrink-0" />
                 <span>Mapeamento de Notas Omissas e Não Escrituradas</span>
               </div>
-              <div className="flex items-center gap-2 text-white">
-                <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+              <div className="flex items-center gap-2 text-[var(--atlas-text)]">
+                <Check className="w-4 h-4 text-[var(--atlas-accent)] shrink-0" />
                 <span>Exportação Direta de SPED Retificado em TXT</span>
               </div>
             </div>
@@ -150,37 +141,37 @@ export function LoginView() {
 
           {/* Feature Details */}
           <div className="space-y-4 mb-10">
-            <div className="flex items-start gap-3.5 pb-3.5 border-b border-white/10">
-              <div className="p-2 rounded-lg text-emerald-300 bg-white/10 shrink-0 mt-0.5">
+            <div className="flex items-start gap-3.5 pb-3.5 border-b border-[var(--atlas-border)]">
+              <div className="p-2 rounded-lg text-[var(--atlas-navy)] shrink-0 mt-0.5" style={{ background: 'rgba(30,58,95,0.1)' }}>
                 <FileCheck2 className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-xs font-bold text-white uppercase tracking-wider">Cruzamento Automatizado</h3>
-                <p className="text-xs text-slate-300 leading-relaxed mt-0.5">
+                <h3 className="text-xs font-bold text-[var(--atlas-navy)] uppercase tracking-wider">Cruzamento Automatizado</h3>
+                <p className="text-xs text-[var(--atlas-text-muted)] leading-relaxed mt-0.5">
                   Análise detalhada de consistência entre livros fiscais e chaves de acesso de documentos emitidos e recebidos.
                 </p>
               </div>
             </div>
 
-            <div className="flex items-start gap-3.5 pb-3.5 border-b border-white/10">
-              <div className="p-2 rounded-lg text-emerald-300 bg-white/10 shrink-0 mt-0.5">
+            <div className="flex items-start gap-3.5 pb-3.5 border-b border-[var(--atlas-border)]">
+              <div className="p-2 rounded-lg text-[var(--atlas-navy)] shrink-0 mt-0.5" style={{ background: 'rgba(30,58,95,0.1)' }}>
                 <SlidersHorizontal className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-xs font-bold text-white uppercase tracking-wider">Regras Tributárias Estaduais</h3>
-                <p className="text-xs text-slate-300 leading-relaxed mt-0.5">
+                <h3 className="text-xs font-bold text-[var(--atlas-navy)] uppercase tracking-wider">Regras Tributárias Estaduais</h3>
+                <p className="text-xs text-[var(--atlas-text-muted)] leading-relaxed mt-0.5">
                   Validação automatizada de alíquotas internas de ICMS, substituição tributária e benefícios fiscais vigentes.
                 </p>
               </div>
             </div>
 
             <div className="flex items-start gap-3.5">
-              <div className="p-2 rounded-lg text-emerald-300 bg-white/10 shrink-0 mt-0.5">
+              <div className="p-2 rounded-lg text-[var(--atlas-navy)] shrink-0 mt-0.5" style={{ background: 'rgba(30,58,95,0.1)' }}>
                 <BarChart3 className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-xs font-bold text-white uppercase tracking-wider">Relatórios e Edição em Lote</h3>
-                <p className="text-xs text-slate-300 leading-relaxed mt-0.5">
+                <h3 className="text-xs font-bold text-[var(--atlas-navy)] uppercase tracking-wider">Relatórios e Edição em Lote</h3>
+                <p className="text-xs text-[var(--atlas-text-muted)] leading-relaxed mt-0.5">
                   Painel intuitivo com apontamento de erros por severidade e recursos de retificação ágil de registros.
                 </p>
               </div>
@@ -189,14 +180,14 @@ export function LoginView() {
         </div>
 
         {/* Footer info */}
-        <div className="pt-6 border-t border-white/10 flex flex-wrap items-center justify-between text-xs text-slate-300 gap-4 relative z-10">
+        <div className="pt-6 border-t border-[var(--atlas-border)] flex flex-wrap items-center justify-between text-xs text-[var(--atlas-text-muted)] gap-4">
           <p>© {new Date().getFullYear()} Grupo Atlas Automação e Desenvolvimento. Todos os direitos reservados.</p>
           <div className="flex items-center gap-5">
-            <span className="flex items-center gap-1.5 text-white font-semibold">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Compatível com PVA RFB
+            <span className="flex items-center gap-1.5 text-[var(--atlas-text)] font-semibold">
+              <CheckCircle2 className="w-3.5 h-3.5 text-[var(--atlas-accent)]" /> Compatível com PVA RFB
             </span>
-            <span className="flex items-center gap-1.5 text-white font-semibold">
-              <Building2 className="w-3.5 h-3.5 text-emerald-300" /> Multi-Escritório
+            <span className="flex items-center gap-1.5 text-[var(--atlas-text)] font-semibold">
+              <Building2 className="w-3.5 h-3.5 text-[var(--atlas-navy)]" /> Multi-Escritório
             </span>
           </div>
         </div>
@@ -244,15 +235,17 @@ export function LoginView() {
                   Usar @atlas.com
                 </button>
               </div>
-              <div className="relative">
-                <Mail className="w-4 h-4 text-[var(--atlas-text-muted)] absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <div className="relative flex items-center">
+                <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--atlas-text-muted)] flex items-center justify-center z-10">
+                  <Mail className="w-4 h-4" />
+                </div>
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => handleEmailChange(e.target.value)}
                   placeholder="usuario@atlas.com"
-                  className="atlas-input pl-10 py-3.5"
+                  className="atlas-input atlas-input-icon-left"
                 />
               </div>
             </div>
@@ -271,20 +264,22 @@ export function LoginView() {
                     </button>
                   )}
                 </div>
-                <div className="relative">
-                  <Lock className="w-4 h-4 text-[var(--atlas-text-muted)] absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <div className="relative flex items-center">
+                  <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--atlas-text-muted)] flex items-center justify-center z-10">
+                    <Lock className="w-4 h-4" />
+                  </div>
                   <input
                     type={showPassword ? 'text' : 'password'}
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="atlas-input pl-10 pr-10 py-3.5"
+                    className="atlas-input atlas-input-icon-left atlas-input-icon-right"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--atlas-text-muted)] hover:text-[var(--atlas-text-secondary)] transition"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--atlas-text-muted)] hover:text-[var(--atlas-navy)] transition p-1 rounded-md z-10 focus:outline-none"
                     aria-label={showPassword ? "Ocultar senha" : "Exibir senha"}
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}

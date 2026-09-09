@@ -407,10 +407,10 @@ Foram identificados um total de ${totalFindings} apontamentos de divergência. A
   if (!spedData) {
     return (
       <div className="max-w-5xl mx-auto py-12 px-4 text-center">
-        <div className="bg-white rounded-lg shadow-xs border border-slate-200 p-12 space-y-4">
-          <FileText className="w-16 h-16 text-[#1e3a5f] mx-auto" />
-          <h2 className="text-2xl font-bold text-slate-800">Nenhum arquivo SPED EFD carregado</h2>
-          <p className="text-slate-500 max-w-md mx-auto">
+        <div className="atlas-card p-12 space-y-4">
+          <FileText className="w-16 h-16 text-[var(--atlas-navy)] mx-auto" />
+          <h2 className="text-2xl font-bold text-[var(--atlas-navy)]">Nenhum arquivo SPED EFD carregado</h2>
+          <p className="text-xs text-[var(--atlas-text-secondary)] max-w-md mx-auto">
             Importe o arquivo TXT do SPED Fiscal e os XMLs correspondentes para visualizar o Parecer Técnico e o Relatório de Correções do Analista Fiscal Senior.
           </p>
         </div>
@@ -419,48 +419,36 @@ Foram identificados um total de ${totalFindings} apontamentos de divergência. A
   }
 
   return (
-    <div className="space-y-6 pb-16 text-xs font-sans">
-      {/* Breadcrumb Bar */}
-      <div className="atlas-breadcrumb-bar">
-        <div className="flex items-center space-x-2 text-[13px]">
-          <span className="text-[var(--atlas-text-muted)] font-medium">Atlas</span>
-          <span className="text-[var(--atlas-text-muted)]">/</span>
-          <span className="text-[var(--atlas-text)] font-semibold">Relatório Final</span>
-        </div>
-        <div className="text-[12px] text-[var(--atlas-text-secondary)] font-medium">
-          Parecer Técnico Oficial e Resumo Executivo
-        </div>
-      </div>
-
-      <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-        {/* Header Banner */}
-        <div className="bg-[var(--atlas-navy)] rounded-2xl p-6 sm:p-8 text-white shadow-md border border-[var(--atlas-border)]">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="space-y-2">
-              <div className="inline-flex items-center space-x-2 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-semibold">
-                <ShieldCheck className="w-4 h-4 text-emerald-300" />
-                <span>Parecer Técnico do Analista Fiscal Senior</span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-serif">
-                Relatório de Auditoria & Correções Fiscais
-              </h1>
-              <p className="text-slate-200 text-sm max-w-2xl leading-relaxed">
-                Consolidação técnica oficial contendo a sanitização do SPED TXT, resgate de notas omissas, readequação da Matriz Fiscal da UF <span className="font-bold text-white">{companyUf}</span> e reconciliação dos saldos de ICMS.
-              </p>
+    <div className="max-w-7xl w-full mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-6 text-[var(--atlas-text)]">
+      
+      {/* Header Banner */}
+      <div className="atlas-card p-6 sm:p-8 bg-[var(--atlas-navy)] text-white space-y-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-2">
+            <div className="atlas-pill atlas-pill-accent inline-flex items-center space-x-2 py-1 px-3 text-xs font-semibold uppercase tracking-wider">
+              <ShieldCheck className="w-4 h-4 text-[var(--atlas-accent)]" />
+              <span>Parecer Técnico do Analista Fiscal Senior</span>
             </div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+              Relatório de Auditoria & Correções Fiscais
+            </h1>
+            <p className="text-white/80 text-xs max-w-2xl leading-relaxed">
+              Consolidação técnica oficial contendo a sanitização do SPED TXT, resgate de notas omissas, readequação da Matriz Fiscal da UF <span className="font-bold text-white">{companyUf}</span> e reconciliação dos saldos de ICMS.
+            </p>
+          </div>
 
-            <div className="flex flex-wrap items-center gap-3 no-print">
+          <div className="flex flex-wrap items-center gap-2 no-print">
             <button
               onClick={() => window.print()}
-              className="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2.5 rounded-lg border border-slate-700 text-sm font-medium transition-colors"
+              className="atlas-btn atlas-btn-secondary text-xs py-2 px-3.5"
             >
               <Printer className="w-4 h-4" />
-              <span>Imprimir Relatório</span>
+              <span>Imprimir</span>
             </button>
 
             <button
               onClick={generateExcel}
-              className="flex items-center space-x-2 bg-[#0f6e56] hover:bg-[#0b5240] text-white px-4 py-2.5 rounded-lg text-sm font-semibold shadow-xs transition-all"
+              className="atlas-btn atlas-btn-accent text-xs py-2 px-3.5"
             >
               <FileSpreadsheet className="w-4 h-4" />
               <span>Exportar Excel (.XLSX)</span>
@@ -469,35 +457,35 @@ Foram identificados um total de ${totalFindings} apontamentos de divergência. A
             <button
               onClick={generatePDF}
               disabled={generating}
-              className="flex items-center space-x-2 bg-[#1e3a5f] hover:bg-[#142c47] text-white px-5 py-2.5 rounded-lg text-sm font-semibold shadow-xs transition-all disabled:opacity-50"
+              className="atlas-btn atlas-btn-primary text-xs py-2 px-3.5"
             >
               <Download className="w-4 h-4" />
-              <span>{generating ? 'Gerando PDF...' : 'Exportar Parecer Técnico (PDF)'}</span>
+              <span>{generating ? 'Gerando PDF...' : 'Exportar Parecer (PDF)'}</span>
             </button>
           </div>
         </div>
 
         {/* Company Meta Header Bar */}
-        <div className="mt-6 pt-6 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-5 gap-4 text-xs">
+        <div className="pt-6 border-t border-white/10 grid grid-cols-2 sm:grid-cols-5 gap-4 text-xs">
           <div>
-            <span className="text-slate-400 block mb-0.5">Empresa / Razão Social</span>
-            <span className="font-bold text-slate-100 truncate block">{spedData.header.nome}</span>
+            <span className="text-white/60 block mb-0.5">Empresa / Razão Social</span>
+            <span className="font-bold text-white truncate block">{spedData.header.nome}</span>
           </div>
           <div>
-            <span className="text-slate-400 block mb-0.5">CNPJ & Estado (UF)</span>
-            <span className="font-bold text-slate-100 block">{spedData.header.cnpj} — <span className="text-slate-200">{companyUf}</span></span>
+            <span className="text-white/60 block mb-0.5">CNPJ & Estado (UF)</span>
+            <span className="font-bold text-white block">{spedData.header.cnpj} — <span>{companyUf}</span></span>
           </div>
           <div>
-            <span className="text-slate-400 block mb-0.5">Regime Tributário</span>
-            <span className="font-bold text-slate-100 block">Regime Normal (EFD)</span>
+            <span className="text-white/60 block mb-0.5">Regime Tributário</span>
+            <span className="font-bold text-white block">Regime Normal (EFD)</span>
           </div>
           <div>
-            <span className="text-slate-400 block mb-0.5">Período EFD ICMS/IPI</span>
-            <span className="font-bold text-slate-100 block">{spedData.header.dtIni} a {spedData.header.dtFin}</span>
+            <span className="text-white/60 block mb-0.5">Período EFD ICMS/IPI</span>
+            <span className="font-bold text-white block">{spedData.header.dtIni} a {spedData.header.dtFin}</span>
           </div>
           <div>
-            <span className="text-slate-400 block mb-0.5">Status da Sanitização</span>
-            <span className="inline-flex items-center text-emerald-400 font-bold">
+            <span className="text-white/60 block mb-0.5">Status da Sanitização</span>
+            <span className="inline-flex items-center text-[var(--atlas-accent)] font-bold">
               <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
               Auditado & Reconciliado
             </span>
@@ -506,32 +494,26 @@ Foram identificados um total de ${totalFindings} apontamentos de divergência. A
       </div>
 
       {/* Sub-Navigation Bar */}
-      <div className="flex flex-wrap items-center gap-2 bg-slate-200/80 p-1.5 rounded-lg w-full sm:w-fit text-xs font-bold text-slate-700">
+      <div className="flex flex-wrap items-center gap-2 border-b border-[var(--atlas-border)] pb-2 text-xs">
         <button
           onClick={() => setActiveReportTab('INTEGRIDADE')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-md transition ${
-            activeReportTab === 'INTEGRIDADE' ? 'bg-white text-[#1e3a5f] shadow-xs' : 'hover:text-slate-900'
-          }`}
+          className={`atlas-btn py-1.5 px-3.5 ${activeReportTab === 'INTEGRIDADE' ? 'atlas-btn-primary' : 'atlas-btn-ghost'}`}
         >
-          <CheckSquare className="w-4 h-4 text-[#1e3a5f]" />
+          <CheckSquare className="w-4 h-4" />
           <span>Checagem C100 / C170 / C190 (PVA)</span>
         </button>
         <button
           onClick={() => setActiveReportTab('PARECER')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-md transition ${
-            activeReportTab === 'PARECER' ? 'bg-white text-[#1e3a5f] shadow-xs' : 'hover:text-slate-900'
-          }`}
+          className={`atlas-btn py-1.5 px-3.5 ${activeReportTab === 'PARECER' ? 'atlas-btn-primary' : 'atlas-btn-ghost'}`}
         >
-          <FileText className="w-4 h-4 text-[#1e3a5f]" />
+          <FileText className="w-4 h-4" />
           <span>Parecer Técnico & Sanitização</span>
         </button>
         <button
           onClick={() => setActiveReportTab('TODOS')}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-md transition ${
-            activeReportTab === 'TODOS' ? 'bg-white text-[#1e3a5f] shadow-xs' : 'hover:text-slate-900'
-          }`}
+          className={`atlas-btn py-1.5 px-3.5 ${activeReportTab === 'TODOS' ? 'atlas-btn-primary' : 'atlas-btn-ghost'}`}
         >
-          <Layers className="w-4 h-4 text-[#1e3a5f]" />
+          <Layers className="w-4 h-4" />
           <span>Visão Completa Unificada</span>
         </button>
       </div>
@@ -545,294 +527,274 @@ Foram identificados um total de ${totalFindings} apontamentos de divergência. A
       {(activeReportTab === 'PARECER' || activeReportTab === 'TODOS') && (
         <>
           {/* KPI Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-xs flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Inconsistências Mapeadas</p>
-                <p className="text-2xl font-black text-slate-900 mt-1">{totalFindings}</p>
-                <p className="text-xs text-slate-500 mt-1">{pendingCount} pendentes de aprovação</p>
-              </div>
-              <div className="p-3 bg-amber-50 rounded-lg text-amber-600 border border-amber-100">
-                <BadgeAlert className="w-6 h-6" />
-              </div>
+          <div className="atlas-stat-strip">
+            <div className="atlas-stat-item">
+              <span className="atlas-stat-label">Inconsistências</span>
+              <span className="atlas-stat-value text-[var(--atlas-warning)]">{totalFindings}</span>
+              <span className="text-[11px] text-[var(--atlas-text-secondary)] mt-1">{pendingCount} pendentes</span>
             </div>
 
-            <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-xs flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Correções no SPED TXT</p>
-                <p className="text-2xl font-black text-[#0f6e56] mt-1">{totalCorrectionsApplied}</p>
-                <p className="text-xs text-slate-500 mt-1">Linhas ajustadas/inseridas</p>
-              </div>
-              <div className="p-3 bg-emerald-50 rounded-lg text-[#0f6e56] border border-emerald-100">
-                <CheckCircle2 className="w-6 h-6" />
-              </div>
+            <div className="atlas-stat-item">
+              <span className="atlas-stat-label">Correções SPED TXT</span>
+              <span className="atlas-stat-value text-[var(--atlas-accent)]">{totalCorrectionsApplied}</span>
+              <span className="text-[11px] text-[var(--atlas-text-secondary)] mt-1">Linhas ajustadas</span>
             </div>
 
-            <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-xs flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Notas Omissas Resgatadas</p>
-                <p className="text-2xl font-black text-[#1e3a5f] mt-1">{missingNotesInsertedCount}</p>
-                <p className="text-xs text-slate-500 mt-1">Via cruzamento XMLs</p>
-              </div>
-              <div className="p-3 bg-slate-100 rounded-lg text-[#1e3a5f] border border-slate-200">
-                <FileCheck className="w-6 h-6" />
-              </div>
+            <div className="atlas-stat-item">
+              <span className="atlas-stat-label">Notas Omissas Resgatadas</span>
+              <span className="atlas-stat-value text-[var(--atlas-navy)]">{missingNotesInsertedCount}</span>
+              <span className="text-[11px] text-[var(--atlas-text-secondary)] mt-1">Via cruzamento XML</span>
             </div>
 
-            <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-xs flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Sanitização Fiscal</p>
-                <p className="text-2xl font-black text-[#1e3a5f] mt-1">{sanitizationRate}%</p>
-                <p className="text-xs text-slate-500 mt-1">Conformidade com Guia EFD</p>
-              </div>
-              <div className="p-3 bg-slate-100 rounded-lg text-[#1e3a5f] border border-slate-200">
-                <Scale className="w-6 h-6" />
-              </div>
+            <div className="atlas-stat-item">
+              <span className="atlas-stat-label">Sanitização Fiscal</span>
+              <span className="atlas-stat-value text-[var(--atlas-navy)]">{sanitizationRate}%</span>
+              <span className="text-[11px] text-[var(--atlas-text-secondary)] mt-1">Conformidade Guia EFD</span>
             </div>
           </div>
 
           {/* Senior Analyst Opinion Editor / View */}
-      <div className="bg-white rounded-lg shadow-xs border border-slate-200 overflow-hidden">
-        <div className="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <FileText className="w-5 h-5 text-[#1e3a5f]" />
-            <h2 className="text-base font-bold text-slate-800">Parecer Técnico e Considerações do Auditor</h2>
+          <div className="atlas-card p-6 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[var(--atlas-border)]">
+              <div className="flex items-center space-x-2">
+                <FileText className="w-5 h-5 text-[var(--atlas-navy)]" />
+                <h2 className="text-base font-bold text-[var(--atlas-navy)]">Parecer Técnico e Considerações do Auditor</h2>
+              </div>
+              <span className="atlas-pill atlas-pill-navy font-mono text-[10px]">
+                EFD Layout v3.1.x / RICMS-{companyUf}
+              </span>
+            </div>
+
+            <div className="space-y-3">
+              <textarea
+                rows={6}
+                value={analystNotes || defaultParecerText}
+                onChange={(e) => setAnalystNotes(e.target.value)}
+                className="atlas-input font-sans text-xs leading-relaxed p-4"
+                placeholder="Edite ou adicione considerações personalizadas para o relatório final..."
+              />
+              <p className="text-xs text-[var(--atlas-text-muted)] flex items-center">
+                <Info className="w-3.5 h-3.5 mr-1" />
+                Este parecer é incorporado ao cabeçalho do PDF oficial e serve como embasamento em fiscalizações estaduais.
+              </p>
+            </div>
           </div>
-          <span className="text-xs text-slate-500 bg-white px-2.5 py-1 rounded-md border border-slate-200 font-mono">
-            EFD Layout v3.1.x / RICMS-{companyUf}
-          </span>
-        </div>
 
-        <div className="p-6 space-y-4">
-          <textarea
-            rows={6}
-            value={analystNotes || defaultParecerText}
-            onChange={(e) => setAnalystNotes(e.target.value)}
-            className="w-full text-sm text-slate-700 bg-slate-50 border border-slate-300 rounded-lg p-4 focus:ring-1 focus:ring-[#1e3a5f] font-sans leading-relaxed transition-all"
-            placeholder="Edite ou adicione considerações personalizadas para o relatório final..."
-          />
-          <p className="text-xs text-slate-400 flex items-center">
-            <Info className="w-3.5 h-3.5 mr-1 text-slate-400" />
-            Este parecer é incorporado ao cabeçalho do PDF oficial e serve como embasamento em fiscalizações estaduais.
-          </p>
-        </div>
-      </div>
+          {/* Reconciled ICMS Balance (E110) */}
+          {spedData.apuracao && (
+            <div className="atlas-card p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-base font-bold text-[var(--atlas-navy)] flex items-center">
+                  <Building2 className="w-5 h-5 text-[var(--atlas-navy)] mr-2" />
+                  Demonstrativo de Reconciliação do ICMS (Bloco E110)
+                </h3>
+                <span className="atlas-pill atlas-pill-accent">
+                  Saldos Recalculados
+                </span>
+              </div>
 
-      {/* Reconciled ICMS Balance (E110) */}
-      {spedData.apuracao && (
-        <div className="bg-white rounded-lg shadow-xs border border-slate-200 p-6 space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-base font-bold text-slate-900 flex items-center">
-              <Building2 className="w-5 h-5 text-[#1e3a5f] mr-2" />
-              Demonstrativo de Reconciliação do ICMS (Bloco E110)
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+                <div className="bg-[var(--atlas-surface-hover)] p-4 rounded-lg border border-[var(--atlas-border)]">
+                  <span className="text-[11px] font-semibold text-[var(--atlas-text-secondary)] uppercase block">Total de Débitos</span>
+                  <span className="text-base font-bold text-[var(--atlas-text)] mt-1 block">
+                    R$ {spedData.apuracao.vlTotDebitos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+
+                <div className="bg-[var(--atlas-surface-hover)] p-4 rounded-lg border border-[var(--atlas-border)]">
+                  <span className="text-[11px] font-semibold text-[var(--atlas-text-secondary)] uppercase block">Total de Créditos</span>
+                  <span className="text-base font-bold text-[var(--atlas-text)] mt-1 block">
+                    R$ {spedData.apuracao.vlTotCreditos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+
+                <div className="bg-[var(--atlas-surface-hover)] p-4 rounded-lg border border-[var(--atlas-border)]">
+                  <span className="text-[11px] font-semibold text-[var(--atlas-text-secondary)] uppercase block">Saldo Apurado</span>
+                  <span className="text-base font-bold text-[var(--atlas-navy)] mt-1 block">
+                    R$ {spedData.apuracao.vlSldApurado.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+
+                <div className="bg-[var(--atlas-accent-tint)] p-4 rounded-lg border border-[var(--atlas-accent)]/30">
+                  <span className="text-[11px] font-semibold text-[var(--atlas-accent)] uppercase block">Saldo Credor a Transportar</span>
+                  <span className="text-base font-bold text-[var(--atlas-accent)] mt-1 block">
+                    R$ {spedData.apuracao.vlSldCredorTransportar.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Interactive Table of Applied Corrections */}
+          <div className="atlas-card p-6 space-y-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h3 className="text-base font-bold text-[var(--atlas-navy)] flex items-center">
+                  <Layers className="w-5 h-5 text-[var(--atlas-navy)] mr-2" />
+                  Detalhamento de Tudo Que Foi Corrigido no SPED TXT
+                </h3>
+                <p className="text-xs text-[var(--atlas-text-secondary)] mt-0.5">
+                  Exibindo <span className="font-bold text-[var(--atlas-text)]">{filteredCorrections.length}</span> de <span className="font-bold text-[var(--atlas-text)]">{appliedCorrections.length}</span> alterações aplicadas.
+                </p>
+              </div>
+
+              {/* Search & Filter */}
+              <div className="flex flex-col sm:flex-row items-center gap-2">
+                <div className="relative w-full sm:w-60 flex items-center">
+                  <Search className="w-3.5 h-3.5 text-[var(--atlas-text-muted)] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Buscar linha, registro..."
+                    className="atlas-input atlas-input-icon-left text-xs py-1.5"
+                  />
+                </div>
+
+                <div className="flex items-center gap-1 bg-[var(--atlas-surface-hover)] p-1 rounded-lg border border-[var(--atlas-border)] text-xs w-full sm:w-auto">
+                  <button
+                    onClick={() => setFilterCategory('ALL')}
+                    className={`atlas-btn py-1 px-2.5 text-xs ${filterCategory === 'ALL' ? 'atlas-btn-primary' : 'atlas-btn-ghost'}`}
+                  >
+                    Todas ({appliedCorrections.length})
+                  </button>
+                  <button
+                    onClick={() => setFilterCategory('CST_CFOP')}
+                    className={`atlas-btn py-1 px-2.5 text-xs ${filterCategory === 'CST_CFOP' ? 'atlas-btn-primary' : 'atlas-btn-ghost'}`}
+                  >
+                    CST/CFOP ({cstCfopCorrectionsCount})
+                  </button>
+                  <button
+                    onClick={() => setFilterCategory('OMISSA')}
+                    className={`atlas-btn py-1 px-2.5 text-xs ${filterCategory === 'OMISSA' ? 'atlas-btn-primary' : 'atlas-btn-ghost'}`}
+                  >
+                    Omissas ({missingNotesInsertedCount})
+                  </button>
+                  <button
+                    onClick={() => setFilterCategory('VALORES')}
+                    className={`atlas-btn py-1 px-2.5 text-xs ${filterCategory === 'VALORES' ? 'atlas-btn-primary' : 'atlas-btn-ghost'}`}
+                  >
+                    Valores ({valueCorrectionsCount})
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Table */}
+            <div className="overflow-x-auto border border-[var(--atlas-border)] rounded-lg">
+              <table className="min-w-full divide-y divide-[var(--atlas-border)] text-xs">
+                <thead className="bg-[var(--atlas-surface-hover)]">
+                  <tr>
+                    <th className="px-4 py-3 text-left font-bold text-[var(--atlas-text-secondary)] uppercase tracking-wider w-20">Linha TXT</th>
+                    <th className="px-4 py-3 text-left font-bold text-[var(--atlas-text-secondary)] uppercase tracking-wider w-20">Registro</th>
+                    <th className="px-4 py-3 text-left font-bold text-[var(--atlas-text-secondary)] uppercase tracking-wider">Campo Alterado</th>
+                    <th className="px-4 py-3 text-left font-bold text-[var(--atlas-text-secondary)] uppercase tracking-wider">Antes (Original)</th>
+                    <th className="px-4 py-3 text-left font-bold text-[var(--atlas-text-secondary)] uppercase tracking-wider">Depois (Corrigido)</th>
+                    <th className="px-4 py-3 text-left font-bold text-[var(--atlas-text-secondary)] uppercase tracking-wider">Justificativa Técnico-Fiscal</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-[var(--atlas-surface)] divide-y divide-[var(--atlas-border)]">
+                  {filteredCorrections.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="px-4 py-8 text-center text-[var(--atlas-text-muted)]">
+                        Nenhuma alteração encontrada para os filtros selecionados.
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredCorrections.map((alt, idx) => (
+                      <tr key={idx} className="hover:bg-[var(--atlas-surface-hover)] transition-colors">
+                        <td className="px-4 py-3 font-mono font-semibold text-[var(--atlas-text-secondary)] whitespace-nowrap">
+                          {alt.numeroLinha > 0 ? `#${alt.numeroLinha}` : <span className="text-[var(--atlas-navy)] font-bold">+Nova</span>}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap">
+                          <span className="atlas-pill atlas-pill-navy font-mono">
+                            {alt.registro}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 font-medium text-[var(--atlas-text)] whitespace-nowrap">
+                          {getFieldLabel(alt.campo)}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap">
+                          <span className="atlas-pill atlas-pill-danger font-mono line-through">
+                            {alt.valorAntigo}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap">
+                          <span className="atlas-pill atlas-pill-accent font-mono font-bold">
+                            {alt.valorNovo}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-[var(--atlas-text-secondary)] leading-relaxed max-w-md">
+                          {getFiscalJustification(alt, rawFindings, companyUf)}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* General Audit Mappings Breakdown */}
+          <div className="atlas-card p-6 space-y-4">
+            <h3 className="text-base font-bold text-[var(--atlas-navy)] flex items-center">
+              <AlertTriangle className="w-5 h-5 text-[var(--atlas-warning)] mr-2" />
+              Resumo Geral dos Apontamentos de Auditoria
             </h3>
-            <span className="text-xs text-[#0f6e56] font-semibold bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
-              Saldos Recalculados
-            </span>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+              <div className="bg-[var(--atlas-surface-hover)] p-4 rounded-xl border border-[var(--atlas-border)] space-y-2">
+                <span className="font-bold text-[var(--atlas-navy)] block text-sm">Status da Revisão</span>
+                <div className="flex justify-between items-center text-[var(--atlas-text-secondary)]">
+                  <span>Pendentes de Análise:</span>
+                  <span className="font-bold text-[var(--atlas-warning)]">{pendingCount}</span>
+                </div>
+                <div className="flex justify-between items-center text-[var(--atlas-text-secondary)]">
+                  <span>Aprovados / Sanitizados:</span>
+                  <span className="font-bold text-[var(--atlas-accent)]">{approvedCount}</span>
+                </div>
+                <div className="flex justify-between items-center text-[var(--atlas-text-secondary)]">
+                  <span>Rejeitados (Falso Positivo):</span>
+                  <span className="font-bold text-[var(--atlas-text-muted)]">{rejectedCount}</span>
+                </div>
+              </div>
+
+              <div className="bg-[var(--atlas-surface-hover)] p-4 rounded-xl border border-[var(--atlas-border)] space-y-2">
+                <span className="font-bold text-[var(--atlas-navy)] block text-sm">Severidade dos Riscos</span>
+                <div className="flex justify-between items-center text-[var(--atlas-text-secondary)]">
+                  <span>Risco Alto (Autuação):</span>
+                  <span className="font-bold text-[var(--atlas-danger)]">{rawFindings.filter(f => f.severidade === 'alta').length}</span>
+                </div>
+                <div className="flex justify-between items-center text-[var(--atlas-text-secondary)]">
+                  <span>Risco Médio (Inconsistência):</span>
+                  <span className="font-bold text-[var(--atlas-warning)]">{rawFindings.filter(f => f.severidade === 'media').length}</span>
+                </div>
+                <div className="flex justify-between items-center text-[var(--atlas-text-secondary)]">
+                  <span>Risco Baixo (Alerta):</span>
+                  <span className="font-bold text-[var(--atlas-info)]">{rawFindings.filter(f => f.severidade === 'baixa').length}</span>
+                </div>
+              </div>
+
+              <div className="bg-[var(--atlas-surface-hover)] p-4 rounded-xl border border-[var(--atlas-border)] space-y-2">
+                <span className="font-bold text-[var(--atlas-navy)] block text-sm">Documentos Auditados</span>
+                <div className="flex justify-between items-center text-[var(--atlas-text-secondary)]">
+                  <span>Total no SPED Fiscal:</span>
+                  <span className="font-bold text-[var(--atlas-text)]">{spedData.documents.length}</span>
+                </div>
+                <div className="flex justify-between items-center text-[var(--atlas-text-secondary)]">
+                  <span>XMLs Terceiros Carregados:</span>
+                  <span className="font-bold text-[var(--atlas-text)]">{xmlTerceiros.length}</span>
+                </div>
+                <div className="flex justify-between items-center text-[var(--atlas-text-secondary)]">
+                  <span>XMLs Próprios / NFC-e:</span>
+                  <span className="font-bold text-[var(--atlas-text)]">{xmlProprio.length + xmlNfce.length}</span>
+                </div>
+              </div>
+            </div>
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
-              <span className="text-xs font-semibold text-slate-500 uppercase block">Total de Débitos</span>
-              <span className="text-lg font-bold text-slate-900 mt-1 block">
-                R$ {spedData.apuracao.vlTotDebitos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-              </span>
-            </div>
-
-            <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
-              <span className="text-xs font-semibold text-slate-500 uppercase block">Total de Créditos</span>
-              <span className="text-lg font-bold text-slate-900 mt-1 block">
-                R$ {spedData.apuracao.vlTotCreditos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-              </span>
-            </div>
-
-            <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
-              <span className="text-xs font-semibold text-slate-500 uppercase block">Saldo Apurado</span>
-              <span className="text-lg font-bold text-[#1e3a5f] mt-1 block">
-                R$ {spedData.apuracao.vlSldApurado.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-              </span>
-            </div>
-
-            <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
-              <span className="text-xs font-semibold text-slate-500 uppercase block">Saldo Credor a Transportar</span>
-              <span className="text-lg font-bold text-[#0f6e56] mt-1 block">
-                R$ {spedData.apuracao.vlSldCredorTransportar.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-              </span>
-            </div>
-          </div>
-        </div>
+        </>
       )}
 
-      {/* Interactive Table of Applied Corrections */}
-      <div className="bg-white rounded-lg shadow-xs border border-slate-200 overflow-hidden space-y-4 p-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h3 className="text-lg font-bold text-slate-900 flex items-center">
-              <Layers className="w-5 h-5 text-[#1e3a5f] mr-2" />
-              Detalhamento de Tudo Que Foi Corrigido no SPED TXT
-            </h3>
-            <p className="text-xs text-slate-500 mt-1">
-              Exibindo <span className="font-bold text-slate-700">{filteredCorrections.length}</span> de <span className="font-bold text-slate-700">{appliedCorrections.length}</span> alterações aplicadas.
-            </p>
-          </div>
-
-          {/* Search & Filter */}
-          <div className="flex flex-col sm:flex-row items-center gap-3">
-            <div className="relative w-full sm:w-64">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Buscar linha, registro, valor..."
-                className="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:ring-1 focus:ring-[#1e3a5f]"
-              />
-            </div>
-
-            <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs w-full sm:w-auto justify-center">
-              <button
-                onClick={() => setFilterCategory('ALL')}
-                className={`px-3 py-1.5 rounded font-semibold transition-all ${filterCategory === 'ALL' ? 'bg-white text-[#1e3a5f] shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
-              >
-                Todas ({appliedCorrections.length})
-              </button>
-              <button
-                onClick={() => setFilterCategory('CST_CFOP')}
-                className={`px-3 py-1.5 rounded font-semibold transition-all ${filterCategory === 'CST_CFOP' ? 'bg-white text-[#1e3a5f] shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
-              >
-                CST/CFOP ({cstCfopCorrectionsCount})
-              </button>
-              <button
-                onClick={() => setFilterCategory('OMISSA')}
-                className={`px-3 py-1.5 rounded font-semibold transition-all ${filterCategory === 'OMISSA' ? 'bg-white text-[#1e3a5f] shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
-              >
-                Omissas ({missingNotesInsertedCount})
-              </button>
-              <button
-                onClick={() => setFilterCategory('VALORES')}
-                className={`px-3 py-1.5 rounded font-semibold transition-all ${filterCategory === 'VALORES' ? 'bg-white text-[#1e3a5f] shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
-              >
-                Valores ({valueCorrectionsCount})
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Table */}
-        <div className="overflow-x-auto border border-slate-200 rounded-lg">
-          <table className="min-w-full divide-y divide-slate-200 text-xs">
-            <thead className="bg-slate-50">
-              <tr>
-                <th className="px-4 py-3 text-left font-bold text-slate-700 uppercase tracking-wider w-20">Linha TXT</th>
-                <th className="px-4 py-3 text-left font-bold text-slate-700 uppercase tracking-wider w-20">Registro</th>
-                <th className="px-4 py-3 text-left font-bold text-slate-700 uppercase tracking-wider">Campo Alterado</th>
-                <th className="px-4 py-3 text-left font-bold text-slate-700 uppercase tracking-wider">Antes (Original)</th>
-                <th className="px-4 py-3 text-left font-bold text-slate-700 uppercase tracking-wider">Depois (Corrigido)</th>
-                <th className="px-4 py-3 text-left font-bold text-slate-700 uppercase tracking-wider">Justificativa Técnico-Fiscal</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-slate-200">
-              {filteredCorrections.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-slate-400">
-                    Nenhuma alteração encontrada para os filtros selecionados.
-                  </td>
-                </tr>
-              ) : (
-                filteredCorrections.map((alt, idx) => (
-                  <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="px-4 py-3 font-mono font-semibold text-slate-500 whitespace-nowrap">
-                      {alt.numeroLinha > 0 ? `#${alt.numeroLinha}` : <span className="text-[#1e3a5f] font-bold">+Nova</span>}
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap">
-                      <span className="font-bold text-slate-800 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md font-mono">
-                        {alt.registro}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 font-medium text-slate-800 whitespace-nowrap">
-                      {getFieldLabel(alt.campo)}
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap">
-                      <span className="inline-block bg-red-50 text-red-700 border border-red-200 font-mono px-2 py-0.5 rounded text-xs line-through">
-                        {alt.valorAntigo}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap">
-                      <span className="inline-block bg-emerald-50 text-emerald-800 border border-emerald-300 font-mono font-bold px-2 py-0.5 rounded text-xs">
-                        {alt.valorNovo}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-slate-600 leading-relaxed max-w-md">
-                      {getFiscalJustification(alt, rawFindings, companyUf)}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* General Audit Mappings Breakdown */}
-      <div className="bg-white rounded-lg shadow-xs border border-slate-200 p-6 space-y-4">
-        <h3 className="text-base font-bold text-slate-900 flex items-center">
-          <AlertTriangle className="w-5 h-5 text-amber-500 mr-2" />
-          Resumo Geral dos Apontamentos de Auditoria
-        </h3>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-          <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
-            <span className="font-bold text-slate-700 block text-sm">Status da Revisão</span>
-            <div className="flex justify-between items-center text-slate-600">
-              <span>Pendentes de Análise:</span>
-              <span className="font-bold text-amber-600">{pendingCount}</span>
-            </div>
-            <div className="flex justify-between items-center text-slate-600">
-              <span>Aprovados / Sanitizados:</span>
-              <span className="font-bold text-emerald-600">{approvedCount}</span>
-            </div>
-            <div className="flex justify-between items-center text-slate-600">
-              <span>Rejeitados (Falso Positivo):</span>
-              <span className="font-bold text-slate-500">{rejectedCount}</span>
-            </div>
-          </div>
-
-          <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
-            <span className="font-bold text-slate-700 block text-sm">Severidade dos Riscos</span>
-            <div className="flex justify-between items-center text-slate-600">
-              <span>Risco Alto (Autuação):</span>
-              <span className="font-bold text-red-600">{rawFindings.filter(f => f.severidade === 'alta').length}</span>
-            </div>
-            <div className="flex justify-between items-center text-slate-600">
-              <span>Risco Médio (Inconsistência):</span>
-              <span className="font-bold text-amber-600">{rawFindings.filter(f => f.severidade === 'media').length}</span>
-            </div>
-            <div className="flex justify-between items-center text-slate-600">
-              <span>Risco Baixo (Alerta):</span>
-              <span className="font-bold text-blue-600">{rawFindings.filter(f => f.severidade === 'baixa').length}</span>
-            </div>
-          </div>
-
-          <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
-            <span className="font-bold text-slate-700 block text-sm">Documentos Auditados</span>
-            <div className="flex justify-between items-center text-slate-600">
-              <span>Total no SPED Fiscal:</span>
-              <span className="font-bold text-slate-800">{spedData.documents.length}</span>
-            </div>
-            <div className="flex justify-between items-center text-slate-600">
-              <span>XMLs Terceiros Carregados:</span>
-              <span className="font-bold text-slate-800">{xmlTerceiros.length}</span>
-            </div>
-            <div className="flex justify-between items-center text-slate-600">
-              <span>XMLs Próprios / NFC-e:</span>
-              <span className="font-bold text-slate-800">{xmlProprio.length + xmlNfce.length}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
-  )}
-      </div>
     </div>
   );
 }

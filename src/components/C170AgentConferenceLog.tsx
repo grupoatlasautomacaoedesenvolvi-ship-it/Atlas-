@@ -210,13 +210,13 @@ export function C170AgentConferenceLog({
                 statusBadge = <span className="text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded font-bold">✓ APROVADO</span>;
                 break;
               case 'INCONSISTENT':
-                statusBadge = <span className="text-amber-400 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded font-bold">⚠️ INCONSISTENTE</span>;
+                statusBadge = <span className="text-amber-400 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded font-bold">INCONSISTENTE</span>;
                 break;
               case 'AUTO_CORRECTED':
-                statusBadge = <span className="text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-1.5 py-0.5 rounded font-bold">⚡ AUTO-CORRIGIDO</span>;
+                statusBadge = <span className="text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-1.5 py-0.5 rounded font-bold">AUTO-CORRIGIDO</span>;
                 break;
               case 'ANALYSING':
-                statusBadge = <span className="text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded font-bold animate-pulse">⏳ ANALISANDO</span>;
+                statusBadge = <span className="text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded font-bold animate-pulse">ANALISANDO</span>;
                 break;
               default:
                 statusBadge = <span className="text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded font-bold">{log.status}</span>;

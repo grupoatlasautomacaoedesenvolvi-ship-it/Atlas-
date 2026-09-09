@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Upload, FileCheck, ArrowRight, FileCode, Archive, FilePlus, AlertCircle, CheckCircle2, Sparkles, RefreshCw } from 'lucide-react';
+import { Upload, FileCheck, ArrowRight, FileCode, Archive, FilePlus, AlertCircle, CheckCircle2, Sparkles, RefreshCw, Loader2 } from 'lucide-react';
 import { SpedData, XmlRecord, XmlCategoria } from '../types';
 import { parseSpedContent, parseXmlFiles } from '../lib/clientParser';
 import { trackConferenciaEvent } from '../lib/tracking';
@@ -221,259 +221,254 @@ export function UploadSection({
   };
 
   return (
-    <div className="space-y-6 pb-16 text-xs font-sans">
-      {/* Breadcrumb Bar */}
-      <div className="atlas-breadcrumb-bar">
-        <div className="flex items-center space-x-2 text-[13px]">
-          <span className="text-[var(--atlas-text-muted)] font-medium">Atlas</span>
-          <span className="text-[var(--atlas-text-muted)]">/</span>
-          <span className="text-[var(--atlas-text)] font-semibold">Central de Importação</span>
+    <div className="max-w-7xl w-full mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-6 text-[var(--atlas-text)]">
+      {/* Header Breadcrumb Bar */}
+      <div className="atlas-breadcrumb-bar rounded-xl">
+        <div className="flex items-center space-x-2">
+          <Upload className="w-4 h-4 text-[var(--atlas-navy)] shrink-0" />
+          <span className="font-semibold text-[var(--atlas-text-secondary)]">Módulo 1:</span>
+          <span className="font-bold text-[var(--atlas-navy)]">Central de Importação Fiscal & XMLs</span>
         </div>
-        <div className="text-[12px] text-[var(--atlas-text-secondary)] font-medium">
-          Carregamento de SPED e Lotes de XML
+        <div className="flex items-center space-x-3 text-xs">
+          <span>SPED Fiscal: {spedLoaded ? <strong className="text-[var(--atlas-accent)]">Carregado</strong> : <strong className="text-[var(--atlas-text-muted)]">Pendente</strong>}</span>
+          <span>•</span>
+          <span>XMLs Totais: <strong className="text-[var(--atlas-navy)]">{xmlTerceirosCount + xmlProprioCount + xmlNfceCount}</strong></span>
         </div>
       </div>
 
-      <div className="px-6 space-y-6 max-w-6xl mx-auto">
-        {/* Header Banner */}
-        <div className="text-center max-w-2xl mx-auto space-y-1.5 pt-2">
-          <h1 className="text-2xl md:text-3xl font-bold text-[var(--atlas-text)] font-serif tracking-tight">
-            Central de Importação Fiscal
-          </h1>
-          <p className="text-sm text-[var(--atlas-text-secondary)] leading-relaxed">
-            Importe seu arquivo SPED Fiscal (.txt), XMLs de NF-e/NFC-e e reponha notas faltantes para auditoria em tempo real.
-          </p>
-        </div>
-
-        {/* SEÇÃO COMPACTA: Captura de Notas Faltantes e Omissas */}
-        <div className="atlas-card p-4 space-y-3 bg-[var(--atlas-warning-bg)] border-[var(--atlas-border)]">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="flex items-center space-x-3">
-              <div className="p-2.5 bg-amber-100 text-[var(--atlas-warning)] rounded-xl shrink-0">
-                <FilePlus className="w-5 h-5 text-[var(--atlas-warning)]" />
-              </div>
-              <div>
-                <div className="flex items-center space-x-2">
-                  <h2 className="text-sm font-bold text-[var(--atlas-text)] font-serif">Captura de XMLs de Notas Faltantes</h2>
-                  {spedData && missingXmlDocs.length > 0 && (
-                    <span className="atlas-pill atlas-pill-warning">
-                      {missingXmlDocs.length} nota(s) pendente(s)
-                    </span>
-                  )}
-                  {spedData && missingXmlDocs.length === 0 && (
-                    <span className="atlas-pill atlas-pill-accent">
-                      0 pendências
-                    </span>
-                  )}
-                </div>
-                <p className="text-xs text-[var(--atlas-text-secondary)] mt-0.5">
-                  Importe lotes de XMLs/ZIPs capturados para complementar o SPED sem sobrescrever arquivos já carregados.
-                </p>
-              </div>
+      {/* Faixa fina de aviso de notas faltantes com borda inferior em --atlas-warning */}
+      <div className="bg-[var(--atlas-warning-bg)] border-b-2 border-[var(--atlas-warning)] rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+        <div className="flex items-center space-x-3">
+          <div className="p-2 bg-[var(--atlas-surface)] text-[var(--atlas-warning)] rounded-lg shrink-0 border border-[var(--atlas-border)]">
+            <FilePlus className="w-4 h-4 text-[var(--atlas-warning)]" />
+          </div>
+          <div>
+            <div className="flex items-center space-x-2">
+              <span className="font-bold text-[var(--atlas-text)]">Captura Integrada de XMLs Faltantes</span>
+              {spedData && missingXmlDocs.length > 0 && (
+                <span className="atlas-pill atlas-pill-warning">
+                  {missingXmlDocs.length} nota(s) pendente(s)
+                </span>
+              )}
+              {spedData && missingXmlDocs.length === 0 && (
+                <span className="atlas-pill atlas-pill-accent">
+                  0 pendências
+                </span>
+              )}
             </div>
-
-            <div className="shrink-0 self-end sm:self-auto">
-              <label className="atlas-btn atlas-btn-warning px-4 py-2 text-xs cursor-pointer">
-                <Upload className="w-3.5 h-3.5" />
-                <span>{loadingMissingXmls ? 'Lendo...' : 'Capturar Notas Faltantes (.xml / .zip)'}</span>
-                <input
-                  type="file"
-                  accept=".xml,.zip"
-                  multiple
-                  onChange={handleMissingXmlsUpload}
-                  disabled={loadingMissingXmls}
-                  className="hidden"
-                />
-              </label>
-            </div>
+            <p className="text-[var(--atlas-text-secondary)] mt-0.5">
+              Complemente sua auditoria enviando lotes de XMLs/ZIPs sem sobrescrever os arquivos já carregados.
+            </p>
           </div>
         </div>
 
-        {/* LISTA DE IMPORTAÇÕES REGULARES (Layout Horizontal usando atlas-list-row num único atlas-card) */}
-        <div className="atlas-card p-0 overflow-hidden">
-          <div className="p-4 bg-[var(--atlas-navy-tint)] border-b border-[var(--atlas-border)] flex items-center justify-between">
-            <h2 className="text-sm font-bold text-[var(--atlas-navy)] font-serif flex items-center space-x-2">
-              <Archive className="w-4 h-4 text-[var(--atlas-navy)]" />
-              <span>Arquivos para Auditoria Fiscal</span>
-            </h2>
+        <label className="atlas-btn atlas-btn-primary py-1.5 px-3.5 text-xs cursor-pointer shrink-0">
+          <Upload className="w-3.5 h-3.5" />
+          <span>{loadingMissingXmls ? 'Lendo...' : 'Capturar XMLs Faltantes'}</span>
+          <input
+            type="file"
+            accept=".xml,.zip"
+            multiple
+            onChange={handleMissingXmlsUpload}
+            disabled={loadingMissingXmls}
+            className="hidden"
+          />
+        </label>
+      </div>
+
+      {/* QUADRO ÚNICO DE IMPORTAÇÕES REGULARES (.atlas-card com .atlas-list-row) */}
+      <div className="atlas-card p-0 overflow-hidden">
+        <div className="p-5 border-b border-[var(--atlas-border)] flex items-center justify-between bg-[var(--atlas-surface)]">
+          <div>
+            <h2 className="text-sm font-bold text-[var(--atlas-navy)]">Zonas de Importação Fiscal</h2>
+            <p className="text-xs text-[var(--atlas-text-secondary)]">Carregue cada modalidade de arquivo para cruzamento automatizado</p>
+          </div>
+          {spedLoaded && (
             <button
-              onClick={handleLoadSample}
-              className="atlas-btn atlas-btn-secondary px-3 py-1 text-xs"
+              onClick={onGoToAudit}
+              className="atlas-btn atlas-btn-accent py-1.5 px-4 text-xs"
             >
-              <FileCode className="w-3.5 h-3.5 text-[var(--atlas-navy)]" />
-              <span>Carregar Arquivo Exemplo</span>
+              <span>Ir para Auditoria</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </button>
-          </div>
+          )}
+        </div>
 
+        <div className="divide-y divide-[var(--atlas-border)]">
           {/* LINHA 1: SPED Fiscal */}
-          <div className="atlas-list-row flex flex-col md:flex-row md:items-center justify-between gap-4 p-5">
+          <div className="atlas-list-row justify-between flex-col md:flex-row md:items-center gap-4">
             <div className="flex items-center space-x-4 min-w-0">
-              <div className="w-12 h-12 rounded-xl bg-[var(--atlas-navy-tint)] text-[var(--atlas-navy)] flex items-center justify-center shrink-0">
-                <FileCode className="w-6 h-6" />
+              <div className="p-2.5 rounded-lg bg-[var(--atlas-navy-tint)] text-[var(--atlas-navy)] shrink-0">
+                <FileCode className="w-5 h-5" />
               </div>
               <div className="min-w-0">
-                <div className="flex items-center space-x-2">
-                  <h3 className="text-sm font-bold text-[var(--atlas-text)] font-serif">SPED Fiscal (.txt)</h3>
-                  {spedLoaded && <span className="atlas-pill atlas-pill-accent">Pronto</span>}
+                <div className="flex items-center gap-2">
+                  <h3 className="font-bold text-[var(--atlas-text)] text-xs">SPED Fiscal (EFD ICMS/IPI)</h3>
+                  {spedLoaded ? (
+                    <span className="atlas-pill atlas-pill-accent">Carregado</span>
+                  ) : (
+                    <span className="atlas-pill atlas-pill-navy">Pendente</span>
+                  )}
                 </div>
-                <p className="text-xs text-[var(--atlas-text-secondary)] mt-0.5">
-                  {spedLoaded 
-                    ? `Arquivo: ${spedFileName || 'SPED Carregado'}` 
-                    : 'Arquivo texto da EFD ICMS/IPI com registros do Bloco C, H e 0000'}
+                <p className="text-[var(--atlas-text-secondary)] text-[11px] truncate mt-0.5">
+                  {spedLoaded ? (spedFileName || 'SPED Ativo na Sessão') : 'Arquivo .txt oficial do SPED Fiscal'}
                 </p>
                 {loadingSped && (
-                  <div className="mt-2 text-xs font-semibold text-[var(--atlas-navy)] flex items-center space-x-2">
-                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                  <div className="mt-2 text-[11px] text-[var(--atlas-navy)] font-medium flex items-center gap-2">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
                     <span>{spedStatusText} ({spedProgress}%)</span>
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="flex items-center space-x-3 shrink-0 self-end md:self-auto">
-              {spedLoaded ? (
-                <>
-                  {onClearSped && (
-                    <button
-                      onClick={() => { setSpedFileName(null); onClearSped(); }}
-                      className="atlas-btn atlas-btn-danger px-3 py-1.5 text-xs"
-                    >
-                      Remover
-                    </button>
-                  )}
-                  <button
-                    onClick={onGoToAudit}
-                    className="atlas-btn atlas-btn-accent px-4 py-2 text-xs"
-                  >
-                    <span>Ir para Auditoria</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </>
-              ) : (
-                <label className="atlas-btn atlas-btn-primary px-4 py-2 text-xs cursor-pointer">
-                  <Upload className="w-3.5 h-3.5" />
-                  <span>Selecionar SPED .txt</span>
-                  <input type="file" accept=".txt" onChange={handleSpedUpload} className="hidden" />
-                </label>
+            <div className="flex items-center space-x-2 shrink-0 self-end md:self-auto">
+              <button
+                onClick={handleLoadSample}
+                className="atlas-btn atlas-btn-secondary py-1.5 px-3 text-xs"
+              >
+                <FileCode className="w-3.5 h-3.5 text-[var(--atlas-navy)]" />
+                <span>Exemplo</span>
+              </button>
+              {spedLoaded && onClearSped && (
+                <button
+                  onClick={() => { setSpedFileName(null); onClearSped(); }}
+                  className="atlas-btn atlas-btn-secondary py-1.5 px-3 text-xs text-[var(--atlas-danger)] hover:border-[var(--atlas-danger)]"
+                >
+                  Remover
+                </button>
               )}
+              <label className="atlas-btn atlas-btn-primary py-1.5 px-4 text-xs cursor-pointer">
+                <span>{spedLoaded ? 'Substituir .txt' : 'Selecionar .txt'}</span>
+                <input type="file" accept=".txt" onChange={handleSpedUpload} className="hidden" />
+              </label>
             </div>
           </div>
 
           {/* LINHA 2: XML de Terceiros */}
-          <div className="atlas-list-row flex flex-col md:flex-row md:items-center justify-between gap-4 p-5">
+          <div className="atlas-list-row justify-between flex-col md:flex-row md:items-center gap-4">
             <div className="flex items-center space-x-4 min-w-0">
-              <div className="w-12 h-12 rounded-xl bg-[var(--atlas-accent-tint)] text-[var(--atlas-accent)] flex items-center justify-center shrink-0">
-                <Archive className="w-6 h-6" />
+              <div className="p-2.5 rounded-lg bg-[var(--atlas-accent-tint)] text-[var(--atlas-accent)] shrink-0">
+                <Archive className="w-5 h-5" />
               </div>
               <div className="min-w-0">
-                <div className="flex items-center space-x-2">
-                  <h3 className="text-sm font-bold text-[var(--atlas-text)] font-serif">XML de Terceiros (Entradas)</h3>
-                  {xmlTerceirosCount > 0 && <span className="atlas-pill atlas-pill-accent">{xmlTerceirosCount} arquivos</span>}
+                <div className="flex items-center gap-2">
+                  <h3 className="font-bold text-[var(--atlas-text)] text-xs">XML de Terceiros (Entradas / Fornecedores)</h3>
+                  {xmlTerceirosCount > 0 ? (
+                    <span className="atlas-pill atlas-pill-accent">{xmlTerceirosCount} arquivo(s)</span>
+                  ) : (
+                    <span className="atlas-pill atlas-pill-info">Opcional</span>
+                  )}
                 </div>
-                <p className="text-xs text-[var(--atlas-text-secondary)] mt-0.5">
-                  NF-e Mod 55 recebidas de fornecedores em lote .xml ou arquivo .zip
+                <p className="text-[var(--atlas-text-secondary)] text-[11px] truncate mt-0.5">
+                  NF-e Mod 55 recebidas de fornecedores de mercadoria/insumos.
                 </p>
                 {xmlLoadings['XML_TERCEIROS'] && (
-                  <div className="mt-2 text-xs font-semibold text-[var(--atlas-accent)] flex items-center space-x-2">
-                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                  <div className="mt-2 text-[11px] text-[var(--atlas-accent)] font-medium flex items-center gap-2">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
                     <span>{xmlProgress['XML_TERCEIROS']?.text || 'Importando...'} ({xmlProgress['XML_TERCEIROS']?.pct || 0}%)</span>
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="flex items-center space-x-3 shrink-0 self-end md:self-auto">
+            <div className="flex items-center space-x-2 shrink-0 self-end md:self-auto">
               {xmlTerceirosCount > 0 && onClearXmlTerceiros && (
                 <button
                   onClick={onClearXmlTerceiros}
-                  className="atlas-btn atlas-btn-danger px-3 py-1.5 text-xs"
+                  className="atlas-btn atlas-btn-secondary py-1.5 px-3 text-xs text-[var(--atlas-danger)] hover:border-[var(--atlas-danger)]"
                 >
                   Remover
                 </button>
               )}
-              <label className="atlas-btn atlas-btn-accent px-4 py-2 text-xs cursor-pointer">
-                <Upload className="w-3.5 h-3.5" />
-                <span>{xmlTerceirosCount > 0 ? 'Adicionar Mais XMLs' : 'Importar XMLs Terceiros'}</span>
+              <label className="atlas-btn atlas-btn-accent py-1.5 px-4 text-xs cursor-pointer">
+                <span>{xmlTerceirosCount > 0 ? 'Adicionar XML/ZIP' : 'Enviar XML/ZIP'}</span>
                 <input type="file" accept=".xml,.zip" multiple onChange={(e) => handleXmlUpload(e, 'XML_TERCEIROS')} className="hidden" />
               </label>
             </div>
           </div>
 
           {/* LINHA 3: XML Próprio */}
-          <div className="atlas-list-row flex flex-col md:flex-row md:items-center justify-between gap-4 p-5">
+          <div className="atlas-list-row justify-between flex-col md:flex-row md:items-center gap-4">
             <div className="flex items-center space-x-4 min-w-0">
-              <div className="w-12 h-12 rounded-xl bg-[var(--atlas-navy-tint)] text-[var(--atlas-navy)] flex items-center justify-center shrink-0">
-                <Archive className="w-6 h-6" />
+              <div className="p-2.5 rounded-lg bg-[var(--atlas-navy-tint)] text-[var(--atlas-navy)] shrink-0">
+                <Archive className="w-5 h-5" />
               </div>
               <div className="min-w-0">
-                <div className="flex items-center space-x-2">
-                  <h3 className="text-sm font-bold text-[var(--atlas-text)] font-serif">NF-e Próprio (Saídas)</h3>
-                  {xmlProprioCount > 0 && <span className="atlas-pill atlas-pill-navy">{xmlProprioCount} arquivos</span>}
+                <div className="flex items-center gap-2">
+                  <h3 className="font-bold text-[var(--atlas-text)] text-xs">NF-e Próprio (Saídas / Vendas)</h3>
+                  {xmlProprioCount > 0 ? (
+                    <span className="atlas-pill atlas-pill-navy">{xmlProprioCount} arquivo(s)</span>
+                  ) : (
+                    <span className="atlas-pill atlas-pill-info">Opcional</span>
+                  )}
                 </div>
-                <p className="text-xs text-[var(--atlas-text-secondary)] mt-0.5">
-                  NF-e Mod 55 emitidas pela própria empresa em lote .xml ou arquivo .zip
+                <p className="text-[var(--atlas-text-secondary)] text-[11px] truncate mt-0.5">
+                  NF-e Mod 55 emitidas pelo próprio contribuinte.
                 </p>
                 {xmlLoadings['XML_PROPRIO'] && (
-                  <div className="mt-2 text-xs font-semibold text-[var(--atlas-navy)] flex items-center space-x-2">
-                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                    <span>Lendo arquivos...</span>
+                  <div className="mt-2 text-[11px] text-[var(--atlas-navy)] font-medium flex items-center gap-2">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Lendo XMLs próprios...</span>
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="flex items-center space-x-3 shrink-0 self-end md:self-auto">
+            <div className="flex items-center space-x-2 shrink-0 self-end md:self-auto">
               {xmlProprioCount > 0 && onClearXmlProprio && (
                 <button
                   onClick={onClearXmlProprio}
-                  className="atlas-btn atlas-btn-danger px-3 py-1.5 text-xs"
+                  className="atlas-btn atlas-btn-secondary py-1.5 px-3 text-xs text-[var(--atlas-danger)] hover:border-[var(--atlas-danger)]"
                 >
                   Remover
                 </button>
               )}
-              <label className="atlas-btn atlas-btn-secondary px-4 py-2 text-xs cursor-pointer">
-                <Upload className="w-3.5 h-3.5 text-[var(--atlas-navy)]" />
-                <span>{xmlProprioCount > 0 ? 'Adicionar Mais XMLs' : 'Importar NF-e Próprio'}</span>
+              <label className="atlas-btn atlas-btn-primary py-1.5 px-4 text-xs cursor-pointer">
+                <span>{xmlProprioCount > 0 ? 'Adicionar XML/ZIP' : 'Enviar XML/ZIP'}</span>
                 <input type="file" accept=".xml,.zip" multiple onChange={(e) => handleXmlUpload(e, 'XML_PROPRIO')} className="hidden" />
               </label>
             </div>
           </div>
 
-          {/* LINHA 4: XML NFC-e */}
-          <div className="atlas-list-row flex flex-col md:flex-row md:items-center justify-between gap-4 p-5">
+          {/* LINHA 4: NFC-e */}
+          <div className="atlas-list-row justify-between flex-col md:flex-row md:items-center gap-4">
             <div className="flex items-center space-x-4 min-w-0">
-              <div className="w-12 h-12 rounded-xl bg-[var(--atlas-info-tint)] text-[var(--atlas-info)] flex items-center justify-center shrink-0">
-                <Archive className="w-6 h-6" />
+              <div className="p-2.5 rounded-lg bg-[var(--atlas-accent-tint)] text-[var(--atlas-accent)] shrink-0">
+                <Archive className="w-5 h-5" />
               </div>
               <div className="min-w-0">
-                <div className="flex items-center space-x-2">
-                  <h3 className="text-sm font-bold text-[var(--atlas-text)] font-serif">NFC-e (Mod 65)</h3>
-                  {xmlNfceCount > 0 && <span className="atlas-pill atlas-pill-info">{xmlNfceCount} arquivos</span>}
+                <div className="flex items-center gap-2">
+                  <h3 className="font-bold text-[var(--atlas-text)] text-xs">NFC-e (Nota de Consumidor Eletrônica)</h3>
+                  {xmlNfceCount > 0 ? (
+                    <span className="atlas-pill atlas-pill-accent">{xmlNfceCount} arquivo(s)</span>
+                  ) : (
+                    <span className="atlas-pill atlas-pill-info">Opcional</span>
+                  )}
                 </div>
-                <p className="text-xs text-[var(--atlas-text-secondary)] mt-0.5">
-                  Notas Fiscais de Consumidor Eletrônicas em lote .xml ou arquivo .zip
+                <p className="text-[var(--atlas-text-secondary)] text-[11px] truncate mt-0.5">
+                  NFC-e Mod 65 para conciliação de cupom fiscal e vendas no varejo.
                 </p>
                 {xmlLoadings['XML_NFCE'] && (
-                  <div className="mt-2 text-xs font-semibold text-[var(--atlas-info)] flex items-center space-x-2">
-                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                    <span>Lendo NFC-e...</span>
+                  <div className="mt-2 text-[11px] text-[var(--atlas-accent)] font-medium flex items-center gap-2">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Lendo NFC-es...</span>
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="flex items-center space-x-3 shrink-0 self-end md:self-auto">
+            <div className="flex items-center space-x-2 shrink-0 self-end md:self-auto">
               {xmlNfceCount > 0 && onClearXmlNfce && (
                 <button
                   onClick={onClearXmlNfce}
-                  className="atlas-btn atlas-btn-danger px-3 py-1.5 text-xs"
+                  className="atlas-btn atlas-btn-secondary py-1.5 px-3 text-xs text-[var(--atlas-danger)] hover:border-[var(--atlas-danger)]"
                 >
                   Remover
                 </button>
               )}
-              <label className="atlas-btn atlas-btn-secondary px-4 py-2 text-xs cursor-pointer">
-                <Upload className="w-3.5 h-3.5 text-[var(--atlas-info)]" />
-                <span>{xmlNfceCount > 0 ? 'Adicionar Mais NFC-e' : 'Importar NFC-e'}</span>
+              <label className="atlas-btn atlas-btn-accent py-1.5 px-4 text-xs cursor-pointer">
+                <span>{xmlNfceCount > 0 ? 'Adicionar XML/ZIP' : 'Enviar XML/ZIP'}</span>
                 <input type="file" accept=".xml,.zip" multiple onChange={(e) => handleXmlUpload(e, 'XML_NFCE')} className="hidden" />
               </label>
             </div>
@@ -483,22 +478,22 @@ export function UploadSection({
 
       {/* MODAL DE SUCESSO DE CAPTURA */}
       {showSuccessModal && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fade-in">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl border border-[var(--atlas-border)] text-center">
-            <div className="w-16 h-16 bg-[var(--atlas-accent-tint)] text-[var(--atlas-accent)] rounded-full flex items-center justify-center mx-auto shadow-inner">
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+          <div className="atlas-card max-w-md w-full p-6 space-y-5 shadow-2xl text-center">
+            <div className="w-16 h-16 bg-[var(--atlas-accent-tint)] text-[var(--atlas-accent)] rounded-full flex items-center justify-center mx-auto">
               <CheckCircle2 className="w-8 h-8" />
             </div>
             
             <div className="space-y-2">
-              <h3 className="text-xl font-extrabold text-[var(--atlas-text)] font-serif">Captura Realizada com Sucesso!</h3>
+              <h3 className="text-xl font-bold text-[var(--atlas-navy)]">Captura Realizada com Sucesso!</h3>
               <p className="text-xs text-[var(--atlas-text-secondary)]">
-                Foram capturados e integrados <strong className="text-[var(--atlas-accent)] font-extrabold">{lastCapturedCount} novo(s) arquivo(s) XML</strong> à base de conferência.
+                Foram capturados e integrados <strong className="text-[var(--atlas-accent)]">{lastCapturedCount} novo(s) arquivo(s) XML</strong> à base de conferência.
               </p>
             </div>
 
             {spedData && (
-              <div className="bg-[var(--atlas-bg)] rounded-xl p-3 text-xs text-[var(--atlas-text-secondary)] border border-[var(--atlas-border)] text-left space-y-1">
-                <p className="font-bold text-[var(--atlas-text)] font-serif">Status Atualizado do Confronto:</p>
+              <div className="bg-[var(--atlas-surface-hover)] rounded-xl p-3 text-xs text-[var(--atlas-text)] border border-[var(--atlas-border)] text-left space-y-1">
+                <p className="font-bold text-[var(--atlas-navy)]">Status Atualizado do Confronto:</p>
                 <p className="text-[var(--atlas-text-secondary)]">
                   {missingXmlDocs.length > 0 
                     ? `Restam ainda ${missingXmlDocs.length} nota(s) faltantes no SPED C100 aguardando XML.` 
@@ -510,13 +505,13 @@ export function UploadSection({
             <div className="flex gap-3 pt-2">
               <button
                 onClick={() => setShowSuccessModal(false)}
-                className="atlas-btn atlas-btn-secondary flex-1 py-2.5 px-4 text-xs font-bold"
+                className="atlas-btn atlas-btn-secondary flex-1 py-2 px-4 text-xs"
               >
                 Continuar Importando
               </button>
               <button
                 onClick={() => { setShowSuccessModal(false); onGoToAudit(); }}
-                className="atlas-btn atlas-btn-accent flex-1 py-2.5 px-4 text-xs font-bold"
+                className="atlas-btn atlas-btn-accent flex-1 py-2 px-4 text-xs"
               >
                 <span>Ir para Auditoria</span>
                 <ArrowRight className="w-4 h-4" />

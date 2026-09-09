@@ -426,174 +426,132 @@ export function AdvancedAuditView({
   };
 
   return (
-    <div className="space-y-6 pb-16 text-xs font-sans">
-      {/* Breadcrumb Bar */}
-      <div className="atlas-breadcrumb-bar">
-        <div className="flex items-center space-x-2 text-[13px]">
-          <span className="text-[var(--atlas-text-muted)] font-medium">Atlas</span>
-          <span className="text-[var(--atlas-text-muted)]">/</span>
-          <span className="text-[var(--atlas-text)] font-semibold">Central de Auditoria</span>
-        </div>
-        <div className="text-[12px] text-[var(--atlas-text-secondary)] font-medium">
-          Revisão Automatizada, Cruzamento SPED x XML e Apuração
-        </div>
-      </div>
-
-      <div className="px-6 space-y-6 max-w-7xl mx-auto">
-        {/* Header Title & Actions */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-[var(--atlas-text)] font-serif tracking-tight">
-              Central de Auditoria Fiscal
-            </h1>
-            <p className="text-xs text-[var(--atlas-text-secondary)] mt-1">
-              Revisão automatizada e orientada para redução de 70% do trabalho manual em SPED
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              onClick={handleFinalizarConferencia}
-              disabled={isFinalizing}
-              className="atlas-btn atlas-btn-accent px-4 py-2 text-xs"
-            >
-              <Database className="w-4 h-4" />
-              <span>{isFinalizing ? 'Finalizando...' : 'Finalizar Conferência'}</span>
-            </button>
-            <button
-              onClick={() => setShowC190AuditModal(true)}
-              className="atlas-btn atlas-btn-secondary px-3.5 py-2 text-xs"
-              title="Ver histórico de recálculo e deltas do Bloco C190"
-            >
-              <Calculator className="w-4 h-4 text-[var(--atlas-navy)]" />
-              <span>Auditoria C190 {c190AuditLogs.length > 0 ? `(${c190AuditLogs.length})` : ''}</span>
-            </button>
-            {filteredFindings.some(f => f.tipo === 'NOTA_SPED_SEM_XML') && (
-              <button
-                onClick={handleExportMissingKeys}
-                className="atlas-btn atlas-btn-secondary px-3.5 py-2 text-xs"
-                title="Baixar chaves que constam no SPED mas faltam no XML importado"
-              >
-                <FileText className="w-4 h-4" />
-                <span>Chaves Faltantes</span>
-              </button>
-            )}
-            <button
-              onClick={handleExportCsv}
-              className="atlas-btn atlas-btn-primary px-3.5 py-2 text-xs"
-            >
-              <Download className="w-4 h-4" />
-              <span>Exportar CSV</span>
-            </button>
-          </div>
+    <div className="max-w-7xl w-full mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-6 text-[var(--atlas-text)]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-[var(--atlas-navy)] tracking-tight">Central de Auditoria</h1>
+          <p className="text-xs text-[var(--atlas-text-secondary)] mt-0.5">Revisão automatizada e orientada para redução de 70% do trabalho manual em SPED</p>
         </div>
 
-        {/* STAT STRIP: Resumo de Inconsistências e Automação */}
-        <div className="atlas-stat-strip">
-          <div className="atlas-stat-item">
-            <span className="atlas-stat-label">Total de Achados</span>
-            <span className="atlas-stat-value">{totalFindings}</span>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={handleFinalizarConferencia}
+            disabled={isFinalizing}
+            className="atlas-btn atlas-btn-accent text-xs py-2 px-3.5"
+          >
+            <Database className="w-4 h-4" />
+            <span>{isFinalizing ? 'Finalizando...' : 'Finalizar Conferência'}</span>
+          </button>
+          <button
+            onClick={() => setShowC190AuditModal(true)}
+            className="atlas-btn atlas-btn-secondary text-xs py-2 px-3.5"
+            title="Ver histórico de recálculo e deltas do Bloco C190"
+          >
+            <Calculator className="w-4 h-4 text-[var(--atlas-navy)]" />
+            <span>Auditoria C190 {c190AuditLogs.length > 0 ? `(${c190AuditLogs.length})` : ''}</span>
+          </button>
+          {filteredFindings.some(f => f.tipo === 'NOTA_SPED_SEM_XML') && (
+            <button
+              onClick={handleExportMissingKeys}
+              className="atlas-btn atlas-btn-secondary text-xs py-2 px-3.5"
+              title="Baixar chaves que constam no SPED mas faltam no XML importado"
+            >
+              <FileText className="w-4 h-4" />
+              <span>Chaves Faltantes</span>
+            </button>
+          )}
+          <button
+            onClick={handleExportCsv}
+            className="atlas-btn atlas-btn-primary text-xs py-2 px-3.5"
+          >
+            <Download className="w-4 h-4" />
+            <span>Exportar CSV</span>
+          </button>
+          <div className="atlas-pill atlas-pill-accent flex items-center space-x-1.5 py-1.5 px-3">
+            <CheckCircle2 className="w-4 h-4 text-[var(--atlas-accent)]" />
+            <span>
+              {withCorrectionCount} Correção Pronta ({Math.round((withCorrectionCount / (totalFindings || 1)) * 100)}% automação)
+            </span>
           </div>
-          <div className="atlas-stat-item">
-            <span className="atlas-stat-label text-[var(--atlas-warning)]">Pendentes de Revisão</span>
-            <span className="atlas-stat-value text-[var(--atlas-warning)]">{pendingCount}</span>
-          </div>
-          <div className="atlas-stat-item">
-            <span className="atlas-stat-label text-[var(--atlas-accent)]">Aprovados</span>
-            <span className="atlas-stat-value text-[var(--atlas-accent)]">{approvedCount}</span>
-          </div>
-          <div className="atlas-stat-item">
-            <span className="atlas-stat-label text-[var(--atlas-danger)]">Rejeitados</span>
-            <span className="atlas-stat-value text-[var(--atlas-danger)]">{rejectedCount}</span>
-          </div>
-          <div className="atlas-stat-item">
-            <span className="atlas-stat-label text-[var(--atlas-info)]">Automação Pronta</span>
-            <span className="atlas-stat-value text-[var(--atlas-info)]">
-              {withCorrectionCount} <span className="text-xs font-medium text-[var(--atlas-text-muted)]">({Math.round((withCorrectionCount / (totalFindings || 1)) * 100)}%)</span>
+          <div className="atlas-pill atlas-pill-warning flex items-center space-x-1.5 py-1.5 px-3">
+            <AlertTriangle className="w-4 h-4 text-[var(--atlas-warning)]" />
+            <span>
+              {requiresInvestigationCount} Investigação
             </span>
           </div>
         </div>
+      </div>
 
-      {/* Tabs Nav */}
-      <div className="flex space-x-2 border-b border-[var(--atlas-border)] pb-2">
+      {/* Tabs */}
+      <div className="flex space-x-2 border-b border-[var(--atlas-border)] pb-2 text-xs">
         <button
           onClick={() => setActiveTab('achados')}
-          className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors cursor-pointer flex items-center space-x-2 ${
-            activeTab === 'achados' ? 'bg-[var(--atlas-navy)] text-white' : 'bg-transparent text-[var(--atlas-text-secondary)] hover:bg-[var(--atlas-navy-tint)]'
-          }`}
+          className={`atlas-btn py-1.5 px-3 ${activeTab === 'achados' ? 'atlas-btn-primary' : 'atlas-btn-ghost'}`}
         >
-          <ShieldAlert className="w-4 h-4" />
+          <ShieldAlert className="w-3.5 h-3.5" />
           <span>Achados de Auditoria</span>
         </button>
         
         <button
           onClick={() => setActiveTab('interestadual')}
-          className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors cursor-pointer flex items-center space-x-2 ${
-            activeTab === 'interestadual' ? 'bg-[var(--atlas-navy)] text-white' : 'bg-transparent text-[var(--atlas-text-secondary)] hover:bg-[var(--atlas-navy-tint)]'
-          }`}
+          className={`atlas-btn py-1.5 px-3 ${activeTab === 'interestadual' ? 'atlas-btn-primary' : 'atlas-btn-ghost'}`}
         >
-          <ArrowRightLeft className="w-4 h-4" />
+          <ArrowRightLeft className="w-3.5 h-3.5" />
           <span>ICMS Interestadual (NCM x CST)</span>
         </button>
-
         <button
           onClick={() => setActiveTab('automacao')}
-          className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors cursor-pointer flex items-center space-x-2 ${
-            activeTab === 'automacao' ? 'bg-[var(--atlas-navy)] text-white' : 'bg-transparent text-[var(--atlas-text-secondary)] hover:bg-[var(--atlas-navy-tint)]'
-          }`}
+          className={`atlas-btn py-1.5 px-3 ${activeTab === 'automacao' ? 'atlas-btn-primary' : 'atlas-btn-ghost'}`}
         >
-          <Settings className="w-4 h-4" />
+          <Settings className="w-3.5 h-3.5" />
           <span>Automação & Logs</span>
         </button>
 
         <button
           onClick={() => setActiveTab('xml_faltantes')}
-          className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors cursor-pointer flex items-center space-x-2 ${
-            activeTab === 'xml_faltantes' ? 'bg-[var(--atlas-navy)] text-white' : 'bg-transparent text-[var(--atlas-text-secondary)] hover:bg-[var(--atlas-navy-tint)]'
-          }`}
+          className={`atlas-btn py-1.5 px-3 ${activeTab === 'xml_faltantes' ? 'atlas-btn-primary' : 'atlas-btn-ghost'}`}
         >
-          <FileText className="w-4 h-4" />
+          <FileText className="w-3.5 h-3.5" />
           <span>XMLs Faltantes</span>
         </button>
       </div>
 
       {activeTab === 'interestadual' ? (
         <div className="space-y-6">
-          <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+          <div className="atlas-card p-6">
             <div className="mb-4">
-              <h2 className="text-lg font-bold text-slate-900">Análise de Operações Interestaduais (ICMS-ST / DIFAL)</h2>
-              <p className="text-sm text-slate-500">
-                Módulo para cruzamento de produtos (NCM) com a tributação aplicada (CST/CFOP) considerando os Estados de Origem e Destino. 
-                Utilizado para destacar inconsistências no imposto DIFAL ou de Substituição Tributária.
+              <h2 className="text-base font-bold text-[var(--atlas-navy)]">Análise de Operações Interestaduais (ICMS-ST / DIFAL)</h2>
+              <p className="text-xs text-[var(--atlas-text-secondary)]">
+                Módulo para cruzamento de produtos (NCM) com a tributação aplicada (CST/CFOP) considerando os Estados de Origem e Destino.
               </p>
             </div>
             
             <div className="flex flex-col md:flex-row gap-4 mb-6">
               <div className="relative flex-1 max-w-md">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                <Search className="w-4 h-4 text-[var(--atlas-text-muted)] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   type="text"
                   placeholder="Buscar NCM, CST, UF ou Nota..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                  className="atlas-input atlas-input-icon-left"
                 />
               </div>
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto custom-scrollbar">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-200 bg-slate-50/70 text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                    <th className="p-4">Documento</th>
-                    <th className="p-4">Produto</th>
-                    <th className="p-4">NCM</th>
-                    <th className="p-4">CFOP / CST</th>
-                    <th className="p-4 text-center">Origem &rarr; Destino</th>
-                    <th className="p-4 text-right">Valor Operação</th>
+                  <tr className="border-b border-[var(--atlas-border)] bg-[var(--atlas-surface-hover)] text-xs font-semibold text-[var(--atlas-text-secondary)] uppercase tracking-wider">
+                    <th className="p-3">Documento</th>
+                    <th className="p-3">Produto</th>
+                    <th className="p-3">NCM</th>
+                    <th className="p-3">CFOP / CST</th>
+                    <th className="p-3 text-center">Origem &rarr; Destino</th>
+                    <th className="p-3 text-right">Valor Operação</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 text-sm">
+                <tbody className="divide-y divide-[var(--atlas-border)] text-xs">
                   {interstateItems
                     .filter(item => 
                       item.ncm.includes(searchTerm) || 
@@ -603,38 +561,38 @@ export function AdvancedAuditView({
                       item.numDoc.includes(searchTerm)
                     )
                     .map(item => (
-                    <tr key={item.id} className="hover:bg-slate-50 transition-colors">
-                      <td className="p-4">
-                        <div className="font-semibold text-slate-800">NF {item.numDoc}</div>
-                        <div className="text-[10px] text-slate-400 font-mono truncate max-w-[120px]" title={item.chvNfe}>{item.chvNfe || 'Sem Chave'}</div>
+                    <tr key={item.id} className="hover:bg-[var(--atlas-surface-hover)] transition-colors">
+                      <td className="p-3">
+                        <div className="font-semibold text-[var(--atlas-text)]">NF {item.numDoc}</div>
+                        <div className="text-[10px] text-[var(--atlas-text-muted)] font-mono truncate max-w-[120px]" title={item.chvNfe}>{item.chvNfe || 'Sem Chave'}</div>
                       </td>
-                      <td className="p-4 text-slate-700">
+                      <td className="p-3 text-[var(--atlas-text)]">
                         <div className="truncate max-w-xs">{item.desc}</div>
                       </td>
-                      <td className="p-4 font-mono font-medium text-slate-800">{item.ncm}</td>
-                      <td className="p-4">
-                        <div className="flex items-center space-x-2">
-                          <span className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-xs font-medium">CFOP {item.cfop}</span>
-                          <span className={`px-2 py-0.5 rounded text-xs font-medium ${item.cst.endsWith('10') || item.cst.endsWith('70') || item.cst.endsWith('60') ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-700'}`}>
+                      <td className="p-3 font-mono font-medium text-[var(--atlas-text)]">{item.ncm}</td>
+                      <td className="p-3">
+                        <div className="flex items-center space-x-1.5">
+                          <span className="atlas-pill atlas-pill-neutral">CFOP {item.cfop}</span>
+                          <span className={`atlas-pill ${item.cst.endsWith('10') || item.cst.endsWith('70') || item.cst.endsWith('60') ? 'atlas-pill-warning' : 'atlas-pill-neutral'}`}>
                             CST {item.cst}
                           </span>
                         </div>
                       </td>
-                      <td className="p-4 text-center">
+                      <td className="p-3 text-center">
                         <div className="flex items-center justify-center space-x-2">
-                          <span className="font-bold text-slate-700">{item.ufOrigem}</span>
-                          <ArrowRightLeft className="w-3 h-3 text-slate-400" />
-                          <span className="font-bold text-[#1e3a5f]">{item.ufDestino}</span>
+                          <span className="font-bold text-[var(--atlas-text)]">{item.ufOrigem}</span>
+                          <ArrowRightLeft className="w-3 h-3 text-[var(--atlas-text-muted)]" />
+                          <span className="font-bold text-[var(--atlas-navy)]">{item.ufDestino}</span>
                         </div>
                       </td>
-                      <td className="p-4 text-right font-medium text-slate-900">
+                      <td className="p-3 text-right font-medium text-[var(--atlas-text)]">
                         R$ {item.vlOpr.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </td>
                     </tr>
                   ))}
                   {interstateItems.length === 0 && (
                     <tr>
-                      <td colSpan={6} className="text-center py-12 text-slate-500">
+                      <td colSpan={6} className="text-center py-8 text-[var(--atlas-text-secondary)]">
                         Nenhuma operação interestadual encontrada (Entrada CFOP 2xxx ou Saída CFOP 6xxx).
                       </td>
                     </tr>
@@ -647,11 +605,11 @@ export function AdvancedAuditView({
       
       ) : activeTab === 'automacao' ? (
         <div className="space-y-6">
-          <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+          <div className="atlas-card p-6">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-lg font-bold text-slate-900">Configuração de Automação</h2>
-                <p className="text-sm text-slate-500">
+                <h2 className="text-base font-bold text-[var(--atlas-navy)]">Configuração de Automação</h2>
+                <p className="text-xs text-[var(--atlas-text-secondary)] mt-0.5">
                   Habilite a execução automática de cruzamentos fiscais (NCM + UF) ao importar novos arquivos SPED.
                 </p>
               </div>
@@ -659,41 +617,41 @@ export function AdvancedAuditView({
                 <label className="flex items-center cursor-pointer">
                   <div className="relative">
                     <input type="checkbox" className="sr-only" checked={autoEnabled} onChange={handleToggleAuto} disabled={isSavingAuto} />
-                    <div className={`block w-14 h-8 rounded-full transition-colors ${autoEnabled ? 'bg-[#0f6e56]' : 'bg-slate-300'}`}></div>
-                    <div className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform ${autoEnabled ? 'transform translate-x-6' : ''}`}></div>
+                    <div className={`block w-12 h-7 rounded-full transition-colors ${autoEnabled ? 'bg-[var(--atlas-accent)]' : 'bg-[var(--atlas-border)]'}`}></div>
+                    <div className={`dot absolute left-1 top-1 bg-white w-5 h-5 rounded-full transition-transform ${autoEnabled ? 'transform translate-x-5' : ''}`}></div>
                   </div>
-                  <div className="ml-3 text-sm font-medium text-slate-700">
+                  <div className="ml-3 text-xs font-medium text-[var(--atlas-text)]">
                     {autoEnabled ? 'Automação Ativada' : 'Automação Desativada'}
                   </div>
                 </label>
               </div>
             </div>
 
-            <div className="border-t border-slate-200 pt-6">
-              <h3 className="text-md font-bold text-slate-800 mb-4 flex items-center space-x-2">
-                <FileText className="w-5 h-5 text-slate-500" />
+            <div className="border-t border-[var(--atlas-border)] pt-6">
+              <h3 className="text-sm font-bold text-[var(--atlas-navy)] mb-4 flex items-center space-x-2">
+                <FileText className="w-4 h-4 text-[var(--atlas-text-secondary)]" />
                 <span>Logs de Execução Automática</span>
               </h3>
               
               {autoLogs.length === 0 ? (
-                <div className="text-center py-8 text-slate-500 bg-slate-50 rounded-lg border border-slate-200 border-dashed">
+                <div className="text-center py-8 text-[var(--atlas-text-secondary)] bg-[var(--atlas-surface-hover)] rounded-lg border border-dashed border-[var(--atlas-border)] text-xs">
                   Nenhum log de automação encontrado.
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {autoLogs.map(log => (
-                    <div key={log.id} className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div key={log.id} className="atlas-list-row flex flex-col md:flex-row md:items-center justify-between gap-4">
                       <div>
                         <div className="flex items-center space-x-2 mb-1">
-                          <span className="text-xs font-semibold bg-[#f1efe8] text-[#1e3a5f] px-2 py-0.5 rounded uppercase tracking-wide">Execução Automática</span>
-                          <span className="text-sm text-slate-500">{new Date(log.timestamp).toLocaleString('pt-BR')}</span>
+                          <span className="atlas-pill atlas-pill-navy">Execução Automática</span>
+                          <span className="text-xs text-[var(--atlas-text-secondary)]">{new Date(log.timestamp).toLocaleString('pt-BR')}</span>
                         </div>
-                        <p className="text-sm font-medium text-slate-800">SPED Importado: <span className="font-mono">{log.spedId}</span></p>
+                        <p className="text-xs font-medium text-[var(--atlas-text)]">SPED Importado: <span className="font-mono">{log.spedId}</span></p>
                       </div>
-                      <div className="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-2 rounded-lg flex items-center space-x-2">
-                        <AlertTriangle className="w-5 h-5" />
+                      <div className="atlas-pill atlas-pill-warning flex items-center space-x-1.5 py-1.5 px-3">
+                        <AlertTriangle className="w-4 h-4 text-[var(--atlas-warning)]" />
                         <span className="font-bold">{log.alteracoes} alterações</span>
-                        <span className="text-sm font-medium">sugeridas identificadas</span>
+                        <span>sugeridas</span>
                       </div>
                     </div>
                   ))}
@@ -701,65 +659,66 @@ export function AdvancedAuditView({
               )}
             </div>
           </div>
+        </div>
       ) : activeTab === 'xml_faltantes' ? (
         <div className="space-y-6">
-          <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+          <div className="atlas-card p-6">
             <div className="mb-4">
-              <h2 className="text-lg font-bold text-slate-900">Relatório de XMLs Faltantes</h2>
-              <p className="text-sm text-slate-500">
+              <h2 className="text-base font-bold text-[var(--atlas-navy)]">Relatório de XMLs Faltantes</h2>
+              <p className="text-xs text-[var(--atlas-text-secondary)]">
                 Notas de entrada (XMLs de fornecedores) que foram escrituradas no SPED, mas cujos arquivos XML não foram importados na ferramenta.
               </p>
             </div>
             <div className="flex flex-col md:flex-row gap-4 mb-6">
               <div className="relative flex-1 max-w-md">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                <Search className="w-4 h-4 text-[var(--atlas-text-muted)] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   type="text"
                   placeholder="Buscar Documento ou Chave..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] bg-white"
+                  className="atlas-input atlas-input-icon-left"
                 />
               </div>
               <input
                 type="date"
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
-                className="px-3 py-2 text-sm font-medium border border-slate-200 rounded-lg bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+                className="atlas-input w-auto"
                 title="Filtrar por Data de Emissão"
               />
             </div>
             {filteredFindings.length === 0 ? (
-              <div className="text-center py-8 text-slate-500 bg-emerald-50 rounded-lg border border-emerald-200">
-                <CheckCircle2 className="w-8 h-8 text-emerald-500 mx-auto mb-2" />
+              <div className="atlas-alert atlas-alert-accent text-center py-6 text-xs">
+                <CheckCircle2 className="w-6 h-6 text-[var(--atlas-accent)] mx-auto mb-1.5" />
                 Nenhuma nota faltante identificada. Todos os XMLs de entrada listados no SPED foram carregados.
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="flex justify-end mb-4">
-                  <button onClick={handleExportMissingKeys} className="bg-[#1e3a5f] hover:bg-[#142c47] text-white px-4 py-2 rounded-lg text-xs font-semibold flex items-center space-x-2 shadow-sm transition-all cursor-pointer">
-                    <Download className="w-4 h-4" />
+                <div className="flex justify-end mb-2">
+                  <button onClick={handleExportMissingKeys} className="atlas-btn atlas-btn-primary text-xs py-1.5 px-3">
+                    <Download className="w-3.5 h-3.5" />
                     <span>Baixar Relatório (TXT)</span>
                   </button>
                 </div>
-                <div className="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm">
-                  <table className="min-w-full divide-y divide-slate-200">
-                    <thead className="bg-slate-50">
+                <div className="border border-[var(--atlas-border)] rounded-lg overflow-hidden">
+                  <table className="min-w-full divide-y divide-[var(--atlas-border)] text-xs">
+                    <thead className="bg-[var(--atlas-surface-hover)]">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Documento</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Chave de Acesso</th>
+                        <th className="px-4 py-3 text-left font-semibold text-[var(--atlas-text-secondary)] uppercase">Documento</th>
+                        <th className="px-4 py-3 text-left font-semibold text-[var(--atlas-text-secondary)] uppercase">Chave de Acesso</th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-slate-200">
+                    <tbody className="divide-y divide-[var(--atlas-border)] bg-[var(--atlas-surface)]">
                       {filteredFindings.map(f => {
                         const chv = (f.descricao || '').match(/Chave: (\d{44})/);
                         const chvDisplay = chv ? chv[1] : 'N/A';
                         return (
-                          <tr key={f.id} className="hover:bg-slate-50">
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
+                          <tr key={f.id} className="hover:bg-[var(--atlas-surface-hover)]">
+                            <td className="px-4 py-3 font-medium text-[var(--atlas-text)]">
                               {f.numDoc} {f.serie ? `(Série ${f.serie})` : ''}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-slate-500">
+                            <td className="px-4 py-3 font-mono text-[var(--atlas-text-secondary)]">
                               {chvDisplay}
                             </td>
                           </tr>
@@ -772,28 +731,24 @@ export function AdvancedAuditView({
             )}
           </div>
         </div>
-
-        </div>
       ) : (
 
         <>
           {/* Painel de Diagnóstico Rápido por Gravidade */}
           <div className="atlas-card p-5 space-y-4">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-3 border-b border-[var(--atlas-border)]">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-[var(--atlas-border)]">
               <div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--atlas-navy)] block mb-0.5">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--atlas-navy)] block">
                   Painel de Diagnóstico Rápido de Divergências
                 </span>
-                <h2 className="text-base font-bold text-[var(--atlas-text)] font-serif">Triagem Automática por Nível de Risco Fiscal</h2>
+                <h2 className="text-base font-bold text-[var(--atlas-navy)]">Triagem Automática por Nível de Risco Fiscal</h2>
               </div>
 
               <div className="flex items-center space-x-2 text-xs text-[var(--atlas-text-secondary)]">
                 <span>Filtrar por gravidade:</span>
                 <button
                   onClick={() => setSeverityFilter('ALL')}
-                  className={`px-3 py-1 rounded-lg transition font-bold cursor-pointer ${
-                    severityFilter === 'ALL' ? 'bg-[var(--atlas-navy)] text-white' : 'atlas-btn-secondary'
-                  }`}
+                  className={`atlas-btn py-1 px-2.5 text-xs ${severityFilter === 'ALL' ? 'atlas-btn-primary' : 'atlas-btn-secondary'}`}
                 >
                   Todos ({totalFindings})
                 </button>
@@ -806,16 +761,16 @@ export function AdvancedAuditView({
                 onClick={() => setSeverityFilter('alta')}
                 className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
                   severityFilter === 'alta'
-                    ? 'bg-rose-50 border-rose-400 ring-2 ring-rose-300'
-                    : 'bg-[var(--atlas-bg)] border-[var(--atlas-border)] hover:border-rose-300'
+                    ? 'bg-[var(--atlas-danger-bg)] border-[var(--atlas-danger)] text-[var(--atlas-danger)]'
+                    : 'bg-[var(--atlas-surface)] border-[var(--atlas-border)] hover:border-[var(--atlas-danger)]'
                 }`}
               >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="atlas-pill atlas-pill-danger">
-                    <ShieldAlert className="w-3.5 h-3.5 mr-1" />
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="inline-flex items-center text-xs font-bold uppercase tracking-wider text-[var(--atlas-danger)]">
+                    <ShieldAlert className="w-4 h-4 mr-1" />
                     Crítico (Alto Risco)
                   </span>
-                  <span className="text-xl font-bold text-[var(--atlas-danger)] font-mono">{highSeverityCount}</span>
+                  <span className="text-xl font-bold font-mono text-[var(--atlas-danger)]">{highSeverityCount}</span>
                 </div>
                 <p className="text-[11px] text-[var(--atlas-text-secondary)]">
                   Divergências de ICMS, escrituração omissa, desalinhamento C100 x XML e apuração.
@@ -827,16 +782,16 @@ export function AdvancedAuditView({
                 onClick={() => setSeverityFilter('media')}
                 className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
                   severityFilter === 'media'
-                    ? 'bg-amber-50 border-amber-400 ring-2 ring-amber-300'
-                    : 'bg-[var(--atlas-bg)] border-[var(--atlas-border)] hover:border-amber-300'
+                    ? 'bg-[var(--atlas-warning-bg)] border-[var(--atlas-warning)] text-[var(--atlas-warning)]'
+                    : 'bg-[var(--atlas-surface)] border-[var(--atlas-border)] hover:border-[var(--atlas-warning)]'
                 }`}
               >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="atlas-pill atlas-pill-warning">
-                    <AlertTriangle className="w-3.5 h-3.5 mr-1" />
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="inline-flex items-center text-xs font-bold uppercase tracking-wider text-[var(--atlas-warning)]">
+                    <AlertTriangle className="w-4 h-4 mr-1" />
                     Aviso (Risco Médio)
                   </span>
-                  <span className="text-xl font-bold text-[var(--atlas-warning)] font-mono">{mediumSeverityCount}</span>
+                  <span className="text-xl font-bold font-mono text-[var(--atlas-warning)]">{mediumSeverityCount}</span>
                 </div>
                 <p className="text-[11px] text-[var(--atlas-text-secondary)]">
                   Incompatibilidades de MVA/CFOP, CST e divergência parcial de aliquotas.
@@ -848,16 +803,16 @@ export function AdvancedAuditView({
                 onClick={() => setSeverityFilter('baixa')}
                 className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
                   severityFilter === 'baixa'
-                    ? 'bg-[var(--atlas-navy-tint)] border-[var(--atlas-navy)] ring-2 ring-[var(--atlas-navy)]/30'
-                    : 'bg-[var(--atlas-bg)] border-[var(--atlas-border)] hover:border-[var(--atlas-navy)]'
+                    ? 'bg-[var(--atlas-navy-tint)] border-[var(--atlas-navy)] text-[var(--atlas-navy)]'
+                    : 'bg-[var(--atlas-surface)] border-[var(--atlas-border)] hover:border-[var(--atlas-navy)]'
                 }`}
               >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="atlas-pill atlas-pill-navy">
-                    <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="inline-flex items-center text-xs font-bold uppercase tracking-wider text-[var(--atlas-navy)]">
+                    <CheckCircle2 className="w-4 h-4 mr-1" />
                     Informativo (Otimização)
                   </span>
-                  <span className="text-xl font-bold text-[var(--atlas-navy)] font-mono">{lowSeverityCount}</span>
+                  <span className="text-xl font-bold font-mono text-[var(--atlas-navy)]">{lowSeverityCount}</span>
                 </div>
                 <p className="text-[11px] text-[var(--atlas-text-secondary)]">
                   Falta de cBenef exigido na UF, notas de ajuste sem chave vinculada.
@@ -868,12 +823,12 @@ export function AdvancedAuditView({
 
           {/* Batch Operations Floating Bar if items selected */}
           {selectedFindingIds.size > 0 && (
-            <div className="sticky top-4 z-30 bg-[var(--atlas-navy)] text-white rounded-xl p-4 border border-[var(--atlas-navy)] shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="sticky top-4 z-30 bg-[var(--atlas-navy)] text-white rounded-xl p-4 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center space-x-3">
-                <span className="atlas-pill atlas-pill-accent font-mono">
+                <span className="atlas-pill atlas-pill-accent">
                   {selectedFindingIds.size} selecionado(s)
                 </span>
-                <span className="text-xs text-[var(--atlas-bg)] font-semibold">
+                <span className="text-xs text-white/90 font-semibold">
                   Ações em Lote para Apontamentos Selecionados:
                 </span>
               </div>
@@ -881,46 +836,66 @@ export function AdvancedAuditView({
               <div className="flex flex-wrap items-center gap-2">
                 <button
                   onClick={() => handleBatchStatusUpdate('aprovado')}
-                  className="atlas-btn atlas-btn-accent px-3 py-1.5 text-xs"
+                  className="atlas-btn atlas-btn-accent text-xs py-1.5 px-3"
                 >
-                  <CheckCircle2 className="w-4 h-4 mr-1" />
-                  <span>Aprovar Lote Selecionado</span>
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>Aprovar Lote</span>
                 </button>
 
                 <button
                   onClick={() => handleBatchStatusUpdate('rejeitado')}
-                  className="atlas-btn atlas-btn-danger px-3 py-1.5 text-xs"
+                  className="atlas-btn bg-[var(--atlas-danger)] text-white hover:opacity-90 text-xs py-1.5 px-3"
                 >
-                  <XCircle className="w-4 h-4 mr-1" />
-                  <span>Rejeitar Lote Selecionado</span>
+                  <XCircle className="w-3.5 h-3.5" />
+                  <span>Rejeitar Lote</span>
                 </button>
 
                 <button
                   onClick={() => handleBatchStatusUpdate('pendente')}
-                  className="atlas-btn atlas-btn-secondary px-3 py-1.5 text-xs"
+                  className="atlas-btn atlas-btn-secondary text-xs py-1.5 px-3"
                 >
-                  <span>Marcar como Pendente</span>
+                  <span>Marcar Pendente</span>
                 </button>
 
                 <button
                   onClick={() => setSelectedFindingIds(new Set())}
-                  className="text-xs text-slate-300 hover:text-white px-2 py-1 ml-2 cursor-pointer"
+                  className="text-xs text-white/70 hover:text-white px-2 py-1 cursor-pointer"
                 >
-                  Limpar Seleção
+                  Limpar
                 </button>
               </div>
             </div>
           )}
 
-          {/* Filters Bar */}
-          <div className="atlas-card p-4 flex flex-col md:flex-row gap-4 justify-between items-center">
-            <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+          {/* Metrics Bar */}
+          <div className="atlas-stat-strip">
+            <div className="atlas-stat-item">
+              <span className="atlas-stat-label">Total Achados</span>
+              <span className="atlas-stat-value text-[var(--atlas-navy)]">{totalFindings}</span>
+            </div>
+            <div className="atlas-stat-item">
+              <span className="atlas-stat-label">Pendentes</span>
+              <span className="atlas-stat-value text-[var(--atlas-warning)]">{pendingCount}</span>
+            </div>
+            <div className="atlas-stat-item">
+              <span className="atlas-stat-label">Aprovados</span>
+              <span className="atlas-stat-value text-[var(--atlas-accent)]">{approvedCount}</span>
+            </div>
+            <div className="atlas-stat-item">
+              <span className="atlas-stat-label">Rejeitados</span>
+              <span className="atlas-stat-value text-[var(--atlas-danger)]">{rejectedCount}</span>
+            </div>
+          </div>
+
+          {/* Filters Bar: Reconstructed into a clean single container */}
+          <div className="atlas-card p-3 flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div className="flex flex-wrap items-center gap-2.5 flex-1">
               <select
                 value={selectedFilter}
                 onChange={(e) => setSelectedFilter(e.target.value)}
-                className="px-3 py-2 text-xs font-medium border border-[var(--atlas-border)] rounded-lg bg-[var(--atlas-bg)] text-[var(--atlas-text)] focus:outline-none focus:ring-2 focus:ring-[var(--atlas-navy)]"
+                className="atlas-input w-auto text-xs py-1.5"
               >
-                <option value="ALL">Todos os Tipos de Achado</option>
+                <option value="ALL">Todos os Tipos</option>
                 <option value="BASE_ICMS_INCONSISTENTE">Base ICMS Inconsistente</option>
                 <option value="CST_INCOMPATIVEL_NCM">CST Incompatível com NCM</option>
                 <option value="CFOP_INCOMPATIVEL">CFOP Incompatível</option>
@@ -942,7 +917,7 @@ export function AdvancedAuditView({
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 py-2 text-xs font-medium border border-[var(--atlas-border)] rounded-lg bg-[var(--atlas-bg)] text-[var(--atlas-text)] focus:outline-none focus:ring-2 focus:ring-[var(--atlas-navy)]"
+                className="atlas-input w-auto text-xs py-1.5"
               >
                 <option value="ALL">Todos os Status</option>
                 <option value="pendente">Pendente</option>
@@ -950,353 +925,351 @@ export function AdvancedAuditView({
                 <option value="rejeitado">Rejeitado</option>
               </select>
 
-
-          <input
-            type="date"
-            value={dateFilter}
-            onChange={(e) => setDateFilter(e.target.value)}
-            className="px-3 py-2 text-xs font-medium border border-slate-200 rounded-lg bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
-            title="Filtrar por Data de Emissão"
-          />
-          <input
-            type="text"
-            placeholder="NCM..."
-            value={ncmFilter}
-            onChange={(e) => setNcmFilter(e.target.value)}
-            className="w-24 px-3 py-2 text-xs font-medium border border-slate-200 rounded-lg bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
-            title="Filtrar por NCM"
-          />
-
-          <select
-            value={severityFilter}
-            onChange={(e) => setSeverityFilter(e.target.value)}
-            className="px-3 py-2 text-xs font-medium border border-slate-200 rounded-lg bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
-          >
-            <option value="ALL">Todas as Severidades</option>
-            <option value="alta">Alta</option>
-            <option value="media">Média</option>
-            <option value="baixa">Baixa</option>
-          </select>
-        </div>
-
-        <div className="relative w-full md:w-72">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-          <input
-            type="text"
-            placeholder="Pesquisar por doc, item ou título..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] bg-white"
-          />
-        </div>
-      </div>
-
-      {/* Active Audit Filters Badges Indicator Bar */}
-      {activeAuditFiltersCount > 0 && (
-        <div className="flex flex-wrap items-center gap-2 p-3 mb-6 bg-indigo-50/80 border border-indigo-100 rounded-lg text-xs">
-          <div className="flex items-center text-indigo-900 font-bold text-[11px] mr-1">
-            <Filter className="w-3.5 h-3.5 mr-1 text-indigo-600" />
-            <span>Filtros Ativos ({activeAuditFiltersCount}):</span>
-          </div>
-
-          {selectedFilter !== 'ALL' && (
-            <span className="inline-flex items-center px-2 py-1 rounded bg-white border border-indigo-200 text-indigo-900 text-[11px] font-medium shadow-2xs">
-              Tipo: {selectedFilter}
-              <button onClick={() => setSelectedFilter('ALL')} className="ml-1 text-slate-400 hover:text-rose-600">
-                <X className="w-3 h-3" />
-              </button>
-            </span>
-          )}
-
-          {statusFilter !== 'ALL' && (
-            <span className="inline-flex items-center px-2 py-1 rounded bg-white border border-indigo-200 text-indigo-900 text-[11px] font-medium shadow-2xs">
-              Status: {statusFilter}
-              <button onClick={() => setStatusFilter('ALL')} className="ml-1 text-slate-400 hover:text-rose-600">
-                <X className="w-3 h-3" />
-              </button>
-            </span>
-          )}
-
-          {severityFilter !== 'ALL' && (
-            <span className="inline-flex items-center px-2 py-1 rounded bg-white border border-indigo-200 text-indigo-900 text-[11px] font-medium shadow-2xs">
-              Severidade: {severityFilter}
-              <button onClick={() => setSeverityFilter('ALL')} className="ml-1 text-slate-400 hover:text-rose-600">
-                <X className="w-3 h-3" />
-              </button>
-            </span>
-          )}
-
-          {searchTerm.trim() !== '' && (
-            <span className="inline-flex items-center px-2 py-1 rounded bg-white border border-indigo-200 text-indigo-900 text-[11px] font-medium shadow-2xs">
-              Busca: "{searchTerm}"
-              <button onClick={() => setSearchTerm('')} className="ml-1 text-slate-400 hover:text-rose-600">
-                <X className="w-3 h-3" />
-              </button>
-            </span>
-          )}
-
-          {dateFilter && (
-            <span className="inline-flex items-center px-2 py-1 rounded bg-white border border-indigo-200 text-indigo-900 text-[11px] font-medium shadow-2xs">
-              Data: {dateFilter}
-              <button onClick={() => setDateFilter('')} className="ml-1 text-slate-400 hover:text-rose-600">
-                <X className="w-3 h-3" />
-              </button>
-            </span>
-          )}
-
-          {ncmFilter.trim() !== '' && (
-            <span className="inline-flex items-center px-2 py-1 rounded bg-white border border-indigo-200 text-indigo-900 text-[11px] font-medium shadow-2xs">
-              NCM: "{ncmFilter}"
-              <button onClick={() => setNcmFilter('')} className="ml-1 text-slate-400 hover:text-rose-600">
-                <X className="w-3 h-3" />
-              </button>
-            </span>
-          )}
-
-          <button
-            onClick={clearAllAuditFilters}
-            className="ml-auto px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded font-semibold text-[11px] flex items-center space-x-1 shadow-2xs transition-colors"
-            title="Limpar todos os filtros com 1 clique"
-          >
-            <X className="w-3.5 h-3.5" />
-            <span>Limpar Todos os Filtros</span>
-          </button>
-        </div>
-      )}
-
-      {/* Apuração do Período (Bloco E110) Card if present */}
-      {spedData?.apuracao && (
-        <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-base font-bold text-slate-900">Apuração do Período (Registro E110)</h2>
-              <p className="text-xs text-slate-500">Resumo oficial de débitos, créditos e saldos apurados no SPED Fiscal</p>
-            </div>
-            <span className="px-3 py-1 bg-[#f1efe8] text-[#1e3a5f] rounded-lg text-xs font-semibold">
-              Bloco E Ativo
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
-            <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
-              <div className="text-[11px] text-slate-500 font-medium">Total Débitos</div>
-              <div className="text-sm font-bold text-slate-800 mt-0.5">R$ {spedData.apuracao.vlTotDebitos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
-            </div>
-            <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
-              <div className="text-[11px] text-slate-500 font-medium">Aj. Débitos</div>
-              <div className="text-sm font-bold text-slate-800 mt-0.5">R$ {spedData.apuracao.vlAjDebitos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
-            </div>
-            <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
-              <div className="text-[11px] text-slate-500 font-medium">Estornos Crédito</div>
-              <div className="text-sm font-bold text-slate-800 mt-0.5">R$ {spedData.apuracao.vlEstornosCred.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
-            </div>
-            <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
-              <div className="text-[11px] text-slate-500 font-medium">Total Créditos</div>
-              <div className="text-sm font-bold text-slate-800 mt-0.5">R$ {spedData.apuracao.vlTotCreditos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
-            </div>
-            <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
-              <div className="text-[11px] text-slate-500 font-medium">Aj. Créditos</div>
-              <div className="text-sm font-bold text-slate-800 mt-0.5">R$ {spedData.apuracao.vlAjCreditos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
-            </div>
-            <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
-              <div className="text-[11px] text-slate-500 font-medium">Saldo Credor Ant.</div>
-              <div className="text-sm font-bold text-slate-800 mt-0.5">R$ {spedData.apuracao.vlSldCredorAnt.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
-            </div>
-            <div className="bg-[#f1efe8] p-3 rounded-lg border border-[#e5e2d9]">
-              <div className="text-[11px] text-[#1e3a5f] font-semibold">ICMS a Recolher</div>
-              <div className="text-sm font-bold text-[#142c47] mt-0.5">R$ {spedData.apuracao.vlIcmsRecolher.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Findings List Header & Batch Select Toggle */}
-      <div className="flex items-center justify-between bg-white px-4 py-3 rounded-lg border border-slate-200 shadow-sm mb-4 text-xs">
-        <label htmlFor="checkbox-select-all-findings" className="flex items-center space-x-2 font-bold text-slate-700 cursor-pointer select-none">
-          <input
-            id="checkbox-select-all-findings"
-            type="checkbox"
-            checked={filteredFindings.length > 0 && selectedFindingIds.size === filteredFindings.length}
-            onChange={handleSelectAllFiltered}
-            className="w-4 h-4 text-[#1e3a5f] rounded border-slate-300 focus:ring-[#1e3a5f] cursor-pointer"
-          />
-          <span>Selecionar Todos da Lista ({filteredFindings.length} itens)</span>
-        </label>
-
-        <span className="text-slate-400">
-          {selectedFindingIds.size} de {filteredFindings.length} selecionado(s)
-        </span>
-      </div>
-
-      {/* Findings List */}
-      <div className="space-y-4">
-        {filteredFindings.length === 0 ? (
-          <div className="bg-white rounded-lg border border-slate-200 p-12 text-center text-slate-500 shadow-sm">
-            Nenhum achado encontrado com os filtros selecionados.
-          </div>
-        ) : (
-          filteredFindings.map((finding) => {
-            const hasCorrection = finding.correcaoSugerida && finding.correcaoSugerida.length > 0;
-            const hasDraft = !!finding.rascunhoLancamento;
-            const isSelected = selectedFindingIds.has(finding.id);
-
-            return (
-              <div
-                key={finding.id}
-                className={`atlas-card p-5 transition-all relative ${
-                  isSelected
-                    ? 'ring-2 ring-[var(--atlas-navy)] border-[var(--atlas-navy)] bg-[var(--atlas-navy-tint)]/40'
-                    : finding.statusRevisao === 'aprovado'
-                    ? 'border-emerald-200 bg-emerald-50/20'
-                    : finding.statusRevisao === 'rejeitado'
-                    ? 'border-rose-200 bg-rose-50/20'
-                    : 'border-[var(--atlas-border)] hover:border-slate-300'
-                }`}
+              <select
+                value={severityFilter}
+                onChange={(e) => setSeverityFilter(e.target.value)}
+                className="atlas-input w-auto text-xs py-1.5"
               >
-                <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                  <div className="flex items-start space-x-3 flex-1">
-                    <input
-                      type="checkbox"
-                      checked={isSelected}
-                      onChange={() => handleToggleSelectFinding(finding.id)}
-                      className="mt-1 w-4 h-4 text-[var(--atlas-navy)] rounded border-slate-300 focus:ring-[var(--atlas-navy)] cursor-pointer"
-                    />
+                <option value="ALL">Todas Severidades</option>
+                <option value="alta">Alta</option>
+                <option value="media">Média</option>
+                <option value="baixa">Baixa</option>
+              </select>
 
-                    <div className="space-y-2 flex-1">
-                      <div className="flex flex-wrap items-center gap-2">
-                      <span
-                        className={`atlas-pill ${
-                          finding.severidade === 'alta'
-                            ? 'atlas-pill-danger'
-                            : finding.severidade === 'media'
-                            ? 'atlas-pill-warning'
-                            : 'atlas-pill-navy'
-                        }`}
-                      >
-                        {finding.severidade.toUpperCase()}
-                      </span>
-                      <span className="text-xs font-mono text-[var(--atlas-text-secondary)]">
-                        Doc: {finding.numDoc} {finding.serie ? `(Série ${finding.serie})` : ''} {finding.numItem ? `| Item: ${finding.numItem} - ${finding.codItem || ''}` : ''}
-                      </span>
-                      <span
-                        className={`atlas-pill ${
-                          finding.statusRevisao === 'aprovado'
-                            ? 'atlas-pill-accent'
-                            : finding.statusRevisao === 'rejeitado'
-                            ? 'atlas-pill-danger'
-                            : 'atlas-pill-warning'
-                        }`}
-                      >
-                        {(finding.statusRevisao || 'pendente').toUpperCase()}
-                      </span>
-                    </div>
+              <input
+                type="date"
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value)}
+                className="atlas-input w-auto text-xs py-1.5"
+                title="Filtrar por Data de Emissão"
+              />
 
-                    <h2 className="text-base font-bold text-[var(--atlas-text)] font-serif">{finding.titulo}</h2>
-                    <p className="text-xs text-[var(--atlas-text-secondary)] leading-relaxed">{finding.descricao}</p>
-                    {finding.baseLegal && (
-                      <p className="text-xs text-[var(--atlas-text-muted)] font-medium">
-                        <strong className="text-[var(--atlas-text)]">Base Legal / Observação:</strong> {finding.baseLegal}
-                      </p>
-                    )}
+              <input
+                type="text"
+                placeholder="NCM..."
+                value={ncmFilter}
+                onChange={(e) => setNcmFilter(e.target.value)}
+                className="atlas-input w-24 text-xs py-1.5"
+                title="Filtrar por NCM"
+              />
+            </div>
 
-                    {/* Suggested Corrections section */}
-                    {hasCorrection && (
-                      <div className="mt-4 p-4 bg-[var(--atlas-navy-tint)] rounded-xl border border-[var(--atlas-border)] space-y-3">
-                        <div className="text-xs font-semibold text-[var(--atlas-navy)] uppercase tracking-wide flex items-center space-x-1.5 font-serif">
-                          <CheckCircle2 className="w-4 h-4 text-[var(--atlas-navy)]" />
-                          <span>Sugestão de Correção Determinística</span>
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          {finding.correcaoSugerida!.map((corr, idx) => (
-                            <div key={idx} className="bg-white p-3 rounded-lg border border-[var(--atlas-border)] space-y-1">
-                              <div className="text-xs text-[var(--atlas-text-muted)] font-medium">Campo: <span className="font-mono text-[var(--atlas-text)]">{corr.campo}</span></div>
-                              <div className="flex items-center justify-between text-xs">
-                                <span className="text-[var(--atlas-danger)] font-semibold">Declarado: {String(corr.valorDeclarado)}</span>
-                                <span className="text-[var(--atlas-accent)] font-bold">Sugerido: {String(corr.valorSugerido)}</span>
-                              </div>
-                              <div className="text-[11px] text-[var(--atlas-text-muted)] italic mt-1">Origem: {corr.origemSugestao}</div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+            <div className="relative min-w-[200px]">
+              <Search className="w-3.5 h-3.5 text-[var(--atlas-text-muted)] absolute left-2.5 top-2.5" />
+              <input
+                type="text"
+                placeholder="Pesquisar..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="atlas-input pl-8 py-1.5 text-xs w-full"
+              />
+            </div>
+          </div>
 
-                    {/* Draft Launch section */}
-                    {hasDraft && finding.rascunhoLancamento && (
-                      <div className="mt-4 p-4 bg-amber-50/60 rounded-lg border border-amber-200 space-y-3">
-                        <div className="text-xs font-semibold text-amber-900 uppercase tracking-wide flex items-center space-x-1.5">
-                          <FileText className="w-4 h-4 text-amber-700" />
-                          <span>Rascunho de Lançamento (Dados Objetivos do XML)</span>
-                        </div>
-                        <div className="bg-white p-3 rounded-lg border border-amber-200 text-xs font-mono space-y-1">
-                          {Object.entries(finding.rascunhoLancamento.camposPreenchidos).map(([k, v]) => (
-                            <div key={k} className="flex justify-between">
-                              <span className="text-slate-500">{k}:</span>
-                              <span className="text-slate-800 font-medium">{String(v)}</span>
-                            </div>
-                          ))}
-                          <div className="pt-2 border-t border-slate-100 text-amber-800 font-sans font-medium">
-                            Requer Ajuste Manual: {finding.rascunhoLancamento.camposRequerAjusteManual.join(', ')}
-                          </div>
-                          <div className="text-slate-500 font-sans italic pt-1">{finding.rascunhoLancamento.observacao}</div>
-                        </div>
-                        <button
-                          onClick={() => handleCopyDraft(JSON.stringify(finding.rascunhoLancamento?.camposPreenchidos, null, 2), finding.id)}
-                          className="flex items-center space-x-1.5 px-3 py-1.5 bg-amber-600 text-white rounded-lg text-xs font-medium hover:bg-amber-700 transition-colors shadow-sm cursor-pointer"
-                        >
-                          {copiedId === finding.id ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                          <span>{copiedId === finding.id ? 'Copiado' : 'Copiar Dados do Rascunho'}</span>
-                        </button>
-                      </div>
-                    )}
-                  </div>
+          {/* Active Audit Filters Badges Indicator Bar */}
+          {activeAuditFiltersCount > 0 && (
+            <div className="atlas-alert atlas-alert-info flex flex-wrap items-center gap-2 p-2.5 text-xs">
+              <div className="flex items-center font-bold text-[11px] mr-1 text-[var(--atlas-info)]">
+                <Filter className="w-3.5 h-3.5 mr-1" />
+                <span>Filtros Ativos ({activeAuditFiltersCount}):</span>
+              </div>
+
+              {selectedFilter !== 'ALL' && (
+                <span className="atlas-pill atlas-pill-neutral">
+                  Tipo: {selectedFilter}
+                  <button onClick={() => setSelectedFilter('ALL')} className="ml-1 hover:text-[var(--atlas-danger)]">
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+
+              {statusFilter !== 'ALL' && (
+                <span className="atlas-pill atlas-pill-neutral">
+                  Status: {statusFilter}
+                  <button onClick={() => setStatusFilter('ALL')} className="ml-1 hover:text-[var(--atlas-danger)]">
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+
+              {severityFilter !== 'ALL' && (
+                <span className="atlas-pill atlas-pill-neutral">
+                  Severidade: {severityFilter}
+                  <button onClick={() => setSeverityFilter('ALL')} className="ml-1 hover:text-[var(--atlas-danger)]">
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+
+              {searchTerm.trim() !== '' && (
+                <span className="atlas-pill atlas-pill-neutral">
+                  Busca: "{searchTerm}"
+                  <button onClick={() => setSearchTerm('')} className="ml-1 hover:text-[var(--atlas-danger)]">
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+
+              {dateFilter && (
+                <span className="atlas-pill atlas-pill-neutral">
+                  Data: {dateFilter}
+                  <button onClick={() => setDateFilter('')} className="ml-1 hover:text-[var(--atlas-danger)]">
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+
+              {ncmFilter.trim() !== '' && (
+                <span className="atlas-pill atlas-pill-neutral">
+                  NCM: "{ncmFilter}"
+                  <button onClick={() => setNcmFilter('')} className="ml-1 hover:text-[var(--atlas-danger)]">
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+
+              <button
+                onClick={clearAllAuditFilters}
+                className="ml-auto text-xs text-[var(--atlas-danger)] hover:underline cursor-pointer font-medium"
+                title="Limpar todos os filtros com 1 clique"
+              >
+                Limpar Todos
+              </button>
+            </div>
+          )}
+
+          {/* Apuração do Período (Bloco E110) Card if present */}
+          {spedData?.apuracao && (
+            <div className="atlas-card p-5">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-sm font-bold text-[var(--atlas-navy)]">Apuração do Período (Registro E110)</h2>
+                  <p className="text-xs text-[var(--atlas-text-secondary)]">Resumo oficial de débitos, créditos e saldos apurados no SPED Fiscal</p>
                 </div>
+                <span className="atlas-pill atlas-pill-navy">
+                  Bloco E Ativo
+                </span>
+              </div>
 
-                  {/* Actions: Approve / Reject for corrections */}
-                  <div className="flex md:flex-col items-center gap-2 pt-4 md:pt-0 border-t md:border-t-0 border-slate-100">
-                    {hasCorrection ? (
-                      <>
-                        <button
-                          onClick={() => handleReview(finding.id, 'aprovado')}
-                          className={`w-full flex items-center justify-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                            finding.statusRevisao === 'aprovado'
-                              ? 'bg-emerald-600 text-white shadow-sm'
-                              : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200'
-                          }`}
-                        >
-                          <CheckCircle2 className="w-4 h-4" />
-                          <span>Aprovar Correção</span>
-                        </button>
-                        <button
-                          onClick={() => handleReview(finding.id, 'rejeitado')}
-                          className={`w-full flex items-center justify-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                            finding.statusRevisao === 'rejeitado'
-                              ? 'bg-rose-600 text-white shadow-sm'
-                              : 'bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200'
-                          }`}
-                        >
-                          <XCircle className="w-4 h-4" />
-                          <span>Rejeitar</span>
-                        </button>
-                      </>
-                    ) : (
-                      <div className="text-xs text-slate-400 italic text-center md:text-right px-2">
-                        Requer investigação manual (sem correção determinística automática)
-                      </div>
-                    )}
-                  </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 text-xs">
+                <div className="bg-[var(--atlas-surface-hover)] p-3 rounded-lg border border-[var(--atlas-border)]">
+                  <div className="text-[11px] text-[var(--atlas-text-secondary)] font-medium">Total Débitos</div>
+                  <div className="text-sm font-bold text-[var(--atlas-text)] mt-0.5">R$ {spedData.apuracao.vlTotDebitos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                </div>
+                <div className="bg-[var(--atlas-surface-hover)] p-3 rounded-lg border border-[var(--atlas-border)]">
+                  <div className="text-[11px] text-[var(--atlas-text-secondary)] font-medium">Aj. Débitos</div>
+                  <div className="text-sm font-bold text-[var(--atlas-text)] mt-0.5">R$ {spedData.apuracao.vlAjDebitos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                </div>
+                <div className="bg-[var(--atlas-surface-hover)] p-3 rounded-lg border border-[var(--atlas-border)]">
+                  <div className="text-[11px] text-[var(--atlas-text-secondary)] font-medium">Estornos Crédito</div>
+                  <div className="text-sm font-bold text-[var(--atlas-text)] mt-0.5">R$ {spedData.apuracao.vlEstornosCred.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                </div>
+                <div className="bg-[var(--atlas-surface-hover)] p-3 rounded-lg border border-[var(--atlas-border)]">
+                  <div className="text-[11px] text-[var(--atlas-text-secondary)] font-medium">Total Créditos</div>
+                  <div className="text-sm font-bold text-[var(--atlas-text)] mt-0.5">R$ {spedData.apuracao.vlTotCreditos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                </div>
+                <div className="bg-[var(--atlas-surface-hover)] p-3 rounded-lg border border-[var(--atlas-border)]">
+                  <div className="text-[11px] text-[var(--atlas-text-secondary)] font-medium">Aj. Créditos</div>
+                  <div className="text-sm font-bold text-[var(--atlas-text)] mt-0.5">R$ {spedData.apuracao.vlAjCreditos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                </div>
+                <div className="bg-[var(--atlas-surface-hover)] p-3 rounded-lg border border-[var(--atlas-border)]">
+                  <div className="text-[11px] text-[var(--atlas-text-secondary)] font-medium">Saldo Credor Ant.</div>
+                  <div className="text-sm font-bold text-[var(--atlas-text)] mt-0.5">R$ {spedData.apuracao.vlSldCredorAnt.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                </div>
+                <div className="bg-[var(--atlas-navy-tint)] p-3 rounded-lg border border-[var(--atlas-navy)]/20">
+                  <div className="text-[11px] text-[var(--atlas-navy)] font-semibold">ICMS a Recolher</div>
+                  <div className="text-sm font-bold text-[var(--atlas-navy)] mt-0.5">R$ {spedData.apuracao.vlIcmsRecolher.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
                 </div>
               </div>
-            );
-          })
-        )}
-      </div>
-      </>
+            </div>
+          )}
+
+          {/* Findings List Header & Batch Select Toggle */}
+          <div className="atlas-card p-3 flex items-center justify-between text-xs">
+            <label htmlFor="checkbox-select-all-findings" className="flex items-center space-x-2 font-bold text-[var(--atlas-text)] cursor-pointer select-none">
+              <input
+                id="checkbox-select-all-findings"
+                type="checkbox"
+                checked={filteredFindings.length > 0 && selectedFindingIds.size === filteredFindings.length}
+                onChange={handleSelectAllFiltered}
+                className="w-4 h-4 text-[var(--atlas-navy)] rounded border-[var(--atlas-border)] focus:ring-[var(--atlas-navy)] cursor-pointer"
+              />
+              <span>Selecionar Todos ({filteredFindings.length} itens)</span>
+            </label>
+
+            <span className="text-[var(--atlas-text-secondary)]">
+              {selectedFindingIds.size} de {filteredFindings.length} selecionado(s)
+            </span>
+          </div>
+
+          {/* Findings List */}
+          <div className="space-y-3">
+            {filteredFindings.length === 0 ? (
+              <div className="atlas-card p-8 text-center text-[var(--atlas-text-secondary)] text-xs">
+                Nenhum achado encontrado com os filtros selecionados.
+              </div>
+            ) : (
+              filteredFindings.map((finding) => {
+                const hasCorrection = finding.correcaoSugerida && finding.correcaoSugerida.length > 0;
+                const hasDraft = !!finding.rascunhoLancamento;
+                const isSelected = selectedFindingIds.has(finding.id);
+
+                return (
+                  <div
+                    key={finding.id}
+                    className={`atlas-card p-5 transition-all relative ${
+                      isSelected
+                        ? 'border-[var(--atlas-navy)] ring-1 ring-[var(--atlas-navy)]'
+                        : finding.statusRevisao === 'aprovado'
+                        ? 'border-[var(--atlas-accent)]/40'
+                        : finding.statusRevisao === 'rejeitado'
+                        ? 'border-[var(--atlas-danger)]/40'
+                        : ''
+                    }`}
+                  >
+                    <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                      <div className="flex items-start space-x-3 flex-1">
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => handleToggleSelectFinding(finding.id)}
+                          className="mt-1 w-4 h-4 text-[var(--atlas-navy)] rounded border-[var(--atlas-border)] cursor-pointer"
+                        />
+
+                        <div className="space-y-2 flex-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                          <span
+                            className={`atlas-pill ${
+                              finding.severidade === 'alta'
+                                ? 'atlas-pill-danger'
+                                : finding.severidade === 'media'
+                                ? 'atlas-pill-warning'
+                                : 'atlas-pill-neutral'
+                            }`}
+                          >
+                            {finding.severidade}
+                          </span>
+                          <span className="text-xs font-mono text-[var(--atlas-text-secondary)]">
+                            Doc: {finding.numDoc} {finding.serie ? `(Série ${finding.serie})` : ''} {finding.numItem ? `| Item: ${finding.numItem} - ${finding.codItem || ''}` : ''}
+                          </span>
+                          <span
+                            className={`atlas-pill ${
+                              finding.statusRevisao === 'aprovado'
+                                ? 'atlas-pill-accent'
+                                : finding.statusRevisao === 'rejeitado'
+                                ? 'atlas-pill-danger'
+                                : 'atlas-pill-neutral'
+                            }`}
+                          >
+                            {(finding.statusRevisao || 'pendente').toUpperCase()}
+                          </span>
+                        </div>
+
+                        <h2 className="text-base font-bold text-[var(--atlas-navy)]">{finding.titulo}</h2>
+                        <p className="text-xs text-[var(--atlas-text)] leading-relaxed">{finding.descricao}</p>
+                        {finding.baseLegal && (
+                          <p className="text-xs text-[var(--atlas-text-secondary)] font-medium">
+                            <strong className="text-[var(--atlas-text)]">Base Legal / Observação:</strong> {finding.baseLegal}
+                          </p>
+                        )}
+
+                        {/* Suggested Corrections section */}
+                        {hasCorrection && (
+                          <div className="mt-3 p-3 bg-[var(--atlas-surface-hover)] rounded-lg border border-[var(--atlas-border)] space-y-2">
+                            <div className="text-xs font-semibold text-[var(--atlas-navy)] uppercase tracking-wide flex items-center space-x-1.5">
+                              <CheckCircle2 className="w-4 h-4 text-[var(--atlas-accent)]" />
+                              <span>Sugestão de Correção Determinística</span>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                              {finding.correcaoSugerida!.map((corr, idx) => (
+                                <div key={idx} className="bg-[var(--atlas-surface)] p-2.5 rounded-lg border border-[var(--atlas-border)] text-xs space-y-1">
+                                  <div className="text-[11px] text-[var(--atlas-text-secondary)]">Campo: <span className="font-mono text-[var(--atlas-text)]">{corr.campo}</span></div>
+                                  <div className="flex items-center justify-between text-xs font-medium">
+                                    <span className="text-[var(--atlas-danger)]">Declarado: {String(corr.valorDeclarado)}</span>
+                                    <span className="text-[var(--atlas-accent)] font-bold">Sugerido: {String(corr.valorSugerido)}</span>
+                                  </div>
+                                  <div className="text-[10px] text-[var(--atlas-text-muted)] italic mt-0.5">Origem: {corr.origemSugestao}</div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Draft Launch section */}
+                        {hasDraft && finding.rascunhoLancamento && (
+                          <div className="mt-3 p-3 bg-[var(--atlas-warning-bg)] rounded-lg border border-[var(--atlas-warning)]/30 space-y-2 text-xs">
+                            <div className="font-semibold text-[var(--atlas-warning)] uppercase tracking-wide flex items-center space-x-1.5">
+                              <FileText className="w-4 h-4 text-[var(--atlas-warning)]" />
+                              <span>Rascunho de Lançamento (Dados Objetivos do XML)</span>
+                            </div>
+                            <div className="bg-[var(--atlas-surface)] p-2.5 rounded-lg border border-[var(--atlas-border)] font-mono space-y-1">
+                              {Object.entries(finding.rascunhoLancamento.camposPreenchidos).map(([k, v]) => (
+                                <div key={k} className="flex justify-between">
+                                  <span className="text-[var(--atlas-text-secondary)]">{k}:</span>
+                                  <span className="text-[var(--atlas-text)] font-medium">{String(v)}</span>
+                                </div>
+                              ))}
+                              <div className="pt-2 border-t border-[var(--atlas-border)] font-sans font-medium text-[var(--atlas-warning)]">
+                                Requer Ajuste Manual: {finding.rascunhoLancamento.camposRequerAjusteManual.join(', ')}
+                              </div>
+                              <div className="text-[var(--atlas-text-secondary)] font-sans italic pt-0.5">{finding.rascunhoLancamento.observacao}</div>
+                            </div>
+                            <button
+                              onClick={() => handleCopyDraft(JSON.stringify(finding.rascunhoLancamento?.camposPreenchidos, null, 2), finding.id)}
+                              className="atlas-btn atlas-btn-secondary text-xs py-1 px-3"
+                            >
+                              {copiedId === finding.id ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                              <span>{copiedId === finding.id ? 'Copiado' : 'Copiar Dados'}</span>
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                      {/* Actions: Approve / Reject for corrections */}
+                      <div className="flex md:flex-col items-center gap-2 pt-3 md:pt-0 border-t md:border-t-0 border-[var(--atlas-border)]">
+                        {hasCorrection ? (
+                          <>
+                            <button
+                              onClick={() => handleReview(finding.id, 'aprovado')}
+                              className={`w-full atlas-btn py-1.5 px-3 text-xs ${
+                                finding.statusRevisao === 'aprovado'
+                                  ? 'atlas-btn-accent'
+                                  : 'atlas-btn-secondary'
+                              }`}
+                            >
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              <span>Aprovar</span>
+                            </button>
+                            <button
+                              onClick={() => handleReview(finding.id, 'rejeitado')}
+                              className={`w-full atlas-btn py-1.5 px-3 text-xs ${
+                                finding.statusRevisao === 'rejeitado'
+                                  ? 'bg-[var(--atlas-danger)] text-white'
+                                  : 'atlas-btn-secondary text-[var(--atlas-danger)]'
+                              }`}
+                            >
+                              <XCircle className="w-3.5 h-3.5" />
+                              <span>Rejeitar</span>
+                            </button>
+                          </>
+                        ) : (
+                          <div className="text-[11px] text-[var(--atlas-text-muted)] italic text-center md:text-right px-2">
+                            Requer investigação
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </>
       )}
-      </div>
 
       {showC190AuditModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4 overflow-y-auto">
           <AuditLogViewer
             c190AuditLogs={c190AuditLogs}
             onClose={() => setShowC190AuditModal(false)}
@@ -1305,4 +1278,5 @@ export function AdvancedAuditView({
       )}
     </div>
   );
+
 }

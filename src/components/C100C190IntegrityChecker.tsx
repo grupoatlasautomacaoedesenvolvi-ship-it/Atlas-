@@ -308,21 +308,21 @@ export function C100C190IntegrityChecker({ spedData, onRecalculateStructure }: C
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-xs border border-slate-200 overflow-hidden space-y-6 p-6">
+    <div className="atlas-card p-6 space-y-6">
       
       {/* Header & PVA Rule Explanatory Banner */}
-      <div className="bg-slate-900 p-6 rounded-lg text-white space-y-3 relative overflow-hidden border border-slate-800 shadow-xs">
+      <div className="atlas-card p-6 bg-[var(--atlas-navy)] text-white space-y-3 relative overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
-            <div className="inline-flex items-center space-x-2 bg-slate-800 text-slate-200 border border-slate-700 px-3 py-1 rounded-md text-xs font-semibold">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <div className="atlas-pill atlas-pill-accent inline-flex items-center space-x-2 py-1 px-3 text-xs font-semibold uppercase tracking-wider">
+              <ShieldCheck className="w-4 h-4 text-[var(--atlas-accent)]" />
               <span>Validação de Conformidade EFD ICMS/IPI — Guia Prático PVA</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
               Checagem de Integridade dos Blocos C100, C170 e C190
             </h2>
-            <p className="text-xs sm:text-sm text-slate-300 max-w-3xl leading-relaxed">
-              Cruzamento matemático automatizado entre o Valor Total da Nota (<code className="text-slate-200 font-mono">C100.VL_DOC</code>), a Somatória dos Itens (<code className="text-slate-200 font-mono">C170.VL_ITEM</code>) e o Registro Analítico de Operação (<code className="text-slate-200 font-mono">C190.VL_OPR</code>). Identifica previamente erros de cálculo e inconsistências que travam a validação no PVA da Receita Federal.
+            <p className="text-xs sm:text-sm text-white/80 max-w-3xl leading-relaxed">
+              Cruzamento matemático automatizado entre o Valor Total da Nota (<code className="text-white font-mono">C100.VL_DOC</code>), a Somatória dos Itens (<code className="text-white font-mono">C170.VL_ITEM</code>) e o Registro Analítico de Operação (<code className="text-white font-mono">C190.VL_OPR</code>). Identifica previamente erros de cálculo e inconsistências que travam a validação no PVA da Receita Federal.
             </p>
           </div>
 
@@ -332,7 +332,7 @@ export function C100C190IntegrityChecker({ spedData, onRecalculateStructure }: C
                 onClick={() => {
                   onRecalculateStructure();
                 }}
-                className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg text-xs font-bold transition shadow-xs whitespace-nowrap cursor-pointer"
+                className="atlas-btn atlas-btn-accent py-2 px-3.5 text-xs font-bold"
                 title="Recalcula totais C100, reconstrói C190 e remove todas as duplicidades de CST/CFOP/Alíquota"
               >
                 <RefreshCw className="w-4 h-4" />
@@ -342,7 +342,7 @@ export function C100C190IntegrityChecker({ spedData, onRecalculateStructure }: C
 
             <button
               onClick={exportCSV}
-              className="flex items-center space-x-2 bg-[#0f6e56] hover:bg-[#0b5240] text-white px-4 py-2.5 rounded-lg text-xs font-bold transition shadow-xs whitespace-nowrap cursor-pointer"
+              className="atlas-btn atlas-btn-secondary py-2 px-3.5 text-xs font-bold"
             >
               <Download className="w-4 h-4" />
               <span>Exportar Relatório PVA (CSV)</span>
@@ -355,49 +355,49 @@ export function C100C190IntegrityChecker({ spedData, onRecalculateStructure }: C
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
         {/* Total & Conformidade */}
-        <div className={`p-5 rounded-lg border ${stats.totalInconsistent === 0 ? 'bg-emerald-50/50 border-emerald-200' : 'bg-amber-50/50 border-amber-200'} space-y-2`}>
+        <div className={`p-4 rounded-lg border ${stats.totalInconsistent === 0 ? 'bg-[var(--atlas-surface-hover)] border-[var(--atlas-accent)]/30' : 'bg-[var(--atlas-surface-hover)] border-[var(--atlas-warning)]/30'} space-y-2`}>
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-600">Conformidade PVA</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-[var(--atlas-text-secondary)]">Conformidade PVA</span>
             {stats.totalInconsistent === 0 ? (
-              <CheckCircle2 className="w-5 h-5 text-[#0f6e56]" />
+              <CheckCircle2 className="w-5 h-5 text-[var(--atlas-accent)]" />
             ) : (
-              <BadgeAlert className="w-5 h-5 text-amber-600" />
+              <BadgeAlert className="w-5 h-5 text-[var(--atlas-warning)]" />
             )}
           </div>
           <div className="flex items-baseline justify-between">
-            <span className="text-3xl font-black text-slate-900">{stats.pvaPassRate}%</span>
-            <span className="text-xs text-slate-500 font-medium">{stats.integrosCount} de {stats.totalDocs} notas íntegras</span>
+            <span className="text-3xl font-black text-[var(--atlas-navy)]">{stats.pvaPassRate}%</span>
+            <span className="text-xs text-[var(--atlas-text-secondary)] font-medium">{stats.integrosCount} de {stats.totalDocs} notas íntegras</span>
           </div>
-          <p className="text-xs text-slate-600">
+          <p className="text-xs text-[var(--atlas-text-secondary)]">
             {stats.totalInconsistent === 0 ? (
-              <span className="text-[#0f6e56] font-semibold">100% dos documentos validados no cruzamento PVA.</span>
+              <span className="text-[var(--atlas-accent)] font-semibold">100% dos documentos validados no cruzamento PVA.</span>
             ) : (
-              <span className="text-amber-700 font-semibold">{stats.totalInconsistent} nota(s) exigem ajuste de cálculo nos itens ou analítico.</span>
+              <span className="text-[var(--atlas-warning)] font-semibold">{stats.totalInconsistent} nota(s) exigem ajuste de cálculo nos itens ou analítico.</span>
             )}
           </p>
         </div>
 
         {/* C100 vs C170 */}
-        <div className="p-5 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+        <div className="p-4 rounded-lg bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-600">Divergência C100 x C170</span>
-            <Calculator className="w-5 h-5 text-[#1e3a5f]" />
+            <span className="text-xs font-bold uppercase tracking-wider text-[var(--atlas-text-secondary)]">Divergência C100 x C170</span>
+            <Calculator className="w-5 h-5 text-[var(--atlas-navy)]" />
           </div>
           <div className="flex items-baseline justify-between">
-            <span className={`text-3xl font-black ${stats.divC100C170 > 0 ? 'text-red-600' : 'text-slate-900'}`}>
+            <span className={`text-3xl font-black ${stats.divC100C170 > 0 ? 'text-[var(--atlas-danger)]' : 'text-[var(--atlas-text)]'}`}>
               {stats.divC100C170}
             </span>
-            <span className="text-xs text-slate-500">Notas afetadas</span>
+            <span className="text-xs text-[var(--atlas-text-muted)]">Notas afetadas</span>
           </div>
-          <p className="text-xs text-slate-500 leading-tight">
+          <p className="text-xs text-[var(--atlas-text-muted)] leading-tight">
             Valor do C100 (<code className="font-mono">VL_DOC</code>) difere da soma dos itens C170 (<code className="font-mono">VL_ITEM</code>).
           </p>
         </div>
 
         {/* C100 vs C190 */}
-        <div className="p-5 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+        <div className="p-4 rounded-lg bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-600">Divergência C100 x C190</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-[var(--atlas-text-secondary)]">Divergência C100 x C190</span>
             <Layers className="w-5 h-5 text-[#1e3a5f]" />
           </div>
           <div className="flex items-baseline justify-between">

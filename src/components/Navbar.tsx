@@ -22,13 +22,10 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   X,
-  Sparkles,
   CheckCircle2,
   AlertCircle,
-  Globe,
   Building2,
   Bot, 
-  Activity,
   LayoutDashboard,
   BrainCircuit,
   Cloud,
@@ -54,7 +51,7 @@ interface NavItem {
   icon: React.ElementType;
   iconColor: string;
   category: 'inicio' | 'sped' | 'estoque' | 'consultas' | 'admin';
-  badge?: { text: string; color: string };
+  badge?: { text: string; variant: 'navy' | 'accent' | 'info' | 'warning' | 'danger' };
   requiresSped?: boolean;
 }
 
@@ -109,7 +106,7 @@ export function Navbar({ activeTab, setActiveTab, hasSped, hasXmlTerceiros, hasX
   };
 
   // Auto-expand module containing active tab
-   useEffect(() => {
+  useEffect(() => {
     if (['clientes', 'robo_fiscal', 'robo_dashboard', 'aprendizado', 'upload', 'sped_raw', 'xml_terceiros', 'xml_proprio', 'xml_nfce', 'advanced_audit', 'all_items', 'sequence_gaps', 'omissas', 'reports'].includes(activeTab)) {
       setOpenSped(true);
     } else if (['stock_engineering'].includes(activeTab)) {
@@ -129,42 +126,42 @@ export function Navbar({ activeTab, setActiveTab, hasSped, hasXmlTerceiros, hasX
 
     const items: NavItem[] = [
       // INÍCIO / PAINEL GERAL
-      { id: 'home', label: 'Painel Inicial', icon: LayoutDashboard, iconColor: 'text-[var(--atlas-navy)]', category: 'inicio', badge: { text: 'Início', color: 'atlas-pill atlas-pill-navy' } },
+      { id: 'home', label: 'Painel Inicial', icon: LayoutDashboard, iconColor: 'text-[var(--atlas-navy)]', category: 'inicio', badge: { text: 'Início', variant: 'navy' } },
       { id: 'minhas_rotinas', label: 'Minhas Rotinas', icon: CheckCircle2, iconColor: 'text-[var(--atlas-accent)]', category: 'inicio' },
 
       // CLIENTES & PASTA & ROBÔ
-      { id: 'clientes', label: 'Clientes & Pastas', icon: Building2, iconColor: 'text-[var(--atlas-accent)]', category: 'sped', badge: { text: 'Nuvem', color: 'atlas-pill atlas-pill-accent' } },
-      { id: 'robo_fiscal', label: 'Robô Fiscal IA', icon: Bot, iconColor: 'text-[var(--atlas-info)]', category: 'sped', badge: { text: 'Automação', color: 'atlas-pill atlas-pill-info' } },
-      { id: 'aprendizado', label: 'Aprendizado & Aprovações', icon: BrainCircuit, iconColor: 'text-[var(--atlas-accent)]', category: 'sped', badge: { text: 'Auditor', color: 'atlas-pill atlas-pill-accent' } },
-      { id: 'ai_orchestrator', label: 'Projeto A.R.C.A. (Orquestrador)', icon: BrainCircuit, iconColor: 'text-[var(--atlas-info)]', category: 'sped', badge: { text: 'Multi-IA', color: 'atlas-pill atlas-pill-info' } },
+      { id: 'clientes', label: 'Clientes & Pastas', icon: Building2, iconColor: 'text-[var(--atlas-accent)]', category: 'sped', badge: { text: 'Nuvem', variant: 'accent' } },
+      { id: 'robo_fiscal', label: 'Robô Fiscal IA', icon: Bot, iconColor: 'text-[var(--atlas-info)]', category: 'sped', badge: { text: 'Automação', variant: 'info' } },
+      { id: 'aprendizado', label: 'Aprendizado & Aprovações', icon: BrainCircuit, iconColor: 'text-[var(--atlas-accent)]', category: 'sped', badge: { text: 'Auditor', variant: 'accent' } },
+      { id: 'ai_orchestrator', label: 'Projeto A.R.C.A.', icon: BrainCircuit, iconColor: 'text-[var(--atlas-info)]', category: 'sped', badge: { text: 'Multi-IA', variant: 'info' } },
       
       // SPED
-      { id: 'upload', label: 'Importação Fiscal', icon: FileText, iconColor: 'text-[var(--atlas-text-muted)]', category: 'sped', badge: hasSped ? { text: 'Ativo', color: 'atlas-pill atlas-pill-accent' } : undefined },
-      { id: 'advanced_audit', label: 'Central de Auditoria', icon: BarChart3, iconColor: 'text-[var(--atlas-text-muted)]', category: 'sped', requiresSped: true },
-      { id: 'all_items', label: 'Itens C170', icon: Layers, iconColor: 'text-[var(--atlas-text-muted)]', category: 'sped', requiresSped: true },
+      { id: 'upload', label: 'Importação Fiscal', icon: FileText, iconColor: 'text-[var(--atlas-text-secondary)]', category: 'sped', badge: hasSped ? { text: 'Ativo', variant: 'accent' } : undefined },
+      { id: 'advanced_audit', label: 'Central de Auditoria', icon: BarChart3, iconColor: 'text-[var(--atlas-text-secondary)]', category: 'sped', requiresSped: true },
+      { id: 'all_items', label: 'Itens C170', icon: Layers, iconColor: 'text-[var(--atlas-text-secondary)]', category: 'sped', requiresSped: true },
       { id: 'sequence_gaps', label: 'Quebra de Sequência', icon: ListOrdered, iconColor: 'text-[var(--atlas-warning)]', category: 'sped', requiresSped: true },
       { id: 'omissas', label: 'Notas Omissas', icon: FileText, iconColor: 'text-[var(--atlas-danger)]', category: 'sped' },
-      { id: 'sped_raw', label: 'Arquivo SPED Bruto', icon: Database, iconColor: 'text-[var(--atlas-text-muted)]', category: 'sped', requiresSped: true },
-      { id: 'reports', label: 'Relatório Final', icon: FileSpreadsheet, iconColor: 'text-[var(--atlas-text-muted)]', category: 'sped', requiresSped: true },
-      ...(hasXmlTerceiros ? [{ id: 'xml_terceiros', label: 'XML Terceiros', icon: Archive, iconColor: 'text-[var(--atlas-warning)]', category: 'sped' as const, badge: { text: 'XML', color: 'atlas-pill atlas-pill-warning' } }] : []),
-      ...(hasXmlProprio ? [{ id: 'xml_proprio', label: 'XML Próprio', icon: Archive, iconColor: 'text-[var(--atlas-text-muted)]', category: 'sped' as const, badge: { text: 'XML', color: 'atlas-pill atlas-pill-navy' } }] : []),
-      ...(hasXmlNfce ? [{ id: 'xml_nfce', label: 'XML NFC-e', icon: Archive, iconColor: 'text-[var(--atlas-accent)]', category: 'sped' as const, badge: { text: 'NFCe', color: 'atlas-pill atlas-pill-accent' } }] : []),
+      { id: 'sped_raw', label: 'Arquivo SPED Bruto', icon: Database, iconColor: 'text-[var(--atlas-text-secondary)]', category: 'sped', requiresSped: true },
+      { id: 'reports', label: 'Relatório Final', icon: FileSpreadsheet, iconColor: 'text-[var(--atlas-text-secondary)]', category: 'sped', requiresSped: true },
+      ...(hasXmlTerceiros ? [{ id: 'xml_terceiros', label: 'XML Terceiros', icon: Archive, iconColor: 'text-[var(--atlas-warning)]', category: 'sped' as const, badge: { text: 'XML', variant: 'warning' as const } }] : []),
+      ...(hasXmlProprio ? [{ id: 'xml_proprio', label: 'XML Próprio', icon: Archive, iconColor: 'text-[var(--atlas-text-secondary)]', category: 'sped' as const, badge: { text: 'XML', variant: 'navy' as const } }] : []),
+      ...(hasXmlNfce ? [{ id: 'xml_nfce', label: 'XML NFC-e', icon: Archive, iconColor: 'text-[var(--atlas-accent)]', category: 'sped' as const, badge: { text: 'NFCe', variant: 'accent' as const } }] : []),
 
       // ESTOQUE
-      { id: 'stock_engineering', label: 'Estoque & Bloco H', icon: Boxes, iconColor: 'text-[var(--atlas-accent)]', category: 'estoque', badge: { text: 'Bloco H', color: 'atlas-pill atlas-pill-accent' } },
+      { id: 'stock_engineering', label: 'Estoque & Bloco H', icon: Boxes, iconColor: 'text-[var(--atlas-accent)]', category: 'estoque', badge: { text: 'Bloco H', variant: 'accent' } },
 
       // CONSULTAS
-      { id: 'state_tax_matrix', label: 'Matriz Tributária UF/NCM', icon: Database, iconColor: 'text-[var(--atlas-text-muted)]', category: 'consultas' },
-      { id: 'ncm_lookup', label: 'Consulta NCM', icon: Search, iconColor: 'text-[var(--atlas-text-muted)]', category: 'consultas' },
-      { id: 'difal_calculator', label: 'Calculadora DIFAL', icon: Calculator, iconColor: 'text-[var(--atlas-text-muted)]', category: 'consultas' },
+      { id: 'state_tax_matrix', label: 'Matriz Tributária UF/NCM', icon: Database, iconColor: 'text-[var(--atlas-text-secondary)]', category: 'consultas' },
+      { id: 'ncm_lookup', label: 'Consulta NCM', icon: Search, iconColor: 'text-[var(--atlas-text-secondary)]', category: 'consultas' },
+      { id: 'difal_calculator', label: 'Calculadora DIFAL', icon: Calculator, iconColor: 'text-[var(--atlas-text-secondary)]', category: 'consultas' },
       { id: 'regime_simulator', label: 'Simulador de Regime', icon: TrendingUp, iconColor: 'text-[var(--atlas-accent)]', category: 'consultas' },
     ];
 
-    // CONFIG & ADMIN (Restricted by role - adm e super_admin)
+    // CONFIG & ADMIN
     if (isSuperAdmin || isAdminEscritorio) {
-      items.push({ id: 'config', label: 'Regras de Auditoria', icon: Sliders, iconColor: 'text-[var(--atlas-text-muted)]', category: 'admin' });
-      items.push({ id: 'user_management', label: 'Gestão de Usuários (RBAC)', icon: Users, iconColor: 'text-[var(--atlas-accent)]', category: 'admin', badge: { text: 'RBAC', color: 'atlas-pill atlas-pill-accent' } });
-      items.push({ id: 'admin_panel', label: 'Painel & Relatórios (ADM)', icon: Shield, iconColor: 'text-[var(--atlas-navy)]', category: 'admin', badge: { text: 'ADM', color: 'atlas-pill atlas-pill-navy' } });
+      items.push({ id: 'config', label: 'Regras de Auditoria', icon: Sliders, iconColor: 'text-[var(--atlas-text-secondary)]', category: 'admin' });
+      items.push({ id: 'user_management', label: 'Gestão de Usuários (RBAC)', icon: Users, iconColor: 'text-[var(--atlas-accent)]', category: 'admin', badge: { text: 'RBAC', variant: 'accent' } });
+      items.push({ id: 'admin_panel', label: 'Painel & Relatórios (ADM)', icon: Shield, iconColor: 'text-[var(--atlas-navy)]', category: 'admin', badge: { text: 'ADM', variant: 'navy' } });
     }
 
     return items;
@@ -193,18 +190,18 @@ export function Navbar({ activeTab, setActiveTab, hasSped, hasXmlTerceiros, hasX
             onClick={() => setActiveTab(item.id)}
             className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-200 ${
               isActive
-                ? 'bg-[#1e3a5f] text-white shadow-2xs'
-                : 'text-slate-600 hover:bg-white hover:text-slate-900 border border-transparent hover:border-[#e5e2d9]'
+                ? 'bg-[var(--atlas-navy)] text-white shadow-2xs'
+                : 'text-[var(--atlas-text-secondary)] hover:bg-[var(--atlas-surface)] hover:text-[var(--atlas-text)] border border-transparent hover:border-[var(--atlas-border)]'
             }`}
           >
             <Icon className={`w-4 h-4 ${isActive ? 'text-white' : item.iconColor}`} />
           </button>
 
           {/* Floating Tooltip */}
-          <div className="absolute left-full ml-3 px-3 py-1.5 bg-[#142c47] border border-slate-700 rounded-lg text-xs font-semibold text-white whitespace-nowrap shadow-sm z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-center space-x-2">
+          <div className="absolute left-full ml-3 px-3 py-1.5 bg-[var(--atlas-navy-dark)] border border-[var(--atlas-border)] rounded-lg text-xs font-semibold text-white whitespace-nowrap shadow-sm z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-center space-x-2">
             <span>{item.label}</span>
             {item.badge && (
-              <span className={`px-1.5 py-0.2 text-[9px] font-mono rounded ${item.badge.color}`}>
+              <span className={`atlas-pill atlas-pill-${item.badge.variant}`}>
                 {item.badge.text}
               </span>
             )}
@@ -219,13 +216,13 @@ export function Navbar({ activeTab, setActiveTab, hasSped, hasXmlTerceiros, hasX
         onClick={() => setActiveTab(item.id)}
         className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-[13.5px] font-medium transition-all duration-150 group relative ${
           isActive
-            ? 'bg-[var(--atlas-navy)] text-white font-semibold shadow-xs'
-            : 'text-slate-700 hover:bg-white hover:text-slate-900 border border-transparent hover:border-[#e5e2d9]/80'
+            ? 'bg-[var(--atlas-navy)] text-white font-semibold shadow-2xs'
+            : 'text-[var(--atlas-text-secondary)] hover:bg-[var(--atlas-surface)] hover:text-[var(--atlas-text)] border border-transparent hover:border-[var(--atlas-border)]'
         }`}
       >
         {/* Active Pill Indicator */}
         {isActive && (
-          <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-5 bg-[var(--atlas-accent)] rounded-r" />
+          <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-[var(--atlas-accent)] rounded-r" />
         )}
 
         <div className="flex items-center space-x-2.5 truncate">
@@ -234,7 +231,7 @@ export function Navbar({ activeTab, setActiveTab, hasSped, hasXmlTerceiros, hasX
         </div>
 
         {item.badge && (
-          <span className={`shrink-0 ml-1.5 ${item.badge.color}`}>
+          <span className={`atlas-pill atlas-pill-${item.badge.variant} shrink-0 ml-1.5`}>
             {item.badge.text}
           </span>
         )}
@@ -243,12 +240,12 @@ export function Navbar({ activeTab, setActiveTab, hasSped, hasXmlTerceiros, hasX
   };
 
   return (
-    <aside className={`${isCollapsed ? 'w-16' : 'w-64'} bg-[var(--atlas-bg)] border-r border-[var(--atlas-border)] text-slate-800 flex flex-col h-screen overflow-hidden shrink-0 select-none transition-all duration-300 ease-in-out relative z-30`}>
+    <aside className={`${isCollapsed ? 'w-16' : 'w-64'} bg-[var(--atlas-bg)] border-r border-[var(--atlas-border)] text-[var(--atlas-text)] flex flex-col h-screen overflow-hidden shrink-0 select-none transition-all duration-300 ease-in-out relative z-30`}>
       {/* Brand Header */}
-      <div className={`py-3 px-3 border-b border-[var(--atlas-border)] flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} bg-white/80 backdrop-blur-xs`}>
+      <div className={`py-3 px-3 border-b border-[var(--atlas-border)] flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} bg-[var(--atlas-surface)]/80 backdrop-blur-xs`}>
         {!isCollapsed ? (
           <div className="flex items-center min-w-0 pr-1">
-            <img src="/logo.svg" alt="Atlas Auditor Fiscal" className="h-[66px] w-auto max-w-[212px] object-contain" />
+            <img src="/logo.svg" alt="Atlas Auditor Fiscal" className="h-[52px] w-auto max-w-[200px] object-contain" />
           </div>
         ) : (
           <img src="/favicon.svg" alt="Atlas Auditor Fiscal" className="w-10 h-10 rounded-lg shadow-2xs object-contain shrink-0" title="Atlas Auditor Fiscal" />
@@ -256,40 +253,40 @@ export function Navbar({ activeTab, setActiveTab, hasSped, hasXmlTerceiros, hasX
 
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-1.5 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-200/50 transition-colors shrink-0"
+          className="p-1.5 rounded-lg text-[var(--atlas-text-muted)] hover:text-[var(--atlas-text)] hover:bg-[var(--atlas-border)]/40 transition-colors shrink-0"
           title={isCollapsed ? 'Expandir Menu' : 'Recolher Menu'}
         >
-          {isCollapsed ? <PanelLeftOpen className="w-4 h-4 text-slate-600" /> : <PanelLeftClose className="w-4 h-4 text-slate-500" />}
+          {isCollapsed ? <PanelLeftOpen className="w-4 h-4 text-[var(--atlas-text-secondary)]" /> : <PanelLeftClose className="w-4 h-4 text-[var(--atlas-text-muted)]" />}
         </button>
       </div>
 
-      {/* SPED Status Pill Header (When expanded) */}
+      {/* SPED Status Header (When expanded) */}
       {!isCollapsed && (
         <div className="px-3 pt-3">
-          <div className={`p-2.5 rounded-lg border flex items-center justify-between text-xs ${
+          <div className={`p-2.5 rounded-xl border flex items-center justify-between text-xs ${
             hasSped 
-              ? 'bg-emerald-50/80 border-emerald-200 text-emerald-900' 
-              : 'bg-white border-[#e5e2d9] text-slate-600 shadow-2xs'
+              ? 'bg-[var(--atlas-accent-tint)] border-[var(--atlas-accent)]/30 text-[var(--atlas-accent)]' 
+              : 'bg-[var(--atlas-surface)] border-[var(--atlas-border)] text-[var(--atlas-text-secondary)] shadow-2xs'
           }`}>
             <div className="flex items-center space-x-2 truncate">
               {hasSped ? (
-                <CheckCircle2 className="w-4 h-4 text-[#0f6e56] shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-[var(--atlas-accent)] shrink-0" />
               ) : (
-                <AlertCircle className="w-4 h-4 text-slate-400 shrink-0" />
+                <AlertCircle className="w-4 h-4 text-[var(--atlas-text-muted)] shrink-0" />
               )}
               <div className="truncate">
                 <p className="font-semibold text-[11px] leading-tight">
                   {hasSped ? 'SPED Fiscal Importado' : 'Aguardando Arquivo'}
                 </p>
-                <p className="text-[10px] text-slate-500 truncate">
+                <p className="text-[10px] text-[var(--atlas-text-muted)] truncate">
                   {hasSped ? 'Pronto para auditoria' : 'Importe no Módulo 1'}
                 </p>
               </div>
             </div>
             {hasSped && (
               <span className="flex h-2 w-2 relative shrink-0">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--atlas-accent)] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--atlas-accent)]"></span>
               </span>
             )}
           </div>
@@ -300,18 +297,18 @@ export function Navbar({ activeTab, setActiveTab, hasSped, hasXmlTerceiros, hasX
       {!isCollapsed && (
         <div className="px-3 pt-2">
           <div className="relative">
-            <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--atlas-text-muted)]" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Buscar funcionalidade..."
-              className="w-full bg-white border border-[#e5e2d9] rounded-lg pl-8 pr-7 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#1e3a5f] focus:ring-1 focus:ring-[#1e3a5f] transition-all shadow-2xs"
+              className="w-full bg-[var(--atlas-surface)] border border-[var(--atlas-border)] rounded-lg pl-8 pr-7 py-1.5 text-xs text-[var(--atlas-text)] placeholder-[var(--atlas-text-muted)] focus:outline-none focus:border-[var(--atlas-navy)] transition-all shadow-2xs"
             />
             {searchQuery && (
               <button 
                 onClick={() => setSearchQuery('')}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--atlas-text-muted)] hover:text-[var(--atlas-text)]"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -326,13 +323,13 @@ export function Navbar({ activeTab, setActiveTab, hasSped, hasXmlTerceiros, hasX
         {/* SEARCH FILTER MODE */}
         {searchQuery.trim() ? (
           <div className="space-y-1">
-            <p className="px-2 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+            <p className="px-2 text-[10px] font-semibold text-[var(--atlas-text-muted)] uppercase tracking-wider">
               Resultados ({filteredNavItems.length})
             </p>
             {filteredNavItems.length > 0 ? (
               filteredNavItems.map(renderNavButton)
             ) : (
-              <p className="px-2 py-3 text-xs text-slate-400 text-center">Nenhum resultado encontrado</p>
+              <p className="px-2 py-3 text-xs text-[var(--atlas-text-muted)] text-center">Nenhum resultado encontrado</p>
             )}
           </div>
         ) : (
@@ -348,26 +345,26 @@ export function Navbar({ activeTab, setActiveTab, hasSped, hasXmlTerceiros, hasX
               {!isCollapsed ? (
                 <button
                   onClick={() => setOpenSped(!openSped)}
-                  className="w-full flex items-center justify-between px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-slate-400 hover:text-slate-700 transition-colors"
+                  className="w-full flex items-center justify-between px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-[var(--atlas-text-muted)] hover:text-[var(--atlas-text)] transition-colors"
                 >
                   <div className="flex items-center space-x-1.5">
-                    <FileText className="w-3.5 h-3.5 text-slate-400" />
+                    <FileText className="w-3.5 h-3.5 text-[var(--atlas-text-muted)]" />
                     <span>Conferência SPED</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     {openSped ? (
-                      <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                      <ChevronDown className="w-3.5 h-3.5 text-[var(--atlas-text-muted)]" />
                     ) : (
-                      <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                      <ChevronRight className="w-3.5 h-3.5 text-[var(--atlas-text-muted)]" />
                     )}
                   </div>
                 </button>
               ) : (
-                <div className="w-full h-px bg-[#e5e2d9] my-2" />
+                <div className="w-full h-px bg-[var(--atlas-border)] my-2" />
               )}
 
               {(openSped || isCollapsed) && (
-                <div className={!isCollapsed ? "pl-1 space-y-1 pt-0.5 border-l border-[#e5e2d9] ml-3" : "space-y-2"}>
+                <div className={!isCollapsed ? "pl-1 space-y-1 pt-0.5 border-l border-[var(--atlas-border)] ml-3" : "space-y-2"}>
                   {navItems.filter(i => i.category === 'sped').map(renderNavButton)}
                 </div>
               )}
@@ -378,26 +375,26 @@ export function Navbar({ activeTab, setActiveTab, hasSped, hasXmlTerceiros, hasX
               {!isCollapsed ? (
                 <button
                   onClick={() => setOpenEstoque(!openEstoque)}
-                  className="w-full flex items-center justify-between px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-slate-400 hover:text-slate-700 transition-colors"
+                  className="w-full flex items-center justify-between px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-[var(--atlas-text-muted)] hover:text-[var(--atlas-text)] transition-colors"
                 >
                   <div className="flex items-center space-x-1.5">
-                    <Boxes className="w-3.5 h-3.5 text-emerald-600" />
+                    <Boxes className="w-3.5 h-3.5 text-[var(--atlas-accent)]" />
                     <span>Gestão de Estoque</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     {openEstoque ? (
-                      <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                      <ChevronDown className="w-3.5 h-3.5 text-[var(--atlas-text-muted)]" />
                     ) : (
-                      <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                      <ChevronRight className="w-3.5 h-3.5 text-[var(--atlas-text-muted)]" />
                     )}
                   </div>
                 </button>
               ) : (
-                <div className="w-full h-px bg-[#e5e2d9] my-2" />
+                <div className="w-full h-px bg-[var(--atlas-border)] my-2" />
               )}
 
               {(openEstoque || isCollapsed) && (
-                <div className={!isCollapsed ? "pl-1 space-y-1 pt-0.5 border-l border-[#e5e2d9] ml-3" : "space-y-2"}>
+                <div className={!isCollapsed ? "pl-1 space-y-1 pt-0.5 border-l border-[var(--atlas-border)] ml-3" : "space-y-2"}>
                   {navItems.filter(i => i.category === 'estoque').map(renderNavButton)}
                 </div>
               )}
@@ -408,26 +405,26 @@ export function Navbar({ activeTab, setActiveTab, hasSped, hasXmlTerceiros, hasX
               {!isCollapsed ? (
                 <button
                   onClick={() => setOpenConsultas(!openConsultas)}
-                  className="w-full flex items-center justify-between px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-slate-400 hover:text-slate-700 transition-colors"
+                  className="w-full flex items-center justify-between px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-[var(--atlas-text-muted)] hover:text-[var(--atlas-text)] transition-colors"
                 >
                   <div className="flex items-center space-x-1.5">
-                    <Search className="w-3.5 h-3.5 text-slate-400" />
+                    <Search className="w-3.5 h-3.5 text-[var(--atlas-text-muted)]" />
                     <span>Consultas & Simulação</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     {openConsultas ? (
-                      <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                      <ChevronDown className="w-3.5 h-3.5 text-[var(--atlas-text-muted)]" />
                     ) : (
-                      <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                      <ChevronRight className="w-3.5 h-3.5 text-[var(--atlas-text-muted)]" />
                     )}
                   </div>
                 </button>
               ) : (
-                <div className="w-full h-px bg-[#e5e2d9] my-2" />
+                <div className="w-full h-px bg-[var(--atlas-border)] my-2" />
               )}
 
               {(openConsultas || isCollapsed) && (
-                <div className={!isCollapsed ? "pl-1 space-y-1 pt-0.5 border-l border-[#e5e2d9] ml-3" : "space-y-2"}>
+                <div className={!isCollapsed ? "pl-1 space-y-1 pt-0.5 border-l border-[var(--atlas-border)] ml-3" : "space-y-2"}>
                   {navItems.filter(i => i.category === 'consultas').map(renderNavButton)}
                 </div>
               )}
@@ -438,26 +435,26 @@ export function Navbar({ activeTab, setActiveTab, hasSped, hasXmlTerceiros, hasX
               {!isCollapsed ? (
                 <button
                   onClick={() => setOpenConfig(!openConfig)}
-                  className="w-full flex items-center justify-between px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-slate-400 hover:text-slate-700 transition-colors"
+                  className="w-full flex items-center justify-between px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-[var(--atlas-text-muted)] hover:text-[var(--atlas-text)] transition-colors"
                 >
                   <div className="flex items-center space-x-1.5">
-                    <Settings className="w-3.5 h-3.5 text-slate-400" />
+                    <Settings className="w-3.5 h-3.5 text-[var(--atlas-text-muted)]" />
                     <span>Regras & Sistema</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     {openConfig ? (
-                      <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                      <ChevronDown className="w-3.5 h-3.5 text-[var(--atlas-text-muted)]" />
                     ) : (
-                      <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                      <ChevronRight className="w-3.5 h-3.5 text-[var(--atlas-text-muted)]" />
                     )}
                   </div>
                 </button>
               ) : (
-                <div className="w-full h-px bg-[#e5e2d9] my-2" />
+                <div className="w-full h-px bg-[var(--atlas-border)] my-2" />
               )}
 
               {(openConfig || isCollapsed) && (
-                <div className={!isCollapsed ? "pl-1 space-y-1 pt-0.5 border-l border-[#e5e2d9] ml-3" : "space-y-2"}>
+                <div className={!isCollapsed ? "pl-1 space-y-1 pt-0.5 border-l border-[var(--atlas-border)] ml-3" : "space-y-2"}>
                   {navItems.filter(i => i.category === 'admin').map(renderNavButton)}
                 </div>
               )}
@@ -467,30 +464,36 @@ export function Navbar({ activeTab, setActiveTab, hasSped, hasXmlTerceiros, hasX
 
       </div>
 
-      {/* Footer User Info & Actions */}
-      <div className="p-2.5 border-t border-[#e5e2d9] bg-white/60 space-y-2 shrink-0">
+      {/* Footer User Info, Theme Selector & Actions */}
+      <div className="p-2.5 border-t border-[var(--atlas-border)] bg-[var(--atlas-surface)] space-y-2 shrink-0">
         {!isCollapsed ? (
           <>
-            {/* User Row (sem card/sombra) */}
-            <div className="py-2 px-1 flex items-center space-x-2.5 min-w-0 border-b border-[var(--atlas-border)] mb-1">
-              <div className="w-8 h-8 rounded-full bg-[var(--atlas-navy)] text-white flex items-center justify-center shrink-0 font-bold text-xs shadow-xs">
-                <User className="w-4 h-4" />
+            {/* User Row (Linha simples sem borda/sombra) */}
+            <div className="py-1 flex items-center justify-between min-w-0">
+              <div className="flex items-center space-x-2.5 min-w-0">
+                <div className="w-7 h-7 rounded-md bg-[var(--atlas-navy)] text-white flex items-center justify-center shrink-0 font-bold text-xs">
+                  <User className="w-4 h-4" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-bold text-[var(--atlas-text)] truncate">
+                    {userData?.nome || 'Usuário Auditor'}
+                  </p>
+                  <p className="text-[10px] text-[var(--atlas-text-muted)] truncate">
+                    {userData?.papel === 'super_admin' ? 'Super Administrador' : 'Auditor Fiscal'}
+                  </p>
+                </div>
               </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-[13px] font-bold text-[var(--atlas-text)] truncate leading-tight">
-                  {userData?.nome || 'Usuário Auditor'}
-                </p>
-                <p className="text-[11px] text-[var(--atlas-text-secondary)] truncate">
-                  {userData?.papel === 'super_admin' ? 'Super Administrador' : 'Auditor Fiscal'}
-                </p>
-              </div>
+              <button
+                onClick={signOut}
+                className="p-1.5 text-[var(--atlas-text-muted)] hover:text-[var(--atlas-danger)] rounded-md transition-colors"
+                title="Sair da Conta"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
             </div>
 
-            {/* Seletor de Tema Compacto */}
-            <ThemeSelector compact />
-
-            {/* Cloud Backup & Sync Badge/Buttons */}
-            <div className="p-2 rounded-lg border border-[var(--atlas-border)] space-y-1.5" style={{ background: 'var(--atlas-surface)' }}>
+            {/* Cloud Backup & Sync Buttons */}
+            <div className="p-2 rounded-xl border border-[var(--atlas-border)] bg-[var(--atlas-surface)] space-y-1.5">
               <div className="flex items-center justify-between text-[11px] font-semibold text-[var(--atlas-navy)]">
                 <span className="flex items-center gap-1">
                   <Cloud className="w-3.5 h-3.5 text-[var(--atlas-navy)] animate-pulse" />
@@ -520,35 +523,30 @@ export function Navbar({ activeTab, setActiveTab, hasSped, hasXmlTerceiros, hasX
               </div>
             </div>
 
-            {/* Bottom Action Buttons */}
-            <div className="grid grid-cols-2 gap-1.5">
-              <button
-                onClick={() => setActiveTab('settings')}
-                className={`flex items-center justify-center space-x-1.5 px-2 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  activeTab === 'settings' 
-                    ? 'bg-[#1e3a5f] text-white font-bold shadow-2xs' 
-                    : 'bg-white hover:bg-slate-100 text-slate-700 border border-[#e5e2d9]'
-                }`}
-              >
-                <Settings className="w-3.5 h-3.5" />
-                <span>Ajustes</span>
-              </button>
-
-              <button
-                onClick={signOut}
-                className="flex items-center justify-center space-x-1.5 px-2 py-1.5 rounded-lg text-xs font-semibold bg-white hover:bg-rose-50 text-slate-700 hover:text-rose-700 border border-[#e5e2d9] hover:border-rose-200 transition-all"
-              >
-                <LogOut className="w-3.5 h-3.5 text-rose-600" />
-                <span>Sair</span>
-              </button>
+            {/* Theme Selector Control (Requerido na Seção 6) */}
+            <div className="pt-1 border-t border-[var(--atlas-border)]">
+              <ThemeSelector />
             </div>
+
+            {/* Ajustes Quick Link */}
+            <button
+              onClick={() => setActiveTab('settings')}
+              className={`w-full flex items-center justify-center space-x-1.5 px-2 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                activeTab === 'settings' 
+                  ? 'bg-[var(--atlas-navy)] text-white font-bold shadow-2xs' 
+                  : 'bg-[var(--atlas-surface)] hover:bg-[var(--atlas-navy-tint)] text-[var(--atlas-text)] border border-[var(--atlas-border)]'
+              }`}
+            >
+              <Settings className="w-3.5 h-3.5" />
+              <span>Ajustes do Sistema</span>
+            </button>
           </>
         ) : (
           <div className="flex flex-col items-center space-y-2">
             <button
               onClick={() => setActiveTab('settings')}
               className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${
-                activeTab === 'settings' ? 'bg-[#1e3a5f] text-white' : 'text-slate-600 hover:bg-white hover:text-slate-900 border border-transparent hover:border-[#e5e2d9]'
+                activeTab === 'settings' ? 'bg-[var(--atlas-navy)] text-white' : 'text-[var(--atlas-text-secondary)] hover:bg-[var(--atlas-surface)] hover:text-[var(--atlas-text)] border border-transparent hover:border-[var(--atlas-border)]'
               }`}
               title="Configurações"
             >
@@ -556,10 +554,10 @@ export function Navbar({ activeTab, setActiveTab, hasSped, hasXmlTerceiros, hasX
             </button>
             <button
               onClick={signOut}
-              className="w-10 h-10 rounded-lg flex items-center justify-center text-slate-600 hover:bg-rose-50 hover:text-rose-700 transition-all"
+              className="w-10 h-10 rounded-lg flex items-center justify-center text-[var(--atlas-text-secondary)] hover:bg-[var(--atlas-danger-bg)] hover:text-[var(--atlas-danger)] transition-all"
               title="Sair da Conta"
             >
-              <LogOut className="w-4 h-4 text-rose-600" />
+              <LogOut className="w-4 h-4 text-[var(--atlas-danger)]" />
             </button>
           </div>
         )}
