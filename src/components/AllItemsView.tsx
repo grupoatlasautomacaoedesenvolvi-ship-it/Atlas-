@@ -26,8 +26,29 @@ import {
   Calculator,
   Scale,
   ChevronDown,
-  Eye
+  Eye,
+  SlidersHorizontal
 } from 'lucide-react';
+
+const IBGE_UF_MAP: Record<string, string> = {
+  '11': 'RO', '12': 'AC', '13': 'AM', '14': 'RR', '15': 'PA', '16': 'AP', '17': 'TO',
+  '21': 'MA', '22': 'PI', '23': 'CE', '24': 'RN', '25': 'PB', '26': 'PE', '27': 'AL', '28': 'SE', '29': 'BA',
+  '31': 'MG', '32': 'ES', '33': 'RJ', '35': 'SP',
+  '41': 'PR', '42': 'SC', '43': 'RS',
+  '50': 'MS', '51': 'MT', '52': 'GO', '53': 'DF'
+};
+
+export function getUfFromChave(chvNfe?: string, fallbackUf?: string): string {
+  if (!chvNfe) return fallbackUf || 'N/A';
+  const clean = chvNfe.replace(/\D/g, '');
+  if (clean.length >= 2) {
+    const code = clean.substring(0, 2);
+    if (IBGE_UF_MAP[code]) {
+      return IBGE_UF_MAP[code];
+    }
+  }
+  return fallbackUf || 'N/A';
+}
 
 function MultiSelectDropdown({
   label,
@@ -255,6 +276,7 @@ export function AllItemsView({
   const [analystFilter, setAnalystFilter] = useState<Set<string>>(() => getC170SavedSet('analystFilter'));
   const [robotFilter, setRobotFilter] = useState<Set<string>>(() => getC170SavedSet('robotFilter'));
   const [modifiedFilter, setModifiedFilter] = useState<Set<string>>(() => getC170SavedSet('modifiedFilter'));
+  const [ufFilter, setUfFilter] = useState<Set<string>>(() => getC170SavedSet('ufFilter'));
   const [learnedPatternsCount, setLearnedPatternsCount] = useState<number>(() => {
     const saved = localStorage.getItem('atlas_learned_patterns_count');
     return saved ? parseInt(saved, 10) : 142;
@@ -278,6 +300,7 @@ export function AllItemsView({
         analystFilter: Array.from(analystFilter),
         robotFilter: Array.from(robotFilter),
         modifiedFilter: Array.from(modifiedFilter),
+        ufFilter: Array.from(ufFilter),
         currentPage
       };
       sessionStorage.setItem(C170_FILTERS_STORAGE_KEY, JSON.stringify(filterObj));
@@ -285,7 +308,7 @@ export function AllItemsView({
   }, [
     searchTerm, statusFilter, operFilter, xmlFilter, divergenceTypeFilter,
     cfopFilter, cstFilter, xmlCfopFilter, xmlCstFilter, ncmFilter,
-    productFilter, analystFilter, robotFilter, modifiedFilter, currentPage
+    productFilter, analystFilter, robotFilter, modifiedFilter, ufFilter, currentPage
   ]);
   const itemsPerPage = 50;
 
@@ -549,9 +572,15 @@ export function AllItemsView({
       matrizRule?: StateTaxRule;
       matrizDiff: boolean;
       matrizDiffReason?: string;
+      noteUf: string;
+      companyUf: string;
+      isInterstate: boolean;
     }> = [];
 
     for (const doc of spedData.documents) {
+      const noteUf = getUfFromChave(doc.chvNfe, companyUf);
+      const isInterstate = noteUf !== companyUf;
+
       doc.items.forEach((item, index) => {
         const ncm = (item.ncm || '').trim();
         const cfop = (item.cfop || '').trim();
@@ -645,7 +674,10 @@ export function AllItemsView({
           fuzzyMatch,
           matrizRule, 
           matrizDiff, 
-          matrizDiffReason 
+          matrizDiffReason,
+          noteUf,
+          companyUf,
+          isInterstate
         });
       });
     }
@@ -653,8 +685,8 @@ export function AllItemsView({
   }, [spedData, auditConfig, xmlItemMap, stateTaxRules]);
 
   // Helper for Excel-like cascading filters
-  const itemMatchesFilters = (itemRow: { doc: SpedDocument; item: SpedItem; status: string; xmlItem: any; fuzzyMatch?: ItemMatchDetails | null; matrizDiff: boolean }, excludeKey?: string) => {
-    const { doc, item, status, xmlItem, fuzzyMatch, matrizDiff } = itemRow;
+  const itemMatchesFilters = (itemRow: { doc: SpedDocument; item: SpedItem; status: string; xmlItem: any; fuzzyMatch?: ItemMatchDetails | null; matrizDiff: boolean; noteUf: string; companyUf: string; isInterstate: boolean }, excludeKey?: string) => {
+    const { doc, item, status, xmlItem, fuzzyMatch, matrizDiff, noteUf, isInterstate } = itemRow;
 
     if (excludeKey !== 'status' && statusFilter.size > 0 && !statusFilter.has('ALL')) {
       let matchesAny = false;
@@ -722,6 +754,10 @@ export function AllItemsView({
       if (!productFilter.has(item.codItem.trim())) return false;
     }
 
+    if (excludeKey !== 'uf' && ufFilter.size > 0 && !ufFilter.has('ALL')) {
+      if (!ufFilter.has(noteUf)) return false;
+    }
+
     if (excludeKey !== 'analyst' && analystFilter.size > 0 && !analystFilter.has('ALL')) {
       let matchesAny = false;
       if (analystFilter.has('CONFIRMED') && item.analystConfirmed) matchesAny = true;
@@ -747,6 +783,7 @@ export function AllItemsView({
       const term = searchTerm.toLowerCase().trim();
       const searchChave = doc.chvNfe ? doc.chvNfe.toLowerCase() : '';
       const searchCnpj = doc.cnpjEmit ? doc.cnpjEmit.toLowerCase() : '';
+      const searchNoteUf = (noteUf || '').toLowerCase();
       const xmlCfop = xmlItem && xmlItem.cfop ? String(xmlItem.cfop).toLowerCase() : '';
       const xmlCst = xmlItem && xmlItem.cst ? String(xmlItem.cst).toLowerCase() : '';
       const matches = (
@@ -756,6 +793,8 @@ export function AllItemsView({
         searchCnpj.includes(term) ||
         item.ncm.toLowerCase().includes(term) ||
         searchChave.includes(term) ||
+        searchNoteUf.includes(term) ||
+        (term.includes('interestadual') && isInterstate) ||
         item.cfop.toLowerCase().includes(term) ||
         item.cstIcms.toLowerCase().includes(term) ||
         xmlCfop.includes(term) ||
@@ -770,27 +809,27 @@ export function AllItemsView({
   // Filter items
   const filteredItems = useMemo(() => {
     return enrichedItems.filter(i => itemMatchesFilters(i));
-  }, [enrichedItems, statusFilter, operFilter, xmlFilter, divergenceTypeFilter, cfopFilter, cstFilter, xmlCfopFilter, xmlCstFilter, ncmFilter, productFilter, analystFilter, robotFilter, modifiedFilter, searchTerm]);
+  }, [enrichedItems, statusFilter, operFilter, xmlFilter, divergenceTypeFilter, cfopFilter, cstFilter, xmlCfopFilter, xmlCstFilter, ncmFilter, productFilter, analystFilter, robotFilter, modifiedFilter, ufFilter, searchTerm]);
 
   // Unique CFOPs and CSTs for SPED (cascading / Excel-like)
   const uniqueCfops = useMemo(() => {
     const set = new Set<string>();
     enrichedItems.filter(i => itemMatchesFilters(i, 'cfop')).forEach(i => { if (i.item.cfop) set.add(i.item.cfop); });
     return Array.from(set).sort();
-  }, [enrichedItems, statusFilter, operFilter, xmlFilter, divergenceTypeFilter, cstFilter, xmlCfopFilter, xmlCstFilter, ncmFilter, productFilter, analystFilter, robotFilter, modifiedFilter, searchTerm]);
+  }, [enrichedItems, statusFilter, operFilter, xmlFilter, divergenceTypeFilter, cstFilter, xmlCfopFilter, xmlCstFilter, ncmFilter, productFilter, analystFilter, robotFilter, modifiedFilter, ufFilter, searchTerm]);
 
   const uniqueCsts = useMemo(() => {
     const set = new Set<string>();
     enrichedItems.filter(i => itemMatchesFilters(i, 'cst')).forEach(i => { if (i.item.cstIcms) set.add(i.item.cstIcms.trim().padStart(3, '0')); });
     return Array.from(set).sort();
-  }, [enrichedItems, statusFilter, operFilter, xmlFilter, divergenceTypeFilter, cfopFilter, xmlCfopFilter, xmlCstFilter, ncmFilter, productFilter, analystFilter, robotFilter, modifiedFilter, searchTerm]);
+  }, [enrichedItems, statusFilter, operFilter, xmlFilter, divergenceTypeFilter, cfopFilter, xmlCfopFilter, xmlCstFilter, ncmFilter, productFilter, analystFilter, robotFilter, modifiedFilter, ufFilter, searchTerm]);
 
   // Unique NCMs and Products (cascading)
   const uniqueNcms = useMemo(() => {
     const set = new Set<string>();
     enrichedItems.filter(i => itemMatchesFilters(i, 'ncm')).forEach(i => { if (i.item.ncm) set.add(i.item.ncm.trim()); });
     return Array.from(set).sort();
-  }, [enrichedItems, statusFilter, operFilter, xmlFilter, divergenceTypeFilter, cfopFilter, cstFilter, xmlCfopFilter, xmlCstFilter, productFilter, analystFilter, robotFilter, modifiedFilter, searchTerm]);
+  }, [enrichedItems, statusFilter, operFilter, xmlFilter, divergenceTypeFilter, cfopFilter, cstFilter, xmlCfopFilter, xmlCstFilter, productFilter, analystFilter, robotFilter, modifiedFilter, ufFilter, searchTerm]);
 
   const uniqueProducts = useMemo(() => {
     const map = new Map<string, string>();
@@ -800,7 +839,16 @@ export function AllItemsView({
       }
     });
     return Array.from(map.entries()).map(([code, label]) => ({ code, label })).sort((a, b) => a.label.localeCompare(b.label));
-  }, [enrichedItems, statusFilter, operFilter, xmlFilter, divergenceTypeFilter, cfopFilter, cstFilter, xmlCfopFilter, xmlCstFilter, ncmFilter, analystFilter, robotFilter, modifiedFilter, searchTerm]);
+  }, [enrichedItems, statusFilter, operFilter, xmlFilter, divergenceTypeFilter, cfopFilter, cstFilter, xmlCfopFilter, xmlCstFilter, ncmFilter, analystFilter, robotFilter, modifiedFilter, ufFilter, searchTerm]);
+
+  // Unique UFs (cascading)
+  const uniqueUfs = useMemo(() => {
+    const set = new Set<string>();
+    enrichedItems.filter(i => itemMatchesFilters(i, 'uf')).forEach(i => {
+      if (i.noteUf) set.add(i.noteUf);
+    });
+    return Array.from(set).sort();
+  }, [enrichedItems, statusFilter, operFilter, xmlFilter, divergenceTypeFilter, cfopFilter, cstFilter, xmlCfopFilter, xmlCstFilter, ncmFilter, productFilter, analystFilter, robotFilter, modifiedFilter, ufFilter, searchTerm]);
 
   // Unique CFOPs and CSTs for XML (cascading)
   const uniqueXmlCfops = useMemo(() => {
@@ -811,7 +859,7 @@ export function AllItemsView({
       }
     });
     return Array.from(set).sort();
-  }, [enrichedItems, statusFilter, operFilter, xmlFilter, divergenceTypeFilter, cfopFilter, cstFilter, xmlCstFilter, ncmFilter, productFilter, analystFilter, robotFilter, modifiedFilter, searchTerm]);
+  }, [enrichedItems, statusFilter, operFilter, xmlFilter, divergenceTypeFilter, cfopFilter, cstFilter, xmlCfopFilter, ncmFilter, productFilter, analystFilter, robotFilter, modifiedFilter, ufFilter, searchTerm]);
 
   const uniqueXmlCsts = useMemo(() => {
     const set = new Set<string>();
@@ -821,7 +869,7 @@ export function AllItemsView({
       }
     });
     return Array.from(set).sort();
-  }, [enrichedItems, statusFilter, operFilter, xmlFilter, divergenceTypeFilter, cfopFilter, cstFilter, xmlCfopFilter, ncmFilter, productFilter, analystFilter, robotFilter, modifiedFilter, searchTerm]);
+  }, [enrichedItems, statusFilter, operFilter, xmlFilter, divergenceTypeFilter, cfopFilter, cstFilter, xmlCfopFilter, ncmFilter, productFilter, analystFilter, robotFilter, modifiedFilter, ufFilter, searchTerm]);
 
   // Active filters count helper
   const activeFiltersCount = useMemo(() => {
@@ -836,12 +884,13 @@ export function AllItemsView({
     if (xmlCstFilter.size > 0 && !xmlCstFilter.has('ALL')) cnt++;
     if (ncmFilter.size > 0 && !ncmFilter.has('ALL')) cnt++;
     if (productFilter.size > 0 && !productFilter.has('ALL')) cnt++;
+    if (ufFilter.size > 0 && !ufFilter.has('ALL')) cnt++;
     if (analystFilter.size > 0 && !analystFilter.has('ALL')) cnt++;
     if (robotFilter.size > 0 && !robotFilter.has('ALL')) cnt++;
     if (modifiedFilter.size > 0 && !modifiedFilter.has('ALL')) cnt++;
     if (searchTerm.trim() !== '') cnt++;
     return cnt;
-  }, [statusFilter, operFilter, xmlFilter, divergenceTypeFilter, cfopFilter, cstFilter, xmlCfopFilter, xmlCstFilter, ncmFilter, productFilter, analystFilter, robotFilter, modifiedFilter, searchTerm]);
+  }, [statusFilter, operFilter, xmlFilter, divergenceTypeFilter, cfopFilter, cstFilter, xmlCfopFilter, xmlCstFilter, ncmFilter, productFilter, ufFilter, analystFilter, robotFilter, modifiedFilter, searchTerm]);
 
   const resetAllFilters = () => {
     setStatusFilter(new Set(['ALL']));
@@ -854,6 +903,7 @@ export function AllItemsView({
     setXmlCstFilter(new Set(['ALL']));
     setNcmFilter(new Set(['ALL']));
     setProductFilter(new Set(['ALL']));
+    setUfFilter(new Set(['ALL']));
     setAnalystFilter(new Set(['ALL']));
     setRobotFilter(new Set(['ALL']));
     setModifiedFilter(new Set(['ALL']));
@@ -1203,11 +1253,13 @@ export function AllItemsView({
   };
 
   const handleExportCsv = () => {
-    const headers = ['Documento', 'Data', 'Emitente', 'Item', 'Código', 'Descrição', 'NCM SPED', 'NCM XML', 'NCM Matriz', 'CFOP SPED', 'CST SPED', 'Valor Item', 'Aliq ICMS SPED', 'Status', 'Motivo'];
-    const rows = filteredItems.map(({ doc, item, status, reason, xmlItem, matrizRule }) => [
+    const headers = ['Documento', 'Data', 'Emitente', 'UF Origem Nota', 'UF SPED', 'Item', 'Código', 'Descrição', 'NCM SPED', 'NCM XML', 'NCM Matriz', 'CFOP SPED', 'CST SPED', 'Valor Item', 'Aliq ICMS SPED', 'Status', 'Motivo'];
+    const rows = filteredItems.map(({ doc, item, status, reason, xmlItem, matrizRule, noteUf, companyUf }) => [
       doc.numDoc,
       doc.dtDoc || '',
       doc.cnpjEmit,
+      noteUf,
+      companyUf,
       item.numItem,
       item.codItem,
       `"${(item.descrItem || '').replace(/"/g, '""')}"`,
@@ -1861,6 +1913,14 @@ export function AllItemsView({
               onChange={(val) => { setProductFilter(val); setCurrentPage(1); }}
             />
 
+            {/* UF Origem Filter */}
+            <MultiSelectDropdown
+              label="UF Origem"
+              options={uniqueUfs.map(uf => ({ value: uf, label: `UF ${uf}` }))}
+              selectedValues={ufFilter}
+              onChange={(val) => { setUfFilter(val); setCurrentPage(1); }}
+            />
+
             {/* Clear All Filters Button */}
             {activeFiltersCount > 0 && (
               <button
@@ -1954,6 +2014,15 @@ export function AllItemsView({
                 </span>
               )}
 
+              {!ufFilter.has('ALL') && (
+                <span className="inline-flex items-center px-2 py-1 rounded-lg bg-white border border-indigo-200 text-indigo-900 text-[11px] font-medium shadow-2xs">
+                  UF Origem: {Array.from(ufFilter).join(', ')}
+                  <button onClick={() => { setUfFilter(new Set(['ALL'])); setCurrentPage(1); }} className="ml-1 text-slate-400 hover:text-rose-600">
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+
               <button
                 onClick={resetAllFilters}
                 className="ml-auto px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-lg font-semibold text-[11px] flex items-center space-x-1 shadow-2xs transition-colors"
@@ -1968,24 +2037,49 @@ export function AllItemsView({
 
         {/* Data Table */}
         <div className="overflow-x-auto custom-scrollbar pb-2 px-4">
-          <div className="min-w-[1500px]">
+          <div className="min-w-[1380px]">
             {/* Header */}
-            <div className="c170-header-row border-b border-[var(--atlas-border)] bg-[var(--atlas-surface)] text-xs text-[var(--atlas-navy)] uppercase tracking-wider whitespace-nowrap">
-              <div className="px-3 py-2.5 text-center">
+            <div className="c170-header-row border-b border-[var(--atlas-border)] bg-[var(--atlas-surface)] text-[10px] font-bold text-[var(--atlas-navy)] uppercase tracking-wider whitespace-nowrap">
+              <div className="px-1.5 py-2 text-center">
                 <button onClick={toggleSelectAll} className="text-slate-500 hover:text-slate-700">
                   {selectedKeys.size > 0 && selectedKeys.size === filteredItems.length ? (
-                    <CheckSquare className="w-4 h-4 text-[var(--atlas-navy)]" />
+                    <CheckSquare className="w-3.5 h-3.5 text-[var(--atlas-navy)]" />
                   ) : (
-                    <Square className="w-4 h-4" />
+                    <Square className="w-3.5 h-3.5" />
                   )}
                 </button>
               </div>
-              <div className="px-3 py-2.5">Status</div>
-              <div className="px-3 py-2.5">Doc / Série</div>
-              <div className="px-3 py-2.5" style={{ fontFamily: 'var(--font-display)' }}>Item (C170)</div>
-               <div className="px-3 py-2.5">
+              <div className="px-1.5 py-2">Status</div>
+              <div className="px-1.5 py-2">
                 <div className="flex items-center justify-between gap-1">
-                  <span className="whitespace-normal leading-tight text-[11px]">NCM (SPED / XML / Matriz)</span>
+                  <span className="whitespace-normal leading-tight text-[10px]">Doc / Série</span>
+                  <FiscalTooltip
+                    className="shrink-0"
+                    side="bottom"
+                    title="Documento Fiscal"
+                    description="Identifica o número da nota fiscal, série e CNPJ do emitente."
+                    lawRef="Convênio SINIEF s/nº 1970"
+                    badge="Documento"
+                  />
+                </div>
+              </div>
+              <div className="px-1.5 py-2">
+                <div className="flex items-center justify-between gap-1">
+                  <span className="whitespace-normal leading-tight text-[10px]">Origem</span>
+                  <FiscalTooltip
+                    className="shrink-0"
+                    side="bottom"
+                    title="UF de Origem da Nota Fiscal"
+                    description="UF de origem da nota fiscal baseada nos metadados do emissor (chave de acesso/XML) ou no campo UF do header do SPED."
+                    lawRef="Convênio SINIEF s/nº 1970"
+                    badge="UF Origem"
+                  />
+                </div>
+              </div>
+              <div className="px-1.5 py-2" style={{ fontFamily: 'var(--font-display)' }}>Item (C170)</div>
+               <div className="px-1.5 py-2">
+                <div className="flex items-center justify-between gap-1">
+                  <span className="whitespace-normal leading-tight text-[10px]">NCM (SPED/XML/Matriz)</span>
                   <FiscalTooltip
                     className="shrink-0"
                     side="bottom"
@@ -1996,9 +2090,9 @@ export function AllItemsView({
                   />
                 </div>
               </div>
-              <div className="px-3 py-2.5">
+              <div className="px-1.5 py-2">
                 <div className="flex items-center justify-between gap-1">
-                  <span className="whitespace-normal leading-tight text-[11px]">CFOP (SPED / XML)</span>
+                  <span className="whitespace-normal leading-tight text-[10px]">CFOP (SPED/XML)</span>
                   <FiscalTooltip
                     className="shrink-0"
                     side="bottom"
@@ -2009,9 +2103,9 @@ export function AllItemsView({
                   />
                 </div>
               </div>
-              <div className="px-3 py-2.5">
+              <div className="px-1.5 py-2">
                 <div className="flex items-center justify-between gap-1">
-                  <span className="whitespace-normal leading-tight text-[11px]">CST (SPED / XML / Matriz)</span>
+                  <span className="whitespace-normal leading-tight text-[10px]">CST (SPED/XML/Matriz)</span>
                   <FiscalTooltip
                     className="shrink-0"
                     side="bottom"
@@ -2022,10 +2116,10 @@ export function AllItemsView({
                   />
                 </div>
               </div>
-              <div className="px-3 py-2.5 text-right">Valor Item</div>
-              <div className="px-3 py-2.5 text-right">
+              <div className="px-1.5 py-2 text-right">Valor Item</div>
+              <div className="px-1.5 py-2 text-right">
                 <div className="flex items-center justify-end gap-1">
-                  <span className="whitespace-normal leading-tight text-[11px]">Tributação ICMS</span>
+                  <span className="whitespace-normal leading-tight text-[10px]">Tributação ICMS</span>
                   <FiscalTooltip
                     className="shrink-0"
                     side="bottom"
@@ -2035,9 +2129,9 @@ export function AllItemsView({
                   />
                 </div>
               </div>
-              <div className="px-3 py-2.5 text-center">
+              <div className="px-1.5 py-2 text-center">
                 <div className="flex items-center justify-center gap-1">
-                  <span className="whitespace-normal leading-tight text-[11px]">Ações</span>
+                  <span className="whitespace-normal leading-tight text-[10px]">Ações</span>
                   <FiscalTooltip
                     className="shrink-0"
                     side="bottom"
@@ -2051,13 +2145,13 @@ export function AllItemsView({
             </div>
 
             {/* Body */}
-            <div className="divide-y divide-[var(--atlas-border)] text-xs">
+            <div className="divide-y divide-[var(--atlas-border)] text-[11px]">
               {paginatedItems.length === 0 ? (
                 <div className="text-center py-12 text-[var(--atlas-text-muted)]">
                   Nenhum item encontrado com os filtros selecionados.
                 </div>
               ) : (
-                paginatedItems.map(({ doc, item, status, reason, xmlItem, fuzzyMatch, matrizRule, matrizDiff, matrizDiffReason }) => {
+                paginatedItems.map(({ doc, item, status, reason, xmlItem, fuzzyMatch, matrizRule, matrizDiff, matrizDiffReason, noteUf, companyUf, isInterstate }) => {
                   const key = `${doc.id}_${item.numItem}`;
                   const isSelected = selectedKeys.has(key);
                   const rowBg = isSelected
@@ -2083,43 +2177,31 @@ export function AllItemsView({
 
                   return (
                     <div key={key} className={`c170-item-row transition-colors ${rowBg}`}>
-                      <div className="px-3 py-3 text-center">
+                      <div className="px-1 py-1.5 text-center">
                         <button onClick={() => toggleSelectItem(doc.id, item.numItem)} className="text-slate-500 hover:text-slate-700">
-                          {isSelected ? <CheckSquare className="w-4 h-4 text-[var(--atlas-navy)]" /> : <Square className="w-4 h-4 text-slate-400" />}
+                          {isSelected ? <CheckSquare className="w-3.5 h-3.5 text-[var(--atlas-navy)]" /> : <Square className="w-3.5 h-3.5 text-slate-400" />}
                         </button>
                       </div>
-                      <div className="px-3 py-3 whitespace-nowrap space-y-1">
-                        <div className="flex items-center gap-1.5">
+                      <div className="px-1.5 py-1.5 space-y-1 min-w-0">
+                        <div className="flex items-center flex-wrap gap-1">
                           {status === 'OK' && !matrizDiff && (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-800">
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
                               OK
                             </span>
                           )}
                           {status === 'MALFORMED' && (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-red-100 text-red-800 cursor-help" title={reason}>
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-red-100 text-red-800 border border-red-200 cursor-help" title={reason}>
                               Malformado
                             </span>
                           )}
                           {(status === 'DIVERGENT' || matrizDiff) && (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-800 cursor-help" title={`${reason} ${matrizDiffReason || ''}`}>
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-100 text-amber-800 border border-amber-200 cursor-help" title={`${reason} ${matrizDiffReason || ''}`}>
                               Divergente
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex flex-col gap-1.5">
-                          {(item.isModified || item.correctedByRobot) && (
-                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-100 text-blue-800 border border-blue-200" title="Este produto/item já foi alterado ou corrigido. Evite alterar novamente por engano.">
-                              Item Alterado
-                            </span>
-                          )}
-                          {item.correctedByRobot && (
-                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-purple-100 text-purple-800 border border-purple-200" title={item.robotCorrectionReason || 'Corrigido pelo Robô com base na Matriz'}>
-                              Corrigido pelo Robô
                             </span>
                           )}
                           <button
                             onClick={() => handleToggleAnalystConfirm(doc.id, item.numItem, item.analystConfirmed)}
-                            className={`inline-flex items-center justify-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold transition-colors ${
+                            className={`inline-flex items-center justify-center px-1.5 py-0.5 rounded text-[9px] font-bold transition-colors ${
                               item.analystConfirmed
                                 ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border border-emerald-300'
                                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200'
@@ -2128,6 +2210,22 @@ export function AllItemsView({
                           >
                             {item.analystConfirmed ? 'Conferido' : 'Pendente'}
                           </button>
+                        </div>
+                        {(item.isModified || item.correctedByRobot) && (
+                          <div className="flex items-center flex-wrap gap-1">
+                            {item.isModified && (
+                              <span className="inline-flex items-center px-1 py-0.5 rounded text-[8px] font-bold bg-blue-100 text-blue-800 border border-blue-200" title="Este produto/item já foi alterado ou corrigido.">
+                                Alterado
+                              </span>
+                            )}
+                            {item.correctedByRobot && (
+                              <span className="inline-flex items-center px-1 py-0.5 rounded text-[8px] font-bold bg-purple-100 text-purple-800 border border-purple-200" title={item.robotCorrectionReason || 'Corrigido pelo Robô com base na Matriz'}>
+                                Robô
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        <div>
                           <button
                             onClick={() => {
                               setSelectedReportItem({
@@ -2140,151 +2238,164 @@ export function AllItemsView({
                               });
                               setReportModalOpen(true);
                             }}
-                            className="inline-flex items-center justify-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200 transition-colors mt-0.5 pt-0.5"
+                            className="inline-flex items-center gap-1 text-[8px] font-medium text-amber-800 hover:text-amber-900 bg-amber-50 hover:bg-amber-100 px-1 py-0.5 rounded border border-amber-200/80 transition-colors"
                             title="Reportar equívoco do Agente AI para refinamento do prompt"
                           >
-                            Reportar Erro Agente
+                            Reportar Erro
                           </button>
                         </div>
                       </div>
-                      <div className="px-3 py-3 text-[var(--atlas-text)] font-medium whitespace-nowrap">
-                        <div className="text-xs font-semibold text-[var(--atlas-text)]">Doc: {doc.numDoc} <span className="text-[11px] font-normal text-[var(--atlas-text-muted)]">(Sér. {doc.serie || '0'})</span></div>
-                        <div className="text-xs font-mono text-[var(--atlas-text-secondary)] truncate max-w-[120px]">{doc.cnpjEmit}</div>
+                      <div className="px-1.5 py-1.5 text-[var(--atlas-text)] font-medium text-[10px]">
+                        <div className="font-semibold text-[var(--atlas-text)]">Doc: {doc.numDoc} <span className="text-[9px] font-normal text-[var(--atlas-text-muted)]">(Sér. {doc.serie || '0'})</span></div>
+                        <div className="text-[9px] font-mono text-[var(--atlas-text-secondary)] truncate max-w-[110px]">{doc.cnpjEmit}</div>
+
                         {['02', '03', '04', '05'].includes(doc.codSit) && (
-                          <div className="mt-1">
-                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-200" title={`Documento Cancelado no SPED (COD_SIT ${doc.codSit})`}>
+                          <div className="mt-0.5">
+                            <span className="inline-flex items-center px-1 py-0.5 rounded text-[8px] font-bold bg-rose-100 text-rose-800 border border-rose-200" title={`Documento Cancelado no SPED (COD_SIT ${doc.codSit})`}>
                               Cancelado SPED ({doc.codSit})
                             </span>
                           </div>
                         )}
                         {xmlItem && xmlItem.isCancelada && (
-                          <div className="mt-1">
-                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-600 text-white shadow-xs" title={xmlItem.xMotivo || 'XML consta como CANCELADO na SEFAZ'}>
+                          <div className="mt-0.5">
+                            <span className="inline-flex items-center px-1 py-0.5 rounded text-[8px] font-bold bg-rose-600 text-white shadow-xs" title={xmlItem.xMotivo || 'XML consta como CANCELADO na SEFAZ'}>
                               XML Cancelado SEFAZ
                             </span>
                           </div>
                         )}
                       </div>
-                      <div className="px-3 py-3">
-                        <div className="font-bold text-[var(--atlas-navy)] text-xs whitespace-nowrap c170-item-title" style={{ fontFamily: 'var(--font-display)' }}>
+                      <div className="px-1 py-1.5 flex items-center justify-center">
+                        <span
+                          className={`inline-flex items-center justify-center px-1.5 py-0.5 rounded text-[10px] font-bold font-mono border transition-colors ${
+                            isInterstate
+                              ? 'bg-purple-50 text-purple-900 border-purple-200'
+                              : 'bg-slate-100 text-slate-800 border-slate-200'
+                          }`}
+                          title={`UF de Origem: ${noteUf}${isInterstate ? ` (SPED Escriturado em ${companyUf} - Operação Interestadual)` : ' (Operação Interna)'}`}
+                        >
+                          {noteUf}
+                        </span>
+                      </div>
+                      <div className="px-1.5 py-1.5 min-w-0">
+                        <div className="font-bold text-[var(--atlas-navy)] text-[10px] truncate c170-item-title" style={{ fontFamily: 'var(--font-display)' }}>
                           #{item.numItem} - {item.codItem}
                         </div>
-                        <div className="text-xs text-[var(--atlas-text)] font-medium leading-relaxed whitespace-normal break-words mt-0.5 c170-item-title" style={{ fontFamily: 'var(--font-display)' }} title={item.descrItem}>
+                        <div className="text-[10px] text-[var(--atlas-text)] font-medium leading-snug line-clamp-2 mt-0.5 break-words c170-item-title" style={{ fontFamily: 'var(--font-display)' }} title={item.descrItem}>
                           {item.descrItem}
                         </div>
                         {fuzzyMatch && fuzzyMatch.isSequenceMismatch && (
-                          <div className="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-amber-100 text-amber-900 border border-amber-200" title={`Desalinhamento de Sequência: Mapeado para o item ${fuzzyMatch.xmlNItem} do XML (cProd: ${fuzzyMatch.xmlItem?.cProd || 'N/A'}) com ${fuzzyMatch.score}% de similaridade`}>
+                          <div className="mt-0.5 inline-flex items-center gap-1 px-1 py-0.5 rounded text-[9px] font-semibold bg-amber-100 text-amber-900 border border-amber-200" title={`Desalinhamento de Sequência: Mapeado para o item ${fuzzyMatch.xmlNItem} do XML (cProd: ${fuzzyMatch.xmlItem?.cProd || 'N/A'}) com ${fuzzyMatch.score}% de similaridade`}>
                             <span>Item XML #{fuzzyMatch.xmlNItem}</span>
-                            <span className="text-[10px] bg-amber-200/80 px-1 rounded font-bold">{fuzzyMatch.score}% match</span>
+                            <span className="text-[8px] bg-amber-200/80 px-0.5 rounded font-bold">{fuzzyMatch.score}% match</span>
                           </div>
                         )}
                         {fuzzyMatch && !fuzzyMatch.isSequenceMismatch && fuzzyMatch.score >= 40 && (
-                          <div className="mt-0.5 inline-flex items-center gap-1 text-[10px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100" title={`Fuzzy match: ${fuzzyMatch.reasons.join(', ')}`}>
+                          <div className="mt-0.5 inline-flex items-center gap-1 text-[8px] text-emerald-700 bg-emerald-50 px-1 py-0.5 rounded border border-emerald-100" title={`Fuzzy match: ${fuzzyMatch.reasons.join(', ')}`}>
                             <span>Fuzzy Match XML #{fuzzyMatch.xmlNItem} ({fuzzyMatch.score}%)</span>
                           </div>
                         )}
                       </div>
                       
                       {/* NCM Column */}
-                      <div className="px-3 py-3 font-mono text-xs whitespace-nowrap">
-                        <div className="text-[var(--atlas-text)] font-bold text-xs" title="NCM cadastrado no arquivo SPED">SPED: {item.ncm || '-'}</div>
+                      <div className="px-1.5 py-1.5 font-mono text-[10px] whitespace-nowrap">
+                        <div className="text-[var(--atlas-text)] font-bold text-[10px]" title="NCM cadastrado no arquivo SPED">SPED: {item.ncm || '-'}</div>
                         {xmlItem ? (
-                          <div className={`mt-1 px-2 py-0.5 rounded inline-block text-xs font-semibold ${ncmDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-slate-100 text-slate-700'}`} title="NCM na Nota Fiscal XML">
+                          <div className={`mt-0.5 px-1 py-0.5 rounded inline-block text-[9px] font-semibold ${ncmDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-slate-100 text-slate-700'}`} title="NCM na Nota Fiscal XML">
                             XML: {xmlItem.ncm || '-'}
                           </div>
                         ) : (
-                          <div className="text-xs text-slate-400 italic mt-0.5">XML não vinculado</div>
+                          <div className="text-[9px] text-slate-400 italic mt-0.5">XML não vinculado</div>
                         )}
                         {matrizRule ? (
-                          <div className="mt-1 text-xs font-sans font-medium text-indigo-700 bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded block truncate max-w-[170px]" title={`Regra Matriz NCM ${matrizRule.ncmPrefix}: ${matrizRule.description || ''}`}>
+                          <div className="mt-0.5 text-[9px] font-sans font-medium text-indigo-700 bg-indigo-50 border border-indigo-100 px-1 py-0.5 rounded block truncate max-w-[150px]" title={`Regra Matriz NCM ${matrizRule.ncmPrefix}: ${matrizRule.description || ''}`}>
                             Matriz: {matrizRule.ncmPrefix}
                           </div>
                         ) : (
-                          <div className="text-xs text-slate-400 italic mt-0.5">Sem cadastro na matriz</div>
+                          <div className="text-[9px] text-slate-400 italic mt-0.5">Sem cadastro na matriz</div>
                         )}
                       </div>
 
                       {/* CFOP Column */}
-                      <div className="px-3 py-3 font-mono text-xs whitespace-nowrap">
+                      <div className="px-1.5 py-1.5 font-mono text-[10px] whitespace-nowrap">
                         {inlineEditingKey === key ? (
                           <div>
                             <input
                               type="text"
                               value={inlineCfop}
                               onChange={(e) => setInlineCfop(e.target.value)}
-                              className="w-20 px-2 py-1 border border-indigo-400 rounded text-sm font-mono bg-white text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500/20"
+                              className="w-14 px-1 py-0.5 border border-indigo-400 rounded text-[10px] font-mono bg-white text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500/20"
                               placeholder="CFOP"
                             />
                           </div>
                         ) : (
-                          <div className="text-[var(--atlas-text)] font-bold text-xs">SPED: {item.cfop || '-'}</div>
+                          <div className="text-[var(--atlas-text)] font-bold text-[10px]">SPED: {item.cfop || '-'}</div>
                         )}
                         {xmlItem ? (
-                          <div className={`mt-1 px-2 py-0.5 rounded inline-block text-xs font-semibold ${cfopDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-slate-100 text-slate-700'}`}>
+                          <div className={`mt-0.5 px-1 py-0.5 rounded inline-block text-[9px] font-semibold ${cfopDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-slate-100 text-slate-700'}`}>
                             XML: {xmlItem.cfop || '-'}
                           </div>
                         ) : (
-                          <div className="text-xs text-slate-400 italic mt-0.5">XML não vinculado</div>
+                          <div className="text-[9px] text-slate-400 italic mt-0.5">XML não vinculado</div>
                         )}
                       </div>
 
                       {/* CST Column */}
-                      <div className="px-3 py-3 font-mono text-xs whitespace-nowrap">
+                      <div className="px-1.5 py-1.5 font-mono text-[10px] whitespace-nowrap">
                         {inlineEditingKey === key ? (
                           <div>
                             <input
                               type="text"
                               value={inlineCst}
                               onChange={(e) => setInlineCst(e.target.value)}
-                              className="w-16 px-2 py-1 border border-indigo-400 rounded text-sm font-mono bg-white text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500/20"
+                              className="w-12 px-1 py-0.5 border border-indigo-400 rounded text-[10px] font-mono bg-white text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500/20"
                               placeholder="CST"
                             />
                           </div>
                         ) : (
-                          <div className="text-[var(--atlas-text)] font-bold text-xs">SPED: {item.cstIcms ? item.cstIcms.padStart(3, '0') : '-'}</div>
+                          <div className="text-[var(--atlas-text)] font-bold text-[10px]">SPED: {item.cstIcms ? item.cstIcms.padStart(3, '0') : '-'}</div>
                         )}
                         {xmlItem && (
-                          <div className={`mt-1 px-2 py-0.5 rounded inline-block text-xs font-semibold ${cstDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-slate-100 text-slate-700'}`}>
+                          <div className={`mt-0.5 px-1 py-0.5 rounded inline-block text-[9px] font-semibold ${cstDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-slate-100 text-slate-700'}`}>
                             XML: {xmlItem.cst ? xmlItem.cst.padStart(3, '0') : '-'}
                           </div>
                         )}
                         {matrizRule?.expectedCst && (
-                          <div className={`mt-1 px-2 py-0.5 rounded block text-xs font-semibold font-sans ${isMatrizCstDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-emerald-50 text-emerald-800'}`} title="CST esperado no Banco de Dados Cadastrado">
+                          <div className={`mt-0.5 px-1 py-0.5 rounded block text-[9px] font-semibold font-sans ${isMatrizCstDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-emerald-50 text-emerald-800'}`} title="CST esperado no Banco de Dados Cadastrado">
                             Matriz: {matrizRule.expectedCst}
                           </div>
                         )}
                       </div>
 
                       {/* Valor Item Column */}
-                      <div className="px-3 py-3 text-right whitespace-nowrap font-mono text-xs">
+                      <div className="px-1.5 py-1.5 text-right whitespace-nowrap font-mono text-[10px]">
                         {inlineEditingKey === key ? (
                           <div className="flex justify-end">
                             <input
                               type="text"
                               value={inlineVlItem}
                               onChange={(e) => setInlineVlItem(e.target.value)}
-                              className="w-28 px-2 py-1 border border-indigo-400 rounded text-sm font-mono bg-white text-slate-900 outline-none text-right"
+                              className="w-20 px-1 py-0.5 border border-indigo-400 rounded text-[10px] font-mono bg-white text-slate-900 outline-none text-right"
                               placeholder="0.00"
                             />
                           </div>
                         ) : (
-                          <div className="text-[var(--atlas-navy)] font-bold text-xs">SPED: R$ {item.vlItem.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                          <div className="text-[var(--atlas-navy)] font-bold text-[10px]">SPED: R$ {item.vlItem.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
                         )}
                         {xmlItem ? (
-                          <div className={`mt-1 px-2 py-0.5 rounded inline-block text-xs font-semibold ${valDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-slate-100 text-slate-700'}`}>
+                          <div className={`mt-0.5 px-1 py-0.5 rounded inline-block text-[9px] font-semibold ${valDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-slate-100 text-slate-700'}`}>
                             XML: R$ {(xmlItem.vProd || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                           </div>
                         ) : (
-                          <div className="text-xs text-slate-400 italic mt-0.5">XML não vinculado</div>
+                          <div className="text-[9px] text-slate-400 italic mt-0.5">XML não vinculado</div>
                         )}
                       </div>
 
                       {/* ICMS Column */}
-                      <div className="px-3 py-3 text-right whitespace-nowrap min-w-[200px] font-mono text-xs">
+                      <div className="px-1.5 py-1.5 text-right whitespace-nowrap font-mono text-[10px]">
                         {inlineEditingKey === key ? (
                           <div className="space-y-1">
                             <div className="flex items-center justify-end gap-1">
-                              <span className="text-xs text-slate-500">BC:</span>
+                              <span className="text-[9px] text-slate-500">BC:</span>
                               <input
                                 type="text"
                                 value={inlineVlBc}
@@ -2295,12 +2406,12 @@ export function AllItemsView({
                                   const a = parseFloat(inlineAliq.replace(',', '.')) || 0;
                                   setInlineVlIcms(((bc * a) / 100).toFixed(2));
                                 }}
-                                className="w-20 px-1.5 py-0.5 border border-indigo-400 rounded text-xs font-mono bg-white text-slate-900 outline-none"
+                                className="w-14 px-1 py-0.5 border border-indigo-400 rounded text-[10px] font-mono bg-white text-slate-900 outline-none"
                                 placeholder="BC"
                               />
                             </div>
                             <div className="flex items-center justify-end gap-1">
-                              <span className="text-xs text-slate-500">Alíq%:</span>
+                              <span className="text-[9px] text-slate-500">Alíq%:</span>
                               <input
                                 type="text"
                                 value={inlineAliq}
@@ -2311,81 +2422,81 @@ export function AllItemsView({
                                   const bc = parseFloat(inlineVlBc.replace(',', '.')) || item.vlItem || 0;
                                   setInlineVlIcms(((bc * a) / 100).toFixed(2));
                                 }}
-                                className="w-16 px-1.5 py-0.5 border border-indigo-400 rounded text-xs font-mono bg-white text-slate-900 outline-none"
+                                className="w-10 px-1 py-0.5 border border-indigo-400 rounded text-[10px] font-mono bg-white text-slate-900 outline-none"
                                 placeholder="%"
                               />
                             </div>
                             <div className="flex items-center justify-end gap-1">
-                              <span className="text-xs text-slate-500">VlIcms:</span>
+                              <span className="text-[9px] text-slate-500">VlIcms:</span>
                               <input
                                 type="text"
                                 value={inlineVlIcms}
                                 onChange={(e) => setInlineVlIcms(e.target.value)}
-                                className="w-20 px-1.5 py-0.5 border border-indigo-400 rounded text-xs font-mono bg-white text-slate-900 outline-none"
+                                className="w-14 px-1 py-0.5 border border-indigo-400 rounded text-[10px] font-mono bg-white text-slate-900 outline-none"
                                 placeholder="0.00"
                               />
                             </div>
                           </div>
                         ) : (
-                          <div className="text-[var(--atlas-navy)] font-bold text-xs" title="Base de Cálculo, Alíquota e Valor do ICMS no SPED">
-                            <span className="text-[var(--atlas-text-secondary)] font-medium text-xs">SPED:</span> BC R$ {(item.vlBcIcms || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-[var(--atlas-text-muted)] font-normal">|</span> {item.aliqIcms}% <span className="text-[var(--atlas-text-muted)] font-normal">|</span> R$ {(item.vlIcms || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                          <div className="text-[var(--atlas-navy)] font-bold text-[10px]" title="Base de Cálculo, Alíquota e Valor do ICMS no SPED">
+                            <span className="text-[var(--atlas-text-secondary)] font-medium text-[9px]">SPED:</span> BC R$ {(item.vlBcIcms || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-[var(--atlas-text-muted)] font-normal">|</span> {item.aliqIcms}% <span className="text-[var(--atlas-text-muted)] font-normal">|</span> R$ {(item.vlIcms || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                           </div>
                         )}
                         {xmlItem && (
-                          <div className="text-xs font-semibold text-[var(--atlas-text)] mt-1 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] px-2 py-0.5 rounded inline-block" title="Base de Cálculo, Alíquota e Valor do ICMS no XML">
+                          <div className="text-[9px] font-semibold text-[var(--atlas-text)] mt-0.5 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] px-1 py-0.5 rounded inline-block" title="Base de Cálculo, Alíquota e Valor do ICMS no XML">
                             <span className="text-[var(--atlas-text-secondary)] font-normal">XML:</span> BC R$ {((xmlItem.vBc ?? xmlItem.vBC ?? 0)).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} | {xmlItem.pIcms ?? 0}% | R$ {(xmlItem.vIcms || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                           </div>
                         )}
                         {matrizRule?.expectedAliqIcms !== undefined && (
-                          <div className={`mt-1 px-2 py-0.5 rounded inline-block text-xs font-semibold font-sans ${isMatrizAliqDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-emerald-50 text-emerald-800'}`} title="Alíquota cadastrada no Banco de Dados">
+                          <div className={`mt-0.5 px-1 py-0.5 rounded inline-block text-[9px] font-semibold font-sans ${isMatrizAliqDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-emerald-50 text-emerald-800'}`} title="Alíquota cadastrada no Banco de Dados">
                             Matriz: {matrizRule.expectedAliqIcms}%
                           </div>
                         )}
                       </div>
 
                       {/* Actions */}
-                      <div className="px-3 py-3 text-center whitespace-nowrap pl-4">
+                      <div className="px-1 py-1.5 text-center whitespace-nowrap">
                         {inlineEditingKey === key ? (
                           <div className="flex items-center justify-center gap-1">
                             {xmlItem && (
                               <button
                                 onClick={() => copyFromXmlForInline(doc.id, item)}
-                                className="px-1.5 py-1 bg-amber-100 text-amber-800 hover:bg-amber-200 rounded text-[10px] font-bold"
-                                title="Copiar valores e tributos do XML"
+                                className="px-1 py-0.5 bg-amber-100 text-amber-800 hover:bg-amber-200 rounded text-[9px] font-bold"
+                                title="Copiar valores do XML"
                               >
                                 Xml
                               </button>
                             )}
                             <button
                               onClick={() => saveInlineEdit(doc.id, item)}
-                              className="p-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition shadow-sm"
-                              title="Salvar Alterações Inline"
+                              className="p-1 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition"
+                              title="Salvar Alterações"
                             >
                               <Check className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={cancelInlineEdit}
-                              className="p-1.5 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition"
-                              title="Cancelar Edição Inline"
+                              className="p-1 bg-slate-200 text-slate-700 rounded hover:bg-slate-300 transition"
+                              title="Cancelar Edição"
                             >
                               <X className="w-3.5 h-3.5" />
                             </button>
                           </div>
                         ) : (
-                          <div className="flex items-center justify-center gap-1.5">
+                          <div className="flex items-center justify-center gap-1">
                             <button
                               onClick={() => startInlineEdit(doc.id, item)}
-                              className={`p-1.5 rounded-lg transition ${item.analystConfirmed ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100'}`}
-                              title={item.analystConfirmed ? 'Item conferido. Desmarque a conferência para editar.' : 'Edição Rápida Inline (CST, CFOP, Alíquota)'}
+                              className={`p-1 rounded transition ${item.analystConfirmed ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100'}`}
+                              title={item.analystConfirmed ? 'Item conferido. Desmarque para editar.' : 'Edição Rápida Inline (Lápis)'}
                             >
                               <Pencil className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={() => startEditing(doc.id, item)}
-                              className={`px-2.5 py-1.5 border rounded-lg text-xs font-bold flex items-center space-x-1 transition-colors shadow-2xs ${item.analystConfirmed ? 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed' : 'bg-white border-slate-200 text-[#1e3a5f] hover:bg-[#1e3a5f]/5'}`}
-                              title={item.analystConfirmed ? 'Item conferido. Desmarque a conferência para editar.' : 'Editar Tributação e NCM Completa (Modal)'}
+                              className={`p-1 border rounded transition-colors ${item.analystConfirmed ? 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed' : 'bg-white border-slate-200 text-[#1e3a5f] hover:bg-[#1e3a5f]/10'}`}
+                              title={item.analystConfirmed ? 'Item conferido. Desmarque para editar.' : 'Abrir Edição Completa (Janela Modal)'}
                             >
-                              <span>Modal</span>
+                              <SlidersHorizontal className="w-3.5 h-3.5" />
                             </button>
                           </div>
                         )}
