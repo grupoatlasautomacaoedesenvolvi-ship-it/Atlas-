@@ -103,10 +103,11 @@ export function parseXmlDocument(xmlText: string): XmlRecord | null {
       let vIcms = 0;
 
       if (impostoEl) {
-        cst = getDescendantText(impostoEl, ['CST', 'CSOSN', 'cst', 'csosn']).trim().padStart(3, '0');
-        vBc = parseFloat(getDescendantText(impostoEl, ['vBC', 'vbc']).replace(',', '.')) || 0;
-        pIcms = parseFloat(getDescendantText(impostoEl, ['pICMS', 'picms']).replace(',', '.')) || 0;
-        vIcms = parseFloat(getDescendantText(impostoEl, ['vICMS', 'vicms']).replace(',', '.')) || 0;
+        const icmsEl = impostoEl.getElementsByTagName('ICMS')[0] || impostoEl;
+        cst = getDescendantText(icmsEl, ['CST', 'CSOSN', 'cst', 'csosn']).trim().padStart(3, '0');
+        vBc = parseFloat(getDescendantText(icmsEl, ['vBC', 'vbc']).replace(',', '.')) || 0;
+        pIcms = parseFloat(getDescendantText(icmsEl, ['pICMS', 'picms']).replace(',', '.')) || 0;
+        vIcms = parseFloat(getDescendantText(icmsEl, ['vICMS', 'vicms']).replace(',', '.')) || 0;
       }
 
       xmlItems.push({
