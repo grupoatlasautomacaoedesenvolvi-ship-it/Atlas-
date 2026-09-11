@@ -10,8 +10,8 @@ export function normalizarChave(chave: string | undefined | null): string {
   return (chave || '').replace(/\D/g, '');
 }
 
-export function gerarIdAchado(tipo: TipoAchado, docId: string, numItem?: string): string {
-  return `${tipo}__${docId}__${numItem || 'doc'}`;
+export function gerarIdAchado(tipo: TipoAchado, docId: string, numItem?: string, subContext?: string): string {
+  return `${tipo}__${docId}__${numItem || 'doc'}${subContext ? `__${subContext}` : ''}`;
 }
 
 function getRevisoesKey(escritorioId?: string): string {
@@ -378,7 +378,7 @@ export function executarAuditoriaUnificada(
         const allowedStCfops = ['1403', '2403', '5403', '6403'];
         if (!allowedStCfops.includes(cfop)) {
           const sugCfop = isEntry ? (isInterstate ? '2403' : '1403') : (isInterstate ? '6403' : '5403');
-          const id = gerarIdAchado('CFOP_INCOMPATIVEL', `${doc.id}_cst060`, itemId);
+          const id = gerarIdAchado('CFOP_INCOMPATIVEL', doc.id, itemId, 'db_cst060');
           achados.push({
             id,
             tipo: 'CFOP_INCOMPATIVEL',
@@ -407,7 +407,7 @@ export function executarAuditoriaUnificada(
         const stCfopsIncorretos = ['1403', '2403', '5403', '6403'];
         if (stCfopsIncorretos.includes(cfop)) {
           const sugCfop = isEntry ? (isInterstate ? '2102' : '1102') : (isInterstate ? '6102' : '5102');
-          const id = gerarIdAchado('CFOP_INCOMPATIVEL', `${doc.id}_cstoutros`, itemId);
+          const id = gerarIdAchado('CFOP_INCOMPATIVEL', doc.id, itemId, 'db_cstoutros');
           achados.push({
             id,
             tipo: 'CFOP_INCOMPATIVEL',
@@ -456,7 +456,7 @@ export function executarAuditoriaUnificada(
               const expectedMatrixCst = (smRule.expectedCst || '').trim().padStart(3, '0');
               const currentCleanCst = cst.padStart(3, '0');
               if (expectedMatrixCst && currentCleanCst !== expectedMatrixCst) {
-                const id = gerarIdAchado('CST_INCOMPATIVEL_NCM', doc.id, itemId);
+                const id = gerarIdAchado('CST_INCOMPATIVEL_NCM', doc.id, itemId, `matrix_cst_${smRule.id || smRule.ncmPrefix || 'rule'}`);
                 achados.push({
                   id,
                   tipo: 'CST_INCOMPATIVEL_NCM',
@@ -488,7 +488,7 @@ export function executarAuditoriaUnificada(
               
               if (expectedCfopsArray.length > 0 && !expectedCfopsArray.includes(cfop)) {
                 // Se a regra define CFOPs e o CFOP atual não está na lista permitida
-                const id = gerarIdAchado('CFOP_INCOMPATIVEL', doc.id, itemId);
+                const id = gerarIdAchado('CFOP_INCOMPATIVEL', doc.id, itemId, `matrix_cfop_${smRule.id || smRule.ncmPrefix || 'rule'}`);
                 achados.push({
                   id,
                   tipo: 'CFOP_INCOMPATIVEL', // reaproveitando a categoria
@@ -524,7 +524,7 @@ export function executarAuditoriaUnificada(
                   const expectedCfopRevenda = shouldBeSt ? `${prefix}403` : `${prefix}102`;
                   
                   if (cfop !== expectedCfopRevenda) {
-                    const id = gerarIdAchado('CFOP_REVENDA_INCORRETO_ST', doc.id, itemId);
+                    const id = gerarIdAchado('CFOP_REVENDA_INCORRETO_ST', doc.id, itemId, `matrix_st_${smRule.id || smRule.ncmPrefix || 'rule'}`);
                     achados.push({
                       id,
                       tipo: 'CFOP_REVENDA_INCORRETO_ST',
@@ -571,7 +571,7 @@ export function executarAuditoriaUnificada(
 
             if (isCfopInvalid) {
               const sugCfop = rule.expectedCfops[0];
-              const id = gerarIdAchado('CFOP_INCOMPATIVEL', doc.id, itemId);
+              const id = gerarIdAchado('CFOP_INCOMPATIVEL', doc.id, itemId, `config_cfop_${rule.name || 'rule'}`);
               achados.push({
                 id,
                 tipo: 'CFOP_INCOMPATIVEL',
@@ -598,7 +598,7 @@ export function executarAuditoriaUnificada(
 
             if (isCstInvalid) {
               const sugCst = rule.expectedCsts[0];
-              const id = gerarIdAchado('CST_INCOMPATIVEL_NCM', doc.id, itemId);
+              const id = gerarIdAchado('CST_INCOMPATIVEL_NCM', doc.id, itemId, `config_cst_${rule.name || 'rule'}`);
               achados.push({
                 id,
                 tipo: 'CST_INCOMPATIVEL_NCM',

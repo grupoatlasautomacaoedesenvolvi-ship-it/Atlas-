@@ -146,6 +146,7 @@ export interface XmlItem {
   vBc: number;
   pIcms: number;
   vIcms: number;
+  vFcp: number;
 }
 
 export interface XmlRecord {

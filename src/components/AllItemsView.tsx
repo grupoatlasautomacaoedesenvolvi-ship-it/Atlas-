@@ -5,6 +5,7 @@ import { FiscalTooltip } from './FiscalTooltip';
 import { SpedData, AuditConfig, SpedDocument, SpedItem, XmlRecord, StateTaxRule } from '../types';
 import { mapXmlCfopToEntryCfop, findMatchingXmlItem, findBestFuzzyXmlItemMatch, ItemMatchDetails } from '../lib/cfopUtils';
 import { AgentErrorReportModal } from './AgentErrorReportModal';
+import { executarAuditoriaUnificada } from '../lib/auditEngine';
 import { 
   Search, 
   AlertTriangle, 
@@ -27,7 +28,8 @@ import {
   Scale,
   ChevronDown,
   Eye,
-  SlidersHorizontal
+  SlidersHorizontal,
+  Sparkles
 } from 'lucide-react';
 
 const IBGE_UF_MAP: Record<string, string> = {
@@ -282,6 +284,15 @@ export function AllItemsView({
     return saved ? parseInt(saved, 10) : 142;
   });
   const [currentPage, setCurrentPage] = useState(() => getC170SavedNumber('currentPage', 1));
+  const [agentAuditModalOpen, setAgentAuditModalOpen] = useState(false);
+  const [agentAuditResult, setAgentAuditResult] = useState<{
+    totalItems: number;
+    divergentCount: number;
+    fcpItemsCount: number;
+    totalFcpCalculated: number;
+    divergentList: Array<{ docNum: string; itemNum: string; descr: string; ncm: string; cstCur: string; cstExp: string }>;
+    fcpList: Array<{ docNum: string; itemNum: string; descr: string; ncm: string; vProd: number; fcpVal: number }>;
+  } | null>(null);
 
   useEffect(() => {
     try {
@@ -1384,6 +1395,65 @@ export function AllItemsView({
     }
   };
 
+  const handleRunAgentAuditC170 = () => {
+    const xmlTerceiros = (xmlRecords || []).filter(x => x.isTerceiros || x.tpNF === '0');
+    const xmlProprio = (xmlRecords || []).filter(x => !x.isTerceiros && x.tpNF === '1' && x.mod === '55');
+    const xmlNfce = (xmlRecords || []).filter(x => !x.isTerceiros && x.tpNF === '1' && x.mod === '65');
+    const auditAchados = executarAuditoriaUnificada(spedData, auditConfig, xmlTerceiros, xmlProprio, xmlNfce);
+
+    const divergentItems = enrichedItems.filter(i => {
+      if (!i.matrizRule) return false;
+      const rule = i.matrizRule;
+      const expCst = rule.expectedCst ? rule.expectedCst.padStart(3, '0') : '';
+      const curCst = (i.item.cstIcms || '').padStart(3, '0');
+      const isCstDiff = expCst ? curCst !== expCst : false;
+      const expCfops = Array.isArray(rule.expectedCfop) ? rule.expectedCfop : [];
+      const isCfopDiff = expCfops.length > 0 && !expCfops.includes(i.item.cfop);
+      return isCstDiff || isCfopDiff;
+    });
+
+    const NCMS_FCP_2PCT = ['3303', '3304', '3305', '3307'];
+    const fcpItems: Array<{ docNum: string; itemNum: string; descr: string; ncm: string; vProd: number; fcpVal: number }> = [];
+    let totalFcp = 0;
+
+    for (const row of enrichedItems) {
+      if (row.doc.indOper === '1') {
+        const ncmClean = (row.item.ncm || '').replace(/\D/g, '');
+        const prefix4 = ncmClean.substring(0, 4);
+        if (NCMS_FCP_2PCT.includes(prefix4)) {
+          const vProd = row.item.vlItem || row.item.vlBcIcms || 0;
+          const fcpVal = vProd * 0.02;
+          totalFcp += fcpVal;
+          fcpItems.push({
+            docNum: row.doc.numDoc || row.doc.id,
+            itemNum: row.item.numItem,
+            descr: row.item.descrItem || 'Produto',
+            ncm: row.item.ncm || '',
+            vProd,
+            fcpVal
+          });
+        }
+      }
+    }
+
+    setAgentAuditResult({
+      totalItems: enrichedItems.length,
+      divergentCount: divergentItems.length,
+      fcpItemsCount: fcpItems.length,
+      totalFcpCalculated: totalFcp,
+      divergentList: divergentItems.map(i => ({
+        docNum: i.doc.numDoc || i.doc.id,
+        itemNum: i.item.numItem,
+        descr: i.item.descrItem || 'Produto',
+        ncm: i.item.ncm || '',
+        cstCur: i.item.cstIcms || '',
+        cstExp: i.matrizRule?.expectedCst || ''
+      })),
+      fcpList: fcpItems
+    });
+    setAgentAuditModalOpen(true);
+  };
+
   const handleToggleAnalystConfirm = (docId: string, itemNum: string, currentStatus?: boolean) => {
     if (!onUpdateItem) return;
     const itemRow = enrichedItems.find(i => i.doc.id === docId && i.item.numItem === itemNum);
@@ -1485,6 +1555,15 @@ export function AllItemsView({
           >
             <RefreshCw className="w-3.5 h-3.5 animate-spin-slow" />
             <span>Executar Robô C170 (CST/CFOP)</span>
+          </button>
+
+          <button
+            onClick={handleRunAgentAuditC170}
+            className="atlas-btn py-2 px-3.5 text-xs font-bold bg-indigo-700 hover:bg-indigo-800 text-white flex items-center space-x-1.5 shadow-xs cursor-pointer"
+            title="Executar Auditoria de Agentes IA: Valida regras da Matriz Tributária e calcula o FCP (2%) em NCMs de perfumaria/cosméticos (3303, 3304, 3305, 3307)"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Executar Auditoria de Agentes</span>
           </button>
 
           <button
@@ -3054,6 +3133,127 @@ export function AllItemsView({
                   Fechar
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {agentAuditModalOpen && agentAuditResult && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fade-in">
+          <div className="bg-white rounded-xl shadow-2xl border border-slate-200 max-w-2xl w-full overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="p-4 bg-indigo-900 text-white flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Sparkles className="w-5 h-5 text-indigo-300" />
+                <h3 className="text-base font-bold">Relatório de Auditoria dos Agentes IA (C170)</h3>
+              </div>
+              <button
+                onClick={() => setAgentAuditModalOpen(false)}
+                className="text-white/80 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto space-y-6 text-sm text-slate-700">
+              <div className="grid grid-cols-3 gap-4">
+                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
+                  <div className="text-xs font-semibold text-slate-500 uppercase">Itens Analisados</div>
+                  <div className="text-2xl font-bold text-slate-900 mt-1">{agentAuditResult.totalItems}</div>
+                </div>
+                <div className="bg-amber-50 p-4 rounded-xl border border-amber-200 text-center">
+                  <div className="text-xs font-semibold text-amber-700 uppercase">Divergências Matriz</div>
+                  <div className="text-2xl font-bold text-amber-800 mt-1">{agentAuditResult.divergentCount}</div>
+                </div>
+                <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-200 text-center">
+                  <div className="text-xs font-semibold text-indigo-700 uppercase">Total FCP Calculado (2%)</div>
+                  <div className="text-xl font-bold text-indigo-900 mt-1">R$ {agentAuditResult.totalFcpCalculated.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                </div>
+              </div>
+
+              {agentAuditResult.fcpList.length > 0 && (
+                <div className="space-y-2">
+                  <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">Itens de Perfumaria/Cosméticos (FCP 2% s/ NCM 3303/4/5/7)</h4>
+                  <div className="border border-slate-200 rounded-xl overflow-hidden max-h-48 overflow-y-auto">
+                    <table className="w-full text-left border-collapse text-xs">
+                      <thead className="bg-slate-100 text-slate-700 uppercase tracking-wider font-semibold sticky top-0">
+                        <tr>
+                          <th className="p-2.5">NF</th>
+                          <th className="p-2.5">Item</th>
+                          <th className="p-2.5">NCM</th>
+                          <th className="p-2.5 text-right">Valor Prod.</th>
+                          <th className="p-2.5 text-right">FCP (2%)</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {agentAuditResult.fcpList.map((f, idx) => (
+                          <tr key={idx} className="hover:bg-slate-50">
+                            <td className="p-2.5 font-medium">{f.docNum}</td>
+                            <td className="p-2.5 truncate max-w-[140px]">{f.descr}</td>
+                            <td className="p-2.5 font-mono text-slate-600">{f.ncm}</td>
+                            <td className="p-2.5 text-right">R$ {f.vProd.toFixed(2)}</td>
+                            <td className="p-2.5 text-right font-bold text-indigo-700">R$ {f.fcpVal.toFixed(2)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {agentAuditResult.divergentList.length > 0 && (
+                <div className="space-y-2">
+                  <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">Divergências de CST/CFOP Encontradas</h4>
+                  <div className="border border-slate-200 rounded-xl overflow-hidden max-h-48 overflow-y-auto">
+                    <table className="w-full text-left border-collapse text-xs">
+                      <thead className="bg-slate-100 text-slate-700 uppercase tracking-wider font-semibold sticky top-0">
+                        <tr>
+                          <th className="p-2.5">NF</th>
+                          <th className="p-2.5">Produto</th>
+                          <th className="p-2.5">NCM</th>
+                          <th className="p-2.5">CST Atual</th>
+                          <th className="p-2.5">CST Esperado</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {agentAuditResult.divergentList.map((d, idx) => (
+                          <tr key={idx} className="hover:bg-slate-50">
+                            <td className="p-2.5 font-medium">{d.docNum}</td>
+                            <td className="p-2.5 truncate max-w-[140px]">{d.descr}</td>
+                            <td className="p-2.5 font-mono text-slate-600">{d.ncm}</td>
+                            <td className="p-2.5 text-red-600 font-bold">{d.cstCur}</td>
+                            <td className="p-2.5 text-emerald-600 font-bold">{d.cstExp}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {agentAuditResult.fcpList.length === 0 && agentAuditResult.divergentList.length === 0 && (
+                <div className="p-8 text-center bg-emerald-50 text-emerald-800 rounded-xl border border-emerald-200 font-medium">
+                  Nenhum item com divergência ou incidência de FCP especial foi detectado pelo robô nos itens filtrados. Tudo regular!
+                </div>
+              )}
+            </div>
+            <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-end space-x-2">
+              {agentAuditResult.divergentCount > 0 && (
+                <button
+                  onClick={() => {
+                    setAgentAuditModalOpen(false);
+                    handleRunRobotC170Correction();
+                  }}
+                  className="px-4 py-2 bg-indigo-700 hover:bg-indigo-800 text-white rounded-xl text-xs font-bold transition-colors shadow-xs cursor-pointer flex items-center space-x-1.5"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  <span>Aplicar Correções Automáticas</span>
+                </button>
+              )}
+              <button
+                onClick={() => setAgentAuditModalOpen(false)}
+                className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-bold transition-colors cursor-pointer"
+              >
+                Fechar
+              </button>
             </div>
           </div>
         </div>

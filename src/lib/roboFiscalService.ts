@@ -4,6 +4,8 @@ import { RoboConfig, RoboExecutionLog, LearnedTaxRule, StateTaxRule, SpedData, X
 import { saveGlobalStateTaxMatrix } from './matrizService';
 import { orchestrateTaxAudit, TaxItemInput } from './aiOrchestrator';
 
+const NCMS_FCP_2PCT = ['3303', '3304', '3305', '3307'];
+
 let robôFiscalEmExecucao = false;
 
 async function mapWithConcurrency<T, R>(items: T[], limit: number, fn: (item: T, index: number) => Promise<R>): Promise<R[]> {
@@ -541,6 +543,22 @@ export async function processarArquivosComRobo({
         if (!ncm || ncm.length < 2) continue;
 
         const ncmPrefix4 = ncm.substring(0, 4);
+
+        // FCP (Fundo de Combate à Pobreza) — regra fixa: NCM 3303/3304/3305/3307,
+        // 2% sobre o valor do item, só em nota de saída (tpNF === '1').
+        if (xml.tpNF === '1' && NCMS_FCP_2PCT.includes(ncmPrefix4)) {
+          const fcpCalculado = item.vProd * 0.02;
+          const fcpDeclarado = item.vFcp || 0;
+          inconsistencias.push({
+            tipo: 'FCP_VALOR_CALCULADO',
+            numDoc: xml.nNF,
+            ncm: item.ncm,
+            cstDeclarado: fcpDeclarado > 0 ? `R$ ${fcpDeclarado.toFixed(2)} (Destacado)` : `R$ 0,00 (Sem Destaque no XML)`,
+            cstEsperado: `R$ ${fcpCalculado.toFixed(2)} (2% s/ R$ ${item.vProd.toFixed(2)})`,
+            cfopDeclarado: item.cfop,
+            mensagem: `XML NFe ${xml.nNF} (Saída): Item NCM ${item.ncm} (${item.xProd || 'Produto'}), Valor R$ ${item.vProd.toFixed(2)} — FCP Calculado (2%): R$ ${fcpCalculado.toFixed(2)}.`
+          });
+        }
 
         const matchedRule = matrizRules.find(r => 
           (r.uf === ufCliente || r.uf === 'ALL') &&

@@ -73,7 +73,11 @@ export default function App() {
           if (cloudData) {
             if (cloudData.spedData && !spedData) {
               setSpedData(cloudData.spedData);
-              localStorage.setItem('atlas_sped_data', JSON.stringify(cloudData.spedData));
+              try {
+                localStorage.setItem('atlas_sped_data', JSON.stringify(cloudData.spedData));
+              } catch (e) {
+                console.warn('LocalStorage quota exceeded for cloud SPED data');
+              }
             }
             if (cloudData.xmlTerceiros && cloudData.xmlTerceiros.length > 0 && xmlTerceiros.length === 0) {
               setXmlTerceiros(cloudData.xmlTerceiros);
@@ -259,7 +263,11 @@ export default function App() {
     setSpedData(data);
     if (data) {
       try {
-        localStorage.setItem('atlas_sped_data', JSON.stringify(data));
+        try {
+          localStorage.setItem('atlas_sped_data', JSON.stringify(data));
+        } catch (storageErr) {
+          console.warn('LocalStorage quota exceeded for SPED data, relying on IndexedDB persistence.');
+        }
         await trackEvent('sped_importado');
         if (!skipNotification) {
           addNotification(

@@ -101,6 +101,7 @@ export function parseXmlDocument(xmlText: string): XmlRecord | null {
       let vBc = 0;
       let pIcms = 0;
       let vIcms = 0;
+      let vFcp = 0;
 
       if (impostoEl) {
         const icmsEl = impostoEl.getElementsByTagName('ICMS')[0] || impostoEl;
@@ -108,6 +109,7 @@ export function parseXmlDocument(xmlText: string): XmlRecord | null {
         vBc = parseFloat(getDescendantText(icmsEl, ['vBC', 'vbc']).replace(',', '.')) || 0;
         pIcms = parseFloat(getDescendantText(icmsEl, ['pICMS', 'picms']).replace(',', '.')) || 0;
         vIcms = parseFloat(getDescendantText(icmsEl, ['vICMS', 'vicms']).replace(',', '.')) || 0;
+        vFcp = parseFloat(getDescendantText(icmsEl, ['vFCP', 'vfcp']).replace(',', '.')) || 0;
       }
 
       xmlItems.push({
@@ -122,7 +124,8 @@ export function parseXmlDocument(xmlText: string): XmlRecord | null {
         vProd: vItemProd,
         vBc,
         pIcms,
-        vIcms
+        vIcms,
+        vFcp
       });
     }
 
