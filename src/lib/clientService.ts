@@ -168,7 +168,7 @@ export async function fetchClientes(escritorioId: string): Promise<Cliente[]> {
 
 export async function saveCliente(clienteData: Partial<Cliente>, escritorioId: string): Promise<Cliente> {
   const eid = exigirEscritorio(escritorioId);
-  const id = clienteData.id || `cli-${Date.now()}`;
+  const id = clienteData.id || `cli-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   const now = new Date().toISOString();
 
   const fullCliente: Cliente = {
@@ -295,7 +295,7 @@ export async function fetchPastasCliente(clienteId: string, escritorioId: string
 
 export async function savePastaCliente(pastaData: Partial<PastaCliente>, escritorioId: string): Promise<PastaCliente> {
   const eid = exigirEscritorio(escritorioId);
-  const id = pastaData.id || `pasta-${Date.now()}`;
+  const id = pastaData.id || `pasta-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   const now = new Date().toISOString();
 
   const fullPasta: PastaCliente = {

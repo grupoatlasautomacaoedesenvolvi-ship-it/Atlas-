@@ -51,13 +51,17 @@ export function FiscalTooltip({
   };
 
   return (
-    <div ref={containerRef} className={`relative inline-flex items-center ${className}`}>
+    <div
+      ref={containerRef}
+      onMouseEnter={() => setIsOpen(true)}
+      onMouseLeave={() => setIsOpen(false)}
+      className={`relative inline-flex items-center ${className}`}
+    >
       
       {/* Trigger Button or Custom Wrapper */}
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        onMouseEnter={() => setIsOpen(true)}
         className="inline-flex items-center text-slate-400 hover:text-[#1e3a5f] focus:outline-hidden focus:text-[#1e3a5f] transition p-0.5 rounded-md cursor-pointer group"
         aria-label={`Informação Didática: ${title}`}
       >

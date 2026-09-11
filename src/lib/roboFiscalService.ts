@@ -1,8 +1,24 @@
 import { doc, getDoc, setDoc, collection, addDoc, query, orderBy, getDocs, limit } from 'firebase/firestore';
 import { db, safeWrite } from './firebase';
-import { RoboConfig, RoboExecutionLog, LearnedTaxRule, StateTaxRule, SpedData, XmlRecord, Cliente, ArquivoCliente } from '../types';
+import { RoboConfig, RoboExecutionLog, LearnedTaxRule, StateTaxRule, SpedData, XmlRecord, Cliente, ArquivoCliente, SpedItem } from '../types';
 import { saveGlobalStateTaxMatrix } from './matrizService';
 import { orchestrateTaxAudit, TaxItemInput } from './aiOrchestrator';
+
+let robôFiscalEmExecucao = false;
+
+async function mapWithConcurrency<T, R>(items: T[], limit: number, fn: (item: T, index: number) => Promise<R>): Promise<R[]> {
+  const results: R[] = new Array(items.length);
+  let nextIndex = 0;
+  async function worker() {
+    while (nextIndex < items.length) {
+      const current = nextIndex++;
+      results[current] = await fn(items[current], current);
+    }
+  }
+  const workers = Array.from({ length: Math.min(limit, items.length) }, () => worker());
+  await Promise.all(workers);
+  return results;
+}
 
 const DEFAULT_ROBO_CONFIG: RoboConfig = {
   ativo: fontCheckDemo(),
@@ -249,94 +265,103 @@ export async function verificarEProcessarArquivosSalvos({
   novosProcessados: number;
 }> {
   const eid = exigirEscritorio(escritorioId);
-  const config = await getRoboConfig(eid);
-  if (!config.ativo) {
+  if (robôFiscalEmExecucao) {
     return { arquivosEncontrados: 0, novosProcessados: 0 };
   }
+  robôFiscalEmExecucao = true;
 
-  const processedStr = localStorage.getItem(`atlas_robo_processed_files_${eid}`) || '[]';
-  let processedIds: string[] = [];
   try {
-    processedIds = JSON.parse(processedStr);
-  } catch (e) {
-    processedIds = [];
-  }
+    const config = await getRoboConfig(eid);
+    if (!config.ativo) {
+      return { arquivosEncontrados: 0, novosProcessados: 0 };
+    }
 
-  const allSavedArquivosStr = localStorage.getItem(`atlas_arquivos_cache_${eid}`);
-  let allSavedArquivos: ArquivoCliente[] = [];
-  if (allSavedArquivosStr) {
+    const processedStr = localStorage.getItem(`atlas_robo_processed_files_${eid}`) || '[]';
+    let processedIds: string[] = [];
     try {
-      allSavedArquivos = JSON.parse(allSavedArquivosStr);
+      processedIds = JSON.parse(processedStr);
     } catch (e) {
-      console.warn('Erro ao ler arquivos do localStorage:', e);
-    }
-  }
-
-  const pendentes = allSavedArquivos.filter(a => a.id && !processedIds.includes(a.id));
-  let novosProcessados = 0;
-
-  for (const arq of pendentes) {
-    const clienteObj = clientes.find(c => c.id === arq.clienteId) || null;
-    const clienteNome = clienteObj?.nome || 'Empresa Cliente';
-
-    const spedData = arq.dadosSped || null;
-    const xmls = [
-      ...(arq.xmlsTerceiros || []),
-      ...(arq.xmlsProprios || []),
-      ...(arq.xmlsNfce || [])
-    ];
-
-    if (!spedData && xmls.length === 0) {
-      processedIds.push(arq.id);
-      continue;
+      processedIds = [];
     }
 
-    const result = await processarArquivosComRobo({
-      spedData,
-      xmls,
-      cliente: clienteObj,
-      matrizRules,
-      escritorioId: eid
-    });
-
-    await addRoboLog({
-      timestamp: new Date().toISOString(),
-      clienteNome,
-      arquivoNome: arq.nome,
-      tipoAcao: result.resumo.inconsistenciasCount > 0 ? 'INCONSISTENCIA' : 'PROCESSAMENTO',
-      mensagem: `[Auto-Importador] Arquivo salvo "${arq.nome}" identificado na pasta e importado pelo Robô.`,
-      detalhes: `${result.resumo.totalItensAnalisados} itens validados | ${result.resumo.inconsistenciasCount} divergência(s) | ${result.resumo.regrasNovasCount} padrão(ões) aprendido(s)`,
-      inconsistenciasCount: result.resumo.inconsistenciasCount,
-      regrasAprendidasCount: result.resumo.regrasNovasCount
-    }, eid);
-
-    if (onNotification) {
-      onNotification(
-        'Robô Fiscal - Novo Arquivo Importado',
-        `Arquivo salvo "${arq.nome}" (${clienteNome}) foi detectado e processado automaticamente (${result.resumo.inconsistenciasCount} divergência(s)).`,
-        result.resumo.inconsistenciasCount > 0 ? 'audit' : 'import'
-      );
-
-      if (result.resumo.regrasNovasCount > 0) {
-        onNotification(
-          'Novo Aprendizado Fiscal Identificado',
-          `O Robô Fiscal aprendeu ${result.resumo.regrasNovasCount} novo(s) padrão(ões) tributário(s) no arquivo "${arq.nome}". Clique para revisar e aprovar na Matriz.`,
-          'rule',
-          'aprendizado'
-        );
+    const allSavedArquivosStr = localStorage.getItem(`atlas_arquivos_cache_${eid}`);
+    let allSavedArquivos: ArquivoCliente[] = [];
+    if (allSavedArquivosStr) {
+      try {
+        allSavedArquivos = JSON.parse(allSavedArquivosStr);
+      } catch (e) {
+        console.warn('Erro ao ler arquivos do localStorage:', e);
       }
     }
 
-    processedIds.push(arq.id);
-    novosProcessados++;
+    const pendentes = allSavedArquivos.filter(a => a.id && !processedIds.includes(a.id));
+    let novosProcessados = 0;
+
+    for (const arq of pendentes) {
+      const clienteObj = clientes.find(c => c.id === arq.clienteId) || null;
+      const clienteNome = clienteObj?.nome || 'Empresa Cliente';
+
+      const spedData = arq.dadosSped || null;
+      const xmls = [
+        ...(arq.xmlsTerceiros || []),
+        ...(arq.xmlsProprios || []),
+        ...(arq.xmlsNfce || [])
+      ];
+
+      if (!spedData && xmls.length === 0) {
+        processedIds.push(arq.id);
+        continue;
+      }
+
+      const result = await processarArquivosComRobo({
+        spedData,
+        xmls,
+        cliente: clienteObj,
+        matrizRules,
+        escritorioId: eid
+      });
+
+      await addRoboLog({
+        timestamp: new Date().toISOString(),
+        clienteNome,
+        arquivoNome: arq.nome,
+        tipoAcao: result.resumo.inconsistenciasCount > 0 ? 'INCONSISTENCIA' : 'PROCESSAMENTO',
+        mensagem: `[Auto-Importador] Arquivo salvo "${arq.nome}" identificado na pasta e importado pelo Robô.`,
+        detalhes: `${result.resumo.totalItensAnalisados} itens validados | ${result.resumo.inconsistenciasCount} divergência(s) | ${result.resumo.regrasNovasCount} padrão(ões) aprendido(s)`,
+        inconsistenciasCount: result.resumo.inconsistenciasCount,
+        regrasAprendidasCount: result.resumo.regrasNovasCount
+      }, eid);
+
+      if (onNotification) {
+        onNotification(
+          'Robô Fiscal - Novo Arquivo Importado',
+          `Arquivo salvo "${arq.nome}" (${clienteNome}) foi detectado e processado automaticamente (${result.resumo.inconsistenciasCount} divergência(s)).`,
+          result.resumo.inconsistenciasCount > 0 ? 'audit' : 'import'
+        );
+
+        if (result.resumo.regrasNovasCount > 0) {
+          onNotification(
+            'Novo Aprendizado Fiscal Identificado',
+            `O Robô Fiscal aprendeu ${result.resumo.regrasNovasCount} novo(s) padrão(ões) tributário(s) no arquivo "${arq.nome}". Clique para revisar e aprovar na Matriz.`,
+            'rule',
+            'aprendizado'
+          );
+        }
+      }
+
+      processedIds.push(arq.id);
+      novosProcessados++;
+    }
+
+    localStorage.setItem(`atlas_robo_processed_files_${eid}`, JSON.stringify(processedIds));
+
+    return {
+      arquivosEncontrados: allSavedArquivos.length,
+      novosProcessados
+    };
+  } finally {
+    robôFiscalEmExecucao = false;
   }
-
-  localStorage.setItem(`atlas_robo_processed_files_${eid}`, JSON.stringify(processedIds));
-
-  return {
-    arquivosEncontrados: allSavedArquivos.length,
-    novosProcessados
-  };
 }
 
 export async function processarArquivosComRobo({
@@ -405,6 +430,8 @@ export async function processarArquivosComRobo({
   let totalDocs = 0;
   let totalItens = 0;
 
+  const itensParaIA: { docNumDoc: string; item: SpedItem }[] = [];
+
   if (spedData && spedData.documents) {
     totalDocs += spedData.documents.length;
 
@@ -450,30 +477,7 @@ export async function processarArquivosComRobo({
             });
           }
         } else {
-          // Executa validação pelo Orquestrador de Agentes IA (com cache de 0 tokens para itens já conhecidos)
-          try {
-            const taxInput: TaxItemInput = {
-              descrItem: item.descrItem || `Mercadoria NCM ${item.ncm}`,
-              ncm: item.ncm,
-              cfop: item.cfop || '5102',
-              cstIcms: item.cstIcms || '00',
-              regimeEmpresa: cliente?.regimeTributario || 'Lucro Presumido'
-            };
-            const aiResult = await orchestrateTaxAudit(taxInput);
-            if (aiResult.overallRisk === 'Alto') {
-              inconsistencias.push({
-                tipo: 'INCONSISTENCIA_ORQUESTRADOR_IA',
-                numDoc: doc.numDoc,
-                ncm: item.ncm,
-                cstDeclarado: item.cstIcms,
-                cstEsperado: aiResult.suggestedCst,
-                cfopDeclarado: item.cfop,
-                mensagem: `[Orquestrador Multi-Agente IA] ${aiResult.finalVerdict}`
-              });
-            }
-          } catch (e) {
-            console.warn('Erro na consulta rápida do orquestrador:', e);
-          }
+          itensParaIA.push({ docNumDoc: doc.numDoc, item });
 
           const patternKey = `${ufCliente}_${ncmPrefix4}_${item.cstIcms}_${item.cfop}`;
           const current = padroesEncontrados.get(patternKey) || {
@@ -489,6 +493,39 @@ export async function processarArquivosComRobo({
           padroesEncontrados.set(patternKey, current);
         }
       }
+    }
+
+    if (itensParaIA.length > 0) {
+      const aiResults = await mapWithConcurrency(itensParaIA, 5, async ({ item }) => {
+        const taxInput: TaxItemInput = {
+          descrItem: item.descrItem || `Mercadoria NCM ${item.ncm}`,
+          ncm: item.ncm,
+          cfop: item.cfop || '5102',
+          cstIcms: item.cstIcms || '00',
+          regimeEmpresa: cliente?.regimeTributario || 'Lucro Presumido'
+        };
+        try {
+          return await orchestrateTaxAudit(taxInput);
+        } catch (e) {
+          console.warn('Erro na consulta rápida do orquestrador:', e);
+          return null;
+        }
+      });
+
+      aiResults.forEach((aiResult, idx) => {
+        if (aiResult && aiResult.overallRisk === 'Alto') {
+          const { docNumDoc, item } = itensParaIA[idx];
+          inconsistencias.push({
+            tipo: 'INCONSISTENCIA_ORQUESTRADOR_IA',
+            numDoc: docNumDoc,
+            ncm: item.ncm,
+            cstDeclarado: item.cstIcms,
+            cstEsperado: aiResult.suggestedCst,
+            cfopDeclarado: item.cfop,
+            mensagem: `[Orquestrador Multi-Agente IA] ${aiResult.finalVerdict}`
+          });
+        }
+      });
     }
   }
 

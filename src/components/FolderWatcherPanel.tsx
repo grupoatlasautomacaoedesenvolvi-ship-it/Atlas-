@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FolderSearch, FolderCheck, Play, Pause, RefreshCw, AlertCircle, CheckCircle2, FileText, HardDrive } from 'lucide-react';
 import { Cliente, XmlRecord } from '../types';
-import { saveArquivoCliente } from '../lib/clientService';
+import { saveArquivoCliente, saveCliente, ensureStandardFiscalFolders } from '../lib/clientService';
 import { parseSpedContent, parseXmlFiles } from '../lib/clientParser';
 
 interface FolderWatcherPanelProps {
@@ -138,13 +138,6 @@ export function FolderWatcherPanel({ clientes, activeClienteId, addNotification,
   const processNewFileFromFolder = async (file: File, fileName: string) => {
     if (!effectiveEscritorioId) return;
     try {
-      const clienteObj = clientes.find(c => c.id === selectedClienteId) || clientes[0] || null;
-      if (!clienteObj) {
-        console.warn('Nenhum cliente cadastrado para associar o arquivo importado — pulando.');
-        return;
-      }
-      const clienteIdToUse = clienteObj.id;
-
       let parsedSped = null;
       let parsedXmls: XmlRecord[] = [];
 
@@ -155,9 +148,51 @@ export function FolderWatcherPanel({ clientes, activeClienteId, addNotification,
         parsedXmls = await parseXmlFiles([file]);
       }
 
+      // Identifica o cliente pelo CNPJ do próprio arquivo (cabeçalho do SPED ou
+      // emitente do XML) — o dropdown selecionado manualmente é só o último recurso.
+      const cnpjArquivo = (parsedSped?.header?.cnpj || parsedXmls[0]?.emitCnpj || '').replace(/\D/g, '');
+      let clienteObj = cnpjArquivo
+        ? clientes.find(c => (c.cnpj || '').replace(/\D/g, '') === cnpjArquivo) || null
+        : null;
+
+      let clienteEhNovo = false;
+      if (!clienteObj && cnpjArquivo && parsedSped?.header) {
+        // Cliente novo: cadastra automaticamente a partir do cabeçalho do próprio SPED
+        clienteObj = await saveCliente({
+          nome: parsedSped.header.nome || `Empresa ${cnpjArquivo}`,
+          cnpj: cnpjArquivo,
+          uf: parsedSped.header.uf || 'SP'
+        }, effectiveEscritorioId);
+        clienteEhNovo = true;
+      }
+
+      if (!clienteObj) {
+        clienteObj = clientes.find(c => c.id === selectedClienteId) || clientes[0] || null;
+      }
+
+      if (!clienteObj) {
+        console.warn('Nenhum cliente cadastrado para associar o arquivo importado — pulando.');
+        return;
+      }
+      const clienteIdToUse = clienteObj.id;
+
+      // Garante a estrutura de pastas do exercício vigente. Não faz nada se já existir.
+      const anoArquivo = parsedSped?.header?.dtIni
+        ? parsedSped.header.dtIni.substring(4)
+        : String(new Date().getFullYear());
+      await ensureStandardFiscalFolders(clienteIdToUse, [anoArquivo], effectiveEscritorioId);
+
+      if (clienteEhNovo && addNotification) {
+        addNotification(
+          'Novo Cliente Cadastrado pelo Robô',
+          `Cliente "${clienteObj.nome}" (CNPJ ${cnpjArquivo}) foi identificado automaticamente pelo arquivo importado, cadastrado, e a estrutura de pastas do exercício ${anoArquivo} foi criada.`,
+          'system'
+        );
+      }
+
       // Save to client folder
       const isTxt = fileName.toLowerCase().endsWith('.txt');
-      const mesAnoFormat = parsedSped?.header?.dtIni 
+      const mesAnoFormat = parsedSped?.header?.dtIni
         ? `${parsedSped.header.dtIni.substring(2, 4)}/${parsedSped.header.dtIni.substring(4)}`
         : '01/2025';
 
@@ -179,7 +214,7 @@ export function FolderWatcherPanel({ clientes, activeClienteId, addNotification,
       if (addNotification) {
         addNotification(
           'Robô Fiscal - Novo Arquivo Detectado',
-          `Arquivo "${fileName}" capturado na pasta monitorada e enviado para auditoria automática.`,
+          `Arquivo "${fileName}" capturado na pasta monitorada (${clienteObj.nome}) e enviado para auditoria automática. O resultado fica pendente de revisão do auditor.`,
           'import'
         );
       }

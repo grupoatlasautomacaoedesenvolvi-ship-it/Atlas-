@@ -316,6 +316,7 @@ export default function App() {
       const docItemC190Groups = new Map<string, any>();
 
       if (doc.items && doc.items.length > 0) {
+        // Pass 1: Sanitize CFOPs and calculate merchandise total & tax totals
         doc.items.forEach(item => {
           const cstIcms = (item.cstIcms || '000').toString().trim().padStart(3, '0');
           let cfop = (item.cfop || '1102').toString().trim().padStart(4, '0');
@@ -333,7 +334,6 @@ export default function App() {
             item.cfop = cfop;
           }
 
-          const aliqIcms = typeof item.aliqIcms === 'number' ? item.aliqIcms : (parseFloat(String(item.aliqIcms || 0).replace(',', '.')) || 0);
           const vlItem = typeof item.vlItem === 'number' ? item.vlItem : (parseFloat(String(item.vlItem || 0).replace(',', '.')) || 0);
           const vlBcIcms = typeof item.vlBcIcms === 'number' ? item.vlBcIcms : (parseFloat(String(item.vlBcIcms || 0).replace(',', '.')) || 0);
           const vlIcms = typeof item.vlIcms === 'number' ? item.vlIcms : (parseFloat(String(item.vlIcms || 0).replace(',', '.')) || 0);
@@ -341,9 +341,31 @@ export default function App() {
           totMerc += vlItem;
           totBcIcms += vlBcIcms;
           totIcms += vlIcms;
+        });
+
+        // Determine master C100 total (vlDoc)
+        const targetVlDoc = (typeof doc.vlDoc === 'number' && doc.vlDoc > 0)
+          ? Math.round(doc.vlDoc * 100) / 100
+          : (totMerc > 0 ? Math.round(totMerc * 100) / 100 : 0);
+
+        doc.vlDoc = targetVlDoc;
+        doc.vlBcIcms = Math.round(totBcIcms * 100) / 100;
+        doc.vlIcms = Math.round(totIcms * 100) / 100;
+
+        // Pass 2: Calculate proportional item vlOpr based on master C100 total
+        doc.items.forEach(item => {
+          const cstIcms = (item.cstIcms || '000').toString().trim().padStart(3, '0');
+          const cfop = (item.cfop || '1102').toString().trim().padStart(4, '0');
+          const aliqIcms = typeof item.aliqIcms === 'number' ? item.aliqIcms : (parseFloat(String(item.aliqIcms || 0).replace(',', '.')) || 0);
+          const vlItem = typeof item.vlItem === 'number' ? item.vlItem : (parseFloat(String(item.vlItem || 0).replace(',', '.')) || 0);
+          const vlBcIcms = typeof item.vlBcIcms === 'number' ? item.vlBcIcms : (parseFloat(String(item.vlBcIcms || 0).replace(',', '.')) || 0);
+          const vlIcms = typeof item.vlIcms === 'number' ? item.vlIcms : (parseFloat(String(item.vlIcms || 0).replace(',', '.')) || 0);
+
+          const itemRatio = totMerc > 0 ? (vlItem / totMerc) : (1 / Math.max(1, doc.items.length));
+          const itemVlOpr = Math.round((targetVlDoc * itemRatio) * 100) / 100;
 
           const sumKey = `${cstIcms}_${cfop}`;
-          itemCstCfopSums.set(sumKey, (itemCstCfopSums.get(sumKey) || 0) + vlItem);
+          itemCstCfopSums.set(sumKey, (itemCstCfopSums.get(sumKey) || 0) + itemVlOpr);
 
           const c190Key = `${actualDocId}_${cstIcms}_${cfop}_${aliqIcms.toFixed(2)}`;
           if (!docItemC190Groups.has(c190Key)) {
@@ -358,14 +380,26 @@ export default function App() {
             });
           }
           const c190 = docItemC190Groups.get(c190Key)!;
-          c190.vlOpr = Math.round((c190.vlOpr + vlItem) * 100) / 100;
+          c190.vlOpr = Math.round((c190.vlOpr + itemVlOpr) * 100) / 100;
           c190.vlBcIcms = Math.round((c190.vlBcIcms + vlBcIcms) * 100) / 100;
           c190.vlIcms = Math.round((c190.vlIcms + vlIcms) * 100) / 100;
         });
 
-        doc.vlDoc = totMerc > 0 ? Math.round(totMerc * 100) / 100 : doc.vlDoc;
-        doc.vlBcIcms = Math.round(totBcIcms * 100) / 100;
-        doc.vlIcms = Math.round(totIcms * 100) / 100;
+        // Pass 3: Adjust rounding cent residual on the largest C190 group so sum(C190.vlOpr) === C100.vlDoc exactly
+        if (docItemC190Groups.size > 0) {
+          let sumC190Opr = 0;
+          let maxGroup: any = null;
+          docItemC190Groups.forEach(g => {
+            sumC190Opr += g.vlOpr;
+            if (!maxGroup || g.vlOpr > maxGroup.vlOpr) {
+              maxGroup = g;
+            }
+          });
+          const diffOpr = Math.round((targetVlDoc - sumC190Opr) * 100) / 100;
+          if (Math.abs(diffOpr) > 0 && maxGroup) {
+            maxGroup.vlOpr = Math.round((maxGroup.vlOpr + diffOpr) * 100) / 100;
+          }
+        }
 
         docItemC190Groups.forEach((val, k) => {
           c190Map.set(k, val);

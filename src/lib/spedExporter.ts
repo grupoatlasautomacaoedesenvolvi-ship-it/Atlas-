@@ -559,14 +559,33 @@ export function exportSped(spedData: SpedData, achadosAprovados: Achado[]): Resu
 
         // Agrupar itens por (CST_ICMS, CFOP, ALIQ_ICMS) para regerar C190
         const c190Map = new Map<string, { cstIcms: string; cfop: string; aliqIcms: number; vlOpr: number; vlBc: number; vlIcms: number }>();
+        const totMerc = docItems.reduce((acc, i) => acc + (i.vlItem || 0), 0);
+        const targetVlDoc = newVlDoc > 0 ? newVlDoc : totMerc;
 
         for (const item of docItems) {
+          const ratio = totMerc > 0 ? ((item.vlItem || 0) / totMerc) : (1 / Math.max(1, docItems.length));
+          const itemVlOpr = targetVlDoc * ratio;
+
           const key = `${item.cstIcms}_${item.cfop}_${item.aliqIcms}`;
           const g = c190Map.get(key) || { cstIcms: item.cstIcms, cfop: item.cfop, aliqIcms: item.aliqIcms, vlOpr: 0, vlBc: 0, vlIcms: 0 };
-          g.vlOpr += item.vlItem;
+          g.vlOpr += itemVlOpr;
           g.vlBc += item.vlBcIcms;
           g.vlIcms += item.vlIcms;
           c190Map.set(key, g);
+        }
+
+        // Adjust cent rounding on the largest C190 group so sum(C190.vlOpr) === targetVlDoc exactly
+        const groups = Array.from(c190Map.values());
+        if (groups.length > 0) {
+          const sumOpr = groups.reduce((acc, g) => acc + g.vlOpr, 0);
+          const diffOpr = Math.round((targetVlDoc - sumOpr) * 100) / 100;
+          if (Math.abs(diffOpr) > 0) {
+            let maxG = groups[0];
+            for (const g of groups) {
+              if (g.vlOpr > maxG.vlOpr) maxG = g;
+            }
+            maxG.vlOpr += diffOpr;
+          }
         }
 
         const geradosC190: string[] = [];

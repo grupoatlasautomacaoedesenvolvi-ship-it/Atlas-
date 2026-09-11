@@ -2039,7 +2039,7 @@ export function AllItemsView({
         <div className="overflow-x-auto custom-scrollbar pb-2 px-4">
           <div className="min-w-[1380px]">
             {/* Header */}
-            <div className="c170-header-row border-b border-[var(--atlas-border)] bg-[var(--atlas-surface)] text-[10px] font-bold text-[var(--atlas-navy)] uppercase tracking-wider whitespace-nowrap">
+            <div className="c170-header-row sticky top-0 z-20 border-b border-[var(--atlas-border)] bg-[var(--atlas-surface)] text-[10px] font-bold text-[var(--atlas-navy)] uppercase tracking-wider whitespace-nowrap shadow-xs">
               <div className="px-1.5 py-2 text-center">
                 <button onClick={toggleSelectAll} className="text-slate-500 hover:text-slate-700">
                   {selectedKeys.size > 0 && selectedKeys.size === filteredItems.length ? (
