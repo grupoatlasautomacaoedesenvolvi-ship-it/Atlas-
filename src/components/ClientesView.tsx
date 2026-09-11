@@ -50,6 +50,7 @@ import {
   deleteArquivoCliente,
   ensureStandardFiscalFolders,
   fetchEscritorioInfo,
+  fetchAllEscritorios,
   EscritorioInfo
 } from '../lib/clientService';
 
@@ -93,15 +94,29 @@ export function ClientesView({
   addNotification,
   escritorioId
 }: ClientesViewProps) {
-  const effectiveEscritorioId = escritorioId || '';
   const { userData } = useAuth();
-  
-  // Hierarchy permission: Registration and import allowed for level superior to colaborador (admin_escritorio and super_admin)
-  const canManageEmpresas = userData?.papel === 'super_admin' || userData?.papel === 'admin_escritorio' || (Boolean(userData) && userData?.papel !== 'colaborador');
+  const isSuperAdmin = userData?.papel === 'super_admin';
+  const canManageEmpresas = isSuperAdmin || userData?.papel === 'admin_escritorio' || (Boolean(userData) && userData?.papel !== 'colaborador');
+
+  // Escritórios list and active selection state
+  const [escritoriosList, setEscritoriosList] = useState<EscritorioInfo[]>([]);
+  const [selectedEscritorioFilter, setSelectedEscritorioFilter] = useState<string>(() => {
+    return escritorioId || (typeof localStorage !== 'undefined' ? localStorage.getItem('atlas_active_escritorio_id') || '' : '');
+  });
+
+  const effectiveEscritorioId = useMemo(() => {
+    if (selectedEscritorioFilter && selectedEscritorioFilter !== 'todos') {
+      return selectedEscritorioFilter;
+    }
+    if (escritorioId && escritorioId.trim().length > 0) return escritorioId.trim();
+    if (userData?.escritorioId && userData.escritorioId.trim().length > 0) return userData.escritorioId.trim();
+    if (escritoriosList.length > 0) return escritoriosList[0].id;
+    return 'padrao';
+  }, [selectedEscritorioFilter, escritorioId, userData?.escritorioId, escritoriosList]);
 
   // State lists
   const [escritorioInfo, setEscritorioInfo] = useState<EscritorioInfo | null>(null);
-  const [clientes, setClientes] = useState<Cliente[]>([]);
+  const [clientes, setClientes] = useState<(Cliente & { escritorioNome?: string })[]>([]);
   const [pastas, setPastas] = useState<PastaCliente[]>([]);
   const [arquivos, setArquivos] = useState<ArquivoCliente[]>([]);
   const [loading, setLoading] = useState(true);
@@ -147,30 +162,42 @@ export function ClientesView({
 
   // Initial Data Load
   useEffect(() => {
-    if (!effectiveEscritorioId) {
-      setClientes([]);
-      setLoading(false);
-      return;
-    }
-    loadClientes();
-  }, [effectiveEscritorioId]);
+    loadClientesAndEscritorios();
+  }, [escritorioId, selectedEscritorioFilter]);
 
-  const loadClientes = async () => {
-    if (!effectiveEscritorioId) return;
+  const loadClientesAndEscritorios = async () => {
     setLoading(true);
     try {
-      const [escData, data] = await Promise.all([
-        fetchEscritorioInfo(effectiveEscritorioId),
-        fetchClientes(effectiveEscritorioId)
-      ]);
-      setEscritorioInfo(escData);
-      setClientes(data);
+      const listEsc = await fetchAllEscritorios();
+      setEscritoriosList(listEsc);
+
+      if (selectedEscritorioFilter === 'todos' || (isSuperAdmin && (!selectedEscritorioFilter || selectedEscritorioFilter === 'todos'))) {
+        const allClis: (Cliente & { escritorioNome?: string })[] = [];
+        for (const esc of listEsc) {
+          const clis = await fetchClientes(esc.id);
+          const mapped = clis.map(c => ({
+            ...c,
+            escritorioNome: esc.nome
+          }));
+          allClis.push(...mapped);
+        }
+        setClientes(allClis);
+      } else {
+        const targetEid = effectiveEscritorioId;
+        const [escData, data] = await Promise.all([
+          fetchEscritorioInfo(targetEid),
+          fetchClientes(targetEid)
+        ]);
+        setEscritorioInfo(escData);
+        setClientes(data.map(c => ({ ...c, escritorioNome: escData.nome })));
+      }
+
       if (activeClienteId) {
-        const found = data.find(c => c.id === activeClienteId);
+        const found = clientes.find(c => c.id === activeClienteId);
         if (found) setSelectedCliente(found);
       }
     } catch (e) {
-      console.error('Erro ao carregar clientes:', e);
+      console.error('Erro ao carregar escritórios e clientes:', e);
     } finally {
       setLoading(false);
     }
@@ -179,7 +206,8 @@ export function ClientesView({
   // Load Pastas and Arquivos whenever selected client changes
   useEffect(() => {
     if (selectedCliente) {
-      loadPastasEArquivos(selectedCliente.id);
+      const targetEid = selectedCliente.escritorioId || effectiveEscritorioId;
+      loadPastasEArquivos(selectedCliente.id, targetEid);
     } else {
       setPastas([]);
       setArquivos([]);
@@ -188,11 +216,11 @@ export function ClientesView({
     }
   }, [selectedCliente]);
 
-  const loadPastasEArquivos = async (clienteId: string) => {
-    if (!effectiveEscritorioId) return;
+  const loadPastasEArquivos = async (clienteId: string, eidTarget?: string) => {
+    const eid = eidTarget || effectiveEscritorioId || 'padrao';
     try {
-      const pData = await ensureStandardFiscalFolders(clienteId, ['2025', '2024'], effectiveEscritorioId);
-      const aData = await fetchArquivosCliente(clienteId, effectiveEscritorioId);
+      const pData = await ensureStandardFiscalFolders(clienteId, ['2025', '2024'], eid);
+      const aData = await fetchArquivosCliente(clienteId, eid);
       setPastas(pData);
       setArquivos(aData);
 
@@ -275,12 +303,13 @@ export function ClientesView({
     }
 
     const isEdit = Boolean(editingCliente.id);
+    const targetEscritorioId = editingCliente.escritorioId || (selectedEscritorioFilter !== 'todos' ? selectedEscritorioFilter : null) || effectiveEscritorioId || 'padrao';
 
     try {
-      const saved = await saveCliente(editingCliente, effectiveEscritorioId);
+      const saved = await saveCliente({ ...editingCliente, escritorioId: targetEscritorioId }, targetEscritorioId);
 
       if (!isEdit) {
-        await ensureStandardFiscalFolders(saved.id, selectedAnosParaCriar, effectiveEscritorioId);
+        await ensureStandardFiscalFolders(saved.id, selectedAnosParaCriar, targetEscritorioId);
       }
 
       addNotification(
@@ -291,11 +320,11 @@ export function ClientesView({
 
       setShowClienteModal(false);
       setEditingCliente(null);
-      await loadClientes();
+      await loadClientesAndEscritorios();
       setSelectedCliente(saved);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Erro ao salvar cliente:', err);
-      alert('Erro ao salvar cliente no banco de dados.');
+      alert(err?.message || 'Erro ao salvar cliente no banco de dados.');
     }
   };
 
@@ -315,7 +344,7 @@ export function ClientesView({
           if (activeClienteId === cliente.id) setActiveClienteId(null);
           if (selectedCliente?.id === cliente.id) setSelectedCliente(null);
           addNotification('Cliente Removido', `O cliente "${cliente.nome}" foi excluído do sistema.`, 'system');
-          await loadClientes();
+          await loadClientesAndEscritorios();
         } catch (err) {
           console.error('Erro ao excluir cliente:', err);
           alert('Erro ao excluir cliente.');
@@ -575,6 +604,24 @@ export function ClientesView({
             </div>
 
             <div className="flex items-center space-x-2">
+              <Building2 className="w-3.5 h-3.5 text-[#1e3a5f]" />
+              <select
+                value={selectedEscritorioFilter}
+                onChange={e => {
+                  const val = e.target.value;
+                  setSelectedEscritorioFilter(val);
+                  if (typeof localStorage !== 'undefined') {
+                    localStorage.setItem('atlas_active_escritorio_id', val);
+                  }
+                }}
+                className="border border-slate-300 rounded-lg px-2.5 py-2 bg-white text-slate-800 font-bold focus:outline-hidden focus:border-[#1e3a5f]"
+              >
+                {(isSuperAdmin || canManageEmpresas) && <option value="todos">Todos os Escritórios</option>}
+                {escritoriosList.map(esc => (
+                  <option key={esc.id} value={esc.id}>{esc.nome} ({esc.cnpj || 'Sem CNPJ'})</option>
+                ))}
+              </select>
+
               <Filter className="w-3.5 h-3.5 text-slate-400" />
               <select
                 value={regimeFilter}
@@ -644,6 +691,7 @@ export function ClientesView({
                 <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold uppercase text-[10px] tracking-wider">
                   <tr>
                     <th className="py-3 px-4">Pasta do Cliente (Nome - CNPJ)</th>
+                    <th className="py-3 px-4">Escritório</th>
                     <th className="py-3 px-4">UF</th>
                     <th className="py-3 px-4">Regime Tributário</th>
                     <th className="py-3 px-4">Inscrição Estadual</th>
@@ -655,6 +703,7 @@ export function ClientesView({
                   {filteredClientes.map(cliente => {
                     const isActive = activeClienteId === cliente.id;
                     const folderName = `${cliente.nome} - ${cliente.cnpj}`;
+                    const escNome = cliente.escritorioNome || (escritoriosList.find(e => e.id === cliente.escritorioId)?.nome) || escritorioInfo?.nome || 'Escritório Padrão';
 
                     return (
                       <tr key={cliente.id} className="hover:bg-slate-50/80 transition-colors">
@@ -673,6 +722,11 @@ export function ClientesView({
                               )}
                             </div>
                           </button>
+                        </td>
+                        <td className="py-3 px-4">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-sky-50 text-sky-800 border border-sky-200">
+                            {escNome}
+                          </span>
                         </td>
                         <td className="py-3 px-4 font-semibold text-slate-700">{cliente.uf}</td>
                         <td className="py-3 px-4">
@@ -1298,6 +1352,21 @@ export function ClientesView({
             </div>
 
             <form onSubmit={handleSaveClienteForm} className="p-5 space-y-4 text-xs">
+              {escritoriosList.length > 0 && (
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Escritório Vinculado *</label>
+                  <select
+                    value={editingCliente?.escritorioId || (selectedEscritorioFilter !== 'todos' ? selectedEscritorioFilter : (escritoriosList[0]?.id || 'padrao'))}
+                    onChange={e => setEditingCliente(prev => ({ ...prev, escritorioId: e.target.value }))}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-white font-semibold text-slate-800 focus:outline-hidden focus:ring-1 focus:ring-[#1e3a5f]"
+                  >
+                    {escritoriosList.map(esc => (
+                      <option key={esc.id} value={esc.id}>{esc.nome} ({esc.cnpj || 'Sem CNPJ'})</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
               <div>
                 <label className="block font-semibold text-slate-700 mb-1">Razão Social / Nome da Empresa *</label>
                 <input
@@ -1600,7 +1669,7 @@ export function ClientesView({
       <CompanyImportModal
         isOpen={showImportModal}
         onClose={() => setShowImportModal(false)}
-        onImportComplete={loadClientes}
+        onImportComplete={loadClientesAndEscritorios}
         addNotification={addNotification}
         escritorioId={effectiveEscritorioId}
         existingClientes={clientes}

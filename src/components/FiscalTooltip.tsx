@@ -61,7 +61,8 @@ export function FiscalTooltip({
       {/* Trigger Button or Custom Wrapper */}
       <button
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
+        onMouseEnter={() => setIsOpen(true)}
+        onMouseLeave={() => setIsOpen(false)}
         className="inline-flex items-center text-slate-400 hover:text-[#1e3a5f] focus:outline-hidden focus:text-[#1e3a5f] transition p-0.5 rounded-md cursor-pointer group"
         aria-label={`Informação Didática: ${title}`}
       >
@@ -75,8 +76,10 @@ export function FiscalTooltip({
       {/* Popover Tooltip Panel */}
       {isOpen && (
         <div
+          onMouseEnter={() => setIsOpen(true)}
+          onMouseLeave={() => setIsOpen(false)}
           className={`absolute z-50 w-80 sm:w-96 p-4 text-white rounded-lg shadow-2xl border border-slate-700 text-xs space-y-2.5 animate-in fade-in zoom-in-95 duration-150 ${sideClasses[side]}`}
-          style={{ backgroundColor: '#0f172a', opacity: 1, pointerEvents: 'auto' }}
+          style={{ backgroundColor: '#0f172a', opacity: 1, pointerEvents: 'none' }}
         >
           {/* Header */}
           <div className="flex items-start justify-between gap-2 border-b border-slate-800 pb-2">

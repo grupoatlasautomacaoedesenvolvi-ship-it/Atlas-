@@ -365,10 +365,14 @@ export function CompanyImportModal({
           observacoes: item.observacoes
         };
 
-        const saved = await saveCliente(clienteObj, escritorioId);
+        const targetEscritorioId = escritorioId || (typeof localStorage !== 'undefined' ? localStorage.getItem('atlas_active_escritorio_id') || 'padrao' : 'padrao');
+
+        console.log('[CompanyImportModal] Importando empresa:', { item, targetEscritorioId });
+
+        const saved = await saveCliente(clienteObj, targetEscritorioId);
 
         if (createFolders && selectedYears.length > 0) {
-          await ensureStandardFiscalFolders(saved.id, selectedYears, escritorioId);
+          await ensureStandardFiscalFolders(saved.id, selectedYears, targetEscritorioId);
         }
 
         completed++;

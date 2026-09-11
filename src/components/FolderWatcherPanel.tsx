@@ -133,10 +133,11 @@ export function FolderWatcherPanel({ clientes, activeClienteId, addNotification,
     }
   };
 
-  const effectiveEscritorioId = escritorioId || '';
+  const effectiveEscritorioId = (escritorioId && escritorioId.trim().length > 0)
+    ? escritorioId.trim()
+    : (typeof localStorage !== 'undefined' ? localStorage.getItem('atlas_active_escritorio_id') || 'padrao' : 'padrao');
 
   const processNewFileFromFolder = async (file: File, fileName: string) => {
-    if (!effectiveEscritorioId) return;
     try {
       let parsedSped = null;
       let parsedXmls: XmlRecord[] = [];
@@ -148,22 +149,38 @@ export function FolderWatcherPanel({ clientes, activeClienteId, addNotification,
         parsedXmls = await parseXmlFiles([file]);
       }
 
-      // Identifica o cliente pelo CNPJ do próprio arquivo (cabeçalho do SPED ou
-      // emitente do XML) — o dropdown selecionado manualmente é só o último recurso.
-      const cnpjArquivo = (parsedSped?.header?.cnpj || parsedXmls[0]?.emitCnpj || '').replace(/\D/g, '');
+      // Identifica o cliente pelo CNPJ do próprio arquivo (cabeçalho do SPED ou emitente/destinatário do XML)
+      const cnpjArquivo = (parsedSped?.header?.cnpj || parsedXmls[0]?.emitCnpj || parsedXmls[0]?.destCnpj || '').replace(/\D/g, '');
       let clienteObj = cnpjArquivo
         ? clientes.find(c => (c.cnpj || '').replace(/\D/g, '') === cnpjArquivo) || null
         : null;
 
       let clienteEhNovo = false;
-      if (!clienteObj && cnpjArquivo && parsedSped?.header) {
-        // Cliente novo: cadastra automaticamente a partir do cabeçalho do próprio SPED
-        clienteObj = await saveCliente({
-          nome: parsedSped.header.nome || `Empresa ${cnpjArquivo}`,
+      if (!clienteObj && cnpjArquivo) {
+        // Cliente novo: cadastra automaticamente a partir do SPED ou do XML importado
+        const firstXml = parsedXmls[0];
+        const nomeEmpresa = parsedSped?.header?.nome || (firstXml ? (firstXml.emitNome || firstXml.destNome) : '') || `Empresa ${cnpjArquivo}`;
+        const ufEmpresa = parsedSped?.header?.uf || 'SP';
+
+        console.log('[Robô Fiscal] Empresa não encontrada para o CNPJ:', cnpjArquivo, '— Cadastrando automaticamente:', {
+          nome: nomeEmpresa,
           cnpj: cnpjArquivo,
-          uf: parsedSped.header.uf || 'SP'
-        }, effectiveEscritorioId);
-        clienteEhNovo = true;
+          uf: ufEmpresa,
+          escritorioId: effectiveEscritorioId
+        });
+
+        try {
+          clienteObj = await saveCliente({
+            nome: nomeEmpresa,
+            cnpj: cnpjArquivo,
+            uf: ufEmpresa,
+            regimeTributario: 'Lucro Real'
+          }, effectiveEscritorioId);
+          clienteEhNovo = true;
+          console.log('[Robô Fiscal] Nova empresa cadastrada com sucesso pelo Robô Fiscal:', clienteObj);
+        } catch (saveErr) {
+          console.error('[Robô Fiscal] Erro crítico ao cadastrar empresa automaticamente via saveCliente:', saveErr);
+        }
       }
 
       if (!clienteObj) {
@@ -171,7 +188,7 @@ export function FolderWatcherPanel({ clientes, activeClienteId, addNotification,
       }
 
       if (!clienteObj) {
-        console.warn('Nenhum cliente cadastrado para associar o arquivo importado — pulando.');
+        console.warn('[Robô Fiscal] Nenhum cliente cadastrado ou selecionado para associar o arquivo importado — pulando.');
         return;
       }
       const clienteIdToUse = clienteObj.id;

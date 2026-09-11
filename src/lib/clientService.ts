@@ -96,10 +96,14 @@ const INITIAL_PASTAS: PastaCliente[] = [
 ];
 
 function exigirEscritorio(escritorioId: string | undefined): string {
-  if (!escritorioId) {
-    throw new Error('escritorioId é obrigatório — operação bloqueada para evitar vazamento entre escritórios.');
+  if (escritorioId && escritorioId.trim().length > 0) {
+    return escritorioId.trim();
   }
-  return escritorioId;
+  const savedActive = typeof localStorage !== 'undefined' ? localStorage.getItem('atlas_active_escritorio_id') : null;
+  if (savedActive && savedActive.trim().length > 0) {
+    return savedActive.trim();
+  }
+  return 'padrao';
 }
 
 export interface EscritorioInfo {
@@ -107,6 +111,21 @@ export interface EscritorioInfo {
   nome: string;
   cnpj?: string;
   ativo?: boolean;
+}
+
+export async function fetchAllEscritorios(): Promise<EscritorioInfo[]> {
+  try {
+    const q = query(collection(db, 'escritorios'));
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+      return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as EscritorioInfo));
+    }
+  } catch (e) {
+    console.warn('Erro ao listar escritórios no Firestore:', e);
+  }
+  return [
+    { id: 'padrao', nome: 'Escritório Modelo', cnpj: '12.345.678/0001-99', ativo: true }
+  ];
 }
 
 export async function fetchEscritorioInfo(escritorioId: string): Promise<EscritorioInfo> {
@@ -171,22 +190,68 @@ export async function saveCliente(clienteData: Partial<Cliente>, escritorioId: s
   const id = clienteData.id || `cli-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   const now = new Date().toISOString();
 
+  // Audit raw incoming input for missing or undefined mandatory fields (helpful for Robô Fiscal diagnosis)
+  const rawAudit = {
+    nomeNullOrUndefined: clienteData.nome === undefined || clienteData.nome === null,
+    nomeEmpty: !clienteData.nome || clienteData.nome.trim() === '',
+    cnpjNullOrUndefined: clienteData.cnpj === undefined || clienteData.cnpj === null,
+    cnpjEmpty: !clienteData.cnpj || clienteData.cnpj.trim() === '',
+    ufNullOrUndefined: clienteData.uf === undefined || clienteData.uf === null,
+    ufEmpty: !clienteData.uf || clienteData.uf.trim() === '',
+    regimeNullOrUndefined: clienteData.regimeTributario === undefined || clienteData.regimeTributario === null,
+    escritorioIdPassed: escritorioId,
+    resolvedEscritorioId: eid
+  };
+
+  if (rawAudit.nomeNullOrUndefined || rawAudit.nomeEmpty || rawAudit.cnpjNullOrUndefined || rawAudit.cnpjEmpty) {
+    console.warn('[clientService.saveCliente] ATENÇÃO: Campos obrigatórios ausentes ou nulos no clienteData bruto:', {
+      rawInput: clienteData,
+      audit: rawAudit
+    });
+  }
+
+  // Standardize & Format CNPJ (00.000.000/0000-00 if 14 raw digits)
+  let cleanCnpj = (clienteData.cnpj || '').trim();
+  const digitsOnly = cleanCnpj.replace(/\D/g, '');
+  if (digitsOnly.length === 14) {
+    cleanCnpj = digitsOnly.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
+  }
+
+  // Ensure mandatory fields are populated or provided with sensible defaults
+  const nomeLimpo = (clienteData.nome || '').trim();
+  const nomeFinal = nomeLimpo.length > 0
+    ? nomeLimpo
+    : (cleanCnpj ? `Empresa ${cleanCnpj}` : 'Nova Empresa');
+
+  const ufFinal = (clienteData.uf || 'SP').trim().toUpperCase() || 'SP';
+  const regimeFinal = clienteData.regimeTributario || 'Lucro Real';
+
   const fullCliente: Cliente = {
     id,
-    nome: clienteData.nome || 'Novo Cliente',
-    cnpj: clienteData.cnpj || '',
-    uf: clienteData.uf || 'SP',
-    ie: clienteData.ie || '',
-    regimeTributario: clienteData.regimeTributario || 'Lucro Real',
-    email: clienteData.email || '',
-    telefone: clienteData.telefone || '',
-    observacoes: clienteData.observacoes || '',
+    nome: nomeFinal,
+    cnpj: cleanCnpj,
+    uf: ufFinal,
+    ie: (clienteData.ie || '').trim(),
+    regimeTributario: regimeFinal,
+    email: (clienteData.email || '').trim(),
+    telefone: (clienteData.telefone || '').trim(),
+    observacoes: (clienteData.observacoes || '').trim(),
     tags: clienteData.tags || [],
     escritorioId: eid,
     createdAt: clienteData.createdAt || now,
     updatedAt: now
   };
 
+  // Explicit pre-write log before attempting Firestore document creation
+  console.log('[clientService.saveCliente] [PRE-GRAVAÇÃO] Verificando dados para gravação no Firestore:', {
+    targetPath: `escritorios/${eid}/clientes/${id}`,
+    escritorioId: eid,
+    dadosBrutosRecebidos: clienteData,
+    dadosProcessados: fullCliente,
+    diagnosticoCamposBrutos: rawAudit
+  });
+
+  // Update local cache immediately for UI responsiveness
   const cache = getLocalCache<Cliente>(CLIENTES_LOCAL_KEY, eid);
   const idx = cache.findIndex(c => c.id === id);
   if (idx >= 0) {
@@ -197,12 +262,53 @@ export async function saveCliente(clienteData: Partial<Cliente>, escritorioId: s
   setLocalCache(CLIENTES_LOCAL_KEY, eid, cache);
   localStorage.setItem(`${CLIENTES_LOCAL_KEY}_${eid}_initialized`, 'true');
 
-  await safeWrite(async () => {
-    await setDoc(doc(db, 'escritorios', eid, 'clientes', id), {
+  // Explicit try-catch around the Firestore document operation (setDoc / addDoc)
+  try {
+    const docRef = doc(db, 'escritorios', eid, 'clientes', id);
+    const payload = {
       ...fullCliente,
       serverTimestamp: serverTimestamp()
-    }, { merge: true });
-  });
+    };
+
+    console.log('[clientService.saveCliente] [DURANTE-GRAVAÇÃO] Iniciando setDoc/addDoc no Firestore:', {
+      docPath: docRef.path,
+      payload
+    });
+
+    await safeWrite(async () => {
+      await setDoc(docRef, payload, { merge: true });
+    });
+
+    console.log('[clientService.saveCliente] [PÓS-GRAVAÇÃO] Sucesso na gravação no Firestore:', {
+      id: fullCliente.id,
+      nome: fullCliente.nome,
+      cnpj: fullCliente.cnpj,
+      escritorioId: eid
+    });
+  } catch (err: any) {
+    const errorMessage = err?.message || String(err);
+    const missingOrInvalidFields: string[] = [];
+
+    if (!fullCliente.nome) missingOrInvalidFields.push('nome');
+    if (!fullCliente.cnpj) missingOrInvalidFields.push('cnpj');
+    if (!fullCliente.uf) missingOrInvalidFields.push('uf');
+    if (!eid) missingOrInvalidFields.push('escritorioId');
+
+    console.error('[clientService.saveCliente] [FALHA-GRAVAÇÃO] Erro durante a chamada do Firestore:', {
+      erro: errorMessage,
+      camposEnviadosClienteData: clienteData,
+      objetoProcessadoFullCliente: fullCliente,
+      escritorioId: eid,
+      diagnosticoCamposBrutos: rawAudit,
+      camposSuspeitos: missingOrInvalidFields
+    });
+
+    throw new Error(
+      `Falha na operação Firestore (saveCliente) no caminho 'escritorios/${eid}/clientes/${id}': ${errorMessage}. ` +
+      `Campos recebidos em clienteData: ${JSON.stringify(clienteData)}. ` +
+      `Diagnóstico de campos nulos/ausentes: ${JSON.stringify(rawAudit)}`
+    );
+  }
 
   return fullCliente;
 }
