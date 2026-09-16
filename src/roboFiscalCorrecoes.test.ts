@@ -33,9 +33,9 @@ describe('Correções de Segurança e Redundância do Robô Fiscal', () => {
     await expect(getRoboConfig(undefined)).rejects.toThrow(/escritorioId é obrigatório/);
   });
 
-  it('2. Deve bloquear requisições sem escritorioId em fetchEscritorioInfo', async () => {
+  it('2. Deve bloquear requisições sem escritorioId em getRoboLogs', async () => {
     // @ts-ignore - forçando chamada sem parâmetro
-    await expect(fetchEscritorioInfo(undefined)).rejects.toThrow(/escritorioId é obrigatório/);
+    await expect(getRoboLogs(50, undefined)).rejects.toThrow(/escritorioId é obrigatório/);
   });
 
   it('3. Não deve retornar historico de logs ficticios para um escritorio novo', async () => {

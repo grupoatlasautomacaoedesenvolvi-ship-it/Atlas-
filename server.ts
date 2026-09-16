@@ -215,6 +215,31 @@ async function startServer() {
     }
   });
 
+  app.get('/api/admin/eventos', requireAuth, async (req: AuthRequest, res) => {
+    try {
+      const ehSuperAdmin = req.papel === 'super_admin';
+      const ehAdminEscritorio = req.papel === 'admin_escritorio' && req.escritorioId;
+
+      if (!ehSuperAdmin && !ehAdminEscritorio) {
+        return res.status(403).json({ error: 'Acesso negado para listar eventos de uso.' });
+      }
+
+      const allEventos = await queryCollectionWithFallback('eventosUso', req.token);
+
+      const filteredEventos = allEventos.filter(d => {
+        if (ehSuperAdmin) return true;
+        return d.data.escritorioId === req.escritorioId;
+      });
+
+      const eventos = filteredEventos.map(d => ({ id: d.id, ...d.data }));
+
+      res.json({ success: true, eventos });
+    } catch (err: any) {
+      console.error('Error in list eventos:', err);
+      res.status(500).json({ error: err.message || 'Erro ao carregar eventos de uso.' });
+    }
+  });
+
   // Atualizar Usuário e Alterar Vínculo de Escritório / Papel
   app.put('/api/admin/usuarios/:targetUid', requireAuth, async (req: AuthRequest, res) => {
     try {

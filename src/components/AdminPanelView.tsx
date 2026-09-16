@@ -114,16 +114,36 @@ export function AdminPanelView() {
       } else {
         try {
           const escSnap = await getDocs(collection(db, 'escritorios'));
-          const evSnap = await getDocs(collection(db, 'eventosUso'));
-          
           rawEscritorios = escSnap.docs.map(d => ({ id: d.id, ...d.data() } as EscritorioItem));
-          setEventos(evSnap.docs.map(d => ({ id: d.id, ...d.data() })));
         } catch (err) {
           console.warn('Carregando do cache/demo local:', err);
           const savedEsc = JSON.parse(localStorage.getItem('atlas_demo_escritorios') || JSON.stringify([
             { id: "demo-1", nome: "Escritório Modelo Contabilidade", cnpj: "12.345.678/0001-99", ativo: true, emailAdmin: "admin@modelo.com", nomeAdmin: "Admin Modelo" }
           ]));
           rawEscritorios = savedEsc;
+        }
+
+        try {
+          const token = await getIdToken(true);
+          let carregouViaApi = false;
+          if (token) {
+            const res = await fetch('/api/admin/eventos', {
+              headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+              const data = await res.json();
+              if (data.eventos) {
+                setEventos(data.eventos);
+                carregouViaApi = true;
+              }
+            }
+          }
+          if (!carregouViaApi) {
+            const evSnap = await getDocs(collection(db, 'eventosUso'));
+            setEventos(evSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+          }
+        } catch (evErr) {
+          console.warn('Erro ao carregar eventos de uso (logins/conferências):', evErr);
         }
       }
 

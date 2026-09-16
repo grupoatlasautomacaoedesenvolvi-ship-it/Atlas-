@@ -64,9 +64,10 @@ service cloud.firestore {
       }
     }
 
-    // Métricas de uso: escrita por quem é do escritório, leitura só super admin.
+    // Métricas de uso: escrita por quem é do escritório, leitura só super admin ou admin do próprio escritório.
     match /eventosUso/{eventoId} {
-      allow read: if ehSuperAdmin();
+      allow read: if ehSuperAdmin() ||
+                     (isSignedIn() && meuPapel() == 'admin_escritorio' && resource.data.escritorioId == meuEscritorio());
       allow create: if isSignedIn() && request.resource.data.escritorioId == meuEscritorio();
       allow update, delete: if false;
     }

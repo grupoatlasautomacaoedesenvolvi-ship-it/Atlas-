@@ -447,6 +447,12 @@ export async function processarArquivosComRobo({
 
         const ncmPrefix2 = ncm.substring(0, 2);
         const ncmPrefix4 = ncm.substring(0, 4);
+        // NCM completo (6 ou 8 dígitos, o que o SPED trouxer) usado para
+        // GRAVAR uma regra aprendida — nunca truncar para 4 dígitos aqui:
+        // dentro da mesma posição fiscal (4 dígitos) podem existir NCMs de
+        // 8 dígitos com CST/CFOP/ST diferentes, e generalizar demais faz o
+        // Atlas aplicar uma correção errada a um "primo" da mesma posição.
+        const ncmAprendizado = ncm.substring(0, 8);
 
         const matchedRule = matrizRules.find(r => 
           (r.uf === ufCliente || r.uf === 'ALL') &&
@@ -481,15 +487,15 @@ export async function processarArquivosComRobo({
         } else {
           itensParaIA.push({ docNumDoc: doc.numDoc, item });
 
-          const patternKey = `${ufCliente}_${ncmPrefix4}_${item.cstIcms}_${item.cfop}`;
+          const patternKey = `${ufCliente}_${ncmAprendizado}_${item.cstIcms}_${item.cfop}`;
           const current = padroesEncontrados.get(patternKey) || {
             uf: ufCliente,
-            ncmPrefix: ncmPrefix4,
+            ncmPrefix: ncmAprendizado,
             cst: item.cstIcms,
             cfop: item.cfop,
             aliqIcms: item.aliqIcms,
             count: 0,
-            descr: item.descrItem || `Mercadoria NCM ${ncmPrefix4}`
+            descr: item.descrItem || `Mercadoria NCM ${ncmAprendizado}`
           };
           current.count++;
           padroesEncontrados.set(patternKey, current);
@@ -543,6 +549,9 @@ export async function processarArquivosComRobo({
         if (!ncm || ncm.length < 2) continue;
 
         const ncmPrefix4 = ncm.substring(0, 4);
+        // NCM completo (6 ou 8 dígitos) para GRAVAR regra aprendida — ver
+        // comentário equivalente no loop de spedData acima.
+        const ncmAprendizado = ncm.substring(0, 8);
 
         // FCP (Fundo de Combate à Pobreza) — regra fixa: NCM 3303/3304/3305/3307,
         // 2% sobre o valor do item, só em nota de saída (tpNF === '1').
@@ -580,15 +589,15 @@ export async function processarArquivosComRobo({
           }
         } else {
           const cstClean = item.cst.length > 2 ? item.cst.substring(1) : item.cst;
-          const patternKey = `${ufCliente}_${ncmPrefix4}_${cstClean}_${item.cfop}`;
+          const patternKey = `${ufCliente}_${ncmAprendizado}_${cstClean}_${item.cfop}`;
           const current = padroesEncontrados.get(patternKey) || {
             uf: ufCliente,
-            ncmPrefix: ncmPrefix4,
+            ncmPrefix: ncmAprendizado,
             cst: cstClean,
             cfop: item.cfop,
             aliqIcms: item.pIcms,
             count: 0,
-            descr: item.xProd || `Produto NCM ${ncmPrefix4}`
+            descr: item.xProd || `Produto NCM ${ncmAprendizado}`
           };
           current.count++;
           padroesEncontrados.set(patternKey, current);

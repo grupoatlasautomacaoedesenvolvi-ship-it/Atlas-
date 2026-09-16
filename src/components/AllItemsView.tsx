@@ -2386,7 +2386,7 @@ export function AllItemsView({
                           <div className="text-[9px] text-slate-400 italic mt-0.5">XML não vinculado</div>
                         )}
                         {matrizRule ? (
-                          <div className="mt-0.5 text-[9px] font-sans font-medium text-indigo-700 bg-indigo-50 border border-indigo-100 px-1 py-0.5 rounded block truncate max-w-[150px]" title={`Regra Matriz NCM ${matrizRule.ncmPrefix}: ${matrizRule.description || ''}`}>
+                          <div className="mt-0.5 text-[9px] font-sans font-medium text-indigo-700 bg-indigo-50 border border-indigo-100 px-1 py-0.5 rounded block truncate max-w-[150px]" title={`Regra Matriz NCM ${matrizRule.ncmPrefix}: ${matrizRule.descricao || matrizRule.description || ''}`}>
                             Matriz: {matrizRule.ncmPrefix}
                           </div>
                         ) : (
@@ -2804,7 +2804,7 @@ export function AllItemsView({
                       <div>Prefixo NCM: <strong>{editingMatrizRule.ncmPrefix}</strong></div>
                       <div>CST Esperado: <strong>{editingMatrizRule.expectedCst || '-'}</strong></div>
                       <div>Alíq. Esperada: <strong>{editingMatrizRule.expectedAliqIcms ?? '-'}%</strong></div>
-                      <div className="font-sans text-[10px] text-indigo-700 truncate">{editingMatrizRule.description}</div>
+                      <div className="font-sans text-[10px] text-indigo-700 truncate">{editingMatrizRule.descricao || editingMatrizRule.description}</div>
                     </div>
                   ) : (
                     <p className="text-[11px] text-indigo-400 italic">Nenhuma regra cadastrada na matriz para este NCM/UF.</p>
