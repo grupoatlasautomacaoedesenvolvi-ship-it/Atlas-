@@ -14,7 +14,7 @@ import { useAuth } from '../lib/auth';
 import { fetchClientes, saveCliente, deleteCliente } from '../lib/clientService';
 import { Cliente, RegimeTributario } from '../types';
 import { UserHierarchyCard } from './UserHierarchyCard';
-import { getLocalSystemErrors, clearLocalSystemErrors, SystemErrorLog } from '../lib/errorMonitor';
+import { getLocalSystemErrors, clearLocalSystemErrors, logSystemError, SystemErrorLog } from '../lib/errorMonitor';
 
 export interface EscritorioItem {
   id: string;
