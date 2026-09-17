@@ -37,6 +37,8 @@ import {
   ResponsiveContainer
 } from 'recharts';
 import { useAuth } from '../lib/auth';
+import { db } from '../lib/firebase';
+import { collection, getDocs } from 'firebase/firestore';
 import { UserHierarchyCard } from './UserHierarchyCard';
 import { fetchMetaProdutividade, saveMetaProdutividade } from '../lib/metaProdutividadeService';
 
@@ -101,13 +103,44 @@ export function UserManagementView() {
   const [reportPeriod, setReportPeriod] = useState<'hoje' | '7dias' | '30dias' | 'todos'>('7dias');
 
   useEffect(() => {
-    try {
-      const local = JSON.parse(localStorage.getItem('atlas_demo_eventos') || '[]');
-      setEventosUso(local);
-    } catch (e) {
-      console.warn('Erro ao carregar eventos:', e);
-    }
-  }, []);
+    const fetchEventos = async () => {
+      try {
+        const token = await getIdToken(true);
+        let carregouViaApi = false;
+        if (token) {
+          const res = await fetch('/api/admin/eventos', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.eventos) {
+              setEventosUso(data.eventos);
+              carregouViaApi = true;
+            }
+          }
+        }
+        if (!carregouViaApi) {
+          const evSnap = await getDocs(collection(db, 'eventosUso'));
+          const firestoreEvents = evSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+          if (firestoreEvents.length > 0) {
+            setEventosUso(firestoreEvents);
+          } else {
+            const local = JSON.parse(localStorage.getItem('atlas_demo_eventos') || '[]');
+            setEventosUso(local);
+          }
+        }
+      } catch (err) {
+        console.warn('Erro ao carregar eventos via API/Firestore, tentando localStorage:', err);
+        try {
+          const local = JSON.parse(localStorage.getItem('atlas_demo_eventos') || '[]');
+          setEventosUso(local);
+        } catch (e) {
+          console.warn('Erro ao carregar eventos do localStorage:', e);
+        }
+      }
+    };
+    fetchEventos();
+  }, [getIdToken]);
 
   const allEvents = useMemo(() => {
     return eventosUso;
@@ -251,38 +284,67 @@ export function UserManagementView() {
 
     try {
       const freshToken = (await getIdToken(true)) || token;
-      if (!freshToken) {
-        throw new Error('Não foi possível obter token de autenticação atualizado.');
-      }
 
-      // Fetch Escritórios
-      try {
-        const resEsc = await fetch('/api/admin/escritorios', {
-          headers: { 'Authorization': `Bearer ${freshToken}` }
-        });
-        if (resEsc.ok) {
-          const dataEsc = await resEsc.json();
-          if (dataEsc.escritorios) {
-            setEscritoriosList(dataEsc.escritorios);
+      let loadedEscritorios = false;
+      let loadedUsuarios = false;
+
+      if (freshToken) {
+        // Fetch Escritórios
+        try {
+          const resEsc = await fetch('/api/admin/escritorios', {
+            headers: { 'Authorization': `Bearer ${freshToken}` }
+          });
+          if (resEsc.ok) {
+            const dataEsc = await resEsc.json();
+            if (dataEsc.escritorios) {
+              setEscritoriosList(dataEsc.escritorios);
+              loadedEscritorios = true;
+            }
           }
+        } catch (e) {
+          console.warn('Erro ao carregar lista de escritórios via API:', e);
         }
-      } catch (e) {
-        console.warn('Erro ao carregar lista de escritórios:', e);
+
+        // Fetch Usuários
+        try {
+          const resUsr = await fetch('/api/admin/usuarios', {
+            headers: { 'Authorization': `Bearer ${freshToken}` }
+          });
+          if (resUsr.ok) {
+            const dataUsr = await resUsr.json();
+            if (dataUsr.usuarios) {
+              setUsuariosList(dataUsr.usuarios);
+              loadedUsuarios = true;
+            }
+          }
+        } catch (e) {
+          console.warn('Erro ao carregar usuários via API:', e);
+        }
       }
 
-      // Fetch Usuários
-      const resUsr = await fetch('/api/admin/usuarios', {
-        headers: { 'Authorization': `Bearer ${freshToken}` }
-      });
+      // Fallback: Direct Firestore query if API failed / returned non-ok / token missing
+      if (!loadedUsuarios || !loadedEscritorios) {
+        const snapUsr = await getDocs(collection(db, 'usuarios'));
+        const snapEsc = await getDocs(collection(db, 'escritorios'));
+        
+        const escList = snapEsc.docs.map(d => ({ id: d.id, ...(d.data() as any) }));
+        if (!loadedEscritorios) {
+          setEscritoriosList(escList);
+        }
 
-      if (!resUsr.ok) {
-        const errJson = await resUsr.json().catch(() => ({}));
-        throw new Error(errJson.error || `Erro HTTP ${resUsr.status} ao carregar usuários.`);
-      }
+        const escMap = new Map<string, string>();
+        escList.forEach(e => escMap.set(e.id, e.nome || 'Escritório Sem Nome'));
 
-      const dataUsr = await resUsr.json();
-      if (dataUsr.usuarios) {
-        setUsuariosList(dataUsr.usuarios);
+        const list = snapUsr.docs.map(d => {
+          const data = d.data() as any;
+          return {
+            id: d.id,
+            uid: d.id,
+            ...data,
+            escritorioNome: data.escritorioId ? (escMap.get(data.escritorioId) || 'Escritório não encontrado') : 'Nenhum (Global)'
+          };
+        });
+        setUsuariosList(list);
       }
     } catch (err: any) {
       console.error('Erro em loadData:', err);

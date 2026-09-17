@@ -124,12 +124,21 @@ export async function trackConferenciaEvent({
   }
 }
 
-export async function trackEvent(tipo: string, details?: Record<string, any>) {
+export async function trackEvent(tipo: string, userData?: UserData | null, details?: Record<string, any>) {
   const currentUser = auth.currentUser;
+  const userEmail = currentUser?.email || userData?.email || '';
+  const userNome = currentUser?.displayName || userData?.nome || (userEmail ? userEmail.split('@')[0] : 'Sistema');
+  const uid = currentUser?.uid || 'anon';
+  const escritorioId = userData?.escritorioId || '';
+  const papel = userData?.papel || 'colaborador';
+
   const payload = {
     tipo,
-    userId: currentUser?.uid || 'anon',
-    userEmail: currentUser?.email || '',
+    userId: uid,
+    userEmail,
+    userNome,
+    escritorioId,
+    papel,
     data: new Date().toISOString(),
     timestamp: serverTimestamp(),
     ...(details || {})
@@ -141,6 +150,19 @@ export async function trackEvent(tipo: string, details?: Record<string, any>) {
     }
   } catch (err) {
     handleFirestoreWriteError(err);
+  }
+
+  // Backup local storage for demo/offline
+  try {
+    const existing = JSON.parse(localStorage.getItem('atlas_demo_eventos') || '[]');
+    existing.unshift({
+      id: 'ev-' + Date.now(),
+      ...payload,
+      timestamp: new Date().toISOString()
+    });
+    localStorage.setItem('atlas_demo_eventos', JSON.stringify(existing.slice(0, 300)));
+  } catch (e) {
+    console.error('Erro ao armazenar em localStorage:', e);
   }
 }
 

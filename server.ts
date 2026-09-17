@@ -163,8 +163,20 @@ async function startServer() {
   // Listar Escritórios
   app.get('/api/admin/escritorios', requireAuth, async (req: AuthRequest, res) => {
     try {
+      const ehSuperAdmin = req.papel === 'super_admin';
+      const ehAdminEscritorio = req.papel === 'admin_escritorio' && req.escritorioId;
+
+      if (!ehSuperAdmin && !ehAdminEscritorio) {
+        return res.status(403).json({ error: 'Acesso negado para listar escritórios.' });
+      }
+
       const allEscritorios = await queryCollectionWithFallback('escritorios', req.token);
-      const escritorios = allEscritorios.map(d => ({
+      const filteredEscritorios = allEscritorios.filter(d => {
+        if (ehSuperAdmin) return true;
+        return d.id === req.escritorioId;
+      });
+
+      const escritorios = filteredEscritorios.map(d => ({
         id: d.id,
         ...d.data
       }));
@@ -273,6 +285,13 @@ async function startServer() {
       if (ehSuperAdmin) {
         if (papel !== undefined) updates.papel = papel;
         if (escritorioId !== undefined) updates.escritorioId = escritorioId;
+      } else if (ehAdminEscritorio) {
+        if (papel !== undefined) {
+          if (papel !== 'admin_escritorio' && papel !== 'colaborador') {
+            return res.status(400).json({ error: 'Papel inválido. Apenas admin_escritorio ou colaborador são permitidos.' });
+          }
+          updates.papel = papel;
+        }
       }
 
       await setDocWithFallback(`usuarios/${targetUid}`, updates, req.token, true);

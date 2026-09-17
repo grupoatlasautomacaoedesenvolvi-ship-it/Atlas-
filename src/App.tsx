@@ -40,19 +40,14 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { exportSped } from './lib/spedExporter';
 import { executarAuditoriaUnificada } from './lib/auditEngine';
 import { fetchSpedXmlCloud, saveSpedXmlCloud } from './lib/spedXmlSyncService';
+import { trackLoginEvent, trackEvent as trackLibEvent } from './lib/tracking';
 
 export default function App() {
   const { user, userData, loading } = useAuth();
   
-  const trackEvent = async (tipo: string) => {
+  const trackUsageEvent = async (tipo: string) => {
     if (userData && userData.papel !== 'super_admin' && userData.escritorioId) {
-      await safeWrite(async () => {
-        await addDoc(collection(db, 'eventosUso'), {
-          tipo,
-          escritorioId: userData.escritorioId,
-          timestamp: serverTimestamp()
-        });
-      });
+      await trackLibEvent(tipo, userData);
     }
   };
 
@@ -61,7 +56,7 @@ export default function App() {
       if (userData.papel !== 'super_admin') {
         const hasLogged = sessionStorage.getItem('atlas_logged_in');
         if (!hasLogged) {
-          trackEvent('login');
+          trackLoginEvent(userData);
           sessionStorage.setItem('atlas_logged_in', 'true');
         }
       }
@@ -268,7 +263,7 @@ export default function App() {
         } catch (storageErr) {
           console.warn('LocalStorage quota exceeded for SPED data, relying on IndexedDB persistence.');
         }
-        await trackEvent('sped_importado');
+        await trackUsageEvent('sped_importado');
         if (!skipNotification) {
           addNotification(
             'Arquivo SPED Fiscal Importado',
@@ -981,7 +976,7 @@ export default function App() {
     }
     try {
       localStorage.setItem('atlas_xml_terceiros', JSON.stringify(records));
-      if (records.length > 0) await trackEvent('xml_importado');
+      if (records.length > 0) await trackUsageEvent('xml_importado');
       
       // Also persist to IndexedDB for the Notas Omissas module
       const { db } = await import('./lib/db');
@@ -1047,7 +1042,7 @@ export default function App() {
     }
     try {
       localStorage.setItem('atlas_xml_proprio', JSON.stringify(records));
-      if (records.length > 0) await trackEvent('xml_importado');
+      if (records.length > 0) await trackUsageEvent('xml_importado');
     } catch (e) {
       console.error('Error saving xml proprio', e);
     }
@@ -1065,7 +1060,7 @@ export default function App() {
     }
     try {
       localStorage.setItem('atlas_xml_nfce', JSON.stringify(records));
-      if (records.length > 0) await trackEvent('xml_importado');
+      if (records.length > 0) await trackUsageEvent('xml_importado');
     } catch (e) {
       console.error('Error saving xml nfce', e);
     }

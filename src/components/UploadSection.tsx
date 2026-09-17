@@ -3,6 +3,7 @@ import { Upload, FileCheck, ArrowRight, FileCode, Archive, FilePlus, AlertCircle
 import { SpedData, XmlRecord, XmlCategoria } from '../types';
 import { parseSpedContent, parseXmlFiles } from '../lib/clientParser';
 import { trackConferenciaEvent } from '../lib/tracking';
+import { useAuth } from '../lib/auth';
 
 interface UploadSectionProps {
   onSpedLoaded: (data: SpedData) => void;
@@ -57,6 +58,7 @@ export function UploadSection({
   allXmlRecords = [],
   onAppendXmlRecords
 }: UploadSectionProps) {
+  const { userData } = useAuth();
   const [spedFileName, setSpedFileName] = useState<string | null>(spedLoaded ? 'Arquivo SPED Carregado' : null);
   const [loadingSped, setLoadingSped] = useState(false);
   const [spedProgress, setSpedProgress] = useState(0);
@@ -101,7 +103,8 @@ export function UploadSection({
           empresaNome: result.header.nome || 'Empresa SPED',
           arquivoNome: file.name,
           resumo: `Importação e auditoria de ${result.documents.length} documentos fiscais`,
-          tempoSegundos
+          tempoSegundos,
+          userData
         });
         onSpedLoaded(result);
       } catch (err) {
@@ -132,7 +135,8 @@ export function UploadSection({
         empresaNome: result.header.nome || 'Demonstrativo SPED',
         arquivoNome: 'sped_demonstrativo.txt',
         resumo: `Demonstrativo carregado (${result.documents.length} documentos)`,
-        tempoSegundos
+        tempoSegundos,
+        userData
       });
       onSpedLoaded(result);
     } catch (err) {

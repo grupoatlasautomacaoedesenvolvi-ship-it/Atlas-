@@ -153,6 +153,10 @@ export function AdminPanelView() {
         ];
       }
 
+      if (userData?.papel !== 'super_admin' && userData?.escritorioId) {
+        rawEscritorios = rawEscritorios.filter(e => e.id === userData.escritorioId);
+      }
+
       // Fetch clients for each office
       const fullEscritorios: EscritorioItem[] = [];
       const flatClientes: { cliente: Cliente; escritorioNome: string; escritorioId: string }[] = [];
@@ -204,12 +208,16 @@ export function AdminPanelView() {
       const escMap = new Map<string, string>();
       snapEsc.docs.forEach(d => escMap.set(d.id, d.data().nome));
 
-      const list = snapUsr.docs.map(d => ({
+      let list = snapUsr.docs.map(d => ({
         id: d.id,
         uid: d.id,
         ...d.data(),
         escritorioNome: d.data().escritorioId ? (escMap.get(d.data().escritorioId) || 'Escritório não encontrado') : 'Nenhum (Global)'
       }));
+
+      if (userData?.papel !== 'super_admin' && userData?.escritorioId) {
+        list = list.filter((u: any) => u.escritorioId === userData.escritorioId);
+      }
       setUsuariosList(list);
     } catch (e) {
       console.warn('Erro ao carregar lista de usuários:', e);
@@ -1057,7 +1065,7 @@ export function AdminPanelView() {
 
   const totalEscritoriosAtivos = escritorios.filter(e => e.ativo).length;
   const totalClientes = allClientes.length;
-  const spedsMes = eventos.filter(e => e.tipo === 'sped_importado').length;
+  const spedsMes = baseEvents.filter(e => e.tipo === 'sped_importado').length;
 
   const isAuthorizedAdmin = userData?.papel === 'super_admin' || userData?.papel === 'admin_escritorio';
 
@@ -1099,13 +1107,15 @@ export function AdminPanelView() {
             <span className="hidden sm:inline">Atualizar</span>
           </button>
           
-          <button
-            onClick={handleOpenCreateEscritorio}
-            className="px-4 py-2.5 bg-[#0f6e56] hover:bg-[#0c5945] text-white rounded-lg text-xs font-bold shadow-xs transition-all flex items-center space-x-2"
-          >
-            <PlusCircle className="w-4 h-4" />
-            <span>Novo Escritório</span>
-          </button>
+          {userData?.papel === 'super_admin' && (
+            <button
+              onClick={handleOpenCreateEscritorio}
+              className="px-4 py-2.5 bg-[#0f6e56] hover:bg-[#0c5945] text-white rounded-lg text-xs font-bold shadow-xs transition-all flex items-center space-x-2"
+            >
+              <PlusCircle className="w-4 h-4" />
+              <span>Novo Escritório</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -1236,13 +1246,15 @@ export function AdminPanelView() {
               )}
             </div>
 
-            <button
-              onClick={handleOpenCreateEscritorio}
-              className="px-4 py-2 bg-[#1e3a5f] hover:bg-[#142c47] text-white rounded-lg text-xs font-semibold shadow-2xs transition-all flex items-center justify-center space-x-1.5 shrink-0"
-            >
-              <PlusCircle className="w-4 h-4" />
-              <span>Cadastrar Novo Escritório</span>
-            </button>
+            {userData?.papel === 'super_admin' && (
+              <button
+                onClick={handleOpenCreateEscritorio}
+                className="px-4 py-2 bg-[#1e3a5f] hover:bg-[#142c47] text-white rounded-lg text-xs font-semibold shadow-2xs transition-all flex items-center justify-center space-x-1.5 shrink-0"
+              >
+                <PlusCircle className="w-4 h-4" />
+                <span>Cadastrar Novo Escritório</span>
+              </button>
+            )}
           </div>
 
           {/* Escritórios Cards Grid */}
