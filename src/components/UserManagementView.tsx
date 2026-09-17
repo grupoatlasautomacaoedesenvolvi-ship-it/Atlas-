@@ -196,7 +196,20 @@ export function UserManagementView() {
       if (!isSuperAdmin && userData?.escritorioId && ev.escritorioId && ev.escritorioId !== userData.escritorioId) {
         return;
       }
-      const key = ev.userId || ev.userEmail || 'unknown';
+      let key = '';
+      if (ev.userId && map[ev.userId]) {
+        key = ev.userId;
+      } else if (ev.userEmail) {
+        const foundKey = Object.keys(map).find(k => map[k].email?.toLowerCase() === ev.userEmail.toLowerCase());
+        if (foundKey) {
+          key = foundKey;
+        }
+      }
+
+      if (!key) {
+        key = ev.userId || ev.userEmail || 'unknown';
+      }
+
       if (!map[key]) {
         if (!isSuperAdmin && userData?.escritorioId && ev.escritorioId && ev.escritorioId !== userData.escritorioId) {
           return;

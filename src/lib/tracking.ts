@@ -35,8 +35,8 @@ export function formatTempoConferencia(segundos: number): string {
 export async function trackLoginEvent(userData?: UserData | null) {
   const currentUser = auth.currentUser;
   const userEmail = currentUser?.email || userData?.email || 'usuario@sistema.com';
-  const userNome = currentUser?.displayName || userData?.nome || userEmail.split('@')[0];
-  const uid = currentUser?.uid || 'user-' + Date.now();
+  const userNome = currentUser?.displayName || userData?.nome || (userEmail ? userEmail.split('@')[0] : 'Usuário Sistema');
+  const uid = currentUser?.uid || userData?.uid || userEmail || 'user-' + Date.now();
   const escritorioId = userData?.escritorioId || '';
 
   const payload = {
@@ -81,8 +81,8 @@ export async function trackConferenciaEvent({
 }: ConferenciaParams) {
   const currentUser = auth.currentUser;
   const userEmail = currentUser?.email || userData?.email || 'auditor@escritorio.com';
-  const userNome = currentUser?.displayName || userData?.nome || userEmail.split('@')[0];
-  const uid = currentUser?.uid || 'user-' + Date.now();
+  const userNome = currentUser?.displayName || userData?.nome || (userEmail ? userEmail.split('@')[0] : 'Auditor Fiscal');
+  const uid = currentUser?.uid || userData?.uid || userEmail || 'user-' + Date.now();
   const escritorioId = userData?.escritorioId || '';
 
   const tempoFormatado = formatTempoConferencia(tempoSegundos);
@@ -128,7 +128,7 @@ export async function trackEvent(tipo: string, userData?: UserData | null, detai
   const currentUser = auth.currentUser;
   const userEmail = currentUser?.email || userData?.email || '';
   const userNome = currentUser?.displayName || userData?.nome || (userEmail ? userEmail.split('@')[0] : 'Sistema');
-  const uid = currentUser?.uid || 'anon';
+  const uid = currentUser?.uid || userData?.uid || userEmail || 'anon';
   const escritorioId = userData?.escritorioId || '';
   const papel = userData?.papel || 'colaborador';
 

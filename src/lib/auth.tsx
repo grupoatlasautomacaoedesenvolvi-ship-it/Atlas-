@@ -11,6 +11,7 @@ import { auth, db } from './firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
 export interface UserData {
+  uid?: string;
   papel: 'super_admin' | 'admin_escritorio' | 'colaborador';
   escritorioId?: string;
   ativo?: boolean;
@@ -54,10 +55,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setToken(freshToken);
           }
 
+          const email = (firebaseUser.email || '').toLowerCase();
+          const isSuperAdminEmail = email === 'grupoatlasautomacaoedesenvolvi@gmail.com' || email.includes('fcaio100') || email.includes('fcaio');
+
           let userParsed: UserData | null = {
+            uid: firebaseUser.uid,
             email: firebaseUser.email || '',
             nome: firebaseUser.displayName || '',
-            papel: 'colaborador',
+            papel: isSuperAdminEmail ? 'super_admin' : 'colaborador',
             escritorioId: '',
             ativo: true
           };

@@ -6,7 +6,7 @@ import {
   CheckCircle2, XCircle, UserPlus, Filter, X, RefreshCw, ChevronRight,
   FolderOpen, Mail, Phone, MapPin, FileText, AlertCircle, ShieldCheck,
   Building, UserCheck, Eye, Sparkles, Clock, Download, FileSpreadsheet,
-  LogIn, BarChart2, ShieldAlert, FileCode
+  LogIn, BarChart2, ShieldAlert, FileCode, AlertTriangle, WifiOff, Server
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { formatTempoConferencia } from '../lib/tracking';
@@ -14,6 +14,7 @@ import { useAuth } from '../lib/auth';
 import { fetchClientes, saveCliente, deleteCliente } from '../lib/clientService';
 import { Cliente, RegimeTributario } from '../types';
 import { UserHierarchyCard } from './UserHierarchyCard';
+import { getLocalSystemErrors, clearLocalSystemErrors, SystemErrorLog } from '../lib/errorMonitor';
 
 export interface EscritorioItem {
   id: string;
@@ -32,7 +33,54 @@ export function AdminPanelView() {
   const [allClientes, setAllClientes] = useState<{ cliente: Cliente; escritorioNome: string; escritorioId: string }[]>([]);
   const [eventos, setEventos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'escritorios' | 'clientes' | 'usuarios' | 'logs'>('escritorios');
+  const [activeTab, setActiveTab] = useState<'escritorios' | 'clientes' | 'usuarios' | 'logs' | 'erros'>('escritorios');
+  const [systemErrors, setSystemErrors] = useState<SystemErrorLog[]>([]);
+  const [errorSearch, setErrorSearch] = useState('');
+  const [errorSevFilter, setErrorSevFilter] = useState<'todos' | 'critical' | 'warning' | 'info'>('todos');
+
+  useEffect(() => {
+    const loadErrors = async () => {
+      const local = getLocalSystemErrors();
+      setSystemErrors(local);
+      try {
+        const token = await getIdToken(true);
+        if (token) {
+          const res = await fetch('/api/admin/erros', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.erros && Array.isArray(data.erros)) {
+              const merged = [...data.erros];
+              local.forEach(l => {
+                if (!merged.some(m => m.id === l.id)) {
+                  merged.unshift(l);
+                }
+              });
+              setSystemErrors(merged.slice(0, 200));
+            }
+          }
+        }
+      } catch (err) {
+        // Fallback to local
+      }
+    };
+
+    loadErrors();
+
+    const handleNewError = (e: any) => {
+      if (e.detail) {
+        setSystemErrors(prev => [e.detail, ...prev].slice(0, 200));
+      } else {
+        setSystemErrors([]);
+      }
+    };
+
+    window.addEventListener('atlas_error_logged', handleNewError);
+    return () => {
+      window.removeEventListener('atlas_error_logged', handleNewError);
+    };
+  }, [getIdToken]);
 
   // Search & Filter states
   const [searchEscritorio, setSearchEscritorio] = useState('');
@@ -182,6 +230,7 @@ export function AdminPanelView() {
       }
     } catch (e) {
       console.error('Erro ao carregar dados do ADM:', e);
+      logSystemError(e, 'Firestore/Network', 'critical');
     } finally {
       setLoading(false);
     }
@@ -221,6 +270,7 @@ export function AdminPanelView() {
       setUsuariosList(list);
     } catch (e) {
       console.warn('Erro ao carregar lista de usuários:', e);
+      logSystemError(e, 'Firestore/Network', 'critical');
     }
   };
 
@@ -1223,7 +1273,167 @@ export function AdminPanelView() {
           <BarChart2 className="w-4 h-4 text-[#0f6e56]" />
           <span>Relatórios ADM (Logins & Tempo)</span>
         </button>
+
+        <button
+          onClick={() => setActiveTab('erros')}
+          className={`pb-3 text-sm font-bold flex items-center space-x-2 transition-colors border-b-2 relative ${
+            activeTab === 'erros'
+              ? 'border-red-600 text-red-600'
+              : 'border-transparent text-slate-500 hover:text-slate-800'
+          }`}
+        >
+          <AlertTriangle className="w-4 h-4 text-red-500" />
+          <span>Monitor de Erros & Rede</span>
+          {systemErrors.length > 0 && (
+            <span className="ml-1 px-1.5 py-0.5 bg-red-100 text-red-700 text-[10px] font-extrabold rounded-full">
+              {systemErrors.length}
+            </span>
+          )}
+        </button>
       </div>
+
+      {/* TAB 5: MONITOR DE ERROS & REDE */}
+      {activeTab === 'erros' && (
+        <div className="space-y-6">
+          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs space-y-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+              <div>
+                <h3 className="text-base font-bold text-slate-900 flex items-center space-x-2">
+                  <Activity className="w-5 h-5 text-red-600 animate-pulse" />
+                  <span>Monitor de Erros Críticos e Falhas de Rede em Tempo Real</span>
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Registro em tempo real de falhas de conexão Firestore, timeouts de API e erros de exceção do sistema.
+                </p>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => {
+                    clearLocalSystemErrors();
+                    setSystemErrors([]);
+                  }}
+                  className="px-3 py-2 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Limpar Logs de Erro</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Metrics overview */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="bg-slate-50 p-3.5 rounded-lg border border-slate-200">
+                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Total de Erros Registrados</p>
+                <p className="text-2xl font-black text-slate-900 mt-1">{systemErrors.length}</p>
+              </div>
+              <div className="bg-red-50/70 p-3.5 rounded-lg border border-red-200">
+                <p className="text-[11px] font-bold text-red-700 uppercase tracking-wider">Falhas Críticas / Rede</p>
+                <p className="text-2xl font-black text-red-700 mt-1">
+                  {systemErrors.filter(e => e.sev === 'critical' || e.context === 'Network' || e.context === 'Firestore').length}
+                </p>
+              </div>
+              <div className="bg-amber-50/70 p-3.5 rounded-lg border border-amber-200">
+                <p className="text-[11px] font-bold text-amber-700 uppercase tracking-wider">Avisos / Warnings</p>
+                <p className="text-2xl font-black text-amber-700 mt-1">
+                  {systemErrors.filter(e => e.sev === 'warning').length}
+                </p>
+              </div>
+            </div>
+
+            {/* Filters */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
+              <div className="relative flex-1">
+                <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Filtrar por mensagem de erro, stack ou contexto..."
+                  value={errorSearch}
+                  onChange={e => setErrorSearch(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-red-500"
+                />
+              </div>
+
+              <select
+                value={errorSevFilter}
+                onChange={e => setErrorSevFilter(e.target.value as any)}
+                className="px-3 py-2 border border-slate-200 rounded-lg text-xs bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+              >
+                <option value="todos">Severidade: Todas</option>
+                <option value="critical">Críticas</option>
+                <option value="warning">Avisos</option>
+                <option value="info">Informações</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Errors List */}
+          <div className="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
+            {systemErrors.length === 0 ? (
+              <div className="py-16 text-center text-slate-400 space-y-2">
+                <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto" />
+                <p className="text-sm font-semibold text-slate-700">Nenhum erro ou falha de rede registrado.</p>
+                <p className="text-xs text-slate-400">O sistema está operando perfeitamente sem falhas ativas.</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-slate-100 max-h-[600px] overflow-y-auto">
+                {systemErrors
+                  .filter(err => {
+                    if (errorSevFilter !== 'todos' && err.sev !== errorSevFilter) return false;
+                    if (errorSearch) {
+                      const q = errorSearch.toLowerCase();
+                      return (
+                        err.message.toLowerCase().includes(q) ||
+                        err.context.toLowerCase().includes(q) ||
+                        (err.stack && err.stack.toLowerCase().includes(q)) ||
+                        (err.userEmail && err.userEmail.toLowerCase().includes(q))
+                      );
+                    }
+                    return true;
+                  })
+                  .map(err => (
+                    <div key={err.id} className="p-4 hover:bg-slate-50/80 transition-colors flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                      <div className="flex items-start space-x-3">
+                        <div className={`p-2 rounded-lg shrink-0 mt-0.5 ${
+                          err.sev === 'critical' ? 'bg-red-100 text-red-700' :
+                          err.sev === 'warning' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'
+                        }`}>
+                          {err.context === 'Network' ? <WifiOff className="w-4 h-4" /> :
+                           err.context === 'Firestore' ? <Server className="w-4 h-4" /> :
+                           <AlertTriangle className="w-4 h-4" />}
+                        </div>
+                        <div>
+                          <div className="flex items-center space-x-2">
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${
+                              err.sev === 'critical' ? 'bg-red-100 text-red-800 border border-red-200' :
+                              err.sev === 'warning' ? 'bg-amber-100 text-amber-800 border border-amber-200' :
+                              'bg-blue-100 text-blue-800 border border-blue-200'
+                            }`}>
+                              {err.context} ({err.sev})
+                            </span>
+                            <span className="text-[11px] text-slate-400 font-mono">
+                              {new Date(err.timestamp).toLocaleString('pt-BR')}
+                            </span>
+                          </div>
+                          <p className="text-xs font-bold text-slate-900 mt-1 font-mono break-all">{err.message}</p>
+                          {err.userEmail && (
+                            <p className="text-[11px] text-slate-500 mt-0.5">Usuário: {err.userEmail}</p>
+                          )}
+                          {err.stack && (
+                            <details className="mt-2 text-[10px] font-mono text-slate-600 bg-slate-100 p-2 rounded overflow-x-auto max-w-2xl">
+                              <summary className="cursor-pointer font-bold text-slate-700">Ver Stack Trace</summary>
+                              <pre className="mt-1 whitespace-pre-wrap">{err.stack}</pre>
+                            </details>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* TAB 1: ESCRITÓRIOS CONTÁBEIS */}
       {activeTab === 'escritorios' && (

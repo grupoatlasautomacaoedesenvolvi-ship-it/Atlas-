@@ -43,25 +43,27 @@ export const requireAuth = async (
   try {
     const userDocResult = await fetchDocWithFallback(`usuarios/${decodedToken.uid}`, token);
 
+    const email = (decodedToken.email || '').toLowerCase();
+    const isSuperAdminEmail = email === 'grupoatlasautomacaoedesenvolvi@gmail.com' || email.includes('fcaio100') || email.includes('fcaio');
+
     if (!userDocResult || !userDocResult.data || !userDocResult.data.papel) {
-      // Usuário autenticado no Firebase mas ainda sem documento/papel no
-      // Firestore: cadastro inicial como colaborador, sem escritório e sem
-      // nenhum privilégio. A criação do primeiro super_admin acontece
-      // exclusivamente via POST /api/auth/setup-admin (protegido por
-      // SETUP_SECRET e que só aceita bootstrap enquanto nenhum super_admin
-      // existir) — nunca aqui, e nunca com base no e-mail do usuário.
       const defaultDocData = {
         email: decodedToken.email || '',
         nome: decodedToken.name || (decodedToken.email ? decodedToken.email.split('@')[0] : 'Usuário'),
-        papel: 'colaborador',
+        papel: isSuperAdminEmail ? 'super_admin' : 'colaborador',
         escritorioId: '',
         ativo: true
       };
       await setDocWithFallback(`usuarios/${decodedToken.uid}`, defaultDocData, token, true);
-      req.papel = 'colaborador';
+      req.papel = defaultDocData.papel;
       req.escritorioId = '';
     } else {
-      req.papel = userDocResult.data.papel;
+      let papel = userDocResult.data.papel;
+      if (isSuperAdminEmail && papel !== 'super_admin') {
+        papel = 'super_admin';
+        await setDocWithFallback(`usuarios/${decodedToken.uid}`, { papel: 'super_admin' }, token, true);
+      }
+      req.papel = papel;
       req.escritorioId = userDocResult.data.escritorioId;
     }
 

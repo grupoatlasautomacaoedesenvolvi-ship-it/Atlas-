@@ -252,6 +252,44 @@ async function startServer() {
     }
   });
 
+  // Sistema de Log de Erros e Monitoramento
+  app.post('/api/admin/erros', async (req: AuthRequest, res) => {
+    try {
+      const errorLog = req.body;
+      if (!errorLog || !errorLog.message) {
+        return res.status(400).json({ error: 'Dados de erro inválidos.' });
+      }
+      await setDocWithFallback(`system_erros/${errorLog.id || Date.now()}`, {
+        ...errorLog,
+        receivedAt: new Date().toISOString()
+      }, req.token, true);
+      res.json({ success: true });
+    } catch (err: any) {
+      console.error('Error posting error log:', err);
+      res.status(500).json({ error: err.message || 'Erro ao registrar log de erro.' });
+    }
+  });
+
+  app.get('/api/admin/erros', requireAuth, async (req: AuthRequest, res) => {
+    try {
+      const ehSuperAdmin = req.papel === 'super_admin';
+      const ehAdminEscritorio = req.papel === 'admin_escritorio' && req.escritorioId;
+
+      if (!ehSuperAdmin && !ehAdminEscritorio) {
+        return res.status(403).json({ error: 'Acesso negado para visualizar logs de erro.' });
+      }
+
+      const allErros = await queryCollectionWithFallback('system_erros', req.token);
+      const erros = allErros.map(d => ({ id: d.id, ...d.data }));
+      erros.sort((a: any, b: any) => new Date(b.timestamp || 0).getTime() - new Date(a.timestamp || 0).getTime());
+
+      res.json({ success: true, erros });
+    } catch (err: any) {
+      console.error('Error listing system errors:', err);
+      res.status(500).json({ error: err.message || 'Erro ao listar logs de erro.' });
+    }
+  });
+
   // Atualizar Usuário e Alterar Vínculo de Escritório / Papel
   app.put('/api/admin/usuarios/:targetUid', requireAuth, async (req: AuthRequest, res) => {
     try {
