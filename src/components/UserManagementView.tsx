@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { safeFetchJson } from '../lib/safeFetch';
 import { 
   Users, 
   UserPlus, 
@@ -392,7 +393,7 @@ export function UserManagementView() {
 
     try {
       const freshToken = (await getIdToken(true)) || token;
-      const res = await fetch('/api/escritorio/convidar', {
+      const data = await safeFetchJson('/api/escritorio/convidar', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${freshToken}`,
@@ -406,11 +407,6 @@ export function UserManagementView() {
           senha: inviteSenha.trim() || undefined
         })
       });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Erro ao convidar usuário.');
-      }
 
       setActionSuccess(`Usuário ${inviteNome} cadastrado com sucesso!`);
       if (data.linkConvite) {
@@ -451,7 +447,7 @@ export function UserManagementView() {
 
     try {
       const freshToken = (await getIdToken(true)) || token;
-      const res = await fetch(`/api/admin/usuarios/${editingUser.uid}`, {
+      await safeFetchJson(`/api/admin/usuarios/${editingUser.uid}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${freshToken}`,
@@ -464,11 +460,6 @@ export function UserManagementView() {
           ativo: editAtivo
         })
       });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Erro ao atualizar dados do usuário.');
-      }
 
       setActionSuccess(`Dados do usuário ${editNome} atualizados com sucesso!`);
       setEditingUser(null);
@@ -491,15 +482,10 @@ export function UserManagementView() {
 
     try {
       const freshToken = (await getIdToken(true)) || token;
-      const res = await fetch(`/api/admin/usuarios/${u.uid}`, {
+      await safeFetchJson(`/api/admin/usuarios/${u.uid}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${freshToken}` }
       });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Erro ao excluir usuário.');
-      }
 
       setActionSuccess(`Usuário ${u.nome} excluído com sucesso.`);
       await loadData();
@@ -516,15 +502,10 @@ export function UserManagementView() {
 
     try {
       const freshToken = (await getIdToken(true)) || token;
-      const res = await fetch(`/api/admin/usuarios/${u.uid}/link-convite`, {
+      const data = await safeFetchJson(`/api/admin/usuarios/${u.uid}/link-convite`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${freshToken}` }
       });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Erro ao gerar link de convite.');
-      }
 
       if (data.linkConvite) {
         setGeneratedLink(data.linkConvite);

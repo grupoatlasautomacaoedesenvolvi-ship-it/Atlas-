@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { safeFetchJson } from '../lib/safeFetch';
 import { db, auth, safeWrite } from '../lib/firebase';
 import { collection, getDocs, doc, setDoc, deleteDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { 
@@ -306,7 +307,7 @@ export function AdminPanelView() {
 
       if (editingUsuario) {
         // Edit existing user binding / papel / nome
-        const res = await fetch(`/api/admin/usuarios/${editingUsuario.uid}`, {
+        await safeFetchJson(`/api/admin/usuarios/${editingUsuario.uid}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -319,13 +320,10 @@ export function AdminPanelView() {
           })
         });
 
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Erro ao atualizar usuário.');
-
         setUserMsg('Usuário e vínculo atualizados com sucesso!');
       } else {
         // Create / invite new user
-        const res = await fetch('/api/escritorio/convidar', {
+        const data = await safeFetchJson('/api/escritorio/convidar', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -338,9 +336,6 @@ export function AdminPanelView() {
             papel: userFormPapel
           })
         });
-
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Erro ao cadastrar usuário.');
 
         setUserMsg(`Usuário convidado! ${data.linkConvite ? 'Link de primeiro acesso gerado.' : ''}`);
       }
@@ -359,7 +354,7 @@ export function AdminPanelView() {
     try {
       const token = await getIdToken(true);
       if (!token) return;
-      const res = await fetch(`/api/admin/usuarios/${targetUid}`, {
+      await safeFetchJson(`/api/admin/usuarios/${targetUid}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -367,13 +362,8 @@ export function AdminPanelView() {
         },
         body: JSON.stringify({ escritorioId: targetEscritorioId })
       });
-      if (res.ok) {
-        await loadUsuarios();
-        await loadData();
-      } else {
-        const data = await res.json();
-        alert(data.error || 'Erro ao alterar vínculo do escritório.');
-      }
+      await loadUsuarios();
+      await loadData();
     } catch (err: any) {
       alert(`Erro: ${err.message}`);
     }
@@ -384,17 +374,12 @@ export function AdminPanelView() {
     try {
       const token = await getIdToken(true);
       if (!token) return;
-      const res = await fetch(`/api/admin/usuarios/${targetUid}`, {
+      await safeFetchJson(`/api/admin/usuarios/${targetUid}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      if (res.ok) {
-        await loadUsuarios();
-        await loadData();
-      } else {
-        const data = await res.json();
-        alert(data.error || 'Erro ao remover usuário.');
-      }
+      await loadUsuarios();
+      await loadData();
     } catch (err: any) {
       alert(`Erro: ${err.message}`);
     }
@@ -404,17 +389,16 @@ export function AdminPanelView() {
     try {
       const token = await getIdToken(true);
       if (!token) return;
-      const res = await fetch(`/api/admin/usuarios/${targetUid}/link-convite`, {
+      const data = await safeFetchJson(`/api/admin/usuarios/${targetUid}/link-convite`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      const data = await res.json();
-      if (res.ok && data.linkConvite) {
+      if (data.linkConvite) {
         await navigator.clipboard.writeText(data.linkConvite);
         setCopiedLinkId(targetUid);
         setTimeout(() => setCopiedLinkId(null), 3500);
       } else {
-        alert(data.error || 'Não foi possível gerar o link de convite.');
+        alert('Não foi possível gerar o link de convite.');
       }
     } catch (err: any) {
       alert(`Erro ao gerar link de convite: ${err.message}`);

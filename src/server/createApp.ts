@@ -93,11 +93,6 @@ export async function createApp() {
 
       const { email, nome, escritorioId: escritorioIdBody, papel: papelBody, senha } = req.body;
 
-      const escritorioDestino = ehSuperAdmin ? escritorioIdBody : req.escritorioId;
-      if (!escritorioDestino) {
-        return res.status(400).json({ error: 'Escritório de destino é obrigatório.' });
-      }
-
       let papelFinal = 'colaborador';
       if (ehSuperAdmin) {
         if (papelBody === 'super_admin' || papelBody === 'admin_escritorio' || papelBody === 'colaborador') {
@@ -107,6 +102,11 @@ export async function createApp() {
         if (papelBody === 'admin_escritorio' || papelBody === 'colaborador') {
           papelFinal = papelBody;
         }
+      }
+
+      const escritorioDestino = ehSuperAdmin ? (escritorioIdBody || '') : req.escritorioId;
+      if (!escritorioDestino && papelFinal !== 'super_admin') {
+        return res.status(400).json({ error: 'Escritório de destino é obrigatório.' });
       }
 
       let uid = '';
@@ -123,6 +123,9 @@ export async function createApp() {
           uid = existingUser.uid;
           if (senha && senha.trim().length >= 6) {
             await adminAuth.updateUser(uid, { password: senha.trim() });
+          }
+          if (nome && nome.trim()) {
+            await adminAuth.updateUser(uid, { displayName: nome.trim() });
           }
         } else {
           throw authErr;
@@ -275,7 +278,7 @@ export async function createApp() {
     }
   });
 
-  // Atualizar Usuário e Alterar Vínculo de Escritório / Papel
+  // Atualizar Usuário e Alterar Vínculo de Escritório / Papel / Nome
   app.put('/api/admin/usuarios/:targetUid', requireAuth, async (req: AuthRequest, res) => {
     try {
       const ehSuperAdmin = req.papel === 'super_admin';
@@ -286,15 +289,12 @@ export async function createApp() {
       }
 
       const { targetUid } = req.params;
-      const { papel, escritorioId, ativo } = req.body;
+      const { papel, escritorioId, ativo, nome } = req.body;
 
       const targetDoc = await fetchDocWithFallback(`usuarios/${targetUid}`, req.token);
-      if (!targetDoc) {
-        return res.status(404).json({ error: 'Usuário não encontrado.' });
-      }
 
       if (ehAdminEscritorio && !ehSuperAdmin) {
-        if (targetDoc.data.escritorioId !== req.escritorioId) {
+        if (targetDoc?.data && targetDoc.data.escritorioId !== req.escritorioId) {
           return res.status(403).json({ error: 'Você só pode gerenciar usuários do seu próprio escritório.' });
         }
         if (papel === 'super_admin' || papel === 'admin_escritorio') {
@@ -303,16 +303,56 @@ export async function createApp() {
       }
 
       const updateData: any = {};
+      if (nome !== undefined) updateData.nome = nome;
       if (papel !== undefined) updateData.papel = papel;
       if (escritorioId !== undefined) updateData.escritorioId = escritorioId;
       if (ativo !== undefined) updateData.ativo = ativo;
 
       await setDocWithFallback(`usuarios/${targetUid}`, updateData, req.token, true);
 
+      if (nome && typeof nome === 'string' && nome.trim()) {
+        try {
+          await adminAuth.updateUser(targetUid, { displayName: nome.trim() });
+        } catch (authErr: any) {
+          console.warn('Aviso ao atualizar displayName no Auth Admin:', authErr?.message);
+        }
+      }
+
       res.json({ success: true, message: 'Usuário atualizado com sucesso.' });
     } catch (err: any) {
       console.error('Error updating user:', err);
       res.status(500).json({ error: err.message || 'Erro ao atualizar usuário.' });
+    }
+  });
+
+  // Gerar Link de Convite / Reset de Senha para um Usuário
+  app.post('/api/admin/usuarios/:targetUid/link-convite', requireAuth, async (req: AuthRequest, res) => {
+    try {
+      const ehSuperAdmin = req.papel === 'super_admin';
+      const ehAdminEscritorio = req.papel === 'admin_escritorio' && req.escritorioId;
+
+      if (!ehSuperAdmin && !ehAdminEscritorio) {
+        return res.status(403).json({ error: 'Acesso negado para gerar link de convite.' });
+      }
+
+      const { targetUid } = req.params;
+      const targetUser = await adminAuth.getUser(targetUid);
+      if (!targetUser || !targetUser.email) {
+        return res.status(404).json({ error: 'Usuário ou e-mail não encontrado.' });
+      }
+
+      if (ehAdminEscritorio && !ehSuperAdmin) {
+        const targetDoc = await fetchDocWithFallback(`usuarios/${targetUid}`, req.token);
+        if (!targetDoc || targetDoc?.data?.escritorioId !== req.escritorioId) {
+          return res.status(403).json({ error: 'Você só pode gerar links para usuários do seu próprio escritório.' });
+        }
+      }
+
+      const linkConvite = await adminAuth.generatePasswordResetLink(targetUser.email);
+      res.json({ success: true, linkConvite });
+    } catch (err: any) {
+      console.error('Error generating invite link:', err);
+      res.status(500).json({ error: err.message || 'Erro ao gerar link de convite.' });
     }
   });
 
