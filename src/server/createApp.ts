@@ -485,5 +485,13 @@ export async function createApp() {
     }
   });
 
+  // Global Express error handler to catch any unhandled errors cleanly in JSON format
+  app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    console.error('Unhandled server route error:', err);
+    if (!res.headersSent) {
+      res.status(500).json({ error: err?.message || 'Erro no processamento da requisição.' });
+    }
+  });
+
   return app;
 }

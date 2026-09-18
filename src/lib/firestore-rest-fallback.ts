@@ -68,26 +68,23 @@ export async function fetchDocWithFallback(path: string, token?: string): Promis
     }
     return null;
   } catch (err: any) {
-    const errStr = String(err?.message || err);
-    if ((errStr.includes('PERMISSION_DENIED') || errStr.includes('7') || errStr.includes('RESOURCE_EXHAUSTED') || errStr.includes('Quota exceeded'))) {
-      if (token) {
-        try {
-          const url = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/${firebaseConfig.firestoreDatabaseId}/documents/${path}`;
-          const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
-          if (res.ok) {
-            const json = await res.json();
-            if (json.fields) {
-              const id = json.name ? json.name.split('/').pop() : path.split('/').pop();
-              return { id: id || '', data: convertRestFields(json.fields) };
-            }
+    if (token) {
+      try {
+        const url = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/${firebaseConfig.firestoreDatabaseId}/documents/${path}`;
+        const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+        if (res.ok) {
+          const json = await res.json();
+          if (json.fields) {
+            const id = json.name ? json.name.split('/').pop() : path.split('/').pop();
+            return { id: id || '', data: convertRestFields(json.fields) };
           }
-        } catch (restErr) {
-          // ignore rest error
         }
+      } catch (restErr) {
+        // ignore rest error
       }
-      // Nunca fabricar um documento (e muito menos com papel super_admin)
-      // quando a leitura falha. Falha de leitura deve significar "não
-      // encontrado/indisponível", nunca "acesso total liberado".
+    }
+    const errStr = String(err?.message || err);
+    if (errStr.includes('PERMISSION_DENIED') || errStr.includes('7') || errStr.includes('RESOURCE_EXHAUSTED') || errStr.includes('Quota exceeded') || errStr.includes('Could not load') || errStr.includes('CredentialImplementationError')) {
       return null;
     }
     throw err;
@@ -98,10 +95,11 @@ export async function setDocWithFallback(path: string, data: Record<string, any>
   try {
     await adminDb.doc(path).set(data, { merge });
   } catch (err: any) {
-    const errStr = String(err?.message || err);
     if (token) {
       try {
-        const url = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/${firebaseConfig.firestoreDatabaseId}/documents/${path}`;
+        const keys = Object.keys(data);
+        const maskQuery = keys.map(k => `updateMask.fieldPaths=${encodeURIComponent(k)}`).join('&');
+        const url = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/${firebaseConfig.firestoreDatabaseId}/documents/${path}${maskQuery ? '?' + maskQuery : ''}`;
         const fields = convertToRestFields(data);
         const res = await fetch(url, {
           method: 'PATCH',
@@ -116,7 +114,8 @@ export async function setDocWithFallback(path: string, data: Record<string, any>
         // ignore rest error
       }
     }
-    if (errStr.includes('PERMISSION_DENIED') || errStr.includes('7') || errStr.includes('RESOURCE_EXHAUSTED') || errStr.includes('Quota exceeded') || errStr.includes('Missing or insufficient permissions')) {
+    const errStr = String(err?.message || err);
+    if (errStr.includes('PERMISSION_DENIED') || errStr.includes('7') || errStr.includes('RESOURCE_EXHAUSTED') || errStr.includes('Quota exceeded') || errStr.includes('Missing or insufficient permissions') || errStr.includes('Could not load') || errStr.includes('CredentialImplementationError')) {
       return; // swallow error gracefully in fallback mode
     }
     throw err;
@@ -127,8 +126,20 @@ export async function deleteDocWithFallback(path: string, token?: string): Promi
   try {
     await adminDb.doc(path).delete();
   } catch (err: any) {
+    if (token) {
+      try {
+        const url = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/${firebaseConfig.firestoreDatabaseId}/documents/${path}`;
+        const res = await fetch(url, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) return;
+      } catch (restErr) {
+        // ignore
+      }
+    }
     const errStr = String(err?.message || err);
-    if ((errStr.includes('PERMISSION_DENIED') || errStr.includes('7') || errStr.includes('RESOURCE_EXHAUSTED') || errStr.includes('Quota exceeded'))) {
+    if (errStr.includes('PERMISSION_DENIED') || errStr.includes('7') || errStr.includes('RESOURCE_EXHAUSTED') || errStr.includes('Quota exceeded') || errStr.includes('Could not load') || errStr.includes('CredentialImplementationError')) {
       return;
     }
     throw err;
@@ -140,29 +151,25 @@ export async function queryCollectionWithFallback(path: string, token?: string):
     const snap = await adminDb.collection(path).get();
     return snap.docs.map(doc => ({ id: doc.id, data: doc.data() }));
   } catch (err: any) {
-    const errStr = String(err?.message || err);
-    if ((errStr.includes('PERMISSION_DENIED') || errStr.includes('7') || errStr.includes('RESOURCE_EXHAUSTED') || errStr.includes('Quota exceeded'))) {
-      if (token) {
-        try {
-          const url = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/${firebaseConfig.firestoreDatabaseId}/documents/${path}`;
-          const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
-          if (res.ok) {
-            const json = await res.json();
-            if (json.documents) {
-              return json.documents.map((docItem: any) => {
-                const id = docItem.name ? docItem.name.split('/').pop() : '';
-                return { id: id || '', data: convertRestFields(docItem.fields || {}) };
-              });
-            }
+    if (token) {
+      try {
+        const url = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/${firebaseConfig.firestoreDatabaseId}/documents/${path}`;
+        const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+        if (res.ok) {
+          const json = await res.json();
+          if (json.documents) {
+            return json.documents.map((docItem: any) => {
+              const id = docItem.name ? docItem.name.split('/').pop() : '';
+              return { id: id || '', data: convertRestFields(docItem.fields || {}) };
+            });
           }
-        } catch (restErr) {
-          // ignore rest error
         }
+      } catch (restErr) {
+        // ignore rest error
       }
-      // Idem: nunca inventar um escritório ou usuário (muito menos um
-      // super_admin) quando a consulta falha. Lista vazia é o resultado
-      // seguro — o chamador deve tratar isso como "indisponível", não como
-      // "sistema vazio, pode virar admin".
+    }
+    const errStr = String(err?.message || err);
+    if (errStr.includes('PERMISSION_DENIED') || errStr.includes('7') || errStr.includes('RESOURCE_EXHAUSTED') || errStr.includes('Quota exceeded') || errStr.includes('Could not load') || errStr.includes('CredentialImplementationError')) {
       return [];
     }
     throw err;

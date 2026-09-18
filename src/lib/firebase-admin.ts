@@ -9,6 +9,9 @@ if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
   if (raw.startsWith('{')) {
     try {
       const sa = JSON.parse(raw);
+      if (sa.private_key && typeof sa.private_key === 'string') {
+        sa.private_key = sa.private_key.replace(/\\n/g, '\n');
+      }
       credential = cert(sa);
     } catch (e) {
       console.warn('Failed to parse FIREBASE_SERVICE_ACCOUNT_JSON, falling back to applicationDefault()', e);
