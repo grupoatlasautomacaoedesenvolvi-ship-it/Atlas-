@@ -397,117 +397,117 @@ export function CompanyImportModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
-      <div className="bg-white rounded-xl max-w-4xl w-full shadow-xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="bg-[var(--atlas-surface)] rounded-xl max-w-4xl w-full shadow-xl border border-[var(--atlas-border)] overflow-hidden flex flex-col max-h-[90vh]">
         
         {/* Modal Header */}
-        <div className="bg-[#1e3a5f] p-4 text-white flex items-center justify-between">
-          <div className="flex items-center space-x-2.5">
-            <div className="p-2 bg-white/10 rounded-lg">
-              <FileSpreadsheet className="w-5 h-5 text-emerald-300" />
+        <div className="p-8 border-b border-[var(--atlas-border)] bg-[var(--atlas-surface-hover)]/40 flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <div className="w-12 h-12 rounded-2xl bg-[var(--atlas-navy)] text-white flex items-center justify-center shadow-xl">
+              <UploadCloud className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="font-bold text-base leading-tight">Importação de Empresas em Lote</h2>
-              <p className="text-xs text-slate-300">
-                Cadastre empresas parceiras/clientes e gere a estrutura de pastas fiscais via CSV.
-              </p>
+              <h2 className="text-2xl font-bold text-[var(--atlas-navy)] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
+                Importação em Lote
+              </h2>
+              <p className="text-xs text-[var(--atlas-text-secondary)] font-bold uppercase tracking-widest mt-0.5">Cadastramento Automático via CSV/Texto</p>
             </div>
           </div>
           <button 
             onClick={onClose} 
             disabled={isProcessing}
-            className="text-slate-300 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors"
+            className="p-2 text-[var(--atlas-text-muted)] hover:text-[var(--atlas-text)] hover:bg-[var(--atlas-surface-hover)] rounded-xl transition-all"
           >
-            <X className="w-5 h-5" />
+            <X className="w-6 h-6" />
           </button>
         </div>
 
         {/* Modal Body */}
-        <div className="p-5 overflow-y-auto space-y-4 text-xs flex-1">
+        <div className="p-8 overflow-y-auto space-y-8 flex-1">
 
           {/* Authorization Guard Notice */}
           {!canManageEmpresas && (
-            <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-xl flex items-start space-x-3 text-amber-900">
-              <Lock className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-              <div>
-                <h4 className="font-bold text-xs">Permissão de Cadastro Restrita ao Administrador</h4>
-                <p className="text-[11px] text-amber-800 mt-0.5">
-                  Seu perfil atual de acesso é <strong>Colaborador</strong>. O cadastro e a importação de novas empresas são restritos estritamente a <strong>Administradores do Escritório</strong> e <strong>Super Administradores</strong>.
+            <div className="atlas-alert-danger flex items-start gap-4">
+              <Lock className="w-6 h-6 shrink-0" />
+              <div className="space-y-1">
+                <h4 className="font-bold text-sm">Permissão de Cadastro Restrita</h4>
+                <p className="text-xs opacity-90 leading-relaxed">
+                  Seu perfil atual é <strong>Colaborador</strong>. O cadastro em massa é restrito a <strong>Administradores</strong>.
                 </p>
               </div>
             </div>
           )}
 
           {/* Download Model & Export Current Data Section */}
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div className="space-y-0.5">
-              <div className="font-bold text-slate-800 flex items-center space-x-1.5">
-                <FileDown className="w-4 h-4 text-[#1e3a5f]" />
-                <span>Modelo de Exportação & Importação</span>
+          <div className="atlas-card p-5 bg-[var(--atlas-surface-hover)]/40 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="space-y-1">
+              <div className="font-bold text-[var(--atlas-navy)] flex items-center gap-2">
+                <FileDown className="w-5 h-5 opacity-70" />
+                <span style={{ fontFamily: 'var(--font-display)' }} className="text-lg">Modelo de Estrutura</span>
               </div>
-              <p className="text-[11px] text-slate-500">
-                Baixe o modelo com o cabeçalho padrão (Nome, CNPJ, Regime, UF, Inscrição Estadual) para preencher no Excel.
+              <p className="text-xs text-[var(--atlas-text-secondary)] leading-relaxed">
+                Baixe o gabarito padrão para preencher no Excel e importar sem erros de mapeamento.
               </p>
             </div>
 
-            <div className="flex items-center space-x-2 shrink-0 w-full sm:w-auto">
+            <div className="flex items-center gap-2 shrink-0 w-full md:w-auto">
               <button
                 type="button"
                 onClick={handleDownloadTemplate}
-                className="flex-1 sm:flex-none px-3 py-1.5 bg-white hover:bg-slate-100 text-[#1e3a5f] border border-slate-300 rounded-lg font-semibold flex items-center justify-center space-x-1.5 shadow-2xs transition-colors"
+                className="atlas-btn atlas-btn-secondary flex-1 md:flex-none py-2 px-4 shadow-xs"
               >
-                <Download className="w-3.5 h-3.5 text-[#1e3a5f]" />
-                <span>Baixar Modelo CSV</span>
+                <Download className="w-4 h-4" />
+                <span>Baixar CSV</span>
               </button>
 
               <button
                 type="button"
                 onClick={handleExportExistingToCSV}
-                className="flex-1 sm:flex-none px-3 py-1.5 bg-white hover:bg-slate-100 text-[#0f6e56] border border-slate-300 rounded-lg font-semibold flex items-center justify-center space-x-1.5 shadow-2xs transition-colors"
+                className="atlas-btn atlas-btn-secondary flex-1 md:flex-none py-2 px-4 shadow-xs"
               >
-                <FileSpreadsheet className="w-3.5 h-3.5 text-[#0f6e56]" />
-                <span>Exportar Atuais ({existingClientes.length})</span>
+                <FileSpreadsheet className="w-4 h-4" />
+                <span>Exportar ({existingClientes.length})</span>
               </button>
             </div>
           </div>
 
           {/* Input Method Tabs */}
           {!hasParsed && (
-            <div className="space-y-3">
-              <div className="flex border-b border-slate-200 space-x-4">
+            <div className="space-y-6">
+              <div className="flex bg-[var(--atlas-surface-hover)] p-1 rounded-xl border border-[var(--atlas-border)]">
                 <button
                   type="button"
                   onClick={() => setActiveTab('upload')}
-                  className={`pb-2 font-bold text-xs border-b-2 transition-colors flex items-center space-x-1.5 ${
+                  className={`flex-1 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${
                     activeTab === 'upload' 
-                      ? 'border-[#1e3a5f] text-[#1e3a5f]' 
-                      : 'border-transparent text-slate-400 hover:text-slate-600'
+                      ? 'bg-[var(--atlas-navy)] text-white shadow-md' 
+                      : 'text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-navy)]'
                   }`}
                 >
                   <UploadCloud className="w-4 h-4" />
-                  <span>Upload de Arquivo CSV / TXT</span>
+                  <span>Upload CSV</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setActiveTab('paste')}
-                  className={`pb-2 font-bold text-xs border-b-2 transition-colors flex items-center space-x-1.5 ${
+                  className={`flex-1 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${
                     activeTab === 'paste' 
-                      ? 'border-[#1e3a5f] text-[#1e3a5f]' 
-                      : 'border-transparent text-slate-400 hover:text-slate-600'
+                      ? 'border-[var(--atlas-navy)] text-white shadow-md' 
+                      : 'text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-navy)]'
                   }`}
                 >
                   <FileText className="w-4 h-4" />
-                  <span>Colar Texto de Tabela / CSV</span>
+                  <span>Colar Texto</span>
                 </button>
               </div>
 
               {activeTab === 'upload' ? (
                 <div 
                   onClick={() => canManageEmpresas && fileInputRef.current?.click()}
-                  className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${
+                  className={`atlas-card border-2 border-dashed p-12 text-center transition-all ${
                     canManageEmpresas 
-                      ? 'border-slate-300 hover:border-[#1e3a5f] bg-slate-50/50 hover:bg-slate-50' 
-                      : 'border-slate-200 bg-slate-100/50 cursor-not-allowed opacity-60'
+                      ? 'border-[var(--atlas-border)] hover:border-[var(--atlas-navy)] bg-[var(--atlas-surface-hover)]/30 hover:bg-[var(--atlas-surface-hover)]/60 cursor-pointer' 
+                      : 'border-[var(--atlas-border)] bg-[var(--atlas-surface-hover)]/20 cursor-not-allowed opacity-60'
                   }`}
                 >
                   <input 
@@ -518,31 +518,33 @@ export function CompanyImportModal({
                     disabled={!canManageEmpresas}
                     className="hidden" 
                   />
-                  <UploadCloud className="w-8 h-8 text-[#1e3a5f] mx-auto mb-2" />
-                  <p className="font-bold text-slate-800 text-sm">Clique para selecionar seu arquivo CSV</p>
-                  <p className="text-slate-500 text-[11px] mt-1">
-                    Suporta arquivos delimitados por ponto e vírgula (;), vírgula (,) ou tabulação.
+                  <div className="w-16 h-16 rounded-full bg-[var(--atlas-surface)] border border-[var(--atlas-border)] flex items-center justify-center mx-auto mb-4 text-[var(--atlas-navy)] shadow-xs">
+                    <UploadCloud className="w-8 h-8" />
+                  </div>
+                  <p className="font-bold text-[var(--atlas-navy)] text-base">Selecione seu arquivo CSV ou TXT</p>
+                  <p className="text-[var(--atlas-text-secondary)] text-xs mt-1 max-w-xs mx-auto leading-relaxed">
+                    O sistema detecta automaticamente delimitadores de ponto e vírgula, vírgula ou TAB.
                   </p>
                 </div>
               ) : (
-                <div className="space-y-2">
+                <div className="space-y-4">
                   <textarea
                     rows={6}
                     disabled={!canManageEmpresas}
                     value={pastedText}
                     onChange={e => setPastedText(e.target.value)}
-                    placeholder="Cole as linhas da sua planilha CSV aqui...&#10;Exemplo:&#10;Nome/Razão Social;CNPJ;Regime Tributário;UF;Inscrição Estadual&#10;Empresa Exemplo;12.345.678/0001-90;Lucro Presumido;SP;123456789"
-                    className="w-full p-3 border border-slate-300 rounded-xl font-mono text-[11px] focus:outline-hidden focus:ring-1 focus:ring-[#1e3a5f] disabled:bg-slate-100 disabled:cursor-not-allowed"
+                    placeholder="Cole aqui as linhas da sua planilha...&#10;Nome;CNPJ;Regime;UF;IE"
+                    className="atlas-input w-full p-4 font-mono text-xs min-h-[200px]"
                   />
                   <div className="flex justify-end">
                     <button
                       type="button"
                       disabled={!canManageEmpresas || !pastedText.trim()}
                       onClick={() => parseCSVText(pastedText)}
-                      className="px-4 py-2 bg-[#1e3a5f] hover:bg-[#142c47] disabled:opacity-50 text-white font-bold rounded-lg transition-colors flex items-center space-x-1.5"
+                      className="atlas-btn atlas-btn-primary py-3 px-8 shadow-md"
                     >
                       <Building2 className="w-4 h-4" />
-                      <span>Processar Texto Copiado</span>
+                      <span>Processar Conteúdo</span>
                     </button>
                   </div>
                 </div>
@@ -554,9 +556,9 @@ export function CompanyImportModal({
           {hasParsed && (
             <div className="space-y-3">
               {/* Summary Stats */}
-              <div className="flex flex-wrap items-center justify-between gap-2 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+              <div className="flex flex-wrap items-center justify-between gap-2 p-3 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-xl">
                 <div className="flex items-center space-x-3">
-                  <span className="font-bold text-slate-700">Resumo da Leitura:</span>
+                  <span className="font-bold text-[var(--atlas-text-secondary)]">Resumo da Leitura:</span>
                   <span className="px-2 py-0.5 bg-blue-100 text-blue-800 font-bold rounded-md">
                     Total: {parsedItems.length}
                   </span>
@@ -582,7 +584,7 @@ export function CompanyImportModal({
                     setParsedItems([]);
                     setPastedText('');
                   }}
-                  className="px-2.5 py-1 text-slate-600 hover:text-slate-900 border border-slate-300 rounded-lg hover:bg-white font-semibold flex items-center space-x-1"
+                  className="px-2.5 py-1 text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)] border border-[var(--atlas-border)] rounded-lg hover:bg-[var(--atlas-surface)] font-semibold flex items-center space-x-1"
                 >
                   <RefreshCw className="w-3 h-3" />
                   <span>Nova Leitura</span>
@@ -590,38 +592,38 @@ export function CompanyImportModal({
               </div>
 
               {/* Options bar */}
-              <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
-                <div className="font-bold text-slate-800 flex items-center space-x-1.5">
-                  <FolderTree className="w-4 h-4 text-[#1e3a5f]" />
+              <div className="p-3 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-xl space-y-2">
+                <div className="font-bold text-[var(--atlas-text)] flex items-center space-x-1.5">
+                  <FolderTree className="w-4 h-4 text-[var(--atlas-navy)]" />
                   <span>Configurações do Cadastro Automático</span>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-4 text-[11px]">
-                  <label className="flex items-center space-x-1.5 cursor-pointer font-semibold text-slate-700">
+                <div className="flex flex-wrap items-center gap-4 text-xs">
+                  <label className="flex items-center space-x-1.5 cursor-pointer font-semibold text-[var(--atlas-text-secondary)]">
                     <input
                       type="checkbox"
                       checked={createFolders}
                       onChange={e => setCreateFolders(e.target.checked)}
-                      className="rounded border-slate-300 text-[#1e3a5f]"
+                      className="rounded border-[var(--atlas-border)] text-[var(--atlas-navy)]"
                     />
                     <span>Gerar Estrutura de Pastas Fiscais</span>
                   </label>
 
-                  <label className="flex items-center space-x-1.5 cursor-pointer font-semibold text-slate-700">
+                  <label className="flex items-center space-x-1.5 cursor-pointer font-semibold text-[var(--atlas-text-secondary)]">
                     <input
                       type="checkbox"
                       checked={updateExisting}
                       onChange={e => setUpdateExisting(e.target.checked)}
-                      className="rounded border-slate-300 text-[#1e3a5f]"
+                      className="rounded border-[var(--atlas-border)] text-[var(--atlas-navy)]"
                     />
                     <span>Sobrescrever/Atualizar Empresas com mesmo CNPJ</span>
                   </label>
 
                   {createFolders && (
-                    <div className="flex items-center space-x-2 pl-2 border-l border-slate-300">
-                      <span className="text-slate-500 font-medium">Exercícios:</span>
+                    <div className="flex items-center space-x-2 pl-2 border-l border-[var(--atlas-border)]">
+                      <span className="text-[var(--atlas-text-secondary)] font-medium">Exercícios:</span>
                       {['2026', '2025', '2024'].map(ano => (
-                        <label key={ano} className="flex items-center space-x-1 cursor-pointer font-bold text-[#1e3a5f]">
+                        <label key={ano} className="flex items-center space-x-1 cursor-pointer font-bold text-[var(--atlas-navy)]">
                           <input
                             type="checkbox"
                             checked={selectedYears.includes(ano)}
@@ -629,7 +631,7 @@ export function CompanyImportModal({
                               if (e.target.checked) setSelectedYears(prev => [...prev, ano]);
                               else setSelectedYears(prev => prev.filter(a => a !== ano));
                             }}
-                            className="rounded border-slate-300 text-[#1e3a5f]"
+                            className="rounded border-[var(--atlas-border)] text-[var(--atlas-navy)]"
                           />
                           <span>{ano}</span>
                         </label>
@@ -640,9 +642,9 @@ export function CompanyImportModal({
               </div>
 
               {/* Preview Table */}
-              <div className="border border-slate-200 rounded-xl overflow-hidden max-h-60 overflow-y-auto">
-                <table className="w-full text-left border-collapse text-[11px]">
-                  <thead className="bg-slate-100 text-slate-700 font-bold sticky top-0 border-b border-slate-200">
+              <div className="border border-[var(--atlas-border)] rounded-xl overflow-hidden max-h-60 overflow-y-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead className="bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] font-bold sticky top-0 border-b border-[var(--atlas-border)]">
                     <tr>
                       <th className="p-2">Status</th>
                       <th className="p-2">Razão Social / Nome</th>
@@ -653,9 +655,9 @@ export function CompanyImportModal({
                       <th className="p-2">Validação</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-200">
+                  <tbody className="divide-y divide-[var(--atlas-border)]">
                     {displayedItems.map((item, idx) => (
-                      <tr key={item.idTemp || idx} className="hover:bg-slate-50">
+                      <tr key={item.idTemp || idx} className="hover:bg-[var(--atlas-surface-hover)]">
                         <td className="p-2 whitespace-nowrap">
                           {item.status === 'VALID' && (
                             <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-800 font-bold rounded flex items-center space-x-1 w-max">
@@ -676,12 +678,12 @@ export function CompanyImportModal({
                             </span>
                           )}
                         </td>
-                        <td className="p-2 font-bold text-slate-800 max-w-[180px] truncate">{item.nome || '—'}</td>
-                        <td className="p-2 font-mono font-medium text-slate-700 whitespace-nowrap">{item.cnpj || '—'}</td>
-                        <td className="p-2 text-slate-700 whitespace-nowrap">{item.regimeTributario}</td>
-                        <td className="p-2 font-bold text-slate-700">{item.uf}</td>
-                        <td className="p-2 text-slate-600">{item.ie}</td>
-                        <td className="p-2 text-slate-500 max-w-[200px] truncate">{item.validationMessage}</td>
+                        <td className="p-2 font-bold text-[var(--atlas-text)] max-w-[180px] truncate">{item.nome || '—'}</td>
+                        <td className="p-2 font-mono font-medium text-[var(--atlas-text-secondary)] whitespace-nowrap">{item.cnpj || '—'}</td>
+                        <td className="p-2 text-[var(--atlas-text-secondary)] whitespace-nowrap">{item.regimeTributario}</td>
+                        <td className="p-2 font-bold text-[var(--atlas-text-secondary)]">{item.uf}</td>
+                        <td className="p-2 text-[var(--atlas-text-secondary)]">{item.ie}</td>
+                        <td className="p-2 text-[var(--atlas-text-secondary)] max-w-[200px] truncate">{item.validationMessage}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -699,7 +701,7 @@ export function CompanyImportModal({
               </div>
               <div className="w-full h-2.5 bg-blue-200 rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-[#1e3a5f] transition-all duration-300 rounded-full"
+                  className="h-full bg-[var(--atlas-navy)] transition-all duration-300 rounded-full"
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
@@ -709,12 +711,12 @@ export function CompanyImportModal({
         </div>
 
         {/* Modal Footer */}
-        <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+        <div className="p-4 bg-[var(--atlas-surface-hover)] border-t border-[var(--atlas-border)] flex items-center justify-between">
           <button
             type="button"
             onClick={onClose}
             disabled={isProcessing}
-            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg transition-colors"
+            className="px-4 py-2 bg-[var(--atlas-surface-hover)] hover:bg-[var(--atlas-border)] text-[var(--atlas-text-secondary)] font-bold rounded-lg transition-colors"
           >
             Cancelar
           </button>
@@ -724,7 +726,7 @@ export function CompanyImportModal({
               type="button"
               disabled={!canManageEmpresas || countImportable === 0 || isProcessing}
               onClick={handleConfirmImport}
-              className="px-5 py-2 bg-[#1e3a5f] hover:bg-[#142c47] disabled:opacity-50 text-white font-bold rounded-lg shadow-2xs transition-colors flex items-center space-x-1.5"
+              className="px-5 py-2 bg-[var(--atlas-navy)] hover:bg-[var(--atlas-navy-dark)] disabled:opacity-50 text-white font-bold rounded-lg shadow-xs transition-colors flex items-center space-x-1.5"
             >
               <UploadCloud className="w-4 h-4" />
               <span>

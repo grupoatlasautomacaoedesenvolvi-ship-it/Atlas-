@@ -540,12 +540,12 @@ export function UserManagementView() {
   if (!isAllowed) {
     return (
       <div className="p-8 max-w-5xl mx-auto space-y-6">
-        <div className="bg-amber-50 border border-amber-200 p-6 rounded-2xl text-amber-950 space-y-3 shadow-2xs">
+        <div className="bg-amber-50 border border-amber-200 p-6 rounded-2xl text-amber-950 space-y-3 shadow-xs">
           <div className="flex items-center gap-3 text-lg font-bold">
             <Lock className="w-6 h-6 text-amber-700" />
             Acesso Restrito à Gestão de Usuários (RBAC)
           </div>
-          <p className="text-sm text-slate-700 leading-relaxed">
+          <p className="text-sm text-[var(--atlas-text-secondary)] leading-relaxed">
             Seu perfil atual é <strong>Colaborador</strong>. A visualização, cadastro e alteração de privilégios de usuários no sistema é restrita a <strong>Administradores de Escritório</strong> e <strong>Super Admins</strong>.
           </p>
           <div className="pt-2">
@@ -557,57 +557,55 @@ export function UserManagementView() {
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-8 py-6">
       {/* Top Header */}
-      <div className="bg-white rounded-2xl shadow-xs border border-slate-200 p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="p-2 bg-blue-50 text-[#1e3a5f] rounded-xl border border-blue-100">
-              <Shield className="w-6 h-6" />
-            </span>
-            <div>
-              <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-                Gestão Unificada de Usuários
-              </h1>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Controle de acessos, privilégios RBAC e convites da equipe contábil.
-              </p>
-            </div>
+      <div className="atlas-card p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 rounded-2xl bg-[#f1efe8] text-[var(--atlas-navy)] flex items-center justify-center border border-[#e5e2d9] shadow-inner shrink-0">
+            <Users className="w-8 h-8" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-[var(--atlas-navy)] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
+              Gestão de Acessos
+            </h1>
+            <p className="text-sm text-[var(--atlas-text-secondary)] mt-1.5 max-w-lg">
+              Controle de privilégios RBAC, convites da equipe e monitoramento de atividades do escritório.
+            </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <span className={`px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 border ${
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className={`atlas-pill py-2 px-4 flex items-center gap-2 border-2 ${
             isSuperAdmin 
               ? 'bg-purple-50 text-purple-800 border-purple-200' 
-              : 'bg-blue-50 text-[#1e3a5f] border-blue-200'
+              : 'bg-blue-50 text-[var(--atlas-navy)] border-blue-200'
           }`}>
-            {isSuperAdmin ? <Crown className="w-4 h-4 text-purple-600" /> : <Building2 className="w-4 h-4 text-[#1e3a5f]" />}
-            {isSuperAdmin ? 'Super Administrador (Acesso Global)' : 'Admin do Escritório'}
-          </span>
+            {isSuperAdmin ? <Crown className="w-4 h-4 text-purple-600" /> : <Shield className="w-4 h-4 text-[var(--atlas-navy)]" />}
+            <span className="text-xs font-bold uppercase tracking-wider">{isSuperAdmin ? 'Super Administrador' : 'Admin Escritório'}</span>
+          </div>
 
           <button
             onClick={() => setShowInviteForm(!showInviteForm)}
-            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-2 cursor-pointer"
+            className="atlas-btn atlas-btn-accent py-2.5 px-5 shadow-md"
           >
             <UserPlus className="w-4 h-4" />
-            {showInviteForm ? 'Fechar Formulário' : 'Novo Usuário / Convidar'}
+            <span>{showInviteForm ? 'Fechar Cadastro' : 'Novo Usuário'}</span>
           </button>
 
           <button
             onClick={loadData}
             disabled={loadingUsers}
-            className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition-all border border-slate-200 cursor-pointer"
+            className="atlas-btn atlas-btn-secondary p-2.5 shadow-xs"
             title="Atualizar Lista"
           >
-            <RefreshCw className={`w-4 h-4 ${loadingUsers ? 'animate-spin text-blue-600' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${loadingUsers ? 'animate-spin text-[var(--atlas-navy)]' : ''}`} />
           </button>
         </div>
       </div>
 
       {/* Global Alerts */}
       {actionError && (
-        <div className="p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-xs flex items-center justify-between gap-2 shadow-2xs">
+        <div className="p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-xs flex items-center justify-between gap-2 shadow-xs">
           <div className="flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
             <span>{actionError}</span>
@@ -617,7 +615,7 @@ export function UserManagementView() {
       )}
 
       {actionSuccess && (
-        <div className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs flex items-center justify-between gap-2 shadow-2xs">
+        <div className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs flex items-center justify-between gap-2 shadow-xs">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
             <span>{actionSuccess}</span>
@@ -628,7 +626,7 @@ export function UserManagementView() {
 
       {/* Generated Link Alert Banner */}
       {generatedLink && (
-        <div className="p-4 bg-sky-50 border border-sky-200 rounded-xl space-y-2 shadow-2xs">
+        <div className="p-4 bg-sky-50 border border-sky-200 rounded-xl space-y-2 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-sky-950 flex items-center gap-1.5">
               <Key className="w-4 h-4 text-sky-600" />
@@ -642,7 +640,7 @@ export function UserManagementView() {
               {copiedLink ? 'Copiado!' : 'Copiar Link'}
             </button>
           </div>
-          <p className="text-xs text-sky-800 break-all bg-white/80 p-2.5 rounded-lg border border-sky-100 font-mono">
+          <p className="text-xs text-sky-800 break-all bg-[var(--atlas-surface)]/80 p-2.5 rounded-lg border border-sky-100 font-mono">
             {generatedLink}
           </p>
         </div>
@@ -650,50 +648,50 @@ export function UserManagementView() {
 
       {/* Quick Form: Novo Usuário / Convite */}
       {showInviteForm && (
-        <div className="bg-white rounded-2xl shadow-xs border border-emerald-200 p-6 space-y-4 animate-fadeIn">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+        <div className="bg-[var(--atlas-surface)] rounded-2xl shadow-xs border border-emerald-200 p-6 space-y-4 animate-fadeIn">
+          <div className="flex items-center justify-between border-b border-[var(--atlas-border)] pb-3">
+            <h3 className="text-sm font-bold text-[var(--atlas-text)] flex items-center gap-2">
               <UserPlus className="w-4 h-4 text-emerald-600" />
               Cadastrar Novo Usuário / Enviar Convite de Acesso
             </h3>
-            <span className="text-xs text-slate-500">
+            <span className="text-xs text-[var(--atlas-text-secondary)]">
               O convidado receberá um e-mail com instrução e link de definição de senha.
             </span>
           </div>
 
           <form onSubmit={handleInviteUser} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Nome Completo *</label>
+              <label className="block text-xs font-semibold text-[var(--atlas-text-secondary)] mb-1">Nome Completo *</label>
               <input
                 type="text"
                 required
                 value={inviteNome}
                 onChange={(e) => setInviteNome(e.target.value)}
                 placeholder="Ex: Ana Maria Silva"
-                className="w-full p-2.5 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-emerald-500 outline-none"
+                className="w-full p-2.5 border border-[var(--atlas-border)] rounded-xl text-xs focus:ring-2 focus:ring-emerald-500 outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">E-mail Corporativo *</label>
+              <label className="block text-xs font-semibold text-[var(--atlas-text-secondary)] mb-1">E-mail Corporativo *</label>
               <input
                 type="email"
                 required
                 value={inviteEmail}
                 onChange={(e) => setInviteEmail(e.target.value)}
                 placeholder="ana@empresa.com.br"
-                className="w-full p-2.5 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-emerald-500 outline-none"
+                className="w-full p-2.5 border border-[var(--atlas-border)] rounded-xl text-xs focus:ring-2 focus:ring-emerald-500 outline-none"
               />
             </div>
 
             {isSuperAdmin ? (
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Escritório de Destino *</label>
+                <label className="block text-xs font-semibold text-[var(--atlas-text-secondary)] mb-1">Escritório de Destino *</label>
                 <select
                   required={invitePapel !== 'super_admin'}
                   value={inviteEscritorioId}
                   onChange={(e) => setInviteEscritorioId(e.target.value)}
-                  className="w-full p-2.5 border border-slate-300 rounded-xl text-xs bg-white focus:ring-2 focus:ring-emerald-500 outline-none"
+                  className="w-full p-2.5 border border-[var(--atlas-border)] rounded-xl text-xs bg-[var(--atlas-surface)] focus:ring-2 focus:ring-emerald-500 outline-none"
                 >
                   <option value="">Selecione o escritório...</option>
                   {escritoriosList.map(esc => (
@@ -703,22 +701,22 @@ export function UserManagementView() {
               </div>
             ) : (
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Escritório do Usuário</label>
+                <label className="block text-xs font-semibold text-[var(--atlas-text-secondary)] mb-1">Escritório do Usuário</label>
                 <input
                   type="text"
                   disabled
                   value={userData?.escritorioId || 'Meu Escritório Vinculado'}
-                  className="w-full p-2.5 border border-slate-200 bg-slate-100 rounded-xl text-xs text-slate-500"
+                  className="w-full p-2.5 border border-[var(--atlas-border)] bg-[var(--atlas-surface-hover)] rounded-xl text-xs text-[var(--atlas-text-secondary)]"
                 />
               </div>
             )}
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Papel / Nível de Acesso *</label>
+              <label className="block text-xs font-semibold text-[var(--atlas-text-secondary)] mb-1">Papel / Nível de Acesso *</label>
               <select
                 value={invitePapel}
                 onChange={(e) => setInvitePapel(e.target.value as any)}
-                className="w-full p-2.5 border border-slate-300 rounded-xl text-xs bg-white focus:ring-2 focus:ring-emerald-500 outline-none"
+                className="w-full p-2.5 border border-[var(--atlas-border)] rounded-xl text-xs bg-[var(--atlas-surface)] focus:ring-2 focus:ring-emerald-500 outline-none"
               >
                 <option value="colaborador">Colaborador (Auditor / Operacional)</option>
                 <option value="admin_escritorio">Admin do Escritório (Gestor)</option>
@@ -727,13 +725,13 @@ export function UserManagementView() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Senha Inicial (Opcional)</label>
+              <label className="block text-xs font-semibold text-[var(--atlas-text-secondary)] mb-1">Senha Inicial (Opcional)</label>
               <input
                 type="password"
                 value={inviteSenha}
                 onChange={(e) => setInviteSenha(e.target.value)}
                 placeholder="Mínimo 6 caracteres"
-                className="w-full p-2.5 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-emerald-500 outline-none"
+                className="w-full p-2.5 border border-[var(--atlas-border)] rounded-xl text-xs focus:ring-2 focus:ring-emerald-500 outline-none"
               />
             </div>
 
@@ -741,7 +739,7 @@ export function UserManagementView() {
               <button
                 type="button"
                 onClick={() => setShowInviteForm(false)}
-                className="px-4 py-2 border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-medium cursor-pointer"
+                className="px-4 py-2 border border-[var(--atlas-border)] hover:bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] rounded-xl text-xs font-medium cursor-pointer"
               >
                 Cancelar
               </button>
@@ -762,17 +760,17 @@ export function UserManagementView() {
       <UserHierarchyCard />
 
       {/* Dashboard de Monitoramento de Tempo de Uso por Usuário */}
-      <div className="bg-white rounded-2xl shadow-xs border border-slate-200 p-6 space-y-6">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+      <div className="bg-[var(--atlas-surface)] rounded-2xl shadow-xs border border-[var(--atlas-border)] p-6 space-y-6">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-[var(--atlas-border)] pb-4">
           <div className="flex items-center gap-3">
-            <span className="p-2.5 bg-[#f1efe8] text-[#1e3a5f] rounded-xl border border-[#e5e2d9]">
+            <span className="p-2.5 bg-[#f1efe8] text-[var(--atlas-navy)] rounded-xl border border-[#e5e2d9]">
               <Clock className="w-5 h-5" />
             </span>
             <div>
-              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <h2 className="text-base font-bold text-[var(--atlas-text)] flex items-center gap-2">
                 Dashboard de Tempo de Uso & Sessões por Colaborador
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-xs text-[var(--atlas-text-secondary)] mt-0.5">
                 Monitoramento de atividade, duração de sessões e tempo total de uso por período.
               </p>
             </div>
@@ -780,28 +778,28 @@ export function UserManagementView() {
 
           {/* Controls & Period Selector */}
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-semibold">
+            <div className="flex items-center gap-1.5 bg-[var(--atlas-surface-hover)] p-1 rounded-xl border border-[var(--atlas-border)] text-xs font-semibold">
               <button
                 onClick={() => setReportPeriod('hoje')}
-                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${reportPeriod === 'hoje' ? 'bg-white text-slate-900 shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'}`}
+                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${reportPeriod === 'hoje' ? 'bg-[var(--atlas-surface)] text-[var(--atlas-text)] shadow-xs font-bold' : 'text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)]'}`}
               >
                 Hoje
               </button>
               <button
                 onClick={() => setReportPeriod('7dias')}
-                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${reportPeriod === '7dias' ? 'bg-white text-slate-900 shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'}`}
+                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${reportPeriod === '7dias' ? 'bg-[var(--atlas-surface)] text-[var(--atlas-text)] shadow-xs font-bold' : 'text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)]'}`}
               >
                 7 Dias
               </button>
               <button
                 onClick={() => setReportPeriod('30dias')}
-                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${reportPeriod === '30dias' ? 'bg-white text-slate-900 shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'}`}
+                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${reportPeriod === '30dias' ? 'bg-[var(--atlas-surface)] text-[var(--atlas-text)] shadow-xs font-bold' : 'text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)]'}`}
               >
                 30 Dias
               </button>
               <button
                 onClick={() => setReportPeriod('todos')}
-                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${reportPeriod === 'todos' ? 'bg-white text-slate-900 shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'}`}
+                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${reportPeriod === 'todos' ? 'bg-[var(--atlas-surface)] text-[var(--atlas-text)] shadow-xs font-bold' : 'text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)]'}`}
               >
                 Geral
               </button>
@@ -811,39 +809,39 @@ export function UserManagementView() {
 
         {/* Metric Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+          <div className="p-4 bg-[var(--atlas-surface-hover)] rounded-xl border border-[var(--atlas-border)] space-y-1">
+            <span className="text-xs font-semibold text-[var(--atlas-text-secondary)] uppercase tracking-wider flex items-center gap-1.5">
               <Users className="w-3.5 h-3.5 text-blue-600" /> Colaboradores Ativos
             </span>
-            <div className="text-2xl font-black text-slate-900">
-              {userActivityStats.filter(u => u.totalSegundos > 0).length} <span className="text-xs font-medium text-slate-500">de {userActivityStats.length}</span>
+            <div className="text-2xl font-black text-[var(--atlas-text)]">
+              {userActivityStats.filter(u => u.totalSegundos > 0).length} <span className="text-xs font-medium text-[var(--atlas-text-secondary)]">de {userActivityStats.length}</span>
             </div>
           </div>
 
-          <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-              <Timer className="w-3.5 h-3.5 text-[#1e3a5f]" /> Tempo Total de Atividade (estimado)
+          <div className="p-4 bg-[var(--atlas-surface-hover)] rounded-xl border border-[var(--atlas-border)] space-y-1">
+            <span className="text-xs font-semibold text-[var(--atlas-text-secondary)] uppercase tracking-wider flex items-center gap-1.5">
+              <Timer className="w-3.5 h-3.5 text-[var(--atlas-navy)]" /> Tempo Total de Atividade (estimado)
             </span>
-            <div className="text-2xl font-black text-slate-900">
+            <div className="text-2xl font-black text-[var(--atlas-text)]">
               {formatDuration(totalTeamSegundos)}
             </div>
           </div>
 
-          <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+          <div className="p-4 bg-[var(--atlas-surface-hover)] rounded-xl border border-[var(--atlas-border)] space-y-1">
+            <span className="text-xs font-semibold text-[var(--atlas-text-secondary)] uppercase tracking-wider flex items-center gap-1.5">
               <Activity className="w-3.5 h-3.5 text-emerald-600" /> Total de Sessões / Logins
             </span>
-            <div className="text-2xl font-black text-slate-900">
-              {totalTeamLogins} <span className="text-xs font-medium text-slate-500">acessos</span>
+            <div className="text-2xl font-black text-[var(--atlas-text)]">
+              {totalTeamLogins} <span className="text-xs font-medium text-[var(--atlas-text-secondary)]">acessos</span>
             </div>
           </div>
 
-          <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+          <div className="p-4 bg-[var(--atlas-surface-hover)] rounded-xl border border-[var(--atlas-border)] space-y-1">
+            <span className="text-xs font-semibold text-[var(--atlas-text-secondary)] uppercase tracking-wider flex items-center gap-1.5">
               <Calendar className="w-3.5 h-3.5 text-amber-600" /> Auditorias Realizadas
             </span>
-            <div className="text-2xl font-black text-slate-900">
-              {totalTeamConferencias} <span className="text-xs font-medium text-slate-500">arquivos</span>
+            <div className="text-2xl font-black text-[var(--atlas-text)]">
+              {totalTeamConferencias} <span className="text-xs font-medium text-[var(--atlas-text-secondary)]">arquivos</span>
             </div>
           </div>
         </div>
@@ -852,19 +850,19 @@ export function UserManagementView() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold">
+              <tr className="bg-[var(--atlas-surface-hover)] border-b border-[var(--atlas-border)] text-[var(--atlas-text-secondary)] font-semibold">
                 <th className="p-3">Colaborador / E-mail</th>
                 <th className="p-3 text-center">Logins (Sessões)</th>
                 <th className="p-3 text-center">Auditorias / Ações</th>
                 <th className="p-3">Duração Média por Sessão (estimada)</th>
-                <th className="p-3 font-bold text-slate-900">Tempo Total de Atividade (estimado)</th>
+                <th className="p-3 font-bold text-[var(--atlas-text)]">Tempo Total de Atividade (estimado)</th>
                 <th className="p-3 text-right">Última Interação</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-[var(--atlas-border)]">
               {userActivityStats.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="p-6 text-center text-slate-500">
+                  <td colSpan={6} className="p-6 text-center text-[var(--atlas-text-secondary)]">
                     Nenhum registro de atividade encontrado para o período selecionado.
                   </td>
                 </tr>
@@ -872,10 +870,10 @@ export function UserManagementView() {
                 userActivityStats.map((item, idx) => {
                   const mediaSegundos = item.loginsCount > 0 ? Math.round(item.totalSegundos / item.loginsCount) : item.totalSegundos;
                   return (
-                    <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
+                    <tr key={idx} className="hover:bg-[var(--atlas-surface-hover)]/80 transition-colors">
                       <td className="p-3">
-                        <div className="font-bold text-slate-900">{item.nome}</div>
-                        <div className="text-slate-500 font-mono text-[11px]">{item.email}</div>
+                        <div className="font-bold text-[var(--atlas-text)]">{item.nome}</div>
+                        <div className="text-[var(--atlas-text-secondary)] font-mono text-xs">{item.email}</div>
                       </td>
                       <td className="p-3 text-center font-semibold text-blue-700 bg-blue-50/30">
                         {item.loginsCount}
@@ -883,21 +881,21 @@ export function UserManagementView() {
                       <td className="p-3 text-center font-semibold text-emerald-700 bg-emerald-50/30">
                         {item.conferenciasCount}
                       </td>
-                      <td className="p-3 text-slate-700 font-medium">
+                      <td className="p-3 text-[var(--atlas-text-secondary)] font-medium">
                         {formatDuration(mediaSegundos)}
                       </td>
                       <td className="p-3">
-                        <div className="font-black text-slate-900 flex items-center gap-2">
+                        <div className="font-black text-[var(--atlas-text)] flex items-center gap-2">
                           {formatDuration(item.totalSegundos)}
-                          <div className="w-24 bg-slate-100 rounded-full h-2 overflow-hidden hidden sm:block border border-slate-200">
+                          <div className="w-24 bg-[var(--atlas-surface-hover)] rounded-full h-2 overflow-hidden hidden sm:block border border-[var(--atlas-border)]">
                             <div 
-                              className="bg-[#1e3a5f] h-2 rounded-full" 
+                              className="bg-[var(--atlas-navy)] h-2 rounded-full" 
                               style={{ width: `${Math.min(100, Math.round((item.totalSegundos / (totalTeamSegundos || 1)) * 100))}%` }}
                             />
                           </div>
                         </div>
                       </td>
-                      <td className="p-3 text-right text-slate-500 font-mono text-[11px]">
+                      <td className="p-3 text-right text-[var(--atlas-text-secondary)] font-mono text-xs">
                         {item.ultimaAtividade ? new Date(item.ultimaAtividade).toLocaleString('pt-BR') : '—'}
                       </td>
                     </tr>
@@ -910,22 +908,22 @@ export function UserManagementView() {
       </div>
 
       {/* Gráfico Recharts: Notas Fiscais Conferidas por Colaborador (dado real) */}
-      <div className="bg-white rounded-2xl shadow-xs border border-slate-200 p-6 space-y-6">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+      <div className="bg-[var(--atlas-surface)] rounded-2xl shadow-xs border border-[var(--atlas-border)] p-6 space-y-6">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-[var(--atlas-border)] pb-4">
           <div className="flex items-center gap-3">
             <span className="p-2.5 bg-emerald-50 text-emerald-700 rounded-xl border border-emerald-100">
               <BarChart3 className="w-5 h-5" />
             </span>
             <div>
-              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <h2 className="text-base font-bold text-[var(--atlas-text)] flex items-center gap-2">
                 Produtividade: Conferências por Colaborador (Mês Atual)
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-xs text-[var(--atlas-text-secondary)] mt-0.5">
                 Contagem real de conferências registradas por colaborador. Não inclui taxa de aprovação — o sistema ainda não rastreia quem aprovou cada achado.
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+          <div className="flex items-center gap-2 text-xs font-semibold text-[var(--atlas-text-secondary)] bg-[var(--atlas-surface-hover)] px-3 py-1.5 rounded-xl border border-[var(--atlas-border)]">
             <Target className="w-4 h-4 text-amber-600" />
             {editandoMeta ? (
               <>
@@ -935,15 +933,15 @@ export function UserManagementView() {
                   value={metaInput}
                   onChange={e => setMetaInput(e.target.value)}
                   placeholder="ex: 180"
-                  className="w-20 px-2 py-1 border border-slate-300 rounded-lg text-xs"
+                  className="w-20 px-2 py-1 border border-[var(--atlas-border)] rounded-lg text-xs"
                 />
                 <button onClick={handleSalvarMeta} className="text-emerald-700 font-bold">Salvar</button>
-                <button onClick={() => setEditandoMeta(false)} className="text-slate-400">Cancelar</button>
+                <button onClick={() => setEditandoMeta(false)} className="text-[var(--atlas-text-muted)]">Cancelar</button>
               </>
             ) : metaMensal !== null ? (
               <>
-                <span>Meta Mensal: <strong className="text-slate-900">{metaMensal} NFs</strong></span>
-                <button onClick={() => { setMetaInput(String(metaMensal)); setEditandoMeta(true); }} className="text-slate-400 underline text-[11px]">editar</button>
+                <span>Meta Mensal: <strong className="text-[var(--atlas-text)]">{metaMensal} NFs</strong></span>
+                <button onClick={() => { setMetaInput(String(metaMensal)); setEditandoMeta(true); }} className="text-[var(--atlas-text-muted)] underline text-xs">editar</button>
               </>
             ) : (
               <button onClick={() => { setMetaInput(''); setEditandoMeta(true); }} className="text-amber-700 underline">
@@ -978,26 +976,26 @@ export function UserManagementView() {
         </div>
 
         {/* Summary Cards — só dado real */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-4 border-t border-slate-100">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-4 border-t border-[var(--atlas-border)]">
           {monthlyGoalComparisonData.map((item, idx) => {
             const progresso = metaMensal ? Math.min(100, Math.round((item.conferidas / metaMensal) * 100)) : null;
             return (
-              <div key={idx} className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+              <div key={idx} className="p-3.5 bg-[var(--atlas-surface-hover)] rounded-xl border border-[var(--atlas-border)] space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-slate-900 text-xs">{item.nomeCompleto}</span>
+                  <span className="font-bold text-[var(--atlas-text)] text-xs">{item.nomeCompleto}</span>
                   {progresso !== null && (
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${progresso >= 100 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${progresso >= 100 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
                       {progresso}% da Meta
                     </span>
                   )}
                 </div>
-                <div className="flex items-center justify-between text-xs text-slate-600">
-                  <span>Conferidas: <strong className="text-[#1e3a5f] font-bold">{item.conferidas}</strong></span>
+                <div className="flex items-center justify-between text-xs text-[var(--atlas-text-secondary)]">
+                  <span>Conferidas: <strong className="text-[var(--atlas-navy)] font-bold">{item.conferidas}</strong></span>
                 </div>
                 {progresso !== null && (
                   <div className="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
                     <div 
-                      className={`h-1.5 rounded-full ${progresso >= 100 ? 'bg-emerald-600' : 'bg-[#1e3a5f]'}`}
+                      className={`h-1.5 rounded-full ${progresso >= 100 ? 'bg-emerald-600' : 'bg-[var(--atlas-navy)]'}`}
                       style={{ width: `${progresso}%` }}
                     />
                   </div>
@@ -1009,28 +1007,28 @@ export function UserManagementView() {
       </div>
 
       {/* Main Table Container */}
-      <div className="bg-white rounded-2xl shadow-xs border border-slate-200 p-6 space-y-4">
+      <div className="bg-[var(--atlas-surface)] rounded-2xl shadow-xs border border-[var(--atlas-border)] p-6 space-y-4">
         {/* Filter Bar */}
-        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 pb-2 border-b border-slate-100">
+        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 pb-2 border-b border-[var(--atlas-border)]">
           <div className="relative flex-1">
-            <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+            <Search className="w-4 h-4 absolute left-3 top-3 text-[var(--atlas-text-muted)]" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Buscar por nome ou e-mail..."
-              className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full pl-9 pr-4 py-2 border border-[var(--atlas-border)] rounded-xl text-xs focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <div className="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
-              <Filter className="w-3.5 h-3.5 text-slate-500" />
-              <span className="text-xs font-semibold text-slate-600">Papel:</span>
+            <div className="flex items-center gap-1.5 bg-[var(--atlas-surface-hover)] px-3 py-1.5 rounded-xl border border-[var(--atlas-border)]">
+              <Filter className="w-3.5 h-3.5 text-[var(--atlas-text-secondary)]" />
+              <span className="text-xs font-semibold text-[var(--atlas-text-secondary)]">Papel:</span>
               <select
                 value={filterPapel}
                 onChange={(e) => setFilterPapel(e.target.value)}
-                className="bg-transparent text-xs font-medium text-slate-800 outline-none cursor-pointer"
+                className="bg-transparent text-xs font-medium text-[var(--atlas-text)] outline-none cursor-pointer"
               >
                 <option value="todos">Todos os Papéis</option>
                 <option value="super_admin">Super Admin</option>
@@ -1040,13 +1038,13 @@ export function UserManagementView() {
             </div>
 
             {isSuperAdmin && escritoriosList.length > 0 && (
-              <div className="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
-                <Building2 className="w-3.5 h-3.5 text-slate-500" />
-                <span className="text-xs font-semibold text-slate-600">Escritório:</span>
+              <div className="flex items-center gap-1.5 bg-[var(--atlas-surface-hover)] px-3 py-1.5 rounded-xl border border-[var(--atlas-border)]">
+                <Building2 className="w-3.5 h-3.5 text-[var(--atlas-text-secondary)]" />
+                <span className="text-xs font-semibold text-[var(--atlas-text-secondary)]">Escritório:</span>
                 <select
                   value={filterEscritorio}
                   onChange={(e) => setFilterEscritorio(e.target.value)}
-                  className="bg-transparent text-xs font-medium text-slate-800 outline-none cursor-pointer max-w-[180px] truncate"
+                  className="bg-transparent text-xs font-medium text-[var(--atlas-text)] outline-none cursor-pointer max-w-[180px] truncate"
                 >
                   <option value="todos">Todos os Escritórios</option>
                   {escritoriosList.map(esc => (
@@ -1062,7 +1060,7 @@ export function UserManagementView() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold">
+              <tr className="bg-[var(--atlas-surface-hover)] border-b border-[var(--atlas-border)] text-[var(--atlas-text-secondary)] font-semibold">
                 <th className="p-3">Usuário / E-mail</th>
                 <th className="p-3">Papel / Nível</th>
                 <th className="p-3">Escritório Vinculado</th>
@@ -1070,54 +1068,54 @@ export function UserManagementView() {
                 <th className="p-3 text-right">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-[var(--atlas-border)]">
               {loadingUsers ? (
                 <tr>
-                  <td colSpan={5} className="p-8 text-center text-slate-500">
+                  <td colSpan={5} className="p-8 text-center text-[var(--atlas-text-secondary)]">
                     <RefreshCw className="w-5 h-5 animate-spin mx-auto text-blue-600 mb-2" />
                     Carregando usuários cadastrados...
                   </td>
                 </tr>
               ) : filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="p-8 text-center text-slate-500">
+                  <td colSpan={5} className="p-8 text-center text-[var(--atlas-text-secondary)]">
                     Nenhum usuário encontrado para os filtros selecionados.
                   </td>
                 </tr>
               ) : (
                 filteredUsers.map(u => (
-                  <tr key={u.uid} className="hover:bg-slate-50/80 transition-colors">
+                  <tr key={u.uid} className="hover:bg-[var(--atlas-surface-hover)]/80 transition-colors">
                     <td className="p-3">
-                      <div className="font-bold text-slate-900">{u.nome || 'Usuário Sem Nome'}</div>
-                      <div className="text-slate-500 font-mono text-[11px]">{u.email}</div>
+                      <div className="font-bold text-[var(--atlas-text)]">{u.nome || 'Usuário Sem Nome'}</div>
+                      <div className="text-[var(--atlas-text-secondary)] font-mono text-xs">{u.email}</div>
                     </td>
                     <td className="p-3">
                       {u.papel === 'super_admin' ? (
-                        <span className="px-2.5 py-1 bg-purple-100 text-purple-800 font-semibold text-[11px] rounded-full inline-flex items-center gap-1 border border-purple-200">
+                        <span className="px-2.5 py-1 bg-purple-100 text-purple-800 font-semibold text-xs rounded-full inline-flex items-center gap-1 border border-purple-200">
                           <Crown className="w-3 h-3 text-purple-600" /> Super Admin
                         </span>
                       ) : u.papel === 'admin_escritorio' ? (
-                        <span className="px-2.5 py-1 bg-blue-100 text-[#1e3a5f] font-semibold text-[11px] rounded-full inline-flex items-center gap-1 border border-blue-200">
-                          <Building2 className="w-3 h-3 text-[#1e3a5f]" /> Admin Escritório
+                        <span className="px-2.5 py-1 bg-blue-100 text-[var(--atlas-navy)] font-semibold text-xs rounded-full inline-flex items-center gap-1 border border-blue-200">
+                          <Building2 className="w-3 h-3 text-[var(--atlas-navy)]" /> Admin Escritório
                         </span>
                       ) : (
-                        <span className="px-2.5 py-1 bg-slate-100 text-slate-700 font-semibold text-[11px] rounded-full inline-flex items-center gap-1 border border-slate-200">
-                          <UserCheck className="w-3 h-3 text-slate-500" /> Colaborador
+                        <span className="px-2.5 py-1 bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] font-semibold text-xs rounded-full inline-flex items-center gap-1 border border-[var(--atlas-border)]">
+                          <UserCheck className="w-3 h-3 text-[var(--atlas-text-secondary)]" /> Colaborador
                         </span>
                       )}
                     </td>
                     <td className="p-3">
-                      <span className="text-slate-800 font-medium">
+                      <span className="text-[var(--atlas-text)] font-medium">
                         {u.escritorioNome || (u.papel === 'super_admin' ? 'Acesso Global' : '— Sem Vínculo —')}
                       </span>
                     </td>
                     <td className="p-3 text-center">
                       {u.ativo !== false ? (
-                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-bold text-[10px] rounded-full inline-flex items-center gap-1">
+                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-bold text-xs rounded-full inline-flex items-center gap-1">
                           <CheckCircle2 className="w-3 h-3 text-emerald-600" /> Ativo
                         </span>
                       ) : (
-                        <span className="px-2 py-0.5 bg-rose-100 text-rose-800 font-bold text-[10px] rounded-full inline-flex items-center gap-1">
+                        <span className="px-2 py-0.5 bg-rose-100 text-rose-800 font-bold text-xs rounded-full inline-flex items-center gap-1">
                           <XCircle className="w-3 h-3 text-rose-600" /> Inativo
                         </span>
                       )}
@@ -1135,7 +1133,7 @@ export function UserManagementView() {
 
                         <button
                           onClick={() => openEditModal(u)}
-                          className="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-all border border-slate-200 cursor-pointer"
+                          className="p-1.5 bg-[var(--atlas-surface-hover)] hover:bg-[var(--atlas-border)] text-[var(--atlas-text-secondary)] rounded-lg transition-all border border-[var(--atlas-border)] cursor-pointer"
                           title="Editar Usuário"
                         >
                           <Edit3 className="w-3.5 h-3.5" />
@@ -1161,15 +1159,15 @@ export function UserManagementView() {
       {/* Modal Edição de Usuário */}
       {editingUser && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-lg w-full p-6 space-y-4 animate-scaleUp">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+          <div className="bg-[var(--atlas-surface)] rounded-2xl shadow-xl border border-[var(--atlas-border)] max-w-lg w-full p-6 space-y-4 animate-scaleUp">
+            <div className="flex items-center justify-between border-b border-[var(--atlas-border)] pb-3">
+              <h3 className="text-base font-bold text-[var(--atlas-text)] flex items-center gap-2">
                 <Edit3 className="w-4 h-4 text-blue-600" />
                 Editar Dados do Usuário
               </h3>
               <button 
                 onClick={() => setEditingUser(null)} 
-                className="text-slate-400 hover:text-slate-600 font-bold text-sm cursor-pointer"
+                className="text-[var(--atlas-text-muted)] hover:text-[var(--atlas-text-secondary)] font-bold text-sm cursor-pointer"
               >
                 ✕
               </button>
@@ -1177,32 +1175,32 @@ export function UserManagementView() {
 
             <form onSubmit={handleSaveEdit} className="space-y-4 text-xs">
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">E-mail de Acesso (Não alterável)</label>
+                <label className="block font-semibold text-[var(--atlas-text-secondary)] mb-1">E-mail de Acesso (Não alterável)</label>
                 <input
                   type="text"
                   disabled
                   value={editingUser.email}
-                  className="w-full p-2.5 border border-slate-200 bg-slate-100 rounded-xl font-mono text-slate-600"
+                  className="w-full p-2.5 border border-[var(--atlas-border)] bg-[var(--atlas-surface-hover)] rounded-xl font-mono text-[var(--atlas-text-secondary)]"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Nome Completo *</label>
+                <label className="block font-semibold text-[var(--atlas-text-secondary)] mb-1">Nome Completo *</label>
                 <input
                   type="text"
                   required
                   value={editNome}
                   onChange={(e) => setEditNome(e.target.value)}
-                  className="w-full p-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full p-2.5 border border-[var(--atlas-border)] rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Papel / Nível de Permissão *</label>
+                <label className="block font-semibold text-[var(--atlas-text-secondary)] mb-1">Papel / Nível de Permissão *</label>
                 <select
                   value={editPapel}
                   onChange={(e) => setEditPapel(e.target.value as any)}
-                  className="w-full p-2.5 border border-slate-300 rounded-xl bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full p-2.5 border border-[var(--atlas-border)] rounded-xl bg-[var(--atlas-surface)] focus:ring-2 focus:ring-blue-500 outline-none"
                 >
                   <option value="colaborador">Colaborador (Operacional)</option>
                   <option value="admin_escritorio">Admin do Escritório</option>
@@ -1212,11 +1210,11 @@ export function UserManagementView() {
 
               {isSuperAdmin && (
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Escritório Vinculado</label>
+                  <label className="block font-semibold text-[var(--atlas-text-secondary)] mb-1">Escritório Vinculado</label>
                   <select
                     value={editEscritorioId}
                     onChange={(e) => setEditEscritorioId(e.target.value)}
-                    className="w-full p-2.5 border border-slate-300 rounded-xl bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full p-2.5 border border-[var(--atlas-border)] rounded-xl bg-[var(--atlas-surface)] focus:ring-2 focus:ring-blue-500 outline-none"
                   >
                     <option value="">— Sem Vínculo (Acesso Global) —</option>
                     {escritoriosList.map(esc => (
@@ -1234,16 +1232,16 @@ export function UserManagementView() {
                   onChange={(e) => setEditAtivo(e.target.checked)}
                   className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4"
                 />
-                <label htmlFor="chkAtivo" className="font-semibold text-slate-800 cursor-pointer">
+                <label htmlFor="chkAtivo" className="font-semibold text-[var(--atlas-text)] cursor-pointer">
                   Usuário Ativo no Sistema
                 </label>
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+              <div className="flex justify-end gap-3 pt-4 border-t border-[var(--atlas-border)]">
                 <button
                   type="button"
                   onClick={() => setEditingUser(null)}
-                  className="px-4 py-2 border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-xl font-semibold cursor-pointer"
+                  className="px-4 py-2 border border-[var(--atlas-border)] hover:bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] rounded-xl font-semibold cursor-pointer"
                 >
                   Cancelar
                 </button>

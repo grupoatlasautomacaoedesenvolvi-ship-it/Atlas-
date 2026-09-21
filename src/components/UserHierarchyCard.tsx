@@ -27,7 +27,7 @@ export function UserHierarchyCard() {
               <span className="atlas-pill atlas-pill-warning flex items-center gap-1">
                 <Crown className="w-3 h-3 text-[var(--atlas-warning)]" /> Nível 1
               </span>
-              <span className="text-[11px] font-semibold text-[var(--atlas-warning)]">Acesso Global</span>
+              <span className="text-xs font-semibold text-[var(--atlas-warning)]">Acesso Global</span>
             </div>
             <h4 className="font-bold text-[var(--atlas-text)] text-sm flex items-center gap-1.5">
               Super Admin
@@ -52,7 +52,7 @@ export function UserHierarchyCard() {
             </div>
           </div>
 
-          <div className="pt-2 border-t border-[var(--atlas-border)] text-[11px] text-[var(--atlas-text-secondary)] bg-[var(--atlas-surface-hover)] p-2 rounded-lg font-medium">
+          <div className="pt-2 border-t border-[var(--atlas-border)] text-xs text-[var(--atlas-text-secondary)] bg-[var(--atlas-surface-hover)] p-2 rounded-lg font-medium">
             🔒 <em>Proteção de Privacidade:</em> Não acessa dados fiscais e SPEDs confidenciais de escritórios de terceiros.
           </div>
         </div>
@@ -64,7 +64,7 @@ export function UserHierarchyCard() {
               <span className="atlas-pill atlas-pill-navy flex items-center gap-1">
                 <Building2 className="w-3 h-3 text-[var(--atlas-navy)]" /> Nível 2
               </span>
-              <span className="text-[11px] font-semibold text-[var(--atlas-navy)]">Escritório Local</span>
+              <span className="text-xs font-semibold text-[var(--atlas-navy)]">Escritório Local</span>
             </div>
             <h4 className="font-bold text-[var(--atlas-text)] text-sm flex items-center gap-1.5">
               Admin do Escritório
@@ -89,7 +89,7 @@ export function UserHierarchyCard() {
             </div>
           </div>
 
-          <div className="pt-2 border-t border-[var(--atlas-border)] text-[11px] text-[var(--atlas-text-secondary)] bg-[var(--atlas-surface-hover)] p-2 rounded-lg font-medium">
+          <div className="pt-2 border-t border-[var(--atlas-border)] text-xs text-[var(--atlas-text-secondary)] bg-[var(--atlas-surface-hover)] p-2 rounded-lg font-medium">
             Gestão completa da equipe e auditorias da sua empresa contábil.
           </div>
         </div>
@@ -101,7 +101,7 @@ export function UserHierarchyCard() {
               <span className="atlas-pill atlas-pill-accent flex items-center gap-1">
                 <UserCheck className="w-3 h-3 text-[var(--atlas-accent)]" /> Nível 3
               </span>
-              <span className="text-[11px] font-semibold text-[var(--atlas-text-muted)]">Operacional</span>
+              <span className="text-xs font-semibold text-[var(--atlas-text-muted)]">Operacional</span>
             </div>
             <h4 className="font-bold text-[var(--atlas-text)] text-sm flex items-center gap-1.5">
               Colaborador
@@ -126,7 +126,7 @@ export function UserHierarchyCard() {
             </div>
           </div>
 
-          <div className="pt-2 border-t border-[var(--atlas-border)] text-[11px] text-[var(--atlas-danger)] bg-[var(--atlas-danger-bg)] p-2 rounded-lg font-medium">
+          <div className="pt-2 border-t border-[var(--atlas-border)] text-xs text-[var(--atlas-danger)] bg-[var(--atlas-danger-bg)] p-2 rounded-lg font-medium">
             <strong>Sem permissão administrativa:</strong> Não pode cadastrar novos usuários.
           </div>
         </div>

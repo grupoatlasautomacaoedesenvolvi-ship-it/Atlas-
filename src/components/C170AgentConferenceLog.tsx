@@ -85,48 +85,49 @@ export function C170AgentConferenceLog({
   });
 
   return (
-    <div className="bg-slate-950 text-slate-100 rounded-xl shadow-md border border-slate-800 overflow-hidden flex flex-col h-[650px]">
+    <div className="bg-[var(--atlas-surface)] rounded-2xl shadow-xl border border-[var(--atlas-border)] overflow-hidden flex flex-col h-[700px]">
       {/* Log Header */}
-      <div className="bg-slate-900 border-b border-slate-800 p-4 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center space-x-3">
-          <div className="p-2.5 bg-[#0f6e56]/20 border border-[#0f6e56]/30 rounded-lg text-emerald-400">
-            <Terminal className="w-5 h-5" />
+      <div className="bg-[var(--atlas-navy)] p-6 flex flex-wrap items-center justify-between gap-6 shadow-lg relative z-10">
+        <div className="flex items-center space-x-5">
+          <div className="w-14 h-14 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-emerald-400 shadow-inner">
+            <Terminal className="w-7 h-7" />
           </div>
           <div>
-            <div className="flex items-center space-x-2">
-              <h3 className="font-bold text-white text-base">Terminal de Conferência C170 em Tempo Real</h3>
+            <div className="flex items-center space-x-3">
+              <h3 className="font-bold text-white text-xl tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
+                Console de Auditoria C170
+              </h3>
               {isProcessing && (
-                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 animate-pulse">
-                  <span className="w-2 h-2 mr-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-                  Processando
-                </span>
+                <div className="atlas-pill atlas-pill-accent animate-pulse border-emerald-400/50 bg-emerald-500/20 text-emerald-300">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping mr-2"></span>
+                  Monitorando
+                </div>
               )}
             </div>
-            <p className="text-xs text-slate-400">
-              Acompanhamento detalhado do fluxo de decisão do Esquadrão de Agentes AI
+            <p className="text-xs text-white/60 font-medium uppercase tracking-widest mt-1">
+              Fluxo em tempo real do processamento de Agentes AI
             </p>
           </div>
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-3">
           <button
             onClick={() => setAutoScroll(!autoScroll)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition ${
+            className={`atlas-btn px-4 py-2 text-xs font-bold transition-all ${
               autoScroll
-                ? 'bg-[#0f6e56]/30 text-emerald-300 border border-[#0f6e56]/40'
-                : 'bg-slate-800 text-slate-400 hover:text-white'
+                ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                : 'bg-white/10 text-white/60 border-white/10 hover:text-white'
             }`}
-            title="Rolar automaticamente para novos logs"
           >
             {autoScroll ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-            <span>{autoScroll ? 'Auto-Scroll ON' : 'Auto-Scroll OFF'}</span>
+            <span>Auto-Scroll {autoScroll ? 'ON' : 'OFF'}</span>
           </button>
 
           <button
             onClick={handleExportLogs}
             disabled={logs.length === 0}
-            className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium transition disabled:opacity-40"
-            title="Exportar logs em JSON"
+            className="atlas-btn atlas-btn-secondary bg-white/10 border-white/10 text-white/80 hover:bg-white/20 p-2"
+            title="Exportar logs"
           >
             <Download className="w-4 h-4" />
           </button>
@@ -134,8 +135,8 @@ export function C170AgentConferenceLog({
           <button
             onClick={handleClear}
             disabled={logs.length === 0}
-            className="p-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg text-xs font-medium border border-rose-500/20 transition disabled:opacity-40"
-            title="Limpar logs"
+            className="atlas-btn atlas-btn-danger p-2"
+            title="Limpar Terminal"
           >
             <Trash2 className="w-4 h-4" />
           </button>
@@ -143,118 +144,130 @@ export function C170AgentConferenceLog({
       </div>
 
       {/* Control Bar: Filters & Search */}
-      <div className="bg-slate-900/80 border-b border-slate-800/80 p-3 px-4 flex flex-wrap items-center justify-between gap-3 text-xs">
-        <div className="flex flex-wrap items-center gap-2">
+      <div className="bg-[var(--atlas-surface-hover)] border-b border-[var(--atlas-border)] p-4 px-6 flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-wrap items-center gap-4">
           <div className="relative">
-            <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-slate-500" />
+            <Search className="w-4 h-4 absolute left-3 top-2.5 text-[var(--atlas-text-muted)]" />
             <input
               type="text"
-              placeholder="Buscar no log C170..."
+              placeholder="Pesquisar mensagens..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-slate-950 text-slate-200 pl-8 pr-3 py-1.5 rounded-lg border border-slate-800 focus:outline-hidden focus:border-[#0f6e56] w-48 sm:w-64 text-xs"
+              className="atlas-input pl-10 pr-4 py-2 w-64 text-xs font-bold"
             />
           </div>
 
-          <div className="flex items-center space-x-1.5 bg-slate-950 p-1 rounded-lg border border-slate-800">
-            <span className="text-slate-400 font-medium px-1.5">Agente:</span>
+          <div className="flex items-center space-x-2">
+            <span className="text-[var(--atlas-text-secondary)] font-bold text-[10px] uppercase tracking-wider">Agente:</span>
             <select
               value={filterAgent}
               onChange={(e) => setFilterAgent(e.target.value)}
-              className="bg-transparent text-slate-200 focus:outline-hidden cursor-pointer"
+              className="atlas-input py-1.5 px-3 text-xs font-bold min-w-[140px]"
             >
-              <option value="ALL" className="bg-slate-900">Todos os Agentes</option>
-              <option value="system" className="bg-slate-900">Sistema / Memória</option>
-              <option value="agent1" className="bg-slate-900">Agente 1 (NCM/CST)</option>
-              <option value="agent2" className="bg-slate-900">Agente 2 (CFOP/Op)</option>
-              <option value="agent3" className="bg-slate-900">Agente 3 (Consenso)</option>
+              <option value="ALL">Todos os Agentes</option>
+              <option value="system">Sistema / Núcleo</option>
+              <option value="agent1">Agente 1 (NCM/CST)</option>
+              <option value="agent2">Agente 2 (CFOP/Op)</option>
+              <option value="agent3">Agente 3 (Consenso)</option>
             </select>
           </div>
 
-          <div className="flex items-center space-x-1.5 bg-slate-950 p-1 rounded-lg border border-slate-800">
-            <span className="text-slate-400 font-medium px-1.5">Status:</span>
+          <div className="flex items-center space-x-2">
+            <span className="text-[var(--atlas-text-secondary)] font-bold text-[10px] uppercase tracking-wider">Status:</span>
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="bg-transparent text-slate-200 focus:outline-hidden cursor-pointer"
+              className="atlas-input py-1.5 px-3 text-xs font-bold min-w-[140px]"
             >
-              <option value="ALL" className="bg-slate-900">Todos os Status</option>
-              <option value="ANALYSING" className="bg-slate-900">Analisando</option>
-              <option value="APPROVED" className="bg-slate-900">Aprovado</option>
-              <option value="INCONSISTENT" className="bg-slate-900">Inconsistente</option>
-              <option value="AUTO_CORRECTED" className="bg-slate-900">Auto-Corrigido</option>
+              <option value="ALL">Todos os Status</option>
+              <option value="ANALYSING">Analisando</option>
+              <option value="APPROVED">Aprovado</option>
+              <option value="INCONSISTENT">Inconsistente</option>
+              <option value="AUTO_CORRECTED">Auto-Corrigido</option>
             </select>
           </div>
         </div>
 
-        <div className="text-slate-400 font-mono">
-          Exibindo <span className="text-emerald-400 font-bold">{filteredLogs.length}</span> de {logs.length} eventos
+        <div className="text-[var(--atlas-text-secondary)] text-[10px] font-bold uppercase tracking-widest bg-[var(--atlas-surface)] px-3 py-1 rounded-full border border-[var(--atlas-border)]">
+          Total de Eventos: <span className="text-[var(--atlas-navy)]">{filteredLogs.length}</span>
         </div>
       </div>
 
       {/* Terminal Output Area */}
-      <div className="flex-1 p-4 font-mono text-xs overflow-y-auto space-y-2.5 bg-slate-950 scrollbar-thin scrollbar-thumb-slate-800">
+      <div className="flex-1 p-6 font-mono text-[11px] overflow-y-auto space-y-4 bg-slate-950 text-slate-300 scrollbar-thin scrollbar-thumb-slate-800">
         {filteredLogs.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-slate-500 space-y-3">
-            <Bot className="w-12 h-12 text-slate-700 animate-bounce" />
-            <p className="text-sm">Nenhum evento registrado no Terminal C170.</p>
-            <p className="text-xs text-slate-600 max-w-sm text-center">
-              Execute uma auditoria em lote no SPED ou simule um item para visualizar o trabalho do Esquadrão AI em tempo real.
-            </p>
+          <div className="h-full flex flex-col items-center justify-center text-slate-700 space-y-4">
+            <Bot className="w-16 h-16 opacity-20 animate-pulse" />
+            <div className="text-center space-y-1">
+              <p className="text-xs font-bold uppercase tracking-widest">Console em standby</p>
+              <p className="text-[10px] opacity-60">Aguardando processamento de auditoria C170...</p>
+            </div>
           </div>
         ) : (
           filteredLogs.map((log) => {
             let statusBadge = null;
             switch (log.status) {
               case 'APPROVED':
-                statusBadge = <span className="text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded font-bold">✓ APROVADO</span>;
+                statusBadge = <span className="text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-md font-bold shadow-xs">✓ APROVADO</span>;
                 break;
               case 'INCONSISTENT':
-                statusBadge = <span className="text-amber-400 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded font-bold">INCONSISTENTE</span>;
+                statusBadge = <span className="text-rose-400 bg-rose-500/10 border border-rose-500/20 px-2 py-0.5 rounded-md font-bold shadow-xs">INCONSISTENTE</span>;
                 break;
               case 'AUTO_CORRECTED':
-                statusBadge = <span className="text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-1.5 py-0.5 rounded font-bold">AUTO-CORRIGIDO</span>;
+                statusBadge = <span className="text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md font-bold shadow-xs">AUTO-CORRIGIDO</span>;
                 break;
               case 'ANALYSING':
-                statusBadge = <span className="text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded font-bold animate-pulse">ANALISANDO</span>;
+                statusBadge = <span className="text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2 py-0.5 rounded-md font-bold animate-pulse">ANALISANDO...</span>;
                 break;
               default:
-                statusBadge = <span className="text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded font-bold">{log.status}</span>;
+                statusBadge = <span className="text-slate-400 bg-slate-800 px-2 py-0.5 rounded-md font-bold">{log.status}</span>;
             }
 
-            let agentColor = 'text-emerald-400';
-            if (log.agentId === 'agent1') agentColor = 'text-teal-400';
-            if (log.agentId === 'agent2') agentColor = 'text-cyan-400';
-            if (log.agentId === 'agent3') agentColor = 'text-amber-400';
+            let agentLabel = 'AGENTE';
+            let agentColor = 'text-emerald-400 border-emerald-500/30 bg-emerald-500/5';
+            if (log.agentId === 'agent1') agentColor = 'text-teal-400 border-teal-500/30 bg-teal-500/5';
+            if (log.agentId === 'agent2') agentColor = 'text-cyan-400 border-cyan-500/30 bg-cyan-500/5';
+            if (log.agentId === 'agent3') agentColor = 'text-amber-400 border-amber-500/30 bg-amber-500/5';
+            if (log.agentId === 'system') agentColor = 'text-slate-500 border-slate-700 bg-slate-800/5';
 
             return (
               <div
                 key={log.id}
-                className="p-2.5 rounded-lg bg-slate-900/60 border border-slate-800/80 hover:bg-slate-900 transition space-y-1.5 group"
+                className="p-4 rounded-xl bg-slate-900/40 border border-white/5 hover:bg-slate-900/80 transition-all space-y-3 group hover:shadow-xl"
               >
-                <div className="flex flex-wrap items-center justify-between gap-2 text-[11px]">
-                  <div className="flex items-center space-x-2">
-                    <span className="text-slate-500 font-mono">[{log.timestamp}]</span>
-                    <span className="text-slate-400 font-semibold">Doc {log.docNum} | Item #{log.itemNum}</span>
-                    <span className={`font-bold ${agentColor}`}>{log.agentName}</span>
+                <div className="flex flex-wrap items-center justify-between gap-3 text-[10px]">
+                  <div className="flex items-center space-x-3">
+                    <span className="text-slate-600 font-bold tracking-tighter">[{log.timestamp.split('T')[1]?.split('.')[0] || log.timestamp}]</span>
+                    <span className="text-slate-500 font-bold uppercase">DOC: {log.docNum}</span>
+                    <span className="text-slate-500 font-bold uppercase">ITEM: #{log.itemNum}</span>
+                    <span className={`px-2 py-0.5 rounded border font-bold uppercase tracking-widest ${agentColor}`}>
+                      {log.agentName}
+                    </span>
                   </div>
                   <div>{statusBadge}</div>
                 </div>
 
-                <div className="text-slate-200 font-sans text-xs pl-2 border-l-2 border-slate-700 leading-relaxed">
-                  <span className="font-semibold text-slate-300">"{log.descrItem}":</span> {log.message}
+                <div className="text-slate-300 font-sans text-xs pl-4 border-l-2 border-slate-800 leading-relaxed group-hover:border-emerald-500/50 transition-colors">
+                  <span className="font-bold text-white/40 block mb-1 uppercase text-[9px] tracking-wider">{log.descrItem}</span>
+                  <div className="text-[12px] font-medium text-slate-300">{log.message}</div>
                 </div>
 
                 {log.details && (
-                  <div className="pl-2 pt-1 flex flex-wrap gap-3 text-[11px] text-slate-400 font-mono">
+                  <div className="pl-4 pt-1 flex flex-wrap gap-4 text-[10px] text-slate-500 font-bold uppercase tracking-tight">
                     {log.details.originalNcm && (
-                      <span>NCM: <span className="line-through text-rose-400">{log.details.originalNcm}</span> ➔ <span className="text-emerald-400 font-bold">{log.details.suggestedNcm}</span></span>
+                      <div className="bg-white/5 px-2 py-1 rounded border border-white/5">
+                        NCM: <span className="line-through text-rose-500 opacity-60">{log.details.originalNcm}</span> ➔ <span className="text-emerald-400">{log.details.suggestedNcm}</span>
+                      </div>
                     )}
                     {log.details.originalCst && (
-                      <span>CST: <span className="line-through text-rose-400">{log.details.originalCst}</span> ➔ <span className="text-emerald-400 font-bold">{log.details.suggestedCst}</span></span>
+                      <div className="bg-white/5 px-2 py-1 rounded border border-white/5">
+                        CST: <span className="line-through text-rose-500 opacity-60">{log.details.originalCst}</span> ➔ <span className="text-emerald-400">{log.details.suggestedCst}</span>
+                      </div>
                     )}
                     {log.details.originalCfop && (
-                      <span>CFOP: <span className="line-through text-rose-400">{log.details.originalCfop}</span> ➔ <span className="text-emerald-400 font-bold">{log.details.suggestedCfop}</span></span>
+                      <div className="bg-white/5 px-2 py-1 rounded border border-white/5">
+                        CFOP: <span className="line-through text-rose-500 opacity-60">{log.details.originalCfop}</span> ➔ <span className="text-emerald-400">{log.details.suggestedCfop}</span>
+                      </div>
                     )}
                   </div>
                 )}

@@ -206,6 +206,25 @@ html[data-palette="roxo"][data-mode="dark"] {
 @theme {
   --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-display: "Fraunces", Georgia, serif;
+  --color-atlas-navy: var(--atlas-navy);
+  --color-atlas-navy-dark: var(--atlas-navy-dark);
+  --color-atlas-accent: var(--atlas-accent);
+  --color-atlas-accent-dark: var(--atlas-accent-dark);
+  --color-atlas-bg: var(--atlas-bg);
+  --color-atlas-surface: var(--atlas-surface);
+  --color-atlas-surface-hover: var(--atlas-surface-hover);
+  --color-atlas-border: var(--atlas-border);
+  --color-atlas-text: var(--atlas-text);
+  --color-atlas-text-secondary: var(--atlas-text-secondary);
+  --color-atlas-text-muted: var(--atlas-text-muted);
+  --color-atlas-danger: var(--atlas-danger);
+  --color-atlas-danger-bg: var(--atlas-danger-bg);
+  --color-atlas-warning: var(--atlas-warning);
+  --color-atlas-warning-bg: var(--atlas-warning-bg);
+  --color-atlas-info: var(--atlas-info);
+  --color-atlas-info-bg: var(--atlas-info-bg);
+  --color-atlas-success: var(--atlas-success);
+  --color-atlas-success-bg: var(--atlas-success-bg);
 }
 
 @layer base {

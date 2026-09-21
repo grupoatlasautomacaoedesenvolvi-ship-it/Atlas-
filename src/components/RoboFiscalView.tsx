@@ -306,110 +306,112 @@ export function RoboFiscalView({
   return (
     <div className="space-y-5 pb-12">
       {/* Top Professional Header Bar */}
-      <div className="bg-white border border-[var(--atlas-border)] rounded-xl p-5 shadow-2xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center space-x-2.5">
-              <div className="p-1.5 bg-[#1e3a5f]/10 rounded-lg text-[#1e3a5f]">
-                <Bot className="w-5 h-5" />
+      <div className="bg-[var(--atlas-surface)] border border-[var(--atlas-border)] rounded-xl p-5 shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+            <div className="flex items-start space-x-4">
+              <div className="p-3 bg-[var(--atlas-navy-tint)] text-[var(--atlas-navy)] rounded-xl shadow-xs shrink-0">
+                <Bot className="w-6 h-6" />
               </div>
-              <h1 className="text-lg font-bold text-slate-900 tracking-tight flex items-center space-x-2">
-                <span>Robô Fiscal &amp; Automação de Importações</span>
-                <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                  config.ativo ? 'bg-emerald-100 text-[#0f6e56] border border-emerald-200' : 'bg-slate-100 text-slate-600 border border-slate-200'
-                }`}>
-                  {config.ativo ? 'Robô Ativo' : 'Robô Pausado'}
-                </span>
-              </h1>
+              <div>
+                <div className="flex items-center gap-3">
+                  <h1 className="text-2xl font-bold text-[var(--atlas-navy)] tracking-tight leading-none" style={{ fontFamily: 'var(--font-display)' }}>
+                    Robô Fiscal & Automação IA
+                  </h1>
+                  <span className={`atlas-pill ${
+                    config.ativo ? 'atlas-pill-accent' : 'atlas-pill-navy'
+                  } !font-bold uppercase tracking-widest text-[10px]`}>
+                    {config.ativo ? 'Robô Ativo' : 'Robô Pausado'}
+                  </span>
+                </div>
+                <p className="text-sm text-[var(--atlas-text-secondary)] mt-2 max-w-2xl leading-relaxed">
+                  Monitoramento automatizado de diretórios, validação em tempo real contra a Matriz Tributária e Aprendizado Contínuo de padrões fiscais.
+                </p>
+              </div>
             </div>
-            <p className="text-xs text-slate-500 mt-1 max-w-3xl">
-              Monitoramento automatizado de diretórios, validação em tempo real contra a Matriz Tributária e Aprendizado Contínuo de padrões fiscais.
-            </p>
-          </div>
 
-          <div className="flex items-center space-x-2.5 shrink-0">
-            <button
-              onClick={handleToggleActive}
-              className={`px-3.5 py-2 rounded-lg text-xs font-semibold shadow-2xs transition-colors flex items-center space-x-1.5 ${
-                config.ativo 
-                  ? 'bg-amber-600 hover:bg-amber-700 text-white' 
-                  : 'bg-[#0f6e56] hover:bg-[#0b5240] text-white'
-              }`}
-            >
-              {config.ativo ? (
-                <>
-                  <Pause className="w-4 h-4" />
-                  <span>Pausar Robô</span>
-                </>
-              ) : (
-                <>
-                  <Play className="w-4 h-4" />
-                  <span>Ativar Robô Fiscal</span>
-                </>
-              )}
-            </button>
+            <div className="flex items-center space-x-3 shrink-0">
+              <button
+                onClick={handleToggleActive}
+                className={`atlas-btn py-2.5 px-5 text-sm font-bold shadow-sm cursor-pointer transition-all ${
+                  config.ativo 
+                    ? 'bg-amber-600 hover:bg-amber-700 text-white border-amber-700' 
+                    : 'atlas-btn-accent'
+                }`}
+              >
+                {config.ativo ? (
+                  <>
+                    <Pause className="w-4 h-4" />
+                    <span>Pausar Monitoramento</span>
+                  </>
+                ) : (
+                  <>
+                    <Play className="w-4 h-4" />
+                    <span>Ativar Robô Fiscal</span>
+                  </>
+                )}
+              </button>
 
-            <button
-              onClick={recarregar}
-              className="p-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-semibold shadow-2xs transition-colors"
-              title="Sincronizar dados"
-            >
-              <RefreshCw className="w-4 h-4" />
-            </button>
+              <button
+                onClick={recarregar}
+                className="atlas-btn atlas-btn-secondary p-2.5 cursor-pointer shadow-xs"
+                title="Sincronizar dados"
+              >
+                <RefreshCw className="w-5 h-5 text-[var(--atlas-navy)]" />
+              </button>
+            </div>
           </div>
-        </div>
 
         {/* Summary Metric Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4 pt-4 border-t border-slate-100 text-xs">
-          <div className="bg-slate-50 border border-slate-200/80 rounded-lg p-3 flex items-center justify-between">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4 pt-4 border-t border-[var(--atlas-border)] text-xs">
+          <div className="atlas-stat-strip border-[var(--atlas-border)]/60 bg-[var(--atlas-surface-hover)] p-4 flex items-center justify-between">
             <div>
-              <span className="text-slate-500 font-medium block text-[11px]">Status do Robô</span>
-              <span className={`text-xs font-bold mt-0.5 block ${config.ativo ? 'text-[#0f6e56]' : 'text-slate-500'}`}>
-                {config.ativo ? 'Ativo & Monitorando' : 'Em Espera (Pausado)'}
+              <span className="text-[var(--atlas-text-muted)] font-bold text-[10px] uppercase tracking-widest block">Status do Robô</span>
+              <span className={`text-sm font-bold mt-1 block ${config.ativo ? 'text-[var(--atlas-accent)]' : 'text-[var(--atlas-text-muted)]'}`}>
+                {config.ativo ? '✓ Ativo & Monitorando' : '○ Em Espera (Pausado)'}
               </span>
             </div>
-            <Activity className={`w-5 h-5 ${config.ativo ? 'text-[#0f6e56]' : 'text-slate-300'}`} />
+            <Activity className={`w-5 h-5 ${config.ativo ? 'text-[var(--atlas-accent)]' : 'text-[var(--atlas-text-muted)]'}`} />
           </div>
 
-          <div className="bg-slate-50 border border-slate-200/80 rounded-lg p-3 flex items-center justify-between">
+          <div className="atlas-stat-strip border-[var(--atlas-border)]/60 bg-[var(--atlas-surface-hover)] p-4 flex items-center justify-between">
             <div>
-              <span className="text-slate-500 font-medium block text-[11px]">Logs Registrados</span>
-              <span className="text-base font-bold text-slate-900 mt-0.5 block">{logs.length} Execuções</span>
+              <span className="text-[var(--atlas-text-muted)] font-bold text-[10px] uppercase tracking-widest block">Execuções Realizadas</span>
+              <span className="text-base font-bold text-[var(--atlas-text)] mt-0.5 block">{logs.length} Lotes</span>
             </div>
-            <FileText className="w-5 h-5 text-slate-400" />
+            <FileText className="w-5 h-5 text-[var(--atlas-text-muted)]" />
           </div>
 
-          <div className="bg-slate-50 border border-slate-200/80 rounded-lg p-3 flex items-center justify-between">
+          <div className="atlas-stat-strip border-[var(--atlas-border)]/60 bg-[var(--atlas-surface-hover)] p-4 flex items-center justify-between">
             <div>
-              <span className="text-slate-500 font-medium block text-[11px]">Aprendizado Contínuo</span>
-              <span className="text-base font-bold text-[#1e3a5f] mt-0.5 block">
-                {pendingLearnedCount} Padrão(ões)
+              <span className="text-[var(--atlas-text-muted)] font-bold text-[10px] uppercase tracking-widest block">Padrões Aprendidos</span>
+              <span className="text-base font-bold text-[var(--atlas-navy)] mt-0.5 block">
+                {pendingLearnedCount} Pendente(s)
               </span>
             </div>
-            <BrainCircuit className="w-5 h-5 text-[#1e3a5f]" />
+            <BrainCircuit className="w-5 h-5 text-[var(--atlas-navy)]" />
           </div>
 
-          <div className="bg-slate-50 border border-slate-200/80 rounded-lg p-3 flex items-center justify-between">
+          <div className="atlas-stat-strip border-[var(--atlas-border)]/60 bg-[var(--atlas-surface-hover)] p-4 flex items-center justify-between">
             <div>
-              <span className="text-slate-500 font-medium block text-[11px]">Matriz Tributária Ativa</span>
-              <span className="text-base font-bold text-slate-900 mt-0.5 block">{matrizRules.length} Regra(s)</span>
+              <span className="text-[var(--atlas-text-muted)] font-bold text-[10px] uppercase tracking-widest block">Matriz Tributária</span>
+              <span className="text-base font-bold text-[var(--atlas-text)] mt-0.5 block">{matrizRules.length} Regra(s)</span>
             </div>
-            <Database className="w-5 h-5 text-slate-400" />
+            <Database className="w-5 h-5 text-[var(--atlas-text-muted)]" />
           </div>
         </div>
       </div>
 
       {/* Tabs Navigation */}
-      <div className="border-b border-slate-200 flex flex-wrap items-center gap-1 text-xs font-semibold bg-white px-2 pt-2 rounded-t-xl border border-[var(--atlas-border)] shadow-2xs">
+      <div className="border-b border-[var(--atlas-border)] flex flex-wrap items-center gap-1 text-xs font-semibold bg-[var(--atlas-surface)] px-2 pt-2 rounded-t-xl border border-[var(--atlas-border)] shadow-xs">
         <button
           onClick={() => setActiveTab('overview')}
           className={`px-4 py-2.5 border-b-2 transition-all flex items-center space-x-2 ${
             activeTab === 'overview'
-              ? 'border-[#1e3a5f] text-[#1e3a5f] bg-slate-50 font-bold'
-              : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50/50'
+              ? 'border-[var(--atlas-navy)] text-[var(--atlas-navy)] bg-[var(--atlas-surface-hover)] font-bold'
+              : 'border-transparent text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)] hover:bg-[var(--atlas-surface-hover)]/50'
           }`}
         >
-          <Activity className="w-4 h-4 text-[#1e3a5f]" />
+          <Activity className="w-4 h-4 text-[var(--atlas-navy)]" />
           <span>Dashboard Executivo</span>
         </button>
 
@@ -417,8 +419,8 @@ export function RoboFiscalView({
           onClick={() => setActiveTab('processador')}
           className={`px-4 py-2.5 border-b-2 transition-all flex items-center space-x-2 ${
             activeTab === 'processador'
-              ? 'border-[#1e3a5f] text-[#1e3a5f] bg-slate-50 font-bold'
-              : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50/50'
+              ? 'border-[var(--atlas-navy)] text-[var(--atlas-navy)] bg-[var(--atlas-surface-hover)] font-bold'
+              : 'border-transparent text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)] hover:bg-[var(--atlas-surface-hover)]/50'
           }`}
         >
           <Upload className="w-4 h-4" />
@@ -429,14 +431,14 @@ export function RoboFiscalView({
           onClick={() => setActiveTab('aprendizado')}
           className={`px-4 py-2.5 border-b-2 transition-all flex items-center space-x-2 relative ${
             activeTab === 'aprendizado'
-              ? 'border-[#1e3a5f] text-[#1e3a5f] bg-slate-50 font-bold'
-              : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50/50'
+              ? 'border-[var(--atlas-navy)] text-[var(--atlas-navy)] bg-[var(--atlas-surface-hover)] font-bold'
+              : 'border-transparent text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)] hover:bg-[var(--atlas-surface-hover)]/50'
           }`}
         >
-          <BrainCircuit className="w-4 h-4 text-[#1e3a5f]" />
+          <BrainCircuit className="w-4 h-4 text-[var(--atlas-navy)]" />
           <span>Aprendizado da Matriz</span>
           {pendingLearnedCount > 0 && (
-            <span className="px-1.5 py-0.2 rounded-full bg-amber-500 text-white text-[10px] font-bold">
+            <span className="px-1.5 py-0.2 rounded-full bg-amber-500 text-white text-xs font-bold">
               {pendingLearnedCount}
             </span>
           )}
@@ -446,8 +448,8 @@ export function RoboFiscalView({
           onClick={() => setActiveTab('logs')}
           className={`px-4 py-2.5 border-b-2 transition-all flex items-center space-x-2 ${
             activeTab === 'logs'
-              ? 'border-[#1e3a5f] text-[#1e3a5f] bg-slate-50 font-bold'
-              : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50/50'
+              ? 'border-[var(--atlas-navy)] text-[var(--atlas-navy)] bg-[var(--atlas-surface-hover)] font-bold'
+              : 'border-transparent text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)] hover:bg-[var(--atlas-surface-hover)]/50'
           }`}
         >
           <FileText className="w-4 h-4" />
@@ -458,8 +460,8 @@ export function RoboFiscalView({
           onClick={() => setActiveTab('pastas')}
           className={`px-4 py-2.5 border-b-2 transition-all flex items-center space-x-2 ${
             activeTab === 'pastas'
-              ? 'border-[#1e3a5f] text-[#1e3a5f] bg-slate-50 font-bold'
-              : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50/50'
+              ? 'border-[var(--atlas-navy)] text-[var(--atlas-navy)] bg-[var(--atlas-surface-hover)] font-bold'
+              : 'border-transparent text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)] hover:bg-[var(--atlas-surface-hover)]/50'
           }`}
         >
           <FolderTree className="w-4 h-4" />
@@ -470,8 +472,8 @@ export function RoboFiscalView({
           onClick={() => setActiveTab('config')}
           className={`px-4 py-2.5 border-b-2 transition-all flex items-center space-x-2 ${
             activeTab === 'config'
-              ? 'border-[#1e3a5f] text-[#1e3a5f] bg-slate-50 font-bold'
-              : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50/50'
+              ? 'border-[var(--atlas-navy)] text-[var(--atlas-navy)] bg-[var(--atlas-surface-hover)] font-bold'
+              : 'border-transparent text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)] hover:bg-[var(--atlas-surface-hover)]/50'
           }`}
         >
           <Sliders className="w-4 h-4" />
@@ -484,51 +486,51 @@ export function RoboFiscalView({
         <div className="space-y-5">
           {/* Executive Overview Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 text-xs">
-            <div className="bg-white border border-[var(--atlas-border)] rounded-xl p-4 shadow-2xs">
+            <div className="bg-[var(--atlas-surface)] border border-[var(--atlas-border)] rounded-xl p-4 shadow-xs">
               <div className="flex items-center justify-between">
-                <span className="text-slate-500 font-medium">Status da Automação</span>
-                <Activity className={`w-4 h-4 ${config.ativo ? 'text-[#0f6e56]' : 'text-slate-300'}`} />
+                <span className="text-[var(--atlas-text-secondary)] font-medium">Status da Automação</span>
+                <Activity className={`w-4 h-4 ${config.ativo ? 'text-[var(--atlas-accent)]' : 'text-[var(--atlas-text-muted)]'}`} />
               </div>
               <div className="mt-2 flex items-baseline justify-between">
-                <span className={`text-base font-bold ${config.ativo ? 'text-[#0f6e56]' : 'text-slate-600'}`}>
+                <span className={`text-base font-bold ${config.ativo ? 'text-[var(--atlas-accent)]' : 'text-[var(--atlas-text-secondary)]'}`}>
                   {config.ativo ? 'Ativo & Varredura On' : 'Pausado'}
                 </span>
-                <span className="text-[10px] text-slate-400 font-mono">100% On-line</span>
+                <span className="text-xs text-[var(--atlas-text-muted)] font-mono">100% On-line</span>
               </div>
             </div>
 
-            <div className="bg-white border border-[var(--atlas-border)] rounded-xl p-4 shadow-2xs">
+            <div className="bg-[var(--atlas-surface)] border border-[var(--atlas-border)] rounded-xl p-4 shadow-xs">
               <div className="flex items-center justify-between">
-                <span className="text-slate-500 font-medium">Lotes Processados</span>
-                <FileText className="w-4 h-4 text-slate-400" />
+                <span className="text-[var(--atlas-text-secondary)] font-medium">Lotes Processados</span>
+                <FileText className="w-4 h-4 text-[var(--atlas-text-muted)]" />
               </div>
               <div className="mt-2 flex items-baseline justify-between">
-                <span className="text-lg font-bold text-slate-900">{logs.length}</span>
-                <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.5 rounded">Processados</span>
+                <span className="text-lg font-bold text-[var(--atlas-text)]">{logs.length}</span>
+                <span className="text-xs text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.5 rounded">Processados</span>
               </div>
             </div>
 
-            <div className="bg-white border border-[var(--atlas-border)] rounded-xl p-4 shadow-2xs">
+            <div className="bg-[var(--atlas-surface)] border border-[var(--atlas-border)] rounded-xl p-4 shadow-xs">
               <div className="flex items-center justify-between">
-                <span className="text-slate-500 font-medium">Alertas de Divergência</span>
+                <span className="text-[var(--atlas-text-secondary)] font-medium">Alertas de Divergência</span>
                 <AlertTriangle className="w-4 h-4 text-rose-500" />
               </div>
               <div className="mt-2 flex items-baseline justify-between">
                 <span className="text-lg font-bold text-rose-700">
                   {logs.reduce((acc, l) => acc + (l.inconsistenciasCount || 0), 0)}
                 </span>
-                <span className="text-[10px] text-rose-700 font-bold bg-rose-50 px-1.5 py-0.5 rounded">Inconsistências</span>
+                <span className="text-xs text-rose-700 font-bold bg-rose-50 px-1.5 py-0.5 rounded">Inconsistências</span>
               </div>
             </div>
 
-            <div className="bg-white border border-[var(--atlas-border)] rounded-xl p-4 shadow-2xs">
+            <div className="bg-[var(--atlas-surface)] border border-[var(--atlas-border)] rounded-xl p-4 shadow-xs">
               <div className="flex items-center justify-between">
-                <span className="text-slate-500 font-medium">Matriz de Aprendizado</span>
-                <BrainCircuit className="w-4 h-4 text-[#1e3a5f]" />
+                <span className="text-[var(--atlas-text-secondary)] font-medium">Matriz de Aprendizado</span>
+                <BrainCircuit className="w-4 h-4 text-[var(--atlas-navy)]" />
               </div>
               <div className="mt-2 flex items-baseline justify-between">
-                <span className="text-lg font-bold text-[#1e3a5f]">{pendingLearnedCount} Pendente(s)</span>
-                <span className="text-[10px] text-[#1e3a5f] font-bold bg-indigo-50 px-1.5 py-0.5 rounded">{matrizRules.length} Regras Ativas</span>
+                <span className="text-lg font-bold text-[var(--atlas-navy)]">{pendingLearnedCount} Pendente(s)</span>
+                <span className="text-xs text-[var(--atlas-navy)] font-bold bg-indigo-50 px-1.5 py-0.5 rounded">{matrizRules.length} Regras Ativas</span>
               </div>
             </div>
           </div>
@@ -537,87 +539,87 @@ export function RoboFiscalView({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div 
               onClick={() => setActiveTab('processador')}
-              className="bg-white border border-[var(--atlas-border)] hover:border-[#1e3a5f] rounded-xl p-4 shadow-2xs cursor-pointer transition-all group"
+              className="bg-[var(--atlas-surface)] border border-[var(--atlas-border)] hover:border-[var(--atlas-navy)] rounded-xl p-4 shadow-xs cursor-pointer transition-all group"
             >
               <div className="flex items-center justify-between">
-                <div className="p-2 bg-slate-100 group-hover:bg-[#1e3a5f]/10 text-slate-700 group-hover:text-[#1e3a5f] rounded-lg transition-colors">
+                <div className="p-2 bg-[var(--atlas-surface-hover)] group-hover:bg-[var(--atlas-navy)]/10 text-[var(--atlas-text-secondary)] group-hover:text-[var(--atlas-navy)] rounded-lg transition-colors">
                   <Upload className="w-5 h-5" />
                 </div>
-                <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#1e3a5f] group-hover:translate-x-1 transition-all" />
+                <ArrowRight className="w-4 h-4 text-[var(--atlas-text-muted)] group-hover:text-[var(--atlas-navy)] group-hover:translate-x-1 transition-all" />
               </div>
-              <h3 className="font-bold text-slate-900 text-sm mt-3">Processador em Lote</h3>
-              <p className="text-xs text-slate-500 mt-1">Execute cruzamentos pontuais entre SPED e XMLs sob demanda com relatórios de saída instantâneos.</p>
+              <h3 className="font-bold text-[var(--atlas-text)] text-sm mt-3">Processador em Lote</h3>
+              <p className="text-xs text-[var(--atlas-text-secondary)] mt-1">Execute cruzamentos pontuais entre SPED e XMLs sob demanda com relatórios de saída instantâneos.</p>
             </div>
 
             <div 
               onClick={() => setActiveTab('aprendizado')}
-              className="bg-white border border-[var(--atlas-border)] hover:border-[#1e3a5f] rounded-xl p-4 shadow-2xs cursor-pointer transition-all group"
+              className="bg-[var(--atlas-surface)] border border-[var(--atlas-border)] hover:border-[var(--atlas-navy)] rounded-xl p-4 shadow-xs cursor-pointer transition-all group"
             >
               <div className="flex items-center justify-between">
-                <div className="p-2 bg-slate-100 group-hover:bg-[#1e3a5f]/10 text-slate-700 group-hover:text-[#1e3a5f] rounded-lg transition-colors">
+                <div className="p-2 bg-[var(--atlas-surface-hover)] group-hover:bg-[var(--atlas-navy)]/10 text-[var(--atlas-text-secondary)] group-hover:text-[var(--atlas-navy)] rounded-lg transition-colors">
                   <BrainCircuit className="w-5 h-5" />
                 </div>
-                <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#1e3a5f] group-hover:translate-x-1 transition-all" />
+                <ArrowRight className="w-4 h-4 text-[var(--atlas-text-muted)] group-hover:text-[var(--atlas-navy)] group-hover:translate-x-1 transition-all" />
               </div>
-              <h3 className="font-bold text-slate-900 text-sm mt-3">Aprendizado da Matriz ({pendingLearnedCount})</h3>
-              <p className="text-xs text-slate-500 mt-1">Revise e aprove padrões de CST/NCM/CFOP sugeridos automaticamente pela IA do robô.</p>
+              <h3 className="font-bold text-[var(--atlas-text)] text-sm mt-3">Aprendizado da Matriz ({pendingLearnedCount})</h3>
+              <p className="text-xs text-[var(--atlas-text-secondary)] mt-1">Revise e aprove padrões de CST/NCM/CFOP sugeridos automaticamente pela IA do robô.</p>
             </div>
 
             <div 
               onClick={() => setActiveTab('pastas')}
-              className="bg-white border border-[var(--atlas-border)] hover:border-[#1e3a5f] rounded-xl p-4 shadow-2xs cursor-pointer transition-all group"
+              className="bg-[var(--atlas-surface)] border border-[var(--atlas-border)] hover:border-[var(--atlas-navy)] rounded-xl p-4 shadow-xs cursor-pointer transition-all group"
             >
               <div className="flex items-center justify-between">
-                <div className="p-2 bg-slate-100 group-hover:bg-[#1e3a5f]/10 text-slate-700 group-hover:text-[#1e3a5f] rounded-lg transition-colors">
+                <div className="p-2 bg-[var(--atlas-surface-hover)] group-hover:bg-[var(--atlas-navy)]/10 text-[var(--atlas-text-secondary)] group-hover:text-[var(--atlas-navy)] rounded-lg transition-colors">
                   <FolderTree className="w-5 h-5" />
                 </div>
-                <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#1e3a5f] group-hover:translate-x-1 transition-all" />
+                <ArrowRight className="w-4 h-4 text-[var(--atlas-text-muted)] group-hover:text-[var(--atlas-navy)] group-hover:translate-x-1 transition-all" />
               </div>
-              <h3 className="font-bold text-slate-900 text-sm mt-3">Monitor de Pastas Locais</h3>
-              <p className="text-xs text-slate-500 mt-1">Configure o monitoramento automático de diretórios no seu computador para ingestão contínua.</p>
+              <h3 className="font-bold text-[var(--atlas-text)] text-sm mt-3">Monitor de Pastas Locais</h3>
+              <p className="text-xs text-[var(--atlas-text-secondary)] mt-1">Configure o monitoramento automático de diretórios no seu computador para ingestão contínua.</p>
             </div>
           </div>
 
           {/* Inconsistency Breakdown Analysis */}
-          <div className="bg-white rounded-xl border border-[var(--atlas-border)] p-4 shadow-2xs space-y-3">
-            <h3 className="font-bold text-slate-900 text-xs flex items-center space-x-2">
-              <ShieldCheck className="w-4 h-4 text-[#0f6e56]" />
+          <div className="bg-[var(--atlas-surface)] rounded-xl border border-[var(--atlas-border)] p-4 shadow-xs space-y-3">
+            <h3 className="font-bold text-[var(--atlas-text)] text-xs flex items-center space-x-2">
+              <ShieldCheck className="w-4 h-4 text-[var(--atlas-accent)]" />
               <span>Categorização e Tipologia de Inconsistências Fiscais</span>
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-              <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                <span className="text-[11px] font-semibold text-slate-600 block">Divergência de Valores</span>
-                <span className="text-sm font-bold text-slate-900 mt-1 block">SPED vs XML</span>
-                <p className="text-[10px] text-slate-500 mt-1">Diferenças no valor total do item, base de cálculo ou ICMS retido.</p>
+              <div className="p-3 bg-[var(--atlas-surface-hover)] rounded-lg border border-[var(--atlas-border)]">
+                <span className="text-xs font-semibold text-[var(--atlas-text-secondary)] block">Divergência de Valores</span>
+                <span className="text-sm font-bold text-[var(--atlas-text)] mt-1 block">SPED vs XML</span>
+                <p className="text-xs text-[var(--atlas-text-secondary)] mt-1">Diferenças no valor total do item, base de cálculo ou ICMS retido.</p>
               </div>
 
-              <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                <span className="text-[11px] font-semibold text-slate-600 block">Notas Fiscais Omissas</span>
-                <span className="text-sm font-bold text-slate-900 mt-1 block">SPED sem XML</span>
-                <p className="text-[10px] text-slate-500 mt-1">Documentos escriturados sem a respectiva chave cadastrada nos XMLs.</p>
+              <div className="p-3 bg-[var(--atlas-surface-hover)] rounded-lg border border-[var(--atlas-border)]">
+                <span className="text-xs font-semibold text-[var(--atlas-text-secondary)] block">Notas Fiscais Omissas</span>
+                <span className="text-sm font-bold text-[var(--atlas-text)] mt-1 block">SPED sem XML</span>
+                <p className="text-xs text-[var(--atlas-text-secondary)] mt-1">Documentos escriturados sem a respectiva chave cadastrada nos XMLs.</p>
               </div>
 
-              <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                <span className="text-[11px] font-semibold text-slate-600 block">Incompatibilidade CST/CFOP</span>
-                <span className="text-sm font-bold text-slate-900 mt-1 block">Matriz Tributária</span>
-                <p className="text-[10px] text-slate-500 mt-1">Combinação incorreta de código de situação tributária para a operação.</p>
+              <div className="p-3 bg-[var(--atlas-surface-hover)] rounded-lg border border-[var(--atlas-border)]">
+                <span className="text-xs font-semibold text-[var(--atlas-text-secondary)] block">Incompatibilidade CST/CFOP</span>
+                <span className="text-sm font-bold text-[var(--atlas-text)] mt-1 block">Matriz Tributária</span>
+                <p className="text-xs text-[var(--atlas-text-secondary)] mt-1">Combinação incorreta de código de situação tributária para a operação.</p>
               </div>
 
-              <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                <span className="text-[11px] font-semibold text-slate-600 block">Documentos Cancelados</span>
-                <span className="text-sm font-bold text-slate-900 mt-1 block">Status na SEFAZ</span>
-                <p className="text-[10px] text-slate-500 mt-1">Notas canceladas escrituradas indevidamente como documento regular.</p>
+              <div className="p-3 bg-[var(--atlas-surface-hover)] rounded-lg border border-[var(--atlas-border)]">
+                <span className="text-xs font-semibold text-[var(--atlas-text-secondary)] block">Documentos Cancelados</span>
+                <span className="text-sm font-bold text-[var(--atlas-text)] mt-1 block">Status na SEFAZ</span>
+                <p className="text-xs text-[var(--atlas-text-secondary)] mt-1">Notas canceladas escrituradas indevidamente como documento regular.</p>
               </div>
             </div>
           </div>
 
           {/* Recent Logs & Execution Preview */}
-          <div className="bg-white rounded-xl border border-[var(--atlas-border)] shadow-2xs overflow-hidden">
-            <div className="bg-slate-50 px-4 py-3 border-b border-slate-200 font-bold text-slate-800 flex items-center justify-between text-xs">
+          <div className="bg-[var(--atlas-surface)] rounded-xl border border-[var(--atlas-border)] shadow-xs overflow-hidden">
+            <div className="bg-[var(--atlas-surface-hover)] px-4 py-3 border-b border-[var(--atlas-border)] font-bold text-[var(--atlas-text)] flex items-center justify-between text-xs">
               <span>Últimas Execuções Registradas</span>
               <button 
                 onClick={() => setActiveTab('logs')}
-                className="text-[#1e3a5f] hover:underline text-[11px] font-semibold flex items-center space-x-1"
+                className="text-[var(--atlas-navy)] hover:underline text-xs font-semibold flex items-center space-x-1"
               >
                 <span>Ver Todos os Logs ({logs.length})</span>
                 <ArrowRight className="w-3 h-3" />
@@ -625,28 +627,28 @@ export function RoboFiscalView({
             </div>
 
             {logs.length === 0 ? (
-              <div className="p-8 text-center text-slate-500 text-xs">
+              <div className="p-8 text-center text-[var(--atlas-text-secondary)] text-xs">
                 Nenhum log gravado ainda. As execuções do robô aparecerão aqui.
               </div>
             ) : (
-              <div className="divide-y divide-slate-100 text-xs">
+              <div className="divide-y divide-[var(--atlas-border)] text-xs">
                 {logs.slice(0, 5).map(l => (
-                  <div key={l.id} className="p-3 hover:bg-slate-50/80 transition-colors flex items-center justify-between gap-3">
+                  <div key={l.id} className="p-3 hover:bg-[var(--atlas-surface-hover)]/80 transition-colors flex items-center justify-between gap-3">
                     <div className="min-w-0">
                       <div className="flex items-center space-x-2">
-                        <span className="font-bold text-slate-900 truncate">{l.clienteNome || 'Geral'}</span>
-                        <span className="text-slate-400">•</span>
-                        <span className="text-slate-500 text-[11px] font-mono">
+                        <span className="font-bold text-[var(--atlas-text)] truncate">{l.clienteNome || 'Geral'}</span>
+                        <span className="text-[var(--atlas-text-muted)]">•</span>
+                        <span className="text-[var(--atlas-text-secondary)] text-xs font-mono">
                           {new Date(l.timestamp).toLocaleString('pt-BR')}
                         </span>
                       </div>
-                      <p className="text-slate-700 font-medium text-xs mt-0.5 truncate">{l.mensagem}</p>
+                      <p className="text-[var(--atlas-text-secondary)] font-medium text-xs mt-0.5 truncate">{l.mensagem}</p>
                     </div>
 
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold shrink-0 ${
+                    <span className={`px-2 py-0.5 rounded text-xs font-bold shrink-0 ${
                       l.tipoAcao === 'INCONSISTENCIA' ? 'bg-rose-100 text-rose-800 border border-rose-200' :
-                      l.tipoAcao === 'APRENDIZADO' ? 'bg-emerald-100 text-[#0f6e56] border border-emerald-200' :
-                      'bg-slate-100 text-slate-700 border border-slate-200'
+                      l.tipoAcao === 'APRENDIZADO' ? 'bg-emerald-100 text-[var(--atlas-accent)] border border-emerald-200' :
+                      'bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] border border-[var(--atlas-border)]'
                     }`}>
                       {l.tipoAcao}
                     </span>
@@ -672,29 +674,29 @@ export function RoboFiscalView({
       {activeTab === 'logs' && (
         <div className="space-y-4">
           {/* Filters Bar */}
-          <div className="bg-white p-3.5 rounded-xl border border-[var(--atlas-border)] shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+          <div className="bg-[var(--atlas-surface)] p-3.5 rounded-xl border border-[var(--atlas-border)] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
             <div className="relative flex-1 max-w-lg">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <Search className="w-4 h-4 text-[var(--atlas-text-muted)] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 type="text"
                 placeholder="Filtrar logs por empresa, mensagem ou detalhes..."
                 value={logSearchTerm}
                 onChange={e => setLogSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-8 py-2 border border-slate-300 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-hidden focus:border-[#1e3a5f]"
+                className="w-full pl-9 pr-8 py-2 border border-[var(--atlas-border)] rounded-lg text-xs text-[var(--atlas-text)] placeholder-[var(--atlas-text-muted)] focus:outline-hidden focus:border-[var(--atlas-navy)]"
               />
               {logSearchTerm && (
-                <button onClick={() => setLogSearchTerm('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 p-0.5">
+                <button onClick={() => setLogSearchTerm('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--atlas-text-muted)] p-0.5">
                   <X className="w-3.5 h-3.5" />
                 </button>
               )}
             </div>
 
             <div className="flex items-center space-x-2">
-              <Filter className="w-3.5 h-3.5 text-slate-400" />
+              <Filter className="w-3.5 h-3.5 text-[var(--atlas-text-muted)]" />
               <select
                 value={logTypeFilter}
                 onChange={e => setLogTypeFilter(e.target.value)}
-                className="border border-slate-300 rounded-lg px-2.5 py-2 bg-white text-slate-700 font-medium focus:outline-hidden focus:border-[#1e3a5f]"
+                className="border border-[var(--atlas-border)] rounded-lg px-2.5 py-2 bg-[var(--atlas-surface)] text-[var(--atlas-text-secondary)] font-medium focus:outline-hidden focus:border-[var(--atlas-navy)]"
               >
                 <option value="todos">Todos os Tipos de Registros</option>
                 <option value="PROCESSAMENTO">Processamentos</option>
@@ -706,24 +708,24 @@ export function RoboFiscalView({
           </div>
 
           {/* Logs Table */}
-          <div className="bg-white rounded-xl border border-[var(--atlas-border)] shadow-2xs overflow-hidden text-xs">
-            <div className="bg-slate-100/80 px-4 py-2.5 border-b border-slate-200 font-bold text-slate-700 flex items-center justify-between">
+          <div className="bg-[var(--atlas-surface)] rounded-xl border border-[var(--atlas-border)] shadow-xs overflow-hidden text-xs">
+            <div className="bg-[var(--atlas-surface-hover)]/80 px-4 py-2.5 border-b border-[var(--atlas-border)] font-bold text-[var(--atlas-text-secondary)] flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <FileText className="w-4 h-4 text-[#1e3a5f]" />
+                <FileText className="w-4 h-4 text-[var(--atlas-navy)]" />
                 <span>Log de Execuções e Auditoria Contínua do Robô Fiscal</span>
               </div>
-              <span className="text-slate-500 font-normal">{filteredLogs.length} registro(s) exibido(s)</span>
+              <span className="text-[var(--atlas-text-secondary)] font-normal">{filteredLogs.length} registro(s) exibido(s)</span>
             </div>
 
             {filteredLogs.length === 0 ? (
-              <div className="p-12 text-center space-y-2 text-slate-500">
-                <Clock className="w-8 h-8 text-slate-300 mx-auto" />
-                <p className="font-semibold text-slate-700">Nenhum log encontrado</p>
+              <div className="p-12 text-center space-y-2 text-[var(--atlas-text-secondary)]">
+                <Clock className="w-8 h-8 text-[var(--atlas-text-muted)] mx-auto" />
+                <p className="font-semibold text-[var(--atlas-text-secondary)]">Nenhum log encontrado</p>
                 <p className="text-xs">Os registros de execuções e validações do Robô Fiscal serão exibidos aqui.</p>
               </div>
             ) : (
               <table className="w-full text-left border-collapse">
-                <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold uppercase text-[10px] tracking-wider">
+                <thead className="bg-[var(--atlas-surface-hover)] border-b border-[var(--atlas-border)] text-[var(--atlas-text-secondary)] font-semibold uppercase text-xs tracking-wider">
                   <tr>
                     <th className="py-2.5 px-4">Data / Hora</th>
                     <th className="py-2.5 px-4">Empresa / Origem</th>
@@ -732,31 +734,31 @@ export function RoboFiscalView({
                     <th className="py-2.5 px-4">Detalhes Técnicos</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-[var(--atlas-border)]">
                   {filteredLogs.map(log => {
-                    let badgeClass = 'bg-slate-100 text-slate-700 border-slate-200';
+                    let badgeClass = 'bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] border-[var(--atlas-border)]';
                     if (log.tipoAcao === 'INCONSISTENCIA') badgeClass = 'bg-rose-100 text-rose-800 border-rose-200 font-bold';
-                    if (log.tipoAcao === 'APRENDIZADO') badgeClass = 'bg-emerald-100 text-[#0f6e56] border-emerald-200 font-bold';
+                    if (log.tipoAcao === 'APRENDIZADO') badgeClass = 'bg-emerald-100 text-[var(--atlas-accent)] border-emerald-200 font-bold';
                     if (log.tipoAcao === 'PROCESSAMENTO') badgeClass = 'bg-sky-100 text-sky-800 border-sky-200';
                     if (log.tipoAcao === 'ERRO') badgeClass = 'bg-amber-100 text-amber-800 border-amber-200';
 
                     return (
-                      <tr key={log.id} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="py-3 px-4 text-slate-500 font-mono text-[11px] whitespace-nowrap">
+                      <tr key={log.id} className="hover:bg-[var(--atlas-surface-hover)]/80 transition-colors">
+                        <td className="py-3 px-4 text-[var(--atlas-text-secondary)] font-mono text-xs whitespace-nowrap">
                           {new Date(log.timestamp).toLocaleString('pt-BR')}
                         </td>
-                        <td className="py-3 px-4 font-bold text-slate-800">
+                        <td className="py-3 px-4 font-bold text-[var(--atlas-text)]">
                           {log.clienteNome || 'Geral / Sistema'}
                         </td>
                         <td className="py-3 px-4 whitespace-nowrap">
-                          <span className={`px-2 py-0.5 rounded text-[10px] border ${badgeClass}`}>
+                          <span className={`px-2 py-0.5 rounded text-xs border ${badgeClass}`}>
                             {log.tipoAcao}
                           </span>
                         </td>
-                        <td className="py-3 px-4 font-semibold text-slate-800">
+                        <td className="py-3 px-4 font-semibold text-[var(--atlas-text)]">
                           {log.mensagem}
                         </td>
-                        <td className="py-3 px-4 text-slate-500 text-[11px] font-mono">
+                        <td className="py-3 px-4 text-[var(--atlas-text-secondary)] text-xs font-mono">
                           {log.detalhes || '—'}
                         </td>
                       </tr>
@@ -772,13 +774,13 @@ export function RoboFiscalView({
       {/* TAB 2: PROCESSADOR EM LOTE E TESTADOR DE REGRAS */}
       {activeTab === 'processador' && (
         <div className="space-y-4">
-          <div className="bg-white p-5 rounded-xl border border-[var(--atlas-border)] shadow-2xs space-y-4">
+          <div className="bg-[var(--atlas-surface)] p-5 rounded-xl border border-[var(--atlas-border)] shadow-xs space-y-4">
             <div>
-              <h2 className="text-sm font-bold text-slate-900 flex items-center space-x-2">
-                <Upload className="w-4 h-4 text-[#1e3a5f]" />
+              <h2 className="text-sm font-bold text-[var(--atlas-text)] flex items-center space-x-2">
+                <Upload className="w-4 h-4 text-[var(--atlas-navy)]" />
                 <span>Processamento de Arquivos no Robô Fiscal</span>
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-xs text-[var(--atlas-text-secondary)] mt-0.5">
                 Submeta arquivos SPED (.txt) ou pacotes XML (.zip, .xml) para validação imediata contra as regras da Matriz Tributária e extração de novos padrões.
               </p>
             </div>
@@ -786,13 +788,13 @@ export function RoboFiscalView({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
               {/* Select Client Target */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-[var(--atlas-text-secondary)] mb-1">
                   Empresa Cliente para Validação Matriz
                 </label>
                 <select
                   value={selectedClienteForRun}
                   onChange={e => setSelectedClienteForRun(e.target.value)}
-                  className="w-full border border-slate-300 rounded-lg p-2 text-xs text-slate-800 bg-white focus:outline-hidden focus:border-[#1e3a5f]"
+                  className="w-full border border-[var(--atlas-border)] rounded-lg p-2 text-xs text-[var(--atlas-text)] bg-[var(--atlas-surface)] focus:outline-hidden focus:border-[var(--atlas-navy)]"
                 >
                   <option value="">-- Detectar automaticamente do cabeçalho --</option>
                   {clientes.map(c => (
@@ -805,7 +807,7 @@ export function RoboFiscalView({
 
               {/* File Dropzone */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-[var(--atlas-text-secondary)] mb-1">
                   Arquivos SPED (.txt) / XMLs (.zip, .xml)
                 </label>
                 <input
@@ -813,15 +815,15 @@ export function RoboFiscalView({
                   multiple
                   accept=".txt,.xml,.zip"
                   onChange={handleFileUpload}
-                  className="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-[#1e3a5f] hover:file:bg-slate-200"
+                  className="w-full text-xs text-[var(--atlas-text-secondary)] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[var(--atlas-surface-hover)] file:text-[var(--atlas-navy)] hover:file:bg-slate-200"
                 />
               </div>
             </div>
 
             {uploadedFiles.length > 0 && (
-              <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs">
-                <div className="font-semibold text-slate-700 mb-1">Arquivos Selecionados:</div>
-                <ul className="list-disc list-inside space-y-0.5 text-slate-600 font-mono text-[11px]">
+              <div className="bg-[var(--atlas-surface-hover)] p-3 rounded-lg border border-[var(--atlas-border)] text-xs">
+                <div className="font-semibold text-[var(--atlas-text-secondary)] mb-1">Arquivos Selecionados:</div>
+                <ul className="list-disc list-inside space-y-0.5 text-[var(--atlas-text-secondary)] font-mono text-xs">
                   {uploadedFiles.map((f, idx) => (
                     <li key={idx}>{f.name} ({(f.size / 1024).toFixed(1)} KB)</li>
                   ))}
@@ -833,7 +835,7 @@ export function RoboFiscalView({
               <button
                 onClick={handleSimulateRobo}
                 disabled={isProcessing}
-                className="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-semibold shadow-2xs transition-colors flex items-center space-x-1.5 disabled:opacity-50"
+                className="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors flex items-center space-x-1.5 disabled:opacity-50"
                 title="Executa um teste imediato com arquivo fiscal demonstrativo para verificar o funcionamento"
               >
                 <Sparkles className="w-4 h-4 text-amber-100" />
@@ -843,7 +845,7 @@ export function RoboFiscalView({
               <button
                 onClick={handleExecuteRobo}
                 disabled={isProcessing || uploadedFiles.length === 0}
-                className="px-4 py-2 bg-[#1e3a5f] hover:bg-[#142c47] text-white rounded-lg text-xs font-semibold shadow-2xs transition-colors flex items-center space-x-2 disabled:opacity-50"
+                className="px-4 py-2 bg-[var(--atlas-navy)] hover:bg-[var(--atlas-navy-dark)] text-white rounded-lg text-xs font-semibold shadow-xs transition-colors flex items-center space-x-2 disabled:opacity-50"
               >
                 {isProcessing ? (
                   <>
@@ -862,32 +864,32 @@ export function RoboFiscalView({
 
           {/* Results Display */}
           {lastProcessResult && (
-            <div className="bg-white rounded-xl border border-[var(--atlas-border)] p-5 shadow-2xs space-y-4 text-xs">
-              <div className="border-b border-slate-200 pb-3 flex items-center justify-between">
-                <h3 className="font-bold text-slate-900 text-sm flex items-center space-x-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#0f6e56]" />
+            <div className="bg-[var(--atlas-surface)] rounded-xl border border-[var(--atlas-border)] p-5 shadow-xs space-y-4 text-xs">
+              <div className="border-b border-[var(--atlas-border)] pb-3 flex items-center justify-between">
+                <h3 className="font-bold text-[var(--atlas-text)] text-sm flex items-center space-x-2">
+                  <CheckCircle2 className="w-4 h-4 text-[var(--atlas-accent)]" />
                   <span>Resultado da Auditoria da Matriz pelo Robô</span>
                 </h3>
-                <span className="text-slate-500">
+                <span className="text-[var(--atlas-text-secondary)]">
                   {lastProcessResult.resumo.totalDocumentos} Documentos | {lastProcessResult.resumo.totalItensAnalisados} Itens
                 </span>
               </div>
 
               {/* Inconsistencies List */}
               <div className="space-y-2">
-                <h4 className="font-semibold text-slate-800 text-xs flex items-center space-x-1.5">
+                <h4 className="font-semibold text-[var(--atlas-text)] text-xs flex items-center space-x-1.5">
                   <AlertTriangle className="w-4 h-4 text-amber-600" />
                   <span>Divergências com a Matriz Tributária ({lastProcessResult.inconsistencias.length})</span>
                 </h4>
 
                 {lastProcessResult.inconsistencias.length === 0 ? (
-                  <div className="p-4 bg-emerald-50 text-[#0f6e56] rounded-lg border border-emerald-200 font-semibold text-xs">
+                  <div className="p-4 bg-emerald-50 text-[var(--atlas-accent)] rounded-lg border border-emerald-200 font-semibold text-xs">
                     Nenhuma divergência encontrada. Todos os itens validados estão em conformidade com as regras da Matriz Tributária.
                   </div>
                 ) : (
-                  <div className="border border-slate-200 rounded-lg overflow-hidden">
+                  <div className="border border-[var(--atlas-border)] rounded-lg overflow-hidden">
                     <table className="w-full text-left text-xs">
-                      <thead className="bg-slate-50 border-b border-slate-200 font-semibold text-slate-600">
+                      <thead className="bg-[var(--atlas-surface-hover)] border-b border-[var(--atlas-border)] font-semibold text-[var(--atlas-text-secondary)]">
                         <tr>
                           <th className="p-2.5">Doc</th>
                           <th className="p-2.5">NCM</th>
@@ -897,15 +899,15 @@ export function RoboFiscalView({
                           <th className="p-2.5">Inconsistência</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100">
+                      <tbody className="divide-y divide-[var(--atlas-border)]">
                         {lastProcessResult.inconsistencias.map((inc, i) => (
-                          <tr key={i} className="hover:bg-slate-50">
-                            <td className="p-2.5 font-bold text-slate-800">{inc.numDoc}</td>
-                            <td className="p-2.5 font-mono text-slate-700">{inc.ncm}</td>
+                          <tr key={i} className="hover:bg-[var(--atlas-surface-hover)]">
+                            <td className="p-2.5 font-bold text-[var(--atlas-text)]">{inc.numDoc}</td>
+                            <td className="p-2.5 font-mono text-[var(--atlas-text-secondary)]">{inc.ncm}</td>
                             <td className="p-2.5 text-rose-700 font-bold">{inc.cstDeclarado}</td>
-                            <td className="p-2.5 text-[#0f6e56] font-bold">{inc.cstEsperado}</td>
-                            <td className="p-2.5 font-mono text-slate-700">{inc.cfopDeclarado}</td>
-                            <td className="p-2.5 text-slate-600">{inc.mensagem}</td>
+                            <td className="p-2.5 text-[var(--atlas-accent)] font-bold">{inc.cstEsperado}</td>
+                            <td className="p-2.5 font-mono text-[var(--atlas-text-secondary)]">{inc.cfopDeclarado}</td>
+                            <td className="p-2.5 text-[var(--atlas-text-secondary)]">{inc.mensagem}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -921,47 +923,47 @@ export function RoboFiscalView({
       {/* TAB 3: APRENDIZADO CONTÍNUO DA MATRIZ TRIBUTÁRIA */}
       {activeTab === 'aprendizado' && (
         <div className="space-y-4 text-xs">
-          <div className="bg-white p-4 rounded-xl border border-[var(--atlas-border)] shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="bg-[var(--atlas-surface)] p-4 rounded-xl border border-[var(--atlas-border)] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h2 className="text-sm font-bold text-slate-900 flex items-center space-x-2">
-                <BrainCircuit className="w-4 h-4 text-[#1e3a5f]" />
+              <h2 className="text-sm font-bold text-[var(--atlas-text)] flex items-center space-x-2">
+                <BrainCircuit className="w-4 h-4 text-[var(--atlas-navy)]" />
                 <span>Módulo de Aprendizado Contínuo da Matriz</span>
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-xs text-[var(--atlas-text-secondary)] mt-0.5">
                 O Robô Fiscal identifica padrões recorrentes de tributação nas notas importadas. Aprove as sugestões para enriquecer a Matriz Tributária.
               </p>
             </div>
 
-            <div className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-semibold text-xs shrink-0">
+            <div className="px-3 py-1.5 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg text-[var(--atlas-text-secondary)] font-semibold text-xs shrink-0">
               {pendingLearnedCount} Padrão(ões) Pendente(s)
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-[var(--atlas-border)] shadow-2xs overflow-hidden">
-            <div className="bg-amber-50 px-4 py-2 border-b border-amber-200 text-amber-900 font-medium text-[11px] flex items-center space-x-2">
+          <div className="bg-[var(--atlas-surface)] rounded-xl border border-[var(--atlas-border)] shadow-xs overflow-hidden">
+            <div className="bg-amber-50 px-4 py-2 border-b border-amber-200 text-amber-900 font-medium text-xs flex items-center space-x-2">
               <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
               <span>Padrão observado no arquivo auditado, não é fonte fiscal oficial. Confirme contra a legislação antes de aprovar.</span>
             </div>
 
-            <div className="bg-slate-100/80 px-4 py-2.5 border-b border-slate-200 font-bold text-slate-700 flex items-center justify-between">
+            <div className="bg-[var(--atlas-surface-hover)]/80 px-4 py-2.5 border-b border-[var(--atlas-border)] font-bold text-[var(--atlas-text-secondary)] flex items-center justify-between">
               <span className="flex items-center space-x-2">
-                <BrainCircuit className="w-4 h-4 text-[#1e3a5f]" />
+                <BrainCircuit className="w-4 h-4 text-[var(--atlas-navy)]" />
                 <span>Solicitações de Aprendizado Fiscal Pendentes de Aprovação pelo Auditor</span>
               </span>
-              <span className="text-slate-500 font-normal text-[11px]">{learnedRules.length} regra(s) capturada(s)</span>
+              <span className="text-[var(--atlas-text-secondary)] font-normal text-xs">{learnedRules.length} regra(s) capturada(s)</span>
             </div>
 
             {learnedRules.length === 0 ? (
-              <div className="p-12 text-center text-slate-500 space-y-2">
-                <BrainCircuit className="w-8 h-8 text-slate-300 mx-auto" />
-                <p className="font-semibold text-slate-700">Nenhum aprendizado pendente de conferência</p>
+              <div className="p-12 text-center text-[var(--atlas-text-secondary)] space-y-2">
+                <BrainCircuit className="w-8 h-8 text-[var(--atlas-text-muted)] mx-auto" />
+                <p className="font-semibold text-[var(--atlas-text-secondary)]">Nenhum aprendizado pendente de conferência</p>
                 <p className="text-xs">
                   À medida que o Robô processa notas e SPEDs, novos padrões com NCM, CST, CFOP e descrição do produto serão sugeridos aqui para aprovação do auditor.
                 </p>
               </div>
             ) : (
               <table className="w-full text-left border-collapse">
-                <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold uppercase text-[10px] tracking-wider">
+                <thead className="bg-[var(--atlas-surface-hover)] border-b border-[var(--atlas-border)] text-[var(--atlas-text-secondary)] font-semibold uppercase text-xs tracking-wider">
                   <tr>
                     <th className="py-2.5 px-4">UF</th>
                     <th className="py-2.5 px-4">Código NCM</th>
@@ -973,42 +975,42 @@ export function RoboFiscalView({
                     <th className="py-2.5 px-4 text-right">Decisão do Auditor</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-[var(--atlas-border)]">
                   {learnedRules.map(rule => (
-                    <tr key={rule.id} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="py-3 px-4 font-bold text-slate-800">{rule.uf}</td>
+                    <tr key={rule.id} className="hover:bg-[var(--atlas-surface-hover)]/80 transition-colors">
+                      <td className="py-3 px-4 font-bold text-[var(--atlas-text)]">{rule.uf}</td>
                       <td className="py-3 px-4">
-                        <span className="px-2 py-0.5 bg-slate-100 text-[#1e3a5f] rounded border border-slate-200 font-mono font-bold">
+                        <span className="px-2 py-0.5 bg-[var(--atlas-surface-hover)] text-[var(--atlas-navy)] rounded border border-[var(--atlas-border)] font-mono font-bold">
                           {rule.ncmPrefix}
                         </span>
                       </td>
                       <td className="py-3 px-4">
-                        <span className="px-2 py-0.5 bg-emerald-50 text-[#0f6e56] rounded border border-emerald-200 font-bold">
+                        <span className="px-2 py-0.5 bg-emerald-50 text-[var(--atlas-accent)] rounded border border-emerald-200 font-bold">
                           CST {rule.learnedCst}
                         </span>
                       </td>
-                      <td className="py-3 px-4 font-mono font-semibold text-slate-700">
+                      <td className="py-3 px-4 font-mono font-semibold text-[var(--atlas-text-secondary)]">
                         {rule.learnedCfop && rule.learnedCfop.length > 0 ? rule.learnedCfop.join(', ') : '5102'}
                       </td>
-                      <td className="py-3 px-4 text-slate-800 max-w-sm">
-                        <div className="font-bold text-slate-900 text-xs">
+                      <td className="py-3 px-4 text-[var(--atlas-text)] max-w-sm">
+                        <div className="font-bold text-[var(--atlas-text)] text-xs">
                           {rule.descricaoProduto || `Produto / NCM ${rule.ncmPrefix}`}
                         </div>
-                        <div className="text-[11px] text-slate-500 mt-0.5 line-clamp-1">
+                        <div className="text-xs text-[var(--atlas-text-secondary)] mt-0.5 line-clamp-1">
                           {rule.descricao}
                         </div>
-                        <div className="text-[10px] text-slate-400 font-medium mt-0.5">
+                        <div className="text-xs text-[var(--atlas-text-muted)] font-medium mt-0.5">
                           Empresa Origem: {rule.clienteOrigem || 'Auditado em SPED/XML'}
                         </div>
                       </td>
-                      <td className="py-3 px-4 text-slate-600 font-medium text-[11px]">
+                      <td className="py-3 px-4 text-[var(--atlas-text-secondary)] font-medium text-xs">
                         <div>{rule.amostrasAnalisadas} item(ns) analisado(s)</div>
-                        <div className="text-emerald-700 font-bold text-[10px]">{rule.confiancaPercentual || 85}% de Confiança</div>
+                        <div className="text-emerald-700 font-bold text-xs">{rule.confiancaPercentual || 85}% de Confiança</div>
                       </td>
                       <td className="py-3 px-4">
-                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide border ${
+                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wide border ${
                           rule.status === 'aprovado'
-                            ? 'bg-emerald-100 text-[#0f6e56] border-emerald-200'
+                            ? 'bg-emerald-100 text-[var(--atlas-accent)] border-emerald-200'
                             : rule.status === 'rejeitado'
                             ? 'bg-rose-100 text-rose-800 border-rose-200'
                             : 'bg-amber-100 text-amber-800 border-amber-200'
@@ -1021,7 +1023,7 @@ export function RoboFiscalView({
                           <div className="flex items-center justify-end space-x-2">
                             <button
                               onClick={() => handleApproveRule(rule.id)}
-                              className="px-3 py-1.5 bg-[#0f6e56] hover:bg-[#0b5240] text-white rounded-lg font-bold text-xs flex items-center space-x-1.5 shadow-2xs transition-all active:scale-95"
+                              className="px-3 py-1.5 bg-[var(--atlas-accent)] hover:bg-[var(--atlas-accent-dark)] text-white rounded-lg font-bold text-xs flex items-center space-x-1.5 shadow-xs transition-all active:scale-95"
                               title="Aprovar e Enviar para a Matriz Tributária"
                             >
                               <Check className="w-3.5 h-3.5" />
@@ -1029,14 +1031,14 @@ export function RoboFiscalView({
                             </button>
                             <button
                               onClick={() => handleRejectRule(rule.id)}
-                              className="px-2 py-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 border border-transparent hover:border-rose-200 transition-colors"
+                              className="px-2 py-1.5 text-[var(--atlas-text-muted)] hover:text-rose-600 rounded-lg hover:bg-rose-50 border border-transparent hover:border-rose-200 transition-colors"
                               title="Rejeitar Aprendizado"
                             >
                               <X className="w-3.5 h-3.5" />
                             </button>
                           </div>
                         ) : (
-                          <span className="text-slate-400 font-semibold text-[11px] italic">
+                          <span className="text-[var(--atlas-text-muted)] font-semibold text-xs italic">
                             {rule.status === 'aprovado' ? 'Integrado na Matriz' : 'Descartado'}
                           </span>
                         )}
@@ -1052,38 +1054,38 @@ export function RoboFiscalView({
 
       {/* TAB 4: PARÂMETROS DO ROBÔ */}
       {activeTab === 'config' && (
-        <form onSubmit={handleSaveConfig} className="bg-white p-5 rounded-xl border border-[var(--atlas-border)] shadow-2xs space-y-5 text-xs max-w-3xl">
+        <form onSubmit={handleSaveConfig} className="bg-[var(--atlas-surface)] p-5 rounded-xl border border-[var(--atlas-border)] shadow-xs space-y-5 text-xs max-w-3xl">
           <div>
-            <h2 className="text-sm font-bold text-slate-900 flex items-center space-x-2">
-              <Sliders className="w-4 h-4 text-[#1e3a5f]" />
+            <h2 className="text-sm font-bold text-[var(--atlas-text)] flex items-center space-x-2">
+              <Sliders className="w-4 h-4 text-[var(--atlas-navy)]" />
               <span>Parâmetros de Operação do Robô Fiscal</span>
             </h2>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-[var(--atlas-text-secondary)] mt-0.5">
               Configure as regras de execução automática e aprendizado contínuo.
             </p>
           </div>
 
-          <div className="space-y-4 pt-2 divide-y divide-slate-100">
+          <div className="space-y-4 pt-2 divide-y divide-[var(--atlas-border)]">
             <div className="flex items-center justify-between pt-2">
               <div>
-                <div className="font-bold text-slate-800">Automação do Robô Fiscal</div>
-                <div className="text-slate-500 text-[11px]">Ativar monitoramento contínuo das pastas de importação</div>
+                <div className="font-bold text-[var(--atlas-text)]">Automação do Robô Fiscal</div>
+                <div className="text-[var(--atlas-text-secondary)] text-xs">Ativar monitoramento contínuo das pastas de importação</div>
               </div>
               <input
                 type="checkbox"
                 checked={config.ativo}
                 onChange={e => setConfig({ ...config, ativo: e.target.checked })}
-                className="w-4 h-4 rounded text-[#1e3a5f] focus:ring-[#1e3a5f]"
+                className="w-4 h-4 rounded text-[var(--atlas-navy)] focus:ring-[var(--atlas-navy)]"
               />
             </div>
 
 
           </div>
 
-          <div className="pt-3 border-t border-slate-200 flex justify-end">
+          <div className="pt-3 border-t border-[var(--atlas-border)] flex justify-end">
             <button
               type="submit"
-              className="px-4 py-2 bg-[#1e3a5f] hover:bg-[#142c47] text-white rounded-lg text-xs font-semibold shadow-2xs transition-colors"
+              className="px-4 py-2 bg-[var(--atlas-navy)] hover:bg-[var(--atlas-navy-dark)] text-white rounded-lg text-xs font-semibold shadow-xs transition-colors"
             >
               Salvar Parâmetros
             </button>

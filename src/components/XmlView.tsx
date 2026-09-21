@@ -57,49 +57,51 @@ export function XmlView({ title, description, xmlRecords }: XmlViewProps) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto py-8 px-4">
-      <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="max-w-7xl mx-auto py-10 px-4 space-y-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">{title}</h1>
-          <p className="text-sm text-slate-500">{description}</p>
+          <h1 className="text-3xl font-bold text-[var(--atlas-navy)] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
+            {title}
+          </h1>
+          <p className="text-sm text-[var(--atlas-text-secondary)] mt-2 max-w-2xl">{description}</p>
         </div>
         <button
           onClick={handleExportCsv}
-          className="bg-[#1e3a5f] hover:bg-[#142c47] text-white px-4 py-2 rounded-lg text-xs font-semibold flex items-center space-x-2 shadow-xs transition-all"
+          className="atlas-btn atlas-btn-secondary py-2.5 px-5 shadow-xs"
         >
           <Download className="w-4 h-4" />
           <span>Exportar CSV</span>
         </button>
       </div>
 
-      <div className="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden mb-6">
-        <div className="p-4 border-b border-slate-100 flex flex-wrap gap-4 items-center justify-between bg-slate-50">
-          <div className="relative w-full md:w-80">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+      <div className="atlas-card overflow-hidden">
+        <div className="p-5 border-b border-[var(--atlas-border)] flex flex-wrap gap-6 items-center justify-between bg-[var(--atlas-surface-hover)]/30">
+          <div className="relative w-full md:w-96">
+            <Search className="w-5 h-5 text-[var(--atlas-navy)] absolute left-3.5 top-1/2 -translate-y-1/2 opacity-60" />
             <input
               type="text"
               placeholder="Buscar por chave, número ou emitente..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#1e3a5f] bg-white"
+              className="atlas-input w-full pl-11 pr-4 py-2.5 text-sm"
             />
           </div>
           
-          <div className="flex flex-wrap items-center gap-6 text-xs text-slate-600 font-medium">
+          <div className="flex flex-wrap items-center gap-8 text-[var(--atlas-text-secondary)]">
             <div className="flex flex-col">
-              <span className="text-[10px] uppercase tracking-wider text-slate-400">Total Notas</span>
-              <span className="text-sm font-semibold text-slate-700">{filtered.length}</span>
+              <span className="text-[10px] uppercase tracking-widest font-bold text-[var(--atlas-text-muted)] mb-1">Total Notas</span>
+              <span className="text-lg font-black text-[var(--atlas-navy)]">{filtered.length}</span>
             </div>
             <div className="flex flex-col">
-              <span className="text-[10px] uppercase tracking-wider text-slate-400">Total NF (R$)</span>
-              <span className="text-sm font-semibold text-blue-600">
-                {totalVNF.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              <span className="text-[10px] uppercase tracking-widest font-bold text-[var(--atlas-text-muted)] mb-1">Total NF</span>
+              <span className="text-lg font-black text-[var(--atlas-navy)]">
+                R$ {totalVNF.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-[10px] uppercase tracking-wider text-slate-400">Total ICMS (R$)</span>
-              <span className="text-sm font-semibold text-green-600">
-                {totalVICMS.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              <span className="text-[10px] uppercase tracking-widest font-bold text-[var(--atlas-text-muted)] mb-1">Total ICMS</span>
+              <span className="text-lg font-black text-[var(--atlas-accent)]">
+                R$ {totalVICMS.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
           </div>
@@ -107,45 +109,45 @@ export function XmlView({ title, description, xmlRecords }: XmlViewProps) {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-slate-200 bg-slate-50/70 text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                <th className="p-4">Nota / Série</th>
-                <th className="p-4">Emitente</th>
-                <th className="p-4">Destinatário</th>
-                <th className="p-4">Valor Total</th>
-                <th className="p-4">Valor ICMS</th>
-                <th className="p-4">Chave de Acesso</th>
+            <thead className="bg-[var(--atlas-surface-hover)] border-b border-[var(--atlas-border)]">
+              <tr className="text-[10px] font-bold text-[var(--atlas-text-muted)] uppercase tracking-widest">
+                <th className="px-6 py-4">Nota / Série</th>
+                <th className="px-6 py-4">Emitente</th>
+                <th className="px-6 py-4">Destinatário</th>
+                <th className="px-6 py-4">Valor Total</th>
+                <th className="px-6 py-4">Valor ICMS</th>
+                <th className="px-6 py-4">Chave de Acesso</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 text-sm">
+            <tbody className="divide-y divide-[var(--atlas-border)] text-sm">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="text-center py-12 text-slate-500">
+                  <td colSpan={6} className="text-center py-20 text-[var(--atlas-text-secondary)] italic">
                     Nenhum XML encontrado nesta categoria.
                   </td>
                 </tr>
               ) : (
                 filtered.map(item => (
-                  <tr key={item.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="p-4 font-semibold text-slate-800">
+                  <tr key={item.id} className="hover:bg-[var(--atlas-surface-hover)]/50 transition-colors group">
+                    <td className="px-6 py-4 font-bold text-[var(--atlas-navy)]">
                       <div>NF: {item.nNF || 'N/D'}</div>
-                      <div className="text-xs text-slate-400">Série: {item.serie || '1'} | Itens: {item.itensCount}</div>
+                      <div className="text-[10px] text-[var(--atlas-text-muted)] mt-1 uppercase tracking-wider">Série: {item.serie || '1'} | Itens: {item.itensCount}</div>
                     </td>
-                    <td className="p-4 text-slate-700">
-                      <div className="font-medium truncate max-w-xs">{item.emitNome || 'Emitente Desconhecido'}</div>
-                      <div className="text-xs text-slate-400 font-mono">{item.emitCnpj}</div>
+                    <td className="px-6 py-4">
+                      <div className="font-bold text-[var(--atlas-text)] truncate max-w-xs">{item.emitNome || 'Emitente Desconhecido'}</div>
+                      <div className="text-[10px] text-[var(--atlas-text-muted)] font-mono mt-0.5">{item.emitCnpj}</div>
                     </td>
-                    <td className="p-4 text-slate-700">
-                      <div className="font-medium truncate max-w-xs">{item.destNome || 'Destinatário'}</div>
-                      <div className="text-xs text-slate-400 font-mono">{item.destCnpj}</div>
+                    <td className="px-6 py-4">
+                      <div className="font-medium text-[var(--atlas-text-secondary)] truncate max-w-xs">{item.destNome || 'Destinatário'}</div>
+                      <div className="text-[10px] text-[var(--atlas-text-muted)] font-mono mt-0.5">{item.destCnpj}</div>
                     </td>
-                    <td className="p-4 font-medium text-slate-900">
+                    <td className="px-6 py-4 font-black text-[var(--atlas-navy)] whitespace-nowrap">
                       R$ {item.vNF.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                     </td>
-                    <td className="p-4 text-slate-700">
+                    <td className="px-6 py-4 font-bold text-[var(--atlas-accent)] whitespace-nowrap">
                       R$ {item.vICMS.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                     </td>
-                    <td className="p-4 font-mono text-xs text-slate-500 truncate max-w-xs" title={item.chvNfe}>
+                    <td className="px-6 py-4 font-mono text-[10px] text-[var(--atlas-text-muted)] truncate max-w-xs group-hover:text-[var(--atlas-text-secondary)]" title={item.chvNfe}>
                       {item.chvNfe}
                     </td>
                   </tr>

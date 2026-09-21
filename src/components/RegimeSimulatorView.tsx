@@ -614,24 +614,37 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
     <div className="max-w-7xl w-full mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8">
       
       {/* Top Banner */}
-      <div className="bg-white rounded-lg p-6 sm:p-8 shadow-sm border border-slate-200">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="space-y-1.5">
-            <span className="text-xs font-bold text-indigo-600 uppercase tracking-wider block">
-              Simulador Fiscal & Planejamento Tributário
-            </span>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-              Análise Tríplice de Regimes & Impacto da Reforma (EC 132/2023)
-            </h1>
-            <p className="text-slate-600 text-sm max-w-2xl">
-              Módulo profissional de simulação fiscal com opção de preenchimento manual ou integração com arquivos SPED.
+      <div className="atlas-card p-6 md:p-10 bg-gradient-to-br from-[var(--atlas-navy)] to-[var(--atlas-navy-dark)] border-0 text-white shadow-xl overflow-hidden relative">
+        <div className="absolute top-0 right-0 p-10 opacity-10 pointer-events-none rotate-12">
+          <TrendingUp className="w-64 h-64" />
+        </div>
+
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+          <div className="space-y-4">
+            <div className="flex items-center space-x-4">
+              <div className="p-4 bg-white/15 text-emerald-400 rounded-2xl backdrop-blur-md border border-white/15 shadow-inner">
+                <Calculator className="w-8 h-8" />
+              </div>
+              <div>
+                <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight leading-tight" style={{ fontFamily: 'var(--font-display)' }}>
+                  Simulador de Regimes
+                </h1>
+                <div className="mt-2 flex items-center gap-2">
+                  <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-xs font-bold uppercase tracking-widest">
+                    Planejamento Tributário 2026
+                  </span>
+                </div>
+              </div>
+            </div>
+            <p className="text-base text-blue-100/80 max-w-2xl leading-relaxed">
+              Análise Tríplice de Regimes & Impacto da Reforma (EC 132/2023) com integração automática ao SPED.
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={exportPDFStudy}
-              className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-sm transition-all"
+              className="atlas-btn atlas-btn-accent py-3 px-6 shadow-md"
             >
               <Download className="w-4 h-4" />
               <span>Exportar Estudo (PDF)</span>
@@ -640,14 +653,14 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
         </div>
 
         {/* SPED Optional Toggle Card */}
-        <div className="mt-6 pt-5 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
+        <div className="mt-6 pt-5 border-t border-[var(--atlas-border)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-[var(--atlas-surface-hover)] p-4 rounded-xl border border-[var(--atlas-border)]">
           <div className="flex items-center space-x-3">
-            <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold ${usarDadosSped ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-700'}`}>
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold ${usarDadosSped ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-[var(--atlas-text-secondary)]'}`}>
               <Database className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-sm font-bold text-slate-900 block">Considerar dados importados do SPED</span>
-              <span className="text-xs text-slate-500">
+              <span className="text-sm font-bold text-[var(--atlas-text)] block">Considerar dados importados do SPED</span>
+              <span className="text-xs text-[var(--atlas-text-secondary)]">
                 {spedData 
                   ? `SPED detectado: ${spedData.header?.nome || 'Empresa'} (${spedData.header?.cnpj || 'CNPJ não informado'})`
                   : 'Nenhum arquivo SPED importado na sessão atual. Preencha os dados manualmente abaixo.'}
@@ -663,11 +676,11 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
                 onChange={(e) => handleToggleSped(e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
-              <span className="ml-3 text-xs font-bold text-slate-700">{usarDadosSped ? 'Ativo (SPED)' : 'Desativado (Manual)'}</span>
+              <div className="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[var(--atlas-surface)] after:border-[var(--atlas-border)] after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+              <span className="ml-3 text-xs font-bold text-[var(--atlas-text-secondary)]">{usarDadosSped ? 'Ativo (SPED)' : 'Desativado (Manual)'}</span>
             </label>
           ) : (
-            <span className="text-xs bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg font-medium">
+            <span className="text-xs bg-slate-200 text-[var(--atlas-text-secondary)] px-3 py-1.5 rounded-lg font-medium">
               Modo 100% Manual Ativo
             </span>
           )}
@@ -675,35 +688,35 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
       </div>
 
       {/* Input Parameters Form Section - 100% Reformulated & Professional */}
-      <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-6 space-y-6">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-slate-100 pb-4 gap-4">
+      <div className="bg-[var(--atlas-surface)] rounded-lg border border-[var(--atlas-border)] shadow-sm p-6 space-y-6">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-[var(--atlas-border)] pb-4 gap-4">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-lg bg-[#1e3a5f] text-white flex items-center justify-center font-bold shadow-sm">
+            <div className="w-10 h-10 rounded-lg bg-[var(--atlas-navy)] text-white flex items-center justify-center font-bold shadow-sm">
               <Calculator className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-slate-900">Parâmetros Fiscais & Dados da Empresa</h2>
-              <p className="text-xs text-slate-500">Configure os dados cadastrais, faturamento anual, estrutura de custos e alíquotas setoriais</p>
+              <h2 className="text-base font-bold text-[var(--atlas-text)]">Parâmetros Fiscais & Dados da Empresa</h2>
+              <p className="text-xs text-[var(--atlas-text-secondary)]">Configure os dados cadastrais, faturamento anual, estrutura de custos e alíquotas setoriais</p>
             </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
             <div className="flex items-center space-x-1.5 mr-2">
-              <span className="text-xs text-slate-500 font-semibold hidden sm:inline">Perfis Prontos:</span>
-              <button onClick={handleCarregarPresetComercio} className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition-all cursor-pointer">
+              <span className="text-xs text-[var(--atlas-text-secondary)] font-semibold hidden sm:inline">Perfis Prontos:</span>
+              <button onClick={handleCarregarPresetComercio} className="px-2.5 py-1.5 bg-[var(--atlas-surface-hover)] hover:bg-[var(--atlas-border)] text-[var(--atlas-text-secondary)] rounded-lg text-xs font-bold transition-all cursor-pointer">
                 Comércio
               </button>
-              <button onClick={handleCarregarPresetIndustria} className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition-all cursor-pointer">
+              <button onClick={handleCarregarPresetIndustria} className="px-2.5 py-1.5 bg-[var(--atlas-surface-hover)] hover:bg-[var(--atlas-border)] text-[var(--atlas-text-secondary)] rounded-lg text-xs font-bold transition-all cursor-pointer">
                 Indústria
               </button>
-              <button onClick={handleCarregarPresetServicos} className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition-all cursor-pointer">
+              <button onClick={handleCarregarPresetServicos} className="px-2.5 py-1.5 bg-[var(--atlas-surface-hover)] hover:bg-[var(--atlas-border)] text-[var(--atlas-text-secondary)] rounded-lg text-xs font-bold transition-all cursor-pointer">
                 Serviços (TI)
               </button>
             </div>
 
             <button
               onClick={handleAtualizarCalculo}
-              className="px-4 py-2 bg-[#1e3a5f] hover:bg-[#142c47] text-white text-xs font-bold rounded-lg shadow-sm transition-all flex items-center space-x-1.5 cursor-pointer"
+              className="px-4 py-2 bg-[var(--atlas-navy)] hover:bg-[var(--atlas-navy-dark)] text-white text-xs font-bold rounded-lg shadow-sm transition-all flex items-center space-x-1.5 cursor-pointer"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${showUpdatedNotification ? 'animate-spin' : ''}`} />
               <span>Recalcular Simulação</span>
@@ -712,24 +725,24 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
         </div>
 
         {/* Tab Navigation for Parameters */}
-        <div className="flex border-b border-slate-200 space-x-6 overflow-x-auto">
+        <div className="flex border-b border-[var(--atlas-border)] space-x-6 overflow-x-auto">
           <button
             onClick={() => setActiveParamTab('CADASTRO')}
-            className={`pb-3 text-xs font-bold transition-all border-b-2 flex items-center space-x-2 whitespace-nowrap cursor-pointer ${activeParamTab === 'CADASTRO' ? 'border-[#1e3a5f] text-[#1e3a5f]' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
+            className={`pb-3 text-xs font-bold transition-all border-b-2 flex items-center space-x-2 whitespace-nowrap cursor-pointer ${activeParamTab === 'CADASTRO' ? 'border-[var(--atlas-navy)] text-[var(--atlas-navy)]' : 'border-transparent text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)]'}`}
           >
             <Building2 className="w-4 h-4" />
             <span>1. Dados Cadastrais & Enquadramento</span>
           </button>
           <button
             onClick={() => setActiveParamTab('FINANCEIRO')}
-            className={`pb-3 text-xs font-bold transition-all border-b-2 flex items-center space-x-2 whitespace-nowrap cursor-pointer ${activeParamTab === 'FINANCEIRO' ? 'border-[#1e3a5f] text-[#1e3a5f]' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
+            className={`pb-3 text-xs font-bold transition-all border-b-2 flex items-center space-x-2 whitespace-nowrap cursor-pointer ${activeParamTab === 'FINANCEIRO' ? 'border-[var(--atlas-navy)] text-[var(--atlas-navy)]' : 'border-transparent text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)]'}`}
           >
             <DollarSign className="w-4 h-4" />
             <span>2. Faturamento & Custos (DRE Anual)</span>
           </button>
           <button
             onClick={() => setActiveParamTab('ALIQUOTAS')}
-            className={`pb-3 text-xs font-bold transition-all border-b-2 flex items-center space-x-2 whitespace-nowrap cursor-pointer ${activeParamTab === 'ALIQUOTAS' ? 'border-[#1e3a5f] text-[#1e3a5f]' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
+            className={`pb-3 text-xs font-bold transition-all border-b-2 flex items-center space-x-2 whitespace-nowrap cursor-pointer ${activeParamTab === 'ALIQUOTAS' ? 'border-[var(--atlas-navy)] text-[var(--atlas-navy)]' : 'border-transparent text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)]'}`}
           >
             <Percent className="w-4 h-4" />
             <span>3. Alíquotas & Reforma Tributária</span>
@@ -741,47 +754,47 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
           <div className="space-y-6 pt-2 animate-fade-in">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold uppercase text-slate-700 block">Razão Social da Empresa</label>
+                <label className="text-xs font-bold uppercase text-[var(--atlas-text-secondary)] block">Razão Social da Empresa</label>
                 <input
                   type="text"
                   value={nomeEmpresa}
                   onChange={(e) => setNomeEmpresa(e.target.value)}
                   placeholder="Ex: Minha Empresa Comércio Ltda"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-lg px-3.5 py-2.5 text-xs font-bold text-slate-900 focus:ring-2 focus:ring-[#1e3a5f] shadow-sm"
+                  className="w-full bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg px-3.5 py-2.5 text-xs font-bold text-[var(--atlas-text)] focus:ring-2 focus:ring-[var(--atlas-navy)] shadow-sm"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold uppercase text-slate-700 block">CNPJ</label>
+                <label className="text-xs font-bold uppercase text-[var(--atlas-text-secondary)] block">CNPJ</label>
                 <input
                   type="text"
                   value={cnpj}
                   onChange={(e) => setCnpj(e.target.value)}
                   placeholder="00.000.000/0001-00"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-lg px-3.5 py-2.5 text-xs font-bold text-slate-900 font-mono focus:ring-2 focus:ring-[#1e3a5f] shadow-sm"
+                  className="w-full bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg px-3.5 py-2.5 text-xs font-bold text-[var(--atlas-text)] font-mono focus:ring-2 focus:ring-[var(--atlas-navy)] shadow-sm"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold uppercase text-slate-700 block">Estado (UF)</label>
+                <label className="text-xs font-bold uppercase text-[var(--atlas-text-secondary)] block">Estado (UF)</label>
                 <input
                   type="text"
                   maxLength={2}
                   value={uf}
                   onChange={(e) => setUf(e.target.value.toUpperCase())}
                   placeholder="SP"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-lg px-3.5 py-2.5 text-xs font-bold text-slate-900 uppercase focus:ring-2 focus:ring-[#1e3a5f] shadow-sm"
+                  className="w-full bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg px-3.5 py-2.5 text-xs font-bold text-[var(--atlas-text)] uppercase focus:ring-2 focus:ring-[var(--atlas-navy)] shadow-sm"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 pt-2">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold uppercase text-slate-700 block">Regime Tributário Atual</label>
+                <label className="text-xs font-bold uppercase text-[var(--atlas-text-secondary)] block">Regime Tributário Atual</label>
                 <select
                   value={regimeAtual}
                   onChange={(e: any) => setRegimeAtual(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-300 rounded-lg px-3.5 py-2.5 text-xs font-bold text-slate-900 focus:ring-2 focus:ring-[#1e3a5f] shadow-sm"
+                  className="w-full bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg px-3.5 py-2.5 text-xs font-bold text-[var(--atlas-text)] focus:ring-2 focus:ring-[var(--atlas-navy)] shadow-sm"
                 >
                   <option value="SIMPLES">Simples Nacional</option>
                   <option value="PRESUMIDO">Lucro Presumido</option>
@@ -791,11 +804,11 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold uppercase text-slate-700 block">Ramo de Atividade (Anexo Simples)</label>
+                <label className="text-xs font-bold uppercase text-[var(--atlas-text-secondary)] block">Ramo de Atividade (Anexo Simples)</label>
                 <select
                   value={tipoAtividade}
                   onChange={(e: any) => setTipoAtividade(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-300 rounded-lg px-3.5 py-2.5 text-xs font-bold text-slate-900 focus:ring-2 focus:ring-[#1e3a5f] shadow-sm"
+                  className="w-full bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg px-3.5 py-2.5 text-xs font-bold text-[var(--atlas-text)] focus:ring-2 focus:ring-[var(--atlas-navy)] shadow-sm"
                 >
                   <option value="COMERCIO">Comércio (Anexo I)</option>
                   <option value="INDUSTRIA">Indústria (Anexo II)</option>
@@ -805,7 +818,7 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold uppercase text-slate-700 block">Regime na Reforma (EC 132/23)</label>
+                <label className="text-xs font-bold uppercase text-[var(--atlas-text-secondary)] block">Regime na Reforma (EC 132/23)</label>
                 <select
                   value={regimeEspecialReforma}
                   onChange={(e: any) => setRegimeEspecialReforma(e.target.value)}
@@ -822,7 +835,7 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
             <div className="flex justify-end pt-3">
               <button
                 onClick={() => setActiveParamTab('FINANCEIRO')}
-                className="px-4 py-2 bg-[#1e3a5f] hover:bg-[#142c47] text-white text-xs font-bold rounded-lg transition-all flex items-center space-x-2 cursor-pointer shadow-sm"
+                className="px-4 py-2 bg-[var(--atlas-navy)] hover:bg-[var(--atlas-navy-dark)] text-white text-xs font-bold rounded-lg transition-all flex items-center space-x-2 cursor-pointer shadow-sm"
               >
                 <span>Avançar para Faturamento & Custos</span>
                 <ArrowRight className="w-4 h-4" />
@@ -837,33 +850,33 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
             {/* Frequency / Time Interval Selector */}
             <div className="bg-[#f1efe8] border border-[#e5e2d9] p-4 rounded-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <span className="text-xs font-bold text-[#1e3a5f] uppercase block">Frequência e Intervalo de Entrada dos Valores</span>
-                <p className="text-xs text-slate-600">Informe os valores mensais, trimestrais (ex: Jan-Mar / Q1) ou anuais. O sistema converte automaticamente para a base anual.</p>
+                <span className="text-xs font-bold text-[var(--atlas-navy)] uppercase block">Frequência e Intervalo de Entrada dos Valores</span>
+                <p className="text-xs text-[var(--atlas-text-secondary)]">Informe os valores mensais, trimestrais (ex: Jan-Mar / Q1) ou anuais. O sistema converte automaticamente para a base anual.</p>
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
-                <div className="bg-white p-1 rounded-lg shadow-sm border border-[#e5e2d9] flex items-center space-x-1">
+                <div className="bg-[var(--atlas-surface)] p-1 rounded-lg shadow-sm border border-[#e5e2d9] flex items-center space-x-1">
                   <button
                     onClick={() => setFrequenciaEntrada('ANUAL')}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${frequenciaEntrada === 'ANUAL' ? 'bg-[#1e3a5f] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${frequenciaEntrada === 'ANUAL' ? 'bg-[var(--atlas-navy)] text-white shadow-sm' : 'text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)]'}`}
                   >
                     Anual (12 Meses)
                   </button>
                   <button
                     onClick={() => setFrequenciaEntrada('MENSAL')}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${frequenciaEntrada === 'MENSAL' ? 'bg-[#1e3a5f] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${frequenciaEntrada === 'MENSAL' ? 'bg-[var(--atlas-navy)] text-white shadow-sm' : 'text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)]'}`}
                   >
                     Mensal (1 Mês)
                   </button>
                   <button
                     onClick={() => setFrequenciaEntrada('TRIMESTRAL')}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${frequenciaEntrada === 'TRIMESTRAL' ? 'bg-[#1e3a5f] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${frequenciaEntrada === 'TRIMESTRAL' ? 'bg-[var(--atlas-navy)] text-white shadow-sm' : 'text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)]'}`}
                   >
                     Trimestral
                   </button>
                   <button
                     onClick={() => setFrequenciaEntrada('CUSTOM')}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${frequenciaEntrada === 'CUSTOM' ? 'bg-[#1e3a5f] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${frequenciaEntrada === 'CUSTOM' ? 'bg-[var(--atlas-navy)] text-white shadow-sm' : 'text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)]'}`}
                   >
                     Personalizado (Datas)
                   </button>
@@ -873,7 +886,7 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
                   <select
                     value={trimestreIntervalo}
                     onChange={(e: any) => setTrimestreIntervalo(e.target.value)}
-                    className="bg-white border border-[#e5e2d9] text-[#1e3a5f] text-xs font-bold rounded-lg px-3 py-1.5 shadow-sm"
+                    className="bg-[var(--atlas-surface)] border border-[#e5e2d9] text-[var(--atlas-navy)] text-xs font-bold rounded-lg px-3 py-1.5 shadow-sm"
                   >
                     <option value="Q1">Janeiro - Março (Q1)</option>
                     <option value="Q2">Abril - Junho (Q2)</option>
@@ -883,20 +896,20 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
                 )}
 
                 {frequenciaEntrada === 'CUSTOM' && (
-                  <div className="flex items-center space-x-2 bg-white border border-[#e5e2d9] rounded-lg px-3 py-1.5 shadow-sm">
-                    <span className="text-[11px] font-bold text-[#1e3a5f]">De:</span>
+                  <div className="flex items-center space-x-2 bg-[var(--atlas-surface)] border border-[#e5e2d9] rounded-lg px-3 py-1.5 shadow-sm">
+                    <span className="text-xs font-bold text-[var(--atlas-navy)]">De:</span>
                     <input
                       type="date"
                       value={dataInicio}
                       onChange={(e) => setDataInicio(e.target.value)}
-                      className="bg-slate-50 border border-slate-300 rounded-lg px-2 py-1 text-xs font-bold text-slate-900"
+                      className="bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg px-2 py-1 text-xs font-bold text-[var(--atlas-text)]"
                     />
-                    <span className="text-[11px] font-bold text-[#1e3a5f]">Até:</span>
+                    <span className="text-xs font-bold text-[var(--atlas-navy)]">Até:</span>
                     <input
                       type="date"
                       value={dataFim}
                       onChange={(e) => setDataFim(e.target.value)}
-                      className="bg-slate-50 border border-slate-300 rounded-lg px-2 py-1 text-xs font-bold text-slate-900"
+                      className="bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg px-2 py-1 text-xs font-bold text-[var(--atlas-text)]"
                     />
                   </div>
                 )}
@@ -904,107 +917,107 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2">
+              <div className="bg-[var(--atlas-surface-hover)] p-4 rounded-lg border border-[var(--atlas-border)] space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold uppercase text-slate-700">
+                  <label className="text-xs font-bold uppercase text-[var(--atlas-text-secondary)]">
                     {frequenciaEntrada === 'MENSAL' ? 'Faturamento Bruto Mensal' : frequenciaEntrada === 'TRIMESTRAL' ? `Faturamento (${trimestreIntervalo})` : 'Faturamento Bruto Anual'}
                   </label>
                   <FiscalTooltip title="Receita Bruta" description="Soma das vendas e serviços prestados no período informado." />
                 </div>
                 <div className="relative">
-                  <DollarSign className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+                  <DollarSign className="w-4 h-4 absolute left-3 top-3 text-[var(--atlas-text-muted)]" />
                   <input
                     type="number"
                     value={faturamentoInput === 0 ? '' : faturamentoInput}
                     onChange={(e) => setFaturamentoInput(e.target.value === '' ? 0 : Number(e.target.value))}
-                    className="w-full pl-9 pr-3 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-bold text-slate-900 focus:ring-2 focus:ring-[#1e3a5f] shadow-sm"
+                    className="w-full pl-9 pr-3 py-2.5 bg-[var(--atlas-surface)] border border-[var(--atlas-border)] rounded-lg text-sm font-bold text-[var(--atlas-text)] focus:ring-2 focus:ring-[var(--atlas-navy)] shadow-sm"
                   />
                 </div>
-                <span className="text-[11px] text-slate-500 font-mono block">
+                <span className="text-xs text-[var(--atlas-text-secondary)] font-mono block">
                   {frequenciaEntrada === 'ANUAL' ? `Média mensal: R$ ${(faturamentoAnual / 12).toLocaleString('pt-BR', { maximumFractionDigits: 2 })}` : `Total Anual Base (x${multiplicadorBase}): R$ ${faturamentoAnual.toLocaleString('pt-BR', { maximumFractionDigits: 2 })}`}
                 </span>
               </div>
 
-              <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2">
+              <div className="bg-[var(--atlas-surface-hover)] p-4 rounded-lg border border-[var(--atlas-border)] space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold uppercase text-slate-700">
+                  <label className="text-xs font-bold uppercase text-[var(--atlas-text-secondary)]">
                     {frequenciaEntrada === 'MENSAL' ? 'Compras / Insumos Mensais' : frequenciaEntrada === 'TRIMESTRAL' ? `Compras (${trimestreIntervalo})` : 'Compras / Insumos Anuais'}
                   </label>
                   <FiscalTooltip title="Custos de Aquisição (CMV/CPV)" description="Total gasto com mercadorias ou matéria-prima no período." />
                 </div>
                 <div className="relative">
-                  <DollarSign className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+                  <DollarSign className="w-4 h-4 absolute left-3 top-3 text-[var(--atlas-text-muted)]" />
                   <input
                     type="number"
                     value={comprasInsumosInput === 0 ? '' : comprasInsumosInput}
                     onChange={(e) => setComprasInsumosInput(e.target.value === '' ? 0 : Number(e.target.value))}
-                    className="w-full pl-9 pr-3 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-bold text-slate-900 focus:ring-2 focus:ring-[#1e3a5f] shadow-sm"
+                    className="w-full pl-9 pr-3 py-2.5 bg-[var(--atlas-surface)] border border-[var(--atlas-border)] rounded-lg text-sm font-bold text-[var(--atlas-text)] focus:ring-2 focus:ring-[var(--atlas-navy)] shadow-sm"
                   />
                 </div>
-                <span className="text-[11px] text-slate-500 font-mono block">
+                <span className="text-xs text-[var(--atlas-text-secondary)] font-mono block">
                   {frequenciaEntrada !== 'ANUAL' ? `Total Anual: R$ ${comprasInsumosAnual.toLocaleString('pt-BR', { maximumFractionDigits: 2 })}` : ''} {(faturamentoAnual > 0 ? (comprasInsumosAnual / faturamentoAnual) * 100 : 0).toFixed(1)}% do faturamento
                 </span>
               </div>
 
-              <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2">
+              <div className="bg-[var(--atlas-surface-hover)] p-4 rounded-lg border border-[var(--atlas-border)] space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold uppercase text-slate-700">
+                  <label className="text-xs font-bold uppercase text-[var(--atlas-text-secondary)]">
                     {frequenciaEntrada === 'MENSAL' ? 'Folha de Pagamento Mensal' : frequenciaEntrada === 'TRIMESTRAL' ? `Folha (${trimestreIntervalo})` : 'Folha de Pagamento Anual'}
                   </label>
                   <FiscalTooltip title="Folha Salarial & Pró-Labore" description="Utilizada para cálculo do Fator R no Simples Nacional." />
                 </div>
                 <div className="relative">
-                  <DollarSign className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+                  <DollarSign className="w-4 h-4 absolute left-3 top-3 text-[var(--atlas-text-muted)]" />
                   <input
                     type="number"
                     value={folhaPagamentoInput === 0 ? '' : folhaPagamentoInput}
                     onChange={(e) => setFolhaPagamentoInput(e.target.value === '' ? 0 : Number(e.target.value))}
-                    className="w-full pl-9 pr-3 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-bold text-slate-900 focus:ring-2 focus:ring-[#1e3a5f] shadow-sm"
+                    className="w-full pl-9 pr-3 py-2.5 bg-[var(--atlas-surface)] border border-[var(--atlas-border)] rounded-lg text-sm font-bold text-[var(--atlas-text)] focus:ring-2 focus:ring-[var(--atlas-navy)] shadow-sm"
                   />
                 </div>
-                <span className={`text-[11px] font-mono block ${fatorR >= 28 ? 'text-emerald-700 font-bold' : 'text-amber-700'}`}>
+                <span className={`text-xs font-mono block ${fatorR >= 28 ? 'text-emerald-700 font-bold' : 'text-amber-700'}`}>
                   Fator R: {fatorR.toFixed(1)}% ({fatorR >= 28 ? 'Anexo III' : 'Anexo V'}) {frequenciaEntrada !== 'ANUAL' ? `• Anual: R$ ${folhaPagamentoAnual.toLocaleString('pt-BR', { maximumFractionDigits: 2 })}` : ''}
                 </span>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
-              <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2">
+              <div className="bg-[var(--atlas-surface-hover)] p-4 rounded-lg border border-[var(--atlas-border)] space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold uppercase text-slate-700">
+                  <label className="text-xs font-bold uppercase text-[var(--atlas-text-secondary)]">
                     {frequenciaEntrada === 'MENSAL' ? 'Despesas Operacionais Mensais' : frequenciaEntrada === 'TRIMESTRAL' ? `Despesas (${trimestreIntervalo})` : 'Despesas Operacionais Anuais'}
                   </label>
                   <FiscalTooltip title="Despesas Administrativas" description="Aluguel, energia, internet, softwares e serviços contábeis." />
                 </div>
                 <div className="relative">
-                  <DollarSign className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+                  <DollarSign className="w-4 h-4 absolute left-3 top-3 text-[var(--atlas-text-muted)]" />
                   <input
                     type="number"
                     value={despesasOperacionaisInput === 0 ? '' : despesasOperacionaisInput}
                     onChange={(e) => setDespesasOperacionaisInput(e.target.value === '' ? 0 : Number(e.target.value))}
-                    className="w-full pl-9 pr-3 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-bold text-slate-900 focus:ring-2 focus:ring-[#1e3a5f] shadow-sm"
+                    className="w-full pl-9 pr-3 py-2.5 bg-[var(--atlas-surface)] border border-[var(--atlas-border)] rounded-lg text-sm font-bold text-[var(--atlas-text)] focus:ring-2 focus:ring-[var(--atlas-navy)] shadow-sm"
                   />
                 </div>
-                <span className="text-[11px] text-slate-500 font-mono block">
+                <span className="text-xs text-[var(--atlas-text-secondary)] font-mono block">
                   {frequenciaEntrada !== 'ANUAL' ? `Total Anual: R$ ${despesasOperacionaisAnual.toLocaleString('pt-BR', { maximumFractionDigits: 2 })}` : ''} {(faturamentoAnual > 0 ? (despesasOperacionaisAnual / faturamentoAnual) * 100 : 0).toFixed(1)}% do faturamento
                 </span>
               </div>
 
-              <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2">
+              <div className="bg-[var(--atlas-surface-hover)] p-4 rounded-lg border border-[var(--atlas-border)] space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold uppercase text-slate-700">Margem de Lucro Estimada (%)</label>
+                  <label className="text-xs font-bold uppercase text-[var(--atlas-text-secondary)]">Margem de Lucro Estimada (%)</label>
                   <FiscalTooltip title="Margem de Lucro Presumido/Real" description="Utilizada para estimativa de base de cálculo em regimes apurados por lucro." />
                 </div>
                 <div className="relative">
-                  <Percent className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+                  <Percent className="w-4 h-4 absolute left-3 top-3 text-[var(--atlas-text-muted)]" />
                   <input
                     type="number"
                     value={margemLucroEstimada === 0 ? '' : margemLucroEstimada}
                     onChange={(e) => setMargemLucroEstimada(e.target.value === '' ? 0 : Number(e.target.value))}
-                    className="w-full pl-9 pr-3 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-bold text-slate-900 focus:ring-2 focus:ring-[#1e3a5f] shadow-sm"
+                    className="w-full pl-9 pr-3 py-2.5 bg-[var(--atlas-surface)] border border-[var(--atlas-border)] rounded-lg text-sm font-bold text-[var(--atlas-text)] focus:ring-2 focus:ring-[var(--atlas-navy)] shadow-sm"
                   />
                 </div>
-                <span className="text-[11px] text-slate-500 font-mono block">
+                <span className="text-xs text-[var(--atlas-text-secondary)] font-mono block">
                   Lucro Estimado Base Anual: R$ {calcLucroReal.lucroRealEstimadoBase.toLocaleString('pt-BR', { maximumFractionDigits: 2 })}
                 </span>
               </div>
@@ -1013,13 +1026,13 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
             <div className="flex justify-between pt-3">
               <button
                 onClick={() => setActiveParamTab('CADASTRO')}
-                className="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-300 transition-all cursor-pointer"
+                className="px-4 py-2 bg-slate-200 text-[var(--atlas-text-secondary)] text-xs font-bold rounded-lg hover:bg-slate-300 transition-all cursor-pointer"
               >
                 Voltar
               </button>
               <button
                 onClick={() => setActiveParamTab('ALIQUOTAS')}
-                className="px-4 py-2 bg-[#1e3a5f] hover:bg-[#142c47] text-white text-xs font-bold rounded-lg transition-all flex items-center space-x-2 cursor-pointer shadow-sm"
+                className="px-4 py-2 bg-[var(--atlas-navy)] hover:bg-[var(--atlas-navy-dark)] text-white text-xs font-bold rounded-lg transition-all flex items-center space-x-2 cursor-pointer shadow-sm"
               >
                 <span>Avançar para Alíquotas & Tributos</span>
                 <ArrowRight className="w-4 h-4" />
@@ -1033,54 +1046,54 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
           <div className="space-y-6 pt-2 animate-fade-in">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold uppercase text-slate-700 block">Alíquota ICMS ({uf})</label>
+                <label className="text-xs font-bold uppercase text-[var(--atlas-text-secondary)] block">Alíquota ICMS ({uf})</label>
                 <div className="relative">
-                  <Percent className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+                  <Percent className="w-4 h-4 absolute left-3 top-3 text-[var(--atlas-text-muted)]" />
                   <input
                     type="number"
                     value={aliquotaIcmsInterna === 0 ? '' : aliquotaIcmsInterna}
                     onChange={(e) => setAliquotaIcmsInterna(e.target.value === '' ? 0 : Number(e.target.value))}
-                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold text-slate-900 shadow-sm"
+                    className="w-full pl-9 pr-3 py-2.5 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg text-xs font-bold text-[var(--atlas-text)] shadow-sm"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold uppercase text-slate-700 block">Crédito ICMS s/ Entradas (%)</label>
+                <label className="text-xs font-bold uppercase text-[var(--atlas-text-secondary)] block">Crédito ICMS s/ Entradas (%)</label>
                 <div className="relative">
-                  <Percent className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+                  <Percent className="w-4 h-4 absolute left-3 top-3 text-[var(--atlas-text-muted)]" />
                   <input
                     type="number"
                     value={creditoIcmsEntradas === 0 ? '' : creditoIcmsEntradas}
                     onChange={(e) => setCreditoIcmsEntradas(e.target.value === '' ? 0 : Number(e.target.value))}
-                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold text-slate-900 shadow-sm"
+                    className="w-full pl-9 pr-3 py-2.5 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg text-xs font-bold text-[var(--atlas-text)] shadow-sm"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold uppercase text-slate-700 block">Alíquota de ISS (%)</label>
+                <label className="text-xs font-bold uppercase text-[var(--atlas-text-secondary)] block">Alíquota de ISS (%)</label>
                 <div className="relative">
-                  <Percent className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+                  <Percent className="w-4 h-4 absolute left-3 top-3 text-[var(--atlas-text-muted)]" />
                   <input
                     type="number"
                     value={aliquotaIss === 0 ? '' : aliquotaIss}
                     onChange={(e) => setAliquotaIss(e.target.value === '' ? 0 : Number(e.target.value))}
-                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold text-slate-900 shadow-sm"
+                    className="w-full pl-9 pr-3 py-2.5 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg text-xs font-bold text-[var(--atlas-text)] shadow-sm"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold uppercase text-slate-700 block">Alíquota IVA Padrão (IBS+CBS)</label>
+                <label className="text-xs font-bold uppercase text-[var(--atlas-text-secondary)] block">Alíquota IVA Padrão (IBS+CBS)</label>
                 <div className="relative">
-                  <Percent className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+                  <Percent className="w-4 h-4 absolute left-3 top-3 text-[var(--atlas-text-muted)]" />
                   <input
                     type="number"
                     step="0.1"
                     value={aliquotaIvaDualStandard === 0 ? '' : aliquotaIvaDualStandard}
                     onChange={(e) => setAliquotaIvaDualStandard(e.target.value === '' ? 0 : Number(e.target.value))}
-                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold text-slate-900 shadow-sm"
+                    className="w-full pl-9 pr-3 py-2.5 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg text-xs font-bold text-[var(--atlas-text)] shadow-sm"
                   />
                 </div>
               </div>
@@ -1089,13 +1102,13 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
             <div className="flex justify-between pt-3">
               <button
                 onClick={() => setActiveParamTab('FINANCEIRO')}
-                className="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-300 transition-all cursor-pointer"
+                className="px-4 py-2 bg-slate-200 text-[var(--atlas-text-secondary)] text-xs font-bold rounded-lg hover:bg-slate-300 transition-all cursor-pointer"
               >
                 Voltar
               </button>
               <button
                 onClick={handleAtualizarCalculo}
-                className="px-6 py-2.5 bg-[#1e3a5f] hover:bg-[#142c47] text-white text-xs font-bold rounded-lg shadow-sm transition-all flex items-center space-x-2 cursor-pointer"
+                className="px-6 py-2.5 bg-[var(--atlas-navy)] hover:bg-[var(--atlas-navy-dark)] text-white text-xs font-bold rounded-lg shadow-sm transition-all flex items-center space-x-2 cursor-pointer"
               >
                 <RefreshCw className="w-4 h-4" />
                 <span>Aplicar Alíquotas & Atualizar Simulações</span>
@@ -1117,7 +1130,7 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
       </div>
 
       {/* Winner Recommendation Banner */}
-      <div className="bg-white rounded-lg p-6 shadow-sm border border-emerald-200 space-y-4">
+      <div className="bg-[var(--atlas-surface)] rounded-lg p-6 shadow-sm border border-emerald-200 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center space-x-3.5">
             <div className="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center font-bold shrink-0 shadow-sm">
@@ -1127,44 +1140,44 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
               <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 block">
                 Regime Recomendado com Menor Custo Tributário ({nomeEmpresa})
               </span>
-              <h2 className="text-xl font-extrabold text-slate-900">
+              <h2 className="text-xl font-extrabold text-[var(--atlas-text)]">
                 {regimesComparison.winner.nome.toUpperCase()}
               </h2>
             </div>
           </div>
 
           <div className="text-left sm:text-right bg-emerald-50/50 sm:bg-transparent p-3 sm:p-0 rounded-xl border sm:border-0 border-emerald-100">
-            <span className="text-xs text-slate-500 font-semibold block">Economia Anual Estimada:</span>
+            <span className="text-xs text-[var(--atlas-text-secondary)] font-semibold block">Economia Anual Estimada:</span>
             <span className="text-xl font-bold text-emerald-700 font-mono">
               R$ {regimesComparison.economiaAnual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
             </span>
           </div>
         </div>
 
-        <p className="text-xs text-slate-600 border-t border-slate-100 pt-3 leading-relaxed">
-          Com base no faturamento de R$ {faturamentoAnual.toLocaleString('pt-BR')} e parâmetros informados, o regime <strong className="text-slate-900 font-bold">{regimesComparison.winner.nome}</strong> representa uma alíquota efetiva de <strong className="text-emerald-700 font-bold">{regimesComparison.winner.aliqEfetiva.toFixed(2)}%</strong> contra {regimesComparison.sorted[1]?.aliqEfetiva.toFixed(2)}% do segundo regime mais vantajoso.
+        <p className="text-xs text-[var(--atlas-text-secondary)] border-t border-[var(--atlas-border)] pt-3 leading-relaxed">
+          Com base no faturamento de R$ {faturamentoAnual.toLocaleString('pt-BR')} e parâmetros informados, o regime <strong className="text-[var(--atlas-text)] font-bold">{regimesComparison.winner.nome}</strong> representa uma alíquota efetiva de <strong className="text-emerald-700 font-bold">{regimesComparison.winner.aliqEfetiva.toFixed(2)}%</strong> contra {regimesComparison.sorted[1]?.aliqEfetiva.toFixed(2)}% do segundo regime mais vantajoso.
         </p>
       </div>
 
       {/* Intelligent Automated Tax Analysis Card */}
-      <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm space-y-4">
-        <div className="flex items-center space-x-3 border-b border-slate-100 pb-3">
-          <div className="w-8 h-8 rounded-lg bg-[#f1efe8] flex items-center justify-center text-[#1e3a5f] font-bold">
+      <div className="bg-[var(--atlas-surface)] rounded-lg border border-[var(--atlas-border)] p-6 shadow-sm space-y-4">
+        <div className="flex items-center space-x-3 border-b border-[var(--atlas-border)] pb-3">
+          <div className="w-8 h-8 rounded-lg bg-[#f1efe8] flex items-center justify-center text-[var(--atlas-navy)] font-bold">
             <Zap className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-slate-900">Análise Automática Inteligente de Carga Tributária</h3>
-            <span className="text-[11px] text-slate-500">Diagnóstico fiscal gerado com base nas regras da Receita Federal e EC 132/2023</span>
+            <h3 className="text-sm font-bold text-[var(--atlas-text)]">Análise Automática Inteligente de Carga Tributária</h3>
+            <span className="text-xs text-[var(--atlas-text-secondary)]">Diagnóstico fiscal gerado com base nas regras da Receita Federal e EC 132/2023</span>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-          <div className="bg-slate-50 p-4 rounded-lg border border-slate-100 space-y-1.5">
-            <span className="font-bold text-slate-700 block flex items-center space-x-1.5">
+          <div className="bg-[var(--atlas-surface-hover)] p-4 rounded-lg border border-[var(--atlas-border)] space-y-1.5">
+            <span className="font-bold text-[var(--atlas-text-secondary)] block flex items-center space-x-1.5">
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
               <span>Fator Decisivo (Vencedor)</span>
             </span>
-            <p className="text-slate-600 leading-relaxed">
+            <p className="text-[var(--atlas-text-secondary)] leading-relaxed">
               {regimesComparison.winner.id === 'SIMPLES' && 'O faturamento anual enquadra a empresa nas faixas iniciais do Simples Nacional, dispensando a complexidade do Lucro Real e reduzindo a carga agregada via DAS único.'}
               {regimesComparison.winner.id === 'PRESUMIDO' && 'As margens de presunção legal aplicadas ao Lucro Presumido combinadas com PIS/COFINS cumulativo tornaram-se mais vantajosas que a progressividade do Simples ou as despesas do Real.'}
               {regimesComparison.winner.id === 'REAL' && 'O volume de despesas operacionais, folha de pagamentos e créditos de insumos informados reduziu expressivamente a base de cálculo do IRPJ/CSLL no Lucro Real.'}
@@ -1172,22 +1185,22 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
             </p>
           </div>
 
-          <div className="bg-slate-50 p-4 rounded-lg border border-slate-100 space-y-1.5">
-            <span className="font-bold text-slate-700 block flex items-center space-x-1.5">
-              <Percent className="w-4 h-4 text-[#1e3a5f]" />
+          <div className="bg-[var(--atlas-surface-hover)] p-4 rounded-lg border border-[var(--atlas-border)] space-y-1.5">
+            <span className="font-bold text-[var(--atlas-text-secondary)] block flex items-center space-x-1.5">
+              <Percent className="w-4 h-4 text-[var(--atlas-navy)]" />
               <span>Amplitude de Economia</span>
             </span>
-            <p className="text-slate-600 leading-relaxed">
-              Optar pelo <strong className="text-slate-800">{regimesComparison.winner.nome}</strong> em vez de <strong className="text-slate-800">{regimesComparison.sorted[1]?.nome}</strong> gera uma retenção de caixa de <strong className="text-emerald-700 font-bold">R$ {regimesComparison.economiaAnual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} anuais</strong>, representando uma redução de {Math.abs(regimesComparison.winner.aliqEfetiva - (regimesComparison.sorted[1]?.aliqEfetiva || 0)).toFixed(2)} p.p. na alíquota efetiva.
+            <p className="text-[var(--atlas-text-secondary)] leading-relaxed">
+              Optar pelo <strong className="text-[var(--atlas-text)]">{regimesComparison.winner.nome}</strong> em vez de <strong className="text-[var(--atlas-text)]">{regimesComparison.sorted[1]?.nome}</strong> gera uma retenção de caixa de <strong className="text-emerald-700 font-bold">R$ {regimesComparison.economiaAnual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} anuais</strong>, representando uma redução de {Math.abs(regimesComparison.winner.aliqEfetiva - (regimesComparison.sorted[1]?.aliqEfetiva || 0)).toFixed(2)} p.p. na alíquota efetiva.
             </p>
           </div>
 
-          <div className="bg-slate-50 p-4 rounded-lg border border-slate-100 space-y-1.5">
-            <span className="font-bold text-slate-700 block flex items-center space-x-1.5">
+          <div className="bg-[var(--atlas-surface-hover)] p-4 rounded-lg border border-[var(--atlas-border)] space-y-1.5">
+            <span className="font-bold text-[var(--atlas-text-secondary)] block flex items-center space-x-1.5">
               <AlertTriangle className="w-4 h-4 text-amber-600" />
               <span>Alerta de Conformidade & Prazo</span>
             </span>
-            <p className="text-slate-600 leading-relaxed">
+            <p className="text-[var(--atlas-text-secondary)] leading-relaxed">
               {faturamentoAnual > 4500000 && faturamentoAnual <= 4800000 ? 'Atenção: O faturamento está próximo do sublimite do Simples Nacional (R$ 4.8M). Planeje a transição preventiva para evitar exclusão retroativa.' : 'Planejamento tributário apto para opção no início do próximo ano-calendário ou conforme regras de transição da Reforma Tributária.'}
             </p>
           </div>
@@ -1195,29 +1208,29 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
       </div>
 
       {/* DRE (Demonstração do Resultado do Exercício) Comparativa com Análise Vertical (%) */}
-      <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm space-y-6">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-slate-100 pb-4 gap-4">
+      <div className="bg-[var(--atlas-surface)] rounded-lg border border-[var(--atlas-border)] p-6 shadow-sm space-y-6">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-[var(--atlas-border)] pb-4 gap-4">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-lg bg-[#f1efe8] text-[#1e3a5f] flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-lg bg-[#f1efe8] text-[var(--atlas-navy)] flex items-center justify-center font-bold">
               <FileText className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-slate-900">DRE Simulada & Análise Vertical (% s/ Faturamento)</h2>
-              <p className="text-xs text-slate-500">Demonstração de Resultado do Exercício comparativa detalhando impostos, IRPJ/CSLL e margens em R$ e %</p>
+              <h2 className="text-base font-bold text-[var(--atlas-text)]">DRE Simulada & Análise Vertical (% s/ Faturamento)</h2>
+              <p className="text-xs text-[var(--atlas-text-secondary)]">Demonstração de Resultado do Exercício comparativa detalhando impostos, IRPJ/CSLL e margens em R$ e %</p>
             </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <div className="bg-slate-100 p-1 rounded-lg flex items-center space-x-1">
+            <div className="bg-[var(--atlas-surface-hover)] p-1 rounded-lg flex items-center space-x-1">
               <button
                 onClick={() => setPeriodoAnalise('ANUAL')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${periodoAnalise === 'ANUAL' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${periodoAnalise === 'ANUAL' ? 'bg-[var(--atlas-surface)] text-[var(--atlas-text)] shadow-sm' : 'text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)]'}`}
               >
                 Anual (12 Meses)
               </button>
               <button
                 onClick={() => setPeriodoAnalise('TRIMESTRAL')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${periodoAnalise === 'TRIMESTRAL' ? 'bg-[#1e3a5f] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${periodoAnalise === 'TRIMESTRAL' ? 'bg-[var(--atlas-navy)] text-white shadow-sm' : 'text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)]'}`}
               >
                 Trimestral
               </button>
@@ -1226,7 +1239,7 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
               <select
                 value={trimestreSelecionado}
                 onChange={(e: any) => setTrimestreSelecionado(e.target.value)}
-                className="bg-[#f1efe8] border border-[#e5e2d9] text-[#1e3a5f] text-xs font-bold rounded-lg px-3 py-1.5 shadow-sm"
+                className="bg-[#f1efe8] border border-[#e5e2d9] text-[var(--atlas-navy)] text-xs font-bold rounded-lg px-3 py-1.5 shadow-sm"
               >
                 <option value="Q1">1º Trimestre (Q1)</option>
                 <option value="Q2">2º Trimestre (Q2)</option>
@@ -1234,7 +1247,7 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
                 <option value="Q4">4º Trimestre (Q4)</option>
               </select>
             )}
-            <span className="text-xs bg-slate-100 text-slate-700 font-bold px-3 py-1.5 rounded-lg border border-slate-200">
+            <span className="text-xs bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] font-bold px-3 py-1.5 rounded-lg border border-[var(--atlas-border)]">
               {periodoAnalise === 'ANUAL' ? 'Base Anual (R$ / %)' : `Base Trimestral - ${trimestreSelecionado} (R$ / %)`}
             </span>
           </div>
@@ -1243,24 +1256,24 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
         <div className="overflow-x-auto">
           <table className="w-full text-xs text-left border-collapse">
             <thead>
-              <tr className="bg-[#1e3a5f] text-white">
+              <tr className="bg-[var(--atlas-navy)] text-white">
                 <th className="p-3.5 rounded-l-lg font-bold">Linha da DRE / Conta Fiscal</th>
                 <th className="p-3.5 text-right font-bold">Simples Nacional (R$ / %)</th>
                 <th className="p-3.5 text-right font-bold">Lucro Presumido (R$ / %)</th>
                 <th className="p-3.5 rounded-r-lg text-right font-bold">Lucro Real (R$ / %)</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
-              <tr className="bg-slate-50/50">
-                <td className="p-3.5 font-bold text-slate-900">1. Receita Bruta (Faturamento)</td>
-                <td className="p-3.5 text-right font-mono font-bold text-slate-900">
-                  R$ {displayDreSimples.receitaBruta.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-[#1e3a5f] font-semibold">(100.0%)</span>
+            <tbody className="divide-y divide-[var(--atlas-border)] font-medium text-[var(--atlas-text-secondary)]">
+              <tr className="bg-[var(--atlas-surface-hover)]/50">
+                <td className="p-3.5 font-bold text-[var(--atlas-text)]">1. Receita Bruta (Faturamento)</td>
+                <td className="p-3.5 text-right font-mono font-bold text-[var(--atlas-text)]">
+                  R$ {displayDreSimples.receitaBruta.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-[var(--atlas-navy)] font-semibold">(100.0%)</span>
                 </td>
-                <td className="p-3.5 text-right font-mono font-bold text-slate-900">
-                  R$ {displayDrePresumido.receitaBruta.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-[#1e3a5f] font-semibold">(100.0%)</span>
+                <td className="p-3.5 text-right font-mono font-bold text-[var(--atlas-text)]">
+                  R$ {displayDrePresumido.receitaBruta.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-[var(--atlas-navy)] font-semibold">(100.0%)</span>
                 </td>
-                <td className="p-3.5 text-right font-mono font-bold text-slate-900">
-                  R$ {displayDreReal.receitaBruta.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-[#1e3a5f] font-semibold">(100.0%)</span>
+                <td className="p-3.5 text-right font-mono font-bold text-[var(--atlas-text)]">
+                  R$ {displayDreReal.receitaBruta.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-[var(--atlas-navy)] font-semibold">(100.0%)</span>
                 </td>
               </tr>
               <tr>
@@ -1275,64 +1288,64 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
                   - R$ {displayDreReal.impostos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="font-semibold">({faturamentoAnual > 0 ? ((displayDreReal.impostos / displayDreReal.receitaBruta) * 100).toFixed(1) : 0}%)</span>
                 </td>
               </tr>
-              <tr className="bg-slate-50 font-bold">
-                <td className="p-3.5 text-slate-900">(=) Receita Líquida</td>
-                <td className="p-3.5 text-right font-mono text-slate-900">
-                  R$ {displayDreSimples.receitaLiquida.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-slate-600">({faturamentoAnual > 0 ? ((displayDreSimples.receitaLiquida / displayDreSimples.receitaBruta) * 100).toFixed(1) : 0}%)</span>
+              <tr className="bg-[var(--atlas-surface-hover)] font-bold">
+                <td className="p-3.5 text-[var(--atlas-text)]">(=) Receita Líquida</td>
+                <td className="p-3.5 text-right font-mono text-[var(--atlas-text)]">
+                  R$ {displayDreSimples.receitaLiquida.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-[var(--atlas-text-secondary)]">({faturamentoAnual > 0 ? ((displayDreSimples.receitaLiquida / displayDreSimples.receitaBruta) * 100).toFixed(1) : 0}%)</span>
                 </td>
-                <td className="p-3.5 text-right font-mono text-slate-900">
-                  R$ {displayDrePresumido.receitaLiquida.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-slate-600">({faturamentoAnual > 0 ? ((displayDrePresumido.receitaLiquida / displayDrePresumido.receitaBruta) * 100).toFixed(1) : 0}%)</span>
+                <td className="p-3.5 text-right font-mono text-[var(--atlas-text)]">
+                  R$ {displayDrePresumido.receitaLiquida.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-[var(--atlas-text-secondary)]">({faturamentoAnual > 0 ? ((displayDrePresumido.receitaLiquida / displayDrePresumido.receitaBruta) * 100).toFixed(1) : 0}%)</span>
                 </td>
-                <td className="p-3.5 text-right font-mono text-slate-900">
-                  R$ {displayDreReal.receitaLiquida.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-slate-600">({faturamentoAnual > 0 ? ((displayDreReal.receitaLiquida / displayDreReal.receitaBruta) * 100).toFixed(1) : 0}%)</span>
+                <td className="p-3.5 text-right font-mono text-[var(--atlas-text)]">
+                  R$ {displayDreReal.receitaLiquida.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-[var(--atlas-text-secondary)]">({faturamentoAnual > 0 ? ((displayDreReal.receitaLiquida / displayDreReal.receitaBruta) * 100).toFixed(1) : 0}%)</span>
                 </td>
               </tr>
               <tr>
-                <td className="p-3.5 text-slate-600">(-) Compras de Insumos / Custos (CMV / CPV)</td>
-                <td className="p-3.5 text-right font-mono text-slate-600">
+                <td className="p-3.5 text-[var(--atlas-text-secondary)]">(-) Compras de Insumos / Custos (CMV / CPV)</td>
+                <td className="p-3.5 text-right font-mono text-[var(--atlas-text-secondary)]">
                   - R$ {displayDreSimples.cmv.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="font-semibold">({faturamentoAnual > 0 ? ((displayDreSimples.cmv / displayDreSimples.receitaBruta) * 100).toFixed(1) : 0}%)</span>
                 </td>
-                <td className="p-3.5 text-right font-mono text-slate-600">
+                <td className="p-3.5 text-right font-mono text-[var(--atlas-text-secondary)]">
                   - R$ {displayDrePresumido.cmv.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="font-semibold">({faturamentoAnual > 0 ? ((displayDrePresumido.cmv / displayDrePresumido.receitaBruta) * 100).toFixed(1) : 0}%)</span>
                 </td>
-                <td className="p-3.5 text-right font-mono text-slate-600">
+                <td className="p-3.5 text-right font-mono text-[var(--atlas-text-secondary)]">
                   - R$ {displayDreReal.cmv.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="font-semibold">({faturamentoAnual > 0 ? ((displayDreReal.cmv / displayDreReal.receitaBruta) * 100).toFixed(1) : 0}%)</span>
                 </td>
               </tr>
-              <tr className="bg-slate-50 font-bold">
-                <td className="p-3.5 text-slate-900">(=) Lucro Bruto</td>
-                <td className="p-3.5 text-right font-mono text-slate-900">
-                  R$ {displayDreSimples.lucroBruto.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-slate-600">({faturamentoAnual > 0 ? ((displayDreSimples.lucroBruto / displayDreSimples.receitaBruta) * 100).toFixed(1) : 0}%)</span>
+              <tr className="bg-[var(--atlas-surface-hover)] font-bold">
+                <td className="p-3.5 text-[var(--atlas-text)]">(=) Lucro Bruto</td>
+                <td className="p-3.5 text-right font-mono text-[var(--atlas-text)]">
+                  R$ {displayDreSimples.lucroBruto.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-[var(--atlas-text-secondary)]">({faturamentoAnual > 0 ? ((displayDreSimples.lucroBruto / displayDreSimples.receitaBruta) * 100).toFixed(1) : 0}%)</span>
                 </td>
-                <td className="p-3.5 text-right font-mono text-slate-900">
-                  R$ {displayDrePresumido.lucroBruto.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-slate-600">({faturamentoAnual > 0 ? ((displayDrePresumido.lucroBruto / displayDrePresumido.receitaBruta) * 100).toFixed(1) : 0}%)</span>
+                <td className="p-3.5 text-right font-mono text-[var(--atlas-text)]">
+                  R$ {displayDrePresumido.lucroBruto.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-[var(--atlas-text-secondary)]">({faturamentoAnual > 0 ? ((displayDrePresumido.lucroBruto / displayDrePresumido.receitaBruta) * 100).toFixed(1) : 0}%)</span>
                 </td>
-                <td className="p-3.5 text-right font-mono text-slate-900">
-                  R$ {displayDreReal.lucroBruto.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-slate-600">({faturamentoAnual > 0 ? ((displayDreReal.lucroBruto / displayDreReal.receitaBruta) * 100).toFixed(1) : 0}%)</span>
+                <td className="p-3.5 text-right font-mono text-[var(--atlas-text)]">
+                  R$ {displayDreReal.lucroBruto.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-[var(--atlas-text-secondary)]">({faturamentoAnual > 0 ? ((displayDreReal.lucroBruto / displayDreReal.receitaBruta) * 100).toFixed(1) : 0}%)</span>
                 </td>
               </tr>
               <tr>
-                <td className="p-3.5 text-slate-600">(-) Despesas Operacionais e Folha de Pagamento</td>
-                <td className="p-3.5 text-right font-mono text-slate-600">
+                <td className="p-3.5 text-[var(--atlas-text-secondary)]">(-) Despesas Operacionais e Folha de Pagamento</td>
+                <td className="p-3.5 text-right font-mono text-[var(--atlas-text-secondary)]">
                   - R$ {displayDreSimples.despesasOp.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="font-semibold">({faturamentoAnual > 0 ? ((displayDreSimples.despesasOp / displayDreSimples.receitaBruta) * 100).toFixed(1) : 0}%)</span>
                 </td>
-                <td className="p-3.5 text-right font-mono text-slate-600">
+                <td className="p-3.5 text-right font-mono text-[var(--atlas-text-secondary)]">
                   - R$ {displayDrePresumido.despesasOp.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="font-semibold">({faturamentoAnual > 0 ? ((displayDrePresumido.despesasOp / displayDrePresumido.receitaBruta) * 100).toFixed(1) : 0}%)</span>
                 </td>
-                <td className="p-3.5 text-right font-mono text-slate-600">
+                <td className="p-3.5 text-right font-mono text-[var(--atlas-text-secondary)]">
                   - R$ {displayDreReal.despesasOp.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="font-semibold">({faturamentoAnual > 0 ? ((displayDreReal.despesasOp / displayDreReal.receitaBruta) * 100).toFixed(1) : 0}%)</span>
                 </td>
               </tr>
               <tr className="bg-[#f1efe8] font-bold">
-                <td className="p-3.5 text-[#1e3a5f]">(=) LAIR / Base de Cálculo (Lucro Antes IRPJ/CSLL)</td>
-                <td className="p-3.5 text-right font-mono text-[#1e3a5f]">
-                  R$ {displayDreSimples.lair.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-[#142c47]">({faturamentoAnual > 0 ? ((displayDreSimples.lair / displayDreSimples.receitaBruta) * 100).toFixed(1) : 0}%)</span>
+                <td className="p-3.5 text-[var(--atlas-navy)]">(=) LAIR / Base de Cálculo (Lucro Antes IRPJ/CSLL)</td>
+                <td className="p-3.5 text-right font-mono text-[var(--atlas-navy)]">
+                  R$ {displayDreSimples.lair.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-[var(--atlas-navy-dark)]">({faturamentoAnual > 0 ? ((displayDreSimples.lair / displayDreSimples.receitaBruta) * 100).toFixed(1) : 0}%)</span>
                 </td>
-                <td className="p-3.5 text-right font-mono text-[#1e3a5f]">
-                  R$ {displayDrePresumido.lair.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-[#142c47]">({faturamentoAnual > 0 ? ((displayDrePresumido.lair / displayDrePresumido.receitaBruta) * 100).toFixed(1) : 0}%)</span>
+                <td className="p-3.5 text-right font-mono text-[var(--atlas-navy)]">
+                  R$ {displayDrePresumido.lair.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-[var(--atlas-navy-dark)]">({faturamentoAnual > 0 ? ((displayDrePresumido.lair / displayDrePresumido.receitaBruta) * 100).toFixed(1) : 0}%)</span>
                 </td>
-                <td className="p-3.5 text-right font-mono text-[#1e3a5f]">
-                  R$ {displayDreReal.lair.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-[#142c47]">({faturamentoAnual > 0 ? ((displayDreReal.lair / displayDreReal.receitaBruta) * 100).toFixed(1) : 0}%)</span>
+                <td className="p-3.5 text-right font-mono text-[var(--atlas-navy)]">
+                  R$ {displayDreReal.lair.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-[var(--atlas-navy-dark)]">({faturamentoAnual > 0 ? ((displayDreReal.lair / displayDreReal.receitaBruta) * 100).toFixed(1) : 0}%)</span>
                 </td>
               </tr>
               <tr>
@@ -1366,11 +1379,11 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         
         {/* 1. SIMPLES NACIONAL */}
-        <div className={`bg-white rounded-lg border p-5 space-y-4 relative overflow-hidden ${
-          regimesComparison.winner.id === 'SIMPLES' ? 'ring-2 ring-emerald-500 border-emerald-300' : 'border-slate-200'
+        <div className={`bg-[var(--atlas-surface)] rounded-lg border p-5 space-y-4 relative overflow-hidden ${
+          regimesComparison.winner.id === 'SIMPLES' ? 'ring-2 ring-emerald-500 border-emerald-300' : 'border-[var(--atlas-border)]'
         }`}>
           {regimesComparison.winner.id === 'SIMPLES' && (
-            <span className="absolute top-0 right-0 bg-emerald-600 text-white text-[10px] font-bold uppercase px-2.5 py-1 rounded-bl-lg">
+            <span className="absolute top-0 right-0 bg-emerald-600 text-white text-xs font-bold uppercase px-2.5 py-1 rounded-bl-lg">
               Mais Econômico
             </span>
           )}
@@ -1378,33 +1391,33 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
           <div className="space-y-1">
             <div className="flex items-center space-x-2">
               <Building2 className="w-5 h-5 text-emerald-600" />
-              <h3 className="font-bold text-slate-900 text-base">Simples Nacional</h3>
+              <h3 className="font-bold text-[var(--atlas-text)] text-base">Simples Nacional</h3>
             </div>
-            <span className="text-[11px] text-slate-500 block truncate">{calcSimplesNacional.anexo}</span>
+            <span className="text-xs text-[var(--atlas-text-secondary)] block truncate">{calcSimplesNacional.anexo}</span>
           </div>
 
-          <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 space-y-1">
-            <span className="text-[10px] font-bold uppercase text-slate-400 block">Alíquota Efetiva</span>
+          <div className="bg-[var(--atlas-surface-hover)] p-3 rounded-lg border border-[var(--atlas-border)] space-y-1">
+            <span className="text-xs font-bold uppercase text-[var(--atlas-text-muted)] block">Alíquota Efetiva</span>
             <span className="text-2xl font-black text-emerald-700 font-mono">
               {calcSimplesNacional.aliqEfetiva.toFixed(2)}%
             </span>
           </div>
 
-          <div className="space-y-2 text-xs divide-y divide-slate-100">
+          <div className="space-y-2 text-xs divide-y divide-[var(--atlas-border)]">
             <div className="flex justify-between pt-1">
-              <span className="text-slate-500">Imposto Mensal (DAS):</span>
-              <span className="font-mono font-bold text-slate-800">
+              <span className="text-[var(--atlas-text-secondary)]">Imposto Mensal (DAS):</span>
+              <span className="font-mono font-bold text-[var(--atlas-text)]">
                 R$ {calcSimplesNacional.impostoMensal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </span>
             </div>
             <div className="flex justify-between pt-2">
-              <span className="text-slate-500">Imposto Anual Total:</span>
-              <span className="font-mono font-bold text-slate-900">
+              <span className="text-[var(--atlas-text-secondary)]">Imposto Anual Total:</span>
+              <span className="font-mono font-bold text-[var(--atlas-text)]">
                 R$ {calcSimplesNacional.impostoAnual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </span>
             </div>
             <div className="flex justify-between pt-2">
-              <span className="text-slate-500">Elegibilidade:</span>
+              <span className="text-[var(--atlas-text-secondary)]">Elegibilidade:</span>
               <span className={`font-bold ${calcSimplesNacional.elegivel ? 'text-emerald-600' : 'text-rose-600'}`}>
                 {calcSimplesNacional.elegivel ? 'Permitido (<=4.8M)' : 'Excedido'}
               </span>
@@ -1413,52 +1426,52 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
         </div>
 
         {/* 2. LUCRO PRESUMIDO */}
-        <div className={`bg-white rounded-lg border p-5 space-y-4 shadow-sm relative overflow-hidden ${
-          regimesComparison.winner.id === 'PRESUMIDO' ? 'ring-2 ring-emerald-500 border-emerald-300' : 'border-slate-200'
+        <div className={`bg-[var(--atlas-surface)] rounded-lg border p-5 space-y-4 shadow-sm relative overflow-hidden ${
+          regimesComparison.winner.id === 'PRESUMIDO' ? 'ring-2 ring-emerald-500 border-emerald-300' : 'border-[var(--atlas-border)]'
         }`}>
           {regimesComparison.winner.id === 'PRESUMIDO' && (
-            <span className="absolute top-0 right-0 bg-emerald-600 text-white text-[10px] font-extrabold uppercase px-3 py-1 rounded-bl-lg">
+            <span className="absolute top-0 right-0 bg-emerald-600 text-white text-xs font-extrabold uppercase px-3 py-1 rounded-bl-lg">
               Mais Econômico
             </span>
           )}
 
           <div className="space-y-1">
             <div className="flex items-center space-x-2">
-              <Scale className="w-5 h-5 text-[#1e3a5f]" />
-              <h3 className="font-bold text-slate-900 text-base">Lucro Presumido</h3>
+              <Scale className="w-5 h-5 text-[var(--atlas-navy)]" />
+              <h3 className="font-bold text-[var(--atlas-text)] text-base">Lucro Presumido</h3>
             </div>
-            <span className="text-[11px] text-slate-500 block">PIS/COFINS Cumulativo</span>
+            <span className="text-xs text-[var(--atlas-text-secondary)] block">PIS/COFINS Cumulativo</span>
           </div>
 
-          <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 space-y-1">
-            <span className="text-[10px] font-bold uppercase text-slate-400 block">Alíquota Efetiva</span>
-            <span className="text-2xl font-black text-[#1e3a5f] font-mono">
+          <div className="bg-[var(--atlas-surface-hover)] p-3 rounded-lg border border-[var(--atlas-border)] space-y-1">
+            <span className="text-xs font-bold uppercase text-[var(--atlas-text-muted)] block">Alíquota Efetiva</span>
+            <span className="text-2xl font-black text-[var(--atlas-navy)] font-mono">
               {calcLucroPresumido.aliqEfetivaTotal.toFixed(2)}%
             </span>
           </div>
 
-          <div className="space-y-2 text-xs divide-y divide-slate-100">
+          <div className="space-y-2 text-xs divide-y divide-[var(--atlas-border)]">
             <div className="flex justify-between pt-1">
-              <span className="text-slate-500">IRPJ + CSLL Anual:</span>
-              <span className="font-mono font-bold text-slate-800">
+              <span className="text-[var(--atlas-text-secondary)]">IRPJ + CSLL Anual:</span>
+              <span className="font-mono font-bold text-[var(--atlas-text)]">
                 R$ {(calcLucroPresumido.irpjAnual + calcLucroPresumido.csllAnual).toLocaleString('pt-BR', { minimumFractionDigits: 0 })}
               </span>
             </div>
             <div className="flex justify-between pt-2">
-              <span className="text-slate-500">PIS/COFINS Anual:</span>
-              <span className="font-mono font-bold text-slate-800">
+              <span className="text-[var(--atlas-text-secondary)]">PIS/COFINS Anual:</span>
+              <span className="font-mono font-bold text-[var(--atlas-text)]">
                 R$ {(calcLucroPresumido.pisAnual + calcLucroPresumido.cofinsAnual).toLocaleString('pt-BR', { minimumFractionDigits: 0 })}
               </span>
             </div>
             <div className="flex justify-between pt-2">
-              <span className="text-slate-500">ICMS/ISS Líquido:</span>
-              <span className="font-mono font-bold text-slate-800">
+              <span className="text-[var(--atlas-text-secondary)]">ICMS/ISS Líquido:</span>
+              <span className="font-mono font-bold text-[var(--atlas-text)]">
                 R$ {(calcLucroPresumido.icmsAnual + calcLucroPresumido.issAnual).toLocaleString('pt-BR', { minimumFractionDigits: 0 })}
               </span>
             </div>
             <div className="flex justify-between pt-2">
-              <span className="text-slate-500">Custo Anual Total:</span>
-              <span className="font-mono font-bold text-slate-900">
+              <span className="text-[var(--atlas-text-secondary)]">Custo Anual Total:</span>
+              <span className="font-mono font-bold text-[var(--atlas-text)]">
                 R$ {calcLucroPresumido.impostoAnualTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </span>
             </div>
@@ -1466,52 +1479,52 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
         </div>
 
         {/* 3. LUCRO REAL */}
-        <div className={`bg-white rounded-lg border p-5 space-y-4 shadow-sm relative overflow-hidden ${
-          regimesComparison.winner.id === 'REAL' ? 'ring-2 ring-emerald-500 border-emerald-300' : 'border-slate-200'
+        <div className={`bg-[var(--atlas-surface)] rounded-lg border p-5 space-y-4 shadow-sm relative overflow-hidden ${
+          regimesComparison.winner.id === 'REAL' ? 'ring-2 ring-emerald-500 border-emerald-300' : 'border-[var(--atlas-border)]'
         }`}>
           {regimesComparison.winner.id === 'REAL' && (
-            <span className="absolute top-0 right-0 bg-emerald-600 text-white text-[10px] font-extrabold uppercase px-3 py-1 rounded-bl-lg">
+            <span className="absolute top-0 right-0 bg-emerald-600 text-white text-xs font-extrabold uppercase px-3 py-1 rounded-bl-lg">
               Mais Econômico
             </span>
           )}
 
           <div className="space-y-1">
             <div className="flex items-center space-x-2">
-              <ShieldCheck className="w-5 h-5 text-[#0f6e56]" />
-              <h3 className="font-bold text-slate-900 text-base">Lucro Real</h3>
+              <ShieldCheck className="w-5 h-5 text-[var(--atlas-accent)]" />
+              <h3 className="font-bold text-[var(--atlas-text)] text-base">Lucro Real</h3>
             </div>
-            <span className="text-[11px] text-slate-500 block">Não Cumulativo com Crédito</span>
+            <span className="text-xs text-[var(--atlas-text-secondary)] block">Não Cumulativo com Crédito</span>
           </div>
 
-          <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 space-y-1">
-            <span className="text-[10px] font-bold uppercase text-slate-400 block">Alíquota Efetiva</span>
-            <span className="text-2xl font-black text-[#0f6e56] font-mono">
+          <div className="bg-[var(--atlas-surface-hover)] p-3 rounded-lg border border-[var(--atlas-border)] space-y-1">
+            <span className="text-xs font-bold uppercase text-[var(--atlas-text-muted)] block">Alíquota Efetiva</span>
+            <span className="text-2xl font-black text-[var(--atlas-accent)] font-mono">
               {calcLucroReal.aliqEfetivaTotal.toFixed(2)}%
             </span>
           </div>
 
-          <div className="space-y-2 text-xs divide-y divide-slate-100">
+          <div className="space-y-2 text-xs divide-y divide-[var(--atlas-border)]">
             <div className="flex justify-between pt-1">
-              <span className="text-slate-500">PIS/COFINS Líquido:</span>
-              <span className="font-mono font-bold text-slate-800">
+              <span className="text-[var(--atlas-text-secondary)]">PIS/COFINS Líquido:</span>
+              <span className="font-mono font-bold text-[var(--atlas-text)]">
                 R$ {(calcLucroReal.pisAnual + calcLucroReal.cofinsAnual).toLocaleString('pt-BR', { minimumFractionDigits: 0 })}
               </span>
             </div>
             <div className="flex justify-between pt-2">
-              <span className="text-slate-500">IRPJ + CSLL Real:</span>
-              <span className="font-mono font-bold text-slate-800">
+              <span className="text-[var(--atlas-text-secondary)]">IRPJ + CSLL Real:</span>
+              <span className="font-mono font-bold text-[var(--atlas-text)]">
                 R$ {(calcLucroReal.irpjAnual + calcLucroReal.csllAnual).toLocaleString('pt-BR', { minimumFractionDigits: 0 })}
               </span>
             </div>
             <div className="flex justify-between pt-2">
-              <span className="text-slate-500">ICMS Líquido:</span>
-              <span className="font-mono font-bold text-slate-800">
+              <span className="text-[var(--atlas-text-secondary)]">ICMS Líquido:</span>
+              <span className="font-mono font-bold text-[var(--atlas-text)]">
                 R$ {calcLucroReal.icmsAnual.toLocaleString('pt-BR', { minimumFractionDigits: 0 })}
               </span>
             </div>
             <div className="flex justify-between pt-2">
-              <span className="text-slate-500">Custo Anual Total:</span>
-              <span className="font-mono font-bold text-slate-900">
+              <span className="text-[var(--atlas-text-secondary)]">Custo Anual Total:</span>
+              <span className="font-mono font-bold text-[var(--atlas-text)]">
                 R$ {calcLucroReal.impostoAnualTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </span>
             </div>
@@ -1519,11 +1532,11 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
         </div>
 
         {/* 4. REFORMA TRIBUTÁRIA (EC 132/2023) */}
-        <div className={`bg-white rounded-lg border p-5 space-y-4 shadow-sm relative overflow-hidden ${
+        <div className={`bg-[var(--atlas-surface)] rounded-lg border p-5 space-y-4 shadow-sm relative overflow-hidden ${
           regimesComparison.winner.id === 'REFORMA' ? 'ring-2 ring-emerald-500 border-emerald-300' : 'border-amber-200 bg-amber-50/10'
         }`}>
           {regimesComparison.winner.id === 'REFORMA' && (
-            <span className="absolute top-0 right-0 bg-emerald-600 text-white text-[10px] font-extrabold uppercase px-3 py-1 rounded-bl-lg">
+            <span className="absolute top-0 right-0 bg-emerald-600 text-white text-xs font-extrabold uppercase px-3 py-1 rounded-bl-lg">
               Mais Econômico
             </span>
           )}
@@ -1531,40 +1544,40 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
           <div className="space-y-1">
             <div className="flex items-center space-x-2">
               <Zap className="w-5 h-5 text-amber-500" />
-              <h3 className="font-bold text-slate-900 text-base">Reforma (EC 132/23)</h3>
+              <h3 className="font-bold text-[var(--atlas-text)] text-base">Reforma (EC 132/23)</h3>
             </div>
-            <span className="text-[11px] text-amber-800 font-semibold block">IVA Dual (IBS + CBS)</span>
+            <span className="text-xs text-amber-800 font-semibold block">IVA Dual (IBS + CBS)</span>
           </div>
 
           <div className="bg-amber-50 p-3 rounded-lg border border-amber-200 space-y-1">
-            <span className="text-[10px] font-bold uppercase text-amber-700 block">Alíquota Efetiva Projetada</span>
+            <span className="text-xs font-bold uppercase text-amber-700 block">Alíquota Efetiva Projetada</span>
             <span className="text-2xl font-black text-amber-800 font-mono">
               {calcReformaTributaria.aliqEfetivaTotal.toFixed(2)}%
             </span>
           </div>
 
-          <div className="space-y-2 text-xs divide-y divide-slate-100">
+          <div className="space-y-2 text-xs divide-y divide-[var(--atlas-border)]">
             <div className="flex justify-between pt-1">
-              <span className="text-slate-500">IVA Dual Débito:</span>
-              <span className="font-mono font-bold text-slate-800">
+              <span className="text-[var(--atlas-text-secondary)]">IVA Dual Débito:</span>
+              <span className="font-mono font-bold text-[var(--atlas-text)]">
                 R$ {calcReformaTributaria.ivaDebito.toLocaleString('pt-BR', { minimumFractionDigits: 0 })}
               </span>
             </div>
             <div className="flex justify-between pt-2">
-              <span className="text-slate-500">Crédito Pleno Insumos:</span>
+              <span className="text-[var(--atlas-text-secondary)]">Crédito Pleno Insumos:</span>
               <span className="font-mono font-bold text-emerald-600">
                 - R$ {calcReformaTributaria.ivaCreditoInsumos.toLocaleString('pt-BR', { minimumFractionDigits: 0 })}
               </span>
             </div>
             <div className="flex justify-between pt-2">
-              <span className="text-slate-500">IVA Líquido Anual:</span>
-              <span className="font-mono font-bold text-slate-800">
+              <span className="text-[var(--atlas-text-secondary)]">IVA Líquido Anual:</span>
+              <span className="font-mono font-bold text-[var(--atlas-text)]">
                 R$ {calcReformaTributaria.ivaLiquidoAnual.toLocaleString('pt-BR', { minimumFractionDigits: 0 })}
               </span>
             </div>
             <div className="flex justify-between pt-2">
-              <span className="text-slate-500">Custo Anual Projetado:</span>
-              <span className="font-mono font-bold text-slate-900">
+              <span className="text-[var(--atlas-text-secondary)]">Custo Anual Projetado:</span>
+              <span className="font-mono font-bold text-[var(--atlas-text)]">
                 R$ {calcReformaTributaria.impostoAnualTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </span>
             </div>
@@ -1577,13 +1590,13 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* Chart 1: Carga Fiscal Anual (R$) */}
-        <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm space-y-6">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+        <div className="bg-[var(--atlas-surface)] rounded-lg border border-[var(--atlas-border)] p-6 shadow-sm space-y-6">
+          <div className="flex items-center justify-between border-b border-[var(--atlas-border)] pb-4">
             <div className="flex items-center space-x-3">
-              <PieIcon className="w-5 h-5 text-[#1e3a5f]" />
-              <h2 className="text-base font-bold text-slate-900">Comparativo de Carga Fiscal Anual (R$)</h2>
+              <PieIcon className="w-5 h-5 text-[var(--atlas-navy)]" />
+              <h2 className="text-base font-bold text-[var(--atlas-text)]">Comparativo de Carga Fiscal Anual (R$)</h2>
             </div>
-            <span className="text-xs text-slate-500">Simples vs Presumido vs Real</span>
+            <span className="text-xs text-[var(--atlas-text-secondary)]">Simples vs Presumido vs Real</span>
           </div>
 
           <div className="h-72 w-full">
@@ -1603,13 +1616,13 @@ export function RegimeSimulatorView({ spedData }: RegimeSimulatorViewProps) {
         </div>
 
         {/* Chart 2: Alíquota Efetiva (%) */}
-        <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm space-y-6">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+        <div className="bg-[var(--atlas-surface)] rounded-lg border border-[var(--atlas-border)] p-6 shadow-sm space-y-6">
+          <div className="flex items-center justify-between border-b border-[var(--atlas-border)] pb-4">
             <div className="flex items-center space-x-3">
-              <Percent className="w-5 h-5 text-[#0f6e56]" />
-              <h2 className="text-base font-bold text-slate-900">Comparativo de Alíquota Efetiva (%)</h2>
+              <Percent className="w-5 h-5 text-[var(--atlas-accent)]" />
+              <h2 className="text-base font-bold text-[var(--atlas-text)]">Comparativo de Alíquota Efetiva (%)</h2>
             </div>
-            <span className="text-xs text-slate-500">Carga % sobre Faturamento</span>
+            <span className="text-xs text-[var(--atlas-text-secondary)]">Carga % sobre Faturamento</span>
           </div>
 
           <div className="h-72 w-full">

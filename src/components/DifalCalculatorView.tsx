@@ -312,29 +312,31 @@ RESUMO DOS RECOLHAMENTOS:
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-8">
+    <div className="p-10 max-w-7xl mx-auto space-y-10">
       {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-6">
-        <div>
-          <div className="flex items-center space-x-3">
-            <div className="p-2.5 bg-blue-600 text-white rounded-lg shadow-sm">
-              <Calculator className="w-6 h-6" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-slate-900">Calculadora Independente de DIFAL & FCP</h1>
-              <p className="text-sm text-slate-500">
-                Simulador fiscal completo e isolado de ICMS Diferencial de Alíquota (LC 190/2021, EC 87/2015 e Convenio 142/2018).
-              </p>
-            </div>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 border-b border-[var(--atlas-border)] pb-8">
+        <div className="flex items-center space-x-5">
+          <div className="w-16 h-16 rounded-2xl bg-[var(--atlas-navy)] text-white flex items-center justify-center shadow-xl">
+            <Calculator className="w-8 h-8" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-[var(--atlas-navy)] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
+              Simulador de DIFAL & FCP
+            </h1>
+            <p className="text-base text-[var(--atlas-text-secondary)] mt-1">
+              Ferramenta avançada para cálculo de Diferencial de Alíquota (LC 190/2021).
+            </p>
           </div>
         </div>
 
         {/* Sub Navigation */}
-        <div className="flex items-center bg-slate-100 p-1 rounded-xl">
+        <div className="flex items-center bg-[var(--atlas-surface-hover)] p-1.5 rounded-2xl border border-[var(--atlas-border)] shadow-inner">
           <button
             onClick={() => setActiveSubTab('CALCULADORA')}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-semibold transition ${
-              activeSubTab === 'CALCULADORA' ? 'bg-white text-blue-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+            className={`flex items-center space-x-2 px-6 py-2.5 rounded-xl text-xs font-bold transition-all ${
+              activeSubTab === 'CALCULADORA' 
+                ? 'bg-[var(--atlas-navy)] text-white shadow-md' 
+                : 'text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-navy)] hover:bg-[var(--atlas-surface)]'
             }`}
           >
             <Calculator className="w-4 h-4" />
@@ -342,17 +344,21 @@ RESUMO DOS RECOLHAMENTOS:
           </button>
           <button
             onClick={() => setActiveSubTab('GUIA_DIDATICO')}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-semibold transition ${
-              activeSubTab === 'GUIA_DIDATICO' ? 'bg-white text-blue-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+            className={`flex items-center space-x-2 px-6 py-2.5 rounded-xl text-xs font-bold transition-all ${
+              activeSubTab === 'GUIA_DIDATICO' 
+                ? 'bg-[var(--atlas-navy)] text-white shadow-md' 
+                : 'text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-navy)] hover:bg-[var(--atlas-surface)]'
             }`}
           >
             <GraduationCap className="w-4 h-4" />
-            <span>Guia Didático & Regras</span>
+            <span>Guia Didático</span>
           </button>
           <button
             onClick={() => setActiveSubTab('HISTORICO')}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-semibold transition ${
-              activeSubTab === 'HISTORICO' ? 'bg-white text-blue-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+            className={`flex items-center space-x-2 px-6 py-2.5 rounded-xl text-xs font-bold transition-all ${
+              activeSubTab === 'HISTORICO' 
+                ? 'bg-[var(--atlas-navy)] text-white shadow-md' 
+                : 'text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-navy)] hover:bg-[var(--atlas-surface)]'
             }`}
           >
             <FileSpreadsheet className="w-4 h-4" />
@@ -360,12 +366,14 @@ RESUMO DOS RECOLHAMENTOS:
           </button>
           <button
             onClick={() => setActiveSubTab('TABELA_UFS')}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-semibold transition ${
-              activeSubTab === 'TABELA_UFS' ? 'bg-white text-blue-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+            className={`flex items-center space-x-2 px-6 py-2.5 rounded-xl text-xs font-bold transition-all ${
+              activeSubTab === 'TABELA_UFS' 
+                ? 'bg-[var(--atlas-navy)] text-white shadow-md' 
+                : 'text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-navy)] hover:bg-[var(--atlas-surface)]'
             }`}
           >
             <BookOpen className="w-4 h-4" />
-            <span>Tabela de UFs</span>
+            <span>Tabela UFs</span>
           </button>
         </div>
       </div>
@@ -381,7 +389,7 @@ RESUMO DOS RECOLHAMENTOS:
                 <span>Base Legal & Didática Tributária</span>
               </span>
               <h2 className="text-2xl font-bold">Entendendo o Cálculo do DIFAL e do FCP</h2>
-              <p className="text-sm text-slate-300 leading-relaxed">
+              <p className="text-sm text-[var(--atlas-text-muted)] leading-relaxed">
                 O Diferencial de Alíquota do ICMS (DIFAL) foi criado para garantir a partilha justa do imposto nas operações interestaduais. Aprenda a diferença prática entre o cálculo por <strong>Base Dupla ("Por Dentro")</strong> exigido pela Lei Complementar nº 190/2021 e a <strong>Base Única ("Por Fora")</strong>.
               </p>
             </div>
@@ -390,22 +398,22 @@ RESUMO DOS RECOLHAMENTOS:
           {/* Grid de Conceitos Fundamentais */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Card 1: O que é DIFAL? */}
-            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-xs space-y-4">
+            <div className="bg-[var(--atlas-surface)] p-6 rounded-lg border border-[var(--atlas-border)] shadow-xs space-y-4">
               <div className="flex items-center space-x-3 text-blue-600">
                 <div className="p-2.5 bg-blue-50 rounded-xl">
                   <Scale className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 text-base">1. O que é o DIFAL?</h3>
-                  <span className="text-xs text-slate-500">Equilíbrio da arrecadação estadual</span>
+                  <h3 className="font-bold text-[var(--atlas-text)] text-base">1. O que é o DIFAL?</h3>
+                  <span className="text-xs text-[var(--atlas-text-secondary)]">Equilíbrio da arrecadação estadual</span>
                 </div>
               </div>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-[var(--atlas-text-secondary)] leading-relaxed">
                 Nas vendas destinadas a outro Estado, o ICMS é dividido entre a <strong>UF de Origem</strong> (que cobra a alíquota interestadual de 4%, 7% ou 12%) e a <strong>UF de Destino</strong> (que recebe a diferença para integralizar a sua alíquota interna).
               </p>
-              <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs space-y-2">
-                <div className="font-semibold text-slate-800">Principais Legislações:</div>
-                <ul className="list-disc list-inside space-y-1 text-slate-600 font-mono text-[11px]">
+              <div className="bg-[var(--atlas-surface-hover)] p-3.5 rounded-xl border border-[var(--atlas-border)] text-xs space-y-2">
+                <div className="font-semibold text-[var(--atlas-text)]">Principais Legislações:</div>
+                <ul className="list-disc list-inside space-y-1 text-[var(--atlas-text-secondary)] font-mono text-xs">
                   <li>Emenda Constitucional nº 87/2015 (Regra Geral)</li>
                   <li>Lei Complementar nº 190/2021 (Normas Gerais & Base Dupla)</li>
                   <li>Convenio ICMS 142/2018 e Convênio ICMS 235/2021</li>
@@ -414,117 +422,117 @@ RESUMO DOS RECOLHAMENTOS:
             </div>
 
             {/* Card 2: Fundo de Combate à Pobreza */}
-            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-xs space-y-4">
+            <div className="bg-[var(--atlas-surface)] p-6 rounded-lg border border-[var(--atlas-border)] shadow-xs space-y-4">
               <div className="flex items-center space-x-3 text-amber-600">
                 <div className="p-2.5 bg-amber-50 rounded-xl">
                   <ShieldAlert className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 text-base">2. O que é o FCP (Fundo de Combate à Pobreza)?</h3>
-                  <span className="text-xs text-slate-500">Adicional de 1% a 2% na UF de Destino</span>
+                  <h3 className="font-bold text-[var(--atlas-text)] text-base">2. O que é o FCP (Fundo de Combate à Pobreza)?</h3>
+                  <span className="text-xs text-[var(--atlas-text-secondary)]">Adicional de 1% a 2% na UF de Destino</span>
                 </div>
               </div>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-[var(--atlas-text-secondary)] leading-relaxed">
                 O FCP é um adicional de ICMS (previsto na EC nº 31/2000) destinado a financiar programas de assistência social estaduais. Ele incide sobre a <strong>mesma base de cálculo recomposta do ICMS de Destino</strong> e é somado ao valor final a recolher.
               </p>
               <div className="bg-amber-50/60 p-3.5 rounded-xl border border-amber-200 text-xs space-y-1 text-amber-900">
                 <span className="font-semibold block">Atenção ao Recolhimento:</span>
-                <p className="text-[11px]">
+                <p className="text-xs">
                   Apesar de calculado junto com o DIFAL, a maioria dos Estados exige a emissão de uma guia GNRE específica separada para o FCP (Código 10012-9 ou similar).
                 </p>
               </div>
             </div>
 
             {/* Card 3: Base Dupla ("Por Dentro") */}
-            <div className="bg-white p-6 rounded-lg border border-blue-200 shadow-xs space-y-4">
+            <div className="bg-[var(--atlas-surface)] p-6 rounded-lg border border-blue-200 shadow-xs space-y-4">
               <div className="flex items-center space-x-3 text-blue-700">
                 <div className="p-2.5 bg-blue-50 rounded-xl">
                   <FileCode className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 text-base">3. Regra de Base Dupla ("Por Dentro")</h3>
+                  <h3 className="font-bold text-[var(--atlas-text)] text-base">3. Regra de Base Dupla ("Por Dentro")</h3>
                   <span className="text-xs text-blue-600 font-semibold">Regra da LC 190/2021 & Convênio 142/2018</span>
                 </div>
               </div>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-[var(--atlas-text-secondary)] leading-relaxed">
                 Na metodologia de Base Dupla, o valor do ICMS retido pela origem não pode permanecer na base do imposto do destino. Assim, faz-se o "Gross-Up" (por dentro):
               </p>
 
-              <div className="space-y-2 font-mono text-xs bg-slate-50 p-4 rounded-xl border border-slate-200">
-                <div className="text-slate-700">
+              <div className="space-y-2 font-mono text-xs bg-[var(--atlas-surface-hover)] p-4 rounded-xl border border-[var(--atlas-border)]">
+                <div className="text-[var(--atlas-text-secondary)]">
                   <span className="font-bold text-blue-700">Passo A:</span> Retira o ICMS Origem
                   <br />
-                  <code className="text-[11px] text-slate-500">Base Líquida = Valor Total - (Valor Total × Alíquota Interestadual)</code>
+                  <code className="text-xs text-[var(--atlas-text-secondary)]">Base Líquida = Valor Total - (Valor Total × Alíquota Interestadual)</code>
                 </div>
-                <div className="text-slate-700 border-t border-slate-200 pt-2">
+                <div className="text-[var(--atlas-text-secondary)] border-t border-[var(--atlas-border)] pt-2">
                   <span className="font-bold text-blue-700">Passo B:</span> Recompõe a Base do Destino
                   <br />
-                  <code className="text-[11px] text-slate-500">Base Destino = Base Líquida ÷ (1 - (Aliq. Interna + FCP))</code>
+                  <code className="text-xs text-[var(--atlas-text-secondary)]">Base Destino = Base Líquida ÷ (1 - (Aliq. Interna + FCP))</code>
                 </div>
-                <div className="text-slate-700 border-t border-slate-200 pt-2">
+                <div className="text-[var(--atlas-text-secondary)] border-t border-[var(--atlas-border)] pt-2">
                   <span className="font-bold text-blue-700">Passo C:</span> Calcula o DIFAL Final
                   <br />
-                  <code className="text-[11px] text-slate-500">DIFAL = (Base Destino × Aliq. Interna) - ICMS Origem</code>
+                  <code className="text-xs text-[var(--atlas-text-secondary)]">DIFAL = (Base Destino × Aliq. Interna) - ICMS Origem</code>
                 </div>
               </div>
             </div>
 
             {/* Card 4: Base Única ("Por Fora") */}
-            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-xs space-y-4">
-              <div className="flex items-center space-x-3 text-slate-700">
-                <div className="p-2.5 bg-slate-100 rounded-xl">
+            <div className="bg-[var(--atlas-surface)] p-6 rounded-lg border border-[var(--atlas-border)] shadow-xs space-y-4">
+              <div className="flex items-center space-x-3 text-[var(--atlas-text-secondary)]">
+                <div className="p-2.5 bg-[var(--atlas-surface-hover)] rounded-xl">
                   <Calculator className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 text-base">4. Regra de Base Única ("Por Fora")</h3>
-                  <span className="text-xs text-slate-500">Metodologia Simplificada / Simples Nacional</span>
+                  <h3 className="font-bold text-[var(--atlas-text)] text-base">4. Regra de Base Única ("Por Fora")</h3>
+                  <span className="text-xs text-[var(--atlas-text-secondary)]">Metodologia Simplificada / Simples Nacional</span>
                 </div>
               </div>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-[var(--atlas-text-secondary)] leading-relaxed">
                 Na Base Única, o valor total da operação permanece como base de cálculo tanto na origem quanto no destino. A diferença percentual é aplicada diretamente sobre a base única:
               </p>
 
-              <div className="space-y-2 font-mono text-xs bg-slate-50 p-4 rounded-xl border border-slate-200">
-                <div className="text-slate-700">
-                  <span className="font-bold text-slate-800">Fórmula Direta:</span>
+              <div className="space-y-2 font-mono text-xs bg-[var(--atlas-surface-hover)] p-4 rounded-xl border border-[var(--atlas-border)]">
+                <div className="text-[var(--atlas-text-secondary)]">
+                  <span className="font-bold text-[var(--atlas-text)]">Fórmula Direta:</span>
                   <br />
-                  <code className="text-[11px] text-slate-600">DIFAL = Valor Operação × (Aliq. Interna Destino - Aliq. Interestadual)</code>
+                  <code className="text-xs text-[var(--atlas-text-secondary)]">DIFAL = Valor Operação × (Aliq. Interna Destino - Aliq. Interestadual)</code>
                 </div>
-                <div className="text-slate-700 border-t border-slate-200 pt-2">
-                  <span className="font-bold text-slate-800">FCP Simplificado:</span>
+                <div className="text-[var(--atlas-text-secondary)] border-t border-[var(--atlas-border)] pt-2">
+                  <span className="font-bold text-[var(--atlas-text)]">FCP Simplificado:</span>
                   <br />
-                  <code className="text-[11px] text-slate-600">FCP = Valor Operação × Alíquota FCP</code>
+                  <code className="text-xs text-[var(--atlas-text-secondary)]">FCP = Valor Operação × Alíquota FCP</code>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Accordion FAQ Didático */}
-          <div className="bg-white rounded-lg border border-slate-200 shadow-xs p-6 space-y-6">
-            <div className="flex items-center space-x-3 border-b border-slate-100 pb-4">
+          <div className="bg-[var(--atlas-surface)] rounded-lg border border-[var(--atlas-border)] shadow-xs p-6 space-y-6">
+            <div className="flex items-center space-x-3 border-b border-[var(--atlas-border)] pb-4">
               <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
                 <HelpCircle className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 text-base">Perguntas Frequentes & Dúvidas Práticas (FAQ)</h3>
-                <p className="text-xs text-slate-500">Explicações para os cenários mais comuns em auditoria fiscal de ICMS.</p>
+                <h3 className="font-bold text-[var(--atlas-text)] text-base">Perguntas Frequentes & Dúvidas Práticas (FAQ)</h3>
+                <p className="text-xs text-[var(--atlas-text-secondary)]">Explicações para os cenários mais comuns em auditoria fiscal de ICMS.</p>
               </div>
             </div>
 
             <div className="space-y-3">
               {/* Question 1 */}
-              <div className="border border-slate-200 rounded-xl overflow-hidden">
+              <div className="border border-[var(--atlas-border)] rounded-xl overflow-hidden">
                 <button
                   onClick={() => setOpenFaq(openFaq === 'faq-1' ? null : 'faq-1')}
-                  className="w-full p-4 text-left font-semibold text-slate-800 text-xs sm:text-sm flex items-center justify-between bg-slate-50 hover:bg-slate-100/80 transition"
+                  className="w-full p-4 text-left font-semibold text-[var(--atlas-text)] text-xs sm:text-sm flex items-center justify-between bg-[var(--atlas-surface-hover)] hover:bg-[var(--atlas-surface-hover)]/80 transition"
                 >
                   <span>Qual é a alíquota interestadual correta (4%, 7% ou 12%)?</span>
-                  {openFaq === 'faq-1' ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
+                  {openFaq === 'faq-1' ? <ChevronUp className="w-4 h-4 text-[var(--atlas-text-secondary)]" /> : <ChevronDown className="w-4 h-4 text-[var(--atlas-text-secondary)]" />}
                 </button>
                 {openFaq === 'faq-1' && (
-                  <div className="p-4 text-xs text-slate-600 space-y-2 border-t border-slate-200 bg-white leading-relaxed">
+                  <div className="p-4 text-xs text-[var(--atlas-text-secondary)] space-y-2 border-t border-[var(--atlas-border)] bg-[var(--atlas-surface)] leading-relaxed">
                     <p>A alíquota interestadual é definida pelo estado remetente e pelo destino:</p>
-                    <ul className="list-disc list-inside space-y-1 font-mono text-[11px]">
+                    <ul className="list-disc list-inside space-y-1 font-mono text-xs">
                       <li><strong>4%:</strong> Produtos importados do exterior ou com Conteúdo de Importação superior a 40% (Resolução do SF nº 13/2012).</li>
                       <li><strong>7%:</strong> Saídas de estados do Sul e Sudeste (exceto Espírito Santo) destinadas aos estados do Norte, Nordeste, Centro-Oeste e Espírito Santo.</li>
                       <li><strong>12%:</strong> Demais operações interestaduais entre estados da mesma região ou do Norte/Nordeste para o Sul/Sudeste.</li>
@@ -534,16 +542,16 @@ RESUMO DOS RECOLHAMENTOS:
               </div>
 
               {/* Question 2 */}
-              <div className="border border-slate-200 rounded-xl overflow-hidden">
+              <div className="border border-[var(--atlas-border)] rounded-xl overflow-hidden">
                 <button
                   onClick={() => setOpenFaq(openFaq === 'faq-2' ? null : 'faq-2')}
-                  className="w-full p-4 text-left font-semibold text-slate-800 text-xs sm:text-sm flex items-center justify-between bg-slate-50 hover:bg-slate-100/80 transition"
+                  className="w-full p-4 text-left font-semibold text-[var(--atlas-text)] text-xs sm:text-sm flex items-center justify-between bg-[var(--atlas-surface-hover)] hover:bg-[var(--atlas-surface-hover)]/80 transition"
                 >
                   <span>O IPI deve entrar na base de cálculo do DIFAL?</span>
-                  {openFaq === 'faq-2' ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
+                  {openFaq === 'faq-2' ? <ChevronUp className="w-4 h-4 text-[var(--atlas-text-secondary)]" /> : <ChevronDown className="w-4 h-4 text-[var(--atlas-text-secondary)]" />}
                 </button>
                 {openFaq === 'faq-2' && (
-                  <div className="p-4 text-xs text-slate-600 space-y-2 border-t border-slate-200 bg-white leading-relaxed">
+                  <div className="p-4 text-xs text-[var(--atlas-text-secondary)] space-y-2 border-t border-[var(--atlas-border)] bg-[var(--atlas-surface)] leading-relaxed">
                     <p>Depende do perfil da operação segundo o Art. 13, §1º da LC 87/96:</p>
                     <p>
                       1. <strong>Operação com Consumidor Final:</strong> O IPI integra a base de cálculo do ICMS de origem e de destino.
@@ -555,16 +563,16 @@ RESUMO DOS RECOLHAMENTOS:
               </div>
 
               {/* Question 3 */}
-              <div className="border border-slate-200 rounded-xl overflow-hidden">
+              <div className="border border-[var(--atlas-border)] rounded-xl overflow-hidden">
                 <button
                   onClick={() => setOpenFaq(openFaq === 'faq-3' ? null : 'faq-3')}
-                  className="w-full p-4 text-left font-semibold text-slate-800 text-xs sm:text-sm flex items-center justify-between bg-slate-50 hover:bg-slate-100/80 transition"
+                  className="w-full p-4 text-left font-semibold text-[var(--atlas-text)] text-xs sm:text-sm flex items-center justify-between bg-[var(--atlas-surface-hover)] hover:bg-[var(--atlas-surface-hover)]/80 transition"
                 >
                   <span>Por que a soma do DIFAL e FCP fica maior na Base Dupla do que na Base Única?</span>
-                  {openFaq === 'faq-3' ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
+                  {openFaq === 'faq-3' ? <ChevronUp className="w-4 h-4 text-[var(--atlas-text-secondary)]" /> : <ChevronDown className="w-4 h-4 text-[var(--atlas-text-secondary)]" />}
                 </button>
                 {openFaq === 'faq-3' && (
-                  <div className="p-4 text-xs text-slate-600 space-y-2 border-t border-slate-200 bg-white leading-relaxed">
+                  <div className="p-4 text-xs text-[var(--atlas-text-secondary)] space-y-2 border-t border-[var(--atlas-border)] bg-[var(--atlas-surface)] leading-relaxed">
                     <p>
                       Na Base Dupla, o imposto do estado de destino é calculado "por dentro" do seu próprio preço recomposto. Como o divisor é menor que 1 (ex: <code>1 - 0.20 = 0.80</code>), a base de cálculo final do destino fica maior que a base original da nota de origem, resultando em um valor nominal de imposto ligeiramente superior. Isso garante a perfeita simetria tributária com as mercadorias vendidas dentro do próprio estado de destino.
                     </p>
@@ -577,11 +585,11 @@ RESUMO DOS RECOLHAMENTOS:
       )}
 
       {activeSubTab === 'TABELA_UFS' && (
-        <div className="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden">
-          <div className="p-6 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+        <div className="bg-[var(--atlas-surface)] rounded-lg border border-[var(--atlas-border)] shadow-xs overflow-hidden">
+          <div className="p-6 border-b border-[var(--atlas-border)] bg-[var(--atlas-surface-hover)] flex items-center justify-between">
             <div>
-              <h3 className="font-bold text-slate-900 text-lg">Alíquotas Internas de ICMS e FCP por Estado (2025/2026)</h3>
-              <p className="text-xs text-slate-500 mt-1">Valores padrão configurados na plataforma para cálculo de operações de consumo final e geral.</p>
+              <h3 className="font-bold text-[var(--atlas-text)] text-lg">Alíquotas Internas de ICMS e FCP por Estado (2025/2026)</h3>
+              <p className="text-xs text-[var(--atlas-text-secondary)] mt-1">Valores padrão configurados na plataforma para cálculo de operações de consumo final e geral.</p>
             </div>
             <span className="text-xs font-semibold text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
               27 Unidades Federativas
@@ -589,8 +597,8 @@ RESUMO DOS RECOLHAMENTOS:
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-700">
-              <thead className="bg-slate-100 text-xs font-bold text-slate-600 uppercase border-b border-slate-200">
+            <table className="w-full text-left text-sm text-[var(--atlas-text-secondary)]">
+              <thead className="bg-[var(--atlas-surface-hover)] text-xs font-bold text-[var(--atlas-text-secondary)] uppercase border-b border-[var(--atlas-border)]">
                 <tr>
                   <th className="px-6 py-3">UF</th>
                   <th className="px-6 py-3">Estado</th>
@@ -600,18 +608,18 @@ RESUMO DOS RECOLHAMENTOS:
                   <th className="px-6 py-3 text-right">Ação</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-[var(--atlas-border)]">
                 {UFS_BRASIL.map(uf => (
-                  <tr key={uf.uf} className="hover:bg-slate-50/80 transition">
-                    <td className="px-6 py-3.5 font-bold text-slate-900">
-                      <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 text-slate-800 font-mono text-xs border border-slate-200">
+                  <tr key={uf.uf} className="hover:bg-[var(--atlas-surface-hover)]/80 transition">
+                    <td className="px-6 py-3.5 font-bold text-[var(--atlas-text)]">
+                      <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--atlas-surface-hover)] text-[var(--atlas-text)] font-mono text-xs border border-[var(--atlas-border)]">
                         {uf.uf}
                       </span>
                     </td>
                     <td className="px-6 py-3.5 font-medium">{uf.nome}</td>
                     <td className="px-6 py-3.5 font-mono text-blue-700 font-bold">{uf.aliqInterna}%</td>
                     <td className="px-6 py-3.5 font-mono text-amber-700">{uf.aliqFcp > 0 ? `${uf.aliqFcp}%` : 'Isento / 0%'}</td>
-                    <td className="px-6 py-3.5 font-mono font-bold text-slate-900">
+                    <td className="px-6 py-3.5 font-mono font-bold text-[var(--atlas-text)]">
                       {(uf.aliqInterna + uf.aliqFcp).toFixed(1)}%
                     </td>
                     <td className="px-6 py-3.5 text-right">
@@ -634,11 +642,11 @@ RESUMO DOS RECOLHAMENTOS:
       )}
 
       {activeSubTab === 'HISTORICO' && (
-        <div className="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden">
-          <div className="p-6 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+        <div className="bg-[var(--atlas-surface)] rounded-lg border border-[var(--atlas-border)] shadow-xs overflow-hidden">
+          <div className="p-6 border-b border-[var(--atlas-border)] bg-[var(--atlas-surface-hover)] flex items-center justify-between">
             <div>
-              <h3 className="font-bold text-slate-900 text-lg">Histórico Local de Simulações de DIFAL</h3>
-              <p className="text-xs text-slate-500 mt-1">Simulações salvas durante a sua sessão de trabalho.</p>
+              <h3 className="font-bold text-[var(--atlas-text)] text-lg">Histórico Local de Simulações de DIFAL</h3>
+              <p className="text-xs text-[var(--atlas-text-secondary)] mt-1">Simulações salvas durante a sua sessão de trabalho.</p>
             </div>
             {historico.length > 0 && (
               <button
@@ -655,15 +663,15 @@ RESUMO DOS RECOLHAMENTOS:
           </div>
 
           {historico.length === 0 ? (
-            <div className="p-12 text-center text-slate-400">
-              <FileSpreadsheet className="w-12 h-12 mx-auto mb-3 stroke-1 text-slate-300" />
-              <p className="text-sm font-medium text-slate-600">Nenhuma simulação salva ainda.</p>
-              <p className="text-xs text-slate-400 mt-1">Preencha os dados na calculadora e clique em "Salvar no Histórico".</p>
+            <div className="p-12 text-center text-[var(--atlas-text-muted)]">
+              <FileSpreadsheet className="w-12 h-12 mx-auto mb-3 stroke-1 text-[var(--atlas-text-muted)]" />
+              <p className="text-sm font-medium text-[var(--atlas-text-secondary)]">Nenhuma simulação salva ainda.</p>
+              <p className="text-xs text-[var(--atlas-text-muted)] mt-1">Preencha os dados na calculadora e clique em "Salvar no Histórico".</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-slate-700">
-                <thead className="bg-slate-100 text-xs font-bold text-slate-600 uppercase border-b border-slate-200">
+              <table className="w-full text-left text-sm text-[var(--atlas-text-secondary)]">
+                <thead className="bg-[var(--atlas-surface-hover)] text-xs font-bold text-[var(--atlas-text-secondary)] uppercase border-b border-[var(--atlas-border)]">
                   <tr>
                     <th className="px-6 py-3">Data / Hora</th>
                     <th className="px-6 py-3">Descrição / Referência</th>
@@ -676,13 +684,13 @@ RESUMO DOS RECOLHAMENTOS:
                     <th className="px-6 py-3 text-center">Ações</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-[var(--atlas-border)]">
                   {historico.map(h => (
-                    <tr key={h.id} className="hover:bg-slate-50 transition">
-                      <td className="px-6 py-3.5 text-xs text-slate-500 font-mono">{h.data}</td>
-                      <td className="px-6 py-3.5 font-medium text-slate-900">{h.descricao}</td>
+                    <tr key={h.id} className="hover:bg-[var(--atlas-surface-hover)] transition">
+                      <td className="px-6 py-3.5 text-xs text-[var(--atlas-text-secondary)] font-mono">{h.data}</td>
+                      <td className="px-6 py-3.5 font-medium text-[var(--atlas-text)]">{h.descricao}</td>
                       <td className="px-6 py-3.5">
-                        <span className="font-bold text-slate-800 bg-slate-100 px-2 py-1 rounded-md text-xs font-mono">
+                        <span className="font-bold text-[var(--atlas-text)] bg-[var(--atlas-surface-hover)] px-2 py-1 rounded-md text-xs font-mono">
                           {h.ufOrigem} &rarr; {h.ufDestino}
                         </span>
                       </td>
@@ -693,7 +701,7 @@ RESUMO DOS RECOLHAMENTOS:
                             Base Dupla
                           </span>
                         ) : (
-                          <span className="text-slate-700 bg-slate-100 px-2 py-0.5 rounded font-semibold">
+                          <span className="text-[var(--atlas-text-secondary)] bg-[var(--atlas-surface-hover)] px-2 py-0.5 rounded font-semibold">
                             Base Única
                           </span>
                         )}
@@ -704,7 +712,7 @@ RESUMO DOS RECOLHAMENTOS:
                       <td className="px-6 py-3.5 text-center">
                         <button
                           onClick={() => handleRemoverSimulacao(h.id)}
-                          className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg transition"
+                          className="p-1.5 text-[var(--atlas-text-muted)] hover:text-red-600 rounded-lg transition"
                           title="Excluir simulação"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -724,15 +732,15 @@ RESUMO DOS RECOLHAMENTOS:
           {/* Form Left Side */}
           <div className="lg:col-span-5 space-y-6">
             {/* Parâmetros da Operação */}
-            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-xs space-y-5">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 className="font-bold text-slate-900 flex items-center space-x-2">
+            <div className="bg-[var(--atlas-surface)] p-6 rounded-lg border border-[var(--atlas-border)] shadow-xs space-y-5">
+              <div className="flex items-center justify-between border-b border-[var(--atlas-border)] pb-3">
+                <h3 className="font-bold text-[var(--atlas-text)] flex items-center space-x-2">
                   <ArrowRightLeft className="w-4 h-4 text-blue-600" />
                   <span>1. Origem, Destino e Regra</span>
                 </h3>
                 <button
                   onClick={handleResetForm}
-                  className="text-xs text-slate-500 hover:text-blue-600 flex items-center space-x-1"
+                  className="text-xs text-[var(--atlas-text-secondary)] hover:text-blue-600 flex items-center space-x-1"
                   title="Resetar formulário"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
@@ -744,7 +752,7 @@ RESUMO DOS RECOLHAMENTOS:
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <div className="flex items-center space-x-1.5 mb-1">
-                    <label className="block text-xs font-semibold text-slate-700">UF de Origem</label>
+                    <label className="block text-xs font-semibold text-[var(--atlas-text-secondary)]">UF de Origem</label>
                     <FiscalTooltip
                       title="UF de Origem (Estado Remetente)"
                       description="Estado onde a mercadoria é faturada ou de onde sai a remessa. Determina a alíquota interestadual aplicável (4%, 7% ou 12%)."
@@ -755,7 +763,7 @@ RESUMO DOS RECOLHAMENTOS:
                   <select
                     value={ufOrigem}
                     onChange={(e) => handleUfOrigemChange(e.target.value)}
-                    className="w-full rounded-xl border-slate-200 text-sm font-bold bg-slate-50 p-2.5 focus:bg-white focus:ring-2 focus:ring-blue-500 transition"
+                    className="w-full rounded-xl border-[var(--atlas-border)] text-sm font-bold bg-[var(--atlas-surface-hover)] p-2.5 focus:bg-[var(--atlas-surface)] focus:ring-2 focus:ring-blue-500 transition"
                   >
                     {UFS_BRASIL.map(u => (
                       <option key={u.uf} value={u.uf}>{u.uf} - {u.nome}</option>
@@ -764,7 +772,7 @@ RESUMO DOS RECOLHAMENTOS:
                 </div>
                 <div>
                   <div className="flex items-center space-x-1.5 mb-1">
-                    <label className="block text-xs font-semibold text-slate-700">UF de Destino</label>
+                    <label className="block text-xs font-semibold text-[var(--atlas-text-secondary)]">UF de Destino</label>
                     <FiscalTooltip
                       title="UF de Destino (Estado Consumidor)"
                       description="Estado do adquirente final ou estabelecimento destinatário. Recebe o DIFAL e o Fundo de Combate à Pobreza (FCP)."
@@ -775,7 +783,7 @@ RESUMO DOS RECOLHAMENTOS:
                   <select
                     value={ufDestino}
                     onChange={(e) => handleUfDestinoChange(e.target.value)}
-                    className="w-full rounded-xl border-slate-200 text-sm font-bold bg-slate-50 p-2.5 focus:bg-white focus:ring-2 focus:ring-blue-500 transition"
+                    className="w-full rounded-xl border-[var(--atlas-border)] text-sm font-bold bg-[var(--atlas-surface-hover)] p-2.5 focus:bg-[var(--atlas-surface)] focus:ring-2 focus:ring-blue-500 transition"
                   >
                     {UFS_BRASIL.map(u => (
                       <option key={u.uf} value={u.uf}>{u.uf} - {u.nome}</option>
@@ -787,7 +795,7 @@ RESUMO DOS RECOLHAMENTOS:
               {/* Modalidade de Cálculo */}
               <div>
                 <div className="flex items-center space-x-1.5 mb-1.5">
-                  <label className="block text-xs font-semibold text-slate-700">Modalidade do Cálculo</label>
+                  <label className="block text-xs font-semibold text-[var(--atlas-text-secondary)]">Modalidade do Cálculo</label>
                   <FiscalTooltip
                     title="Base Dupla ('Por Dentro') vs Base Única"
                     description="Na Base Dupla (exigida pela LC 190/2021 e Convênio 142/2018), o ICMS de Origem é excluído da base bruta e recomposto com a alíquota de destino dividindo por (1 - alíquota total destino). Na Base Única, aplica-se a diferença direta de alíquotas."
@@ -805,37 +813,37 @@ RESUMO DOS RECOLHAMENTOS:
                     onClick={() => setModalidade('BASE_DUPLA')}
                     className={`p-3 rounded-xl border text-left transition ${
                       modalidade === 'BASE_DUPLA'
-                        ? 'border-blue-600 bg-blue-50/80 text-blue-900 shadow-2xs font-semibold'
-                        : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                        ? 'border-blue-600 bg-blue-50/80 text-blue-900 shadow-xs font-semibold'
+                        : 'border-[var(--atlas-border)] text-[var(--atlas-text-secondary)] hover:bg-[var(--atlas-surface-hover)]'
                     }`}
                   >
                     <div className="text-xs font-bold">Base Dupla ("Por Dentro")</div>
-                    <div className="text-[10px] text-slate-500 mt-0.5">LC 190/2021 & Convenio 142/2018 (Padrão)</div>
+                    <div className="text-xs text-[var(--atlas-text-secondary)] mt-0.5">LC 190/2021 & Convenio 142/2018 (Padrão)</div>
                   </button>
                   <button
                     type="button"
                     onClick={() => setModalidade('BASE_UNICA')}
                     className={`p-3 rounded-xl border text-left transition ${
                       modalidade === 'BASE_UNICA'
-                        ? 'border-blue-600 bg-blue-50/80 text-blue-900 shadow-2xs font-semibold'
-                        : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                        ? 'border-blue-600 bg-blue-50/80 text-blue-900 shadow-xs font-semibold'
+                        : 'border-[var(--atlas-border)] text-[var(--atlas-text-secondary)] hover:bg-[var(--atlas-surface-hover)]'
                     }`}
                   >
                     <div className="text-xs font-bold">Base Única ("Por Fora")</div>
-                    <div className="text-[10px] text-slate-500 mt-0.5">Simples / Regra Tradicional</div>
+                    <div className="text-xs text-[var(--atlas-text-secondary)] mt-0.5">Simples / Regra Tradicional</div>
                   </button>
                 </div>
               </div>
 
               {/* Checkboxes de Perfil */}
-              <div className="space-y-2 pt-1 border-t border-slate-100">
+              <div className="space-y-2 pt-1 border-t border-[var(--atlas-border)]">
                 <div className="flex items-center space-x-2">
-                  <label className="flex items-center space-x-2 text-xs text-slate-700 cursor-pointer select-none">
+                  <label className="flex items-center space-x-2 text-xs text-[var(--atlas-text-secondary)] cursor-pointer select-none">
                     <input
                       type="checkbox"
                       checked={isImportado}
                       onChange={(e) => setIsImportado(e.target.checked)}
-                      className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                      className="rounded border-[var(--atlas-border)] text-blue-600 focus:ring-blue-500"
                     />
                     <span>Mercadoria Importada / Resolução SF 13/2012 (Aplica 4% interestadual)</span>
                   </label>
@@ -848,12 +856,12 @@ RESUMO DOS RECOLHAMENTOS:
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <label className="flex items-center space-x-2 text-xs text-slate-700 cursor-pointer select-none">
+                  <label className="flex items-center space-x-2 text-xs text-[var(--atlas-text-secondary)] cursor-pointer select-none">
                     <input
                       type="checkbox"
                       checked={incluirIpiNaBase}
                       onChange={(e) => setIncluirIpiNaBase(e.target.checked)}
-                      className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                      className="rounded border-[var(--atlas-border)] text-blue-600 focus:ring-blue-500"
                     />
                     <span>Incluir IPI na base de cálculo do ICMS Destino</span>
                   </label>
@@ -868,9 +876,9 @@ RESUMO DOS RECOLHAMENTOS:
             </div>
 
             {/* Composição de Valores */}
-            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-xs space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 className="font-bold text-slate-900 flex items-center space-x-2">
+            <div className="bg-[var(--atlas-surface)] p-6 rounded-lg border border-[var(--atlas-border)] shadow-xs space-y-4">
+              <div className="flex items-center justify-between border-b border-[var(--atlas-border)] pb-3">
+                <h3 className="font-bold text-[var(--atlas-text)] flex items-center space-x-2">
                   <DollarSign className="w-4 h-4 text-emerald-600" />
                   <span>2. Valores da Operação (R$)</span>
                 </h3>
@@ -884,7 +892,7 @@ RESUMO DOS RECOLHAMENTOS:
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="block text-xs font-medium text-slate-600">Valor dos Produtos (R$)</label>
+                    <label className="block text-xs font-medium text-[var(--atlas-text-secondary)]">Valor dos Produtos (R$)</label>
                   </div>
                   <input
                     type="number"
@@ -892,12 +900,12 @@ RESUMO DOS RECOLHAMENTOS:
                     step="0.01"
                     value={valorProdutos || ''}
                     onChange={(e) => setValorProdutos(parseFloat(e.target.value) || 0)}
-                    className="w-full rounded-xl border-slate-200 text-sm font-semibold p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-xl border-[var(--atlas-border)] text-sm font-semibold p-2.5 bg-[var(--atlas-surface-hover)] focus:bg-[var(--atlas-surface)] focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="block text-xs font-medium text-slate-600">Frete (R$)</label>
+                    <label className="block text-xs font-medium text-[var(--atlas-text-secondary)]">Frete (R$)</label>
                     <FiscalTooltip
                       title="Frete Acessório (FOB / CIF)"
                       description="Frete cobrado ou debitado ao adquirente integra o valor total da operação para fins de ICMS e DIFAL."
@@ -910,12 +918,12 @@ RESUMO DOS RECOLHAMENTOS:
                     step="0.01"
                     value={valorFrete || ''}
                     onChange={(e) => setValorFrete(parseFloat(e.target.value) || 0)}
-                    className="w-full rounded-xl border-slate-200 text-sm font-semibold p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-xl border-[var(--atlas-border)] text-sm font-semibold p-2.5 bg-[var(--atlas-surface-hover)] focus:bg-[var(--atlas-surface)] focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="block text-xs font-medium text-slate-600">Seguro (R$)</label>
+                    <label className="block text-xs font-medium text-[var(--atlas-text-secondary)]">Seguro (R$)</label>
                   </div>
                   <input
                     type="number"
@@ -923,12 +931,12 @@ RESUMO DOS RECOLHAMENTOS:
                     step="0.01"
                     value={valorSeguro || ''}
                     onChange={(e) => setValorSeguro(parseFloat(e.target.value) || 0)}
-                    className="w-full rounded-xl border-slate-200 text-sm font-semibold p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-xl border-[var(--atlas-border)] text-sm font-semibold p-2.5 bg-[var(--atlas-surface-hover)] focus:bg-[var(--atlas-surface)] focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="block text-xs font-medium text-slate-600">Outras Despesas (R$)</label>
+                    <label className="block text-xs font-medium text-[var(--atlas-text-secondary)]">Outras Despesas (R$)</label>
                   </div>
                   <input
                     type="number"
@@ -936,12 +944,12 @@ RESUMO DOS RECOLHAMENTOS:
                     step="0.01"
                     value={outrasDespesas || ''}
                     onChange={(e) => setOutrasDespesas(parseFloat(e.target.value) || 0)}
-                    className="w-full rounded-xl border-slate-200 text-sm font-semibold p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-xl border-[var(--atlas-border)] text-sm font-semibold p-2.5 bg-[var(--atlas-surface-hover)] focus:bg-[var(--atlas-surface)] focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="block text-xs font-medium text-slate-600">Desconto Incondicional (R$)</label>
+                    <label className="block text-xs font-medium text-[var(--atlas-text-secondary)]">Desconto Incondicional (R$)</label>
                     <FiscalTooltip
                       title="Desconto Incondicional (Constante em Nota)"
                       description="Descontos concedidos no momento da emissão da nota fiscal reduzem a base de cálculo do ICMS. Descontos condicionais (financeiros) não deduzem a base."
@@ -954,12 +962,12 @@ RESUMO DOS RECOLHAMENTOS:
                     step="0.01"
                     value={desconto || ''}
                     onChange={(e) => setDesconto(parseFloat(e.target.value) || 0)}
-                    className="w-full rounded-xl border-slate-200 text-sm font-semibold p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 text-red-600"
+                    className="w-full rounded-xl border-[var(--atlas-border)] text-sm font-semibold p-2.5 bg-[var(--atlas-surface-hover)] focus:bg-[var(--atlas-surface)] focus:ring-2 focus:ring-blue-500 text-red-600"
                   />
                 </div>
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="block text-xs font-medium text-slate-600">Valor do IPI (R$)</label>
+                    <label className="block text-xs font-medium text-[var(--atlas-text-secondary)]">Valor do IPI (R$)</label>
                   </div>
                   <input
                     type="number"
@@ -967,22 +975,22 @@ RESUMO DOS RECOLHAMENTOS:
                     step="0.01"
                     value={valorIpi || ''}
                     onChange={(e) => setValorIpi(parseFloat(e.target.value) || 0)}
-                    className="w-full rounded-xl border-slate-200 text-sm font-semibold p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-xl border-[var(--atlas-border)] text-sm font-semibold p-2.5 bg-[var(--atlas-surface-hover)] focus:bg-[var(--atlas-surface)] focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
 
-              <div className="bg-slate-50 p-3 rounded-xl flex items-center justify-between text-xs text-slate-700 font-semibold border border-slate-200">
+              <div className="bg-[var(--atlas-surface-hover)] p-3 rounded-xl flex items-center justify-between text-xs text-[var(--atlas-text-secondary)] font-semibold border border-[var(--atlas-border)]">
                 <span>Valor Total de Entrada da Operação:</span>
-                <span className="font-mono text-sm text-slate-900">{formatCurrency(calculo.baseOperacaoBruta)}</span>
+                <span className="font-mono text-sm text-[var(--atlas-text)]">{formatCurrency(calculo.baseOperacaoBruta)}</span>
               </div>
             </div>
 
             {/* Ajuste Fino de Alíquotas */}
-            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-xs space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 className="font-bold text-slate-900 flex items-center space-x-2">
-                  <Percent className="w-4 h-4 text-[#1e3a5f]" />
+            <div className="bg-[var(--atlas-surface)] p-6 rounded-lg border border-[var(--atlas-border)] shadow-xs space-y-4">
+              <div className="flex items-center justify-between border-b border-[var(--atlas-border)] pb-3">
+                <h3 className="font-bold text-[var(--atlas-text)] flex items-center space-x-2">
+                  <Percent className="w-4 h-4 text-[var(--atlas-navy)]" />
                   <span>3. Alíquotas (%)</span>
                 </h3>
                 <FiscalTooltip
@@ -996,7 +1004,7 @@ RESUMO DOS RECOLHAMENTOS:
               <div className="grid grid-cols-3 gap-3">
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="block text-[11px] font-semibold text-slate-700">Aliq. Interestadual</label>
+                    <label className="block text-xs font-semibold text-[var(--atlas-text-secondary)]">Aliq. Interestadual</label>
                     <FiscalTooltip
                       title="Alíquota Interestadual (Origem)"
                       description="Alíquota tributada pela UF remetente: 7% para remessas do Sul/Sudeste (exceto ES) ao Norte/Nordeste/Centro-Oeste/ES; 12% nos demais casos; e 4% para importados."
@@ -1008,16 +1016,16 @@ RESUMO DOS RECOLHAMENTOS:
                     step="0.1"
                     value={aliqInterestadual}
                     onChange={(e) => setAliqInterManual(parseFloat(e.target.value) || 0)}
-                    className="w-full rounded-xl border-slate-200 text-xs font-bold p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 font-mono"
+                    className="w-full rounded-xl border-[var(--atlas-border)] text-xs font-bold p-2.5 bg-[var(--atlas-surface-hover)] focus:bg-[var(--atlas-surface)] focus:ring-2 focus:ring-blue-500 font-mono"
                   />
-                  <span className="text-[10px] text-slate-400 mt-1 block">
+                  <span className="text-xs text-[var(--atlas-text-muted)] mt-1 block">
                     {aliqInterManual !== null ? 'Modificado' : `Sugerida (${aliqInterSugerida}%)`}
                   </span>
                 </div>
 
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="block text-[11px] font-semibold text-slate-700">Aliq. Interna UF Dest.</label>
+                    <label className="block text-xs font-semibold text-[var(--atlas-text-secondary)]">Aliq. Interna UF Dest.</label>
                     <FiscalTooltip
                       title="Alíquota Interna no Destino"
                       description="Alíquota modal vigente na UF de destino para a mercadoria (geralmente entre 17% e 22%, podendo ser menor se houver benefício fiscal)."
@@ -1029,16 +1037,16 @@ RESUMO DOS RECOLHAMENTOS:
                     step="0.1"
                     value={aliqInternaDestino}
                     onChange={(e) => setAliqInternaDestinoManual(parseFloat(e.target.value) || 0)}
-                    className="w-full rounded-xl border-slate-200 text-xs font-bold p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 font-mono text-blue-700"
+                    className="w-full rounded-xl border-[var(--atlas-border)] text-xs font-bold p-2.5 bg-[var(--atlas-surface-hover)] focus:bg-[var(--atlas-surface)] focus:ring-2 focus:ring-blue-500 font-mono text-blue-700"
                   />
-                  <span className="text-[10px] text-slate-400 mt-1 block">
+                  <span className="text-xs text-[var(--atlas-text-muted)] mt-1 block">
                     Padrão {ufDestino}: {destUfConfig.aliqInterna}%
                   </span>
                 </div>
 
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="block text-[11px] font-semibold text-slate-700">Aliq. FCP Destino</label>
+                    <label className="block text-xs font-semibold text-[var(--atlas-text-secondary)]">Aliq. FCP Destino</label>
                     <FiscalTooltip
                       title="Fundo de Combate à Pobreza (FCP)"
                       description="Adicional de 1% a 2% sobre a alíquota interna incidente em produtos específicos conforme legislação de cada UF."
@@ -1051,9 +1059,9 @@ RESUMO DOS RECOLHAMENTOS:
                     step="0.1"
                     value={aliqFcpDestino}
                     onChange={(e) => setAliqFcpManual(parseFloat(e.target.value) || 0)}
-                    className="w-full rounded-xl border-slate-200 text-xs font-bold p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 font-mono text-amber-700"
+                    className="w-full rounded-xl border-[var(--atlas-border)] text-xs font-bold p-2.5 bg-[var(--atlas-surface-hover)] focus:bg-[var(--atlas-surface)] focus:ring-2 focus:ring-blue-500 font-mono text-amber-700"
                   />
-                  <span className="text-[10px] text-slate-400 mt-1 block">
+                  <span className="text-xs text-[var(--atlas-text-muted)] mt-1 block">
                     Padrão {ufDestino}: {destUfConfig.aliqFcp}%
                   </span>
                 </div>
@@ -1070,7 +1078,7 @@ RESUMO DOS RECOLHAMENTOS:
                 <div className="text-2xl font-black font-mono">
                   {formatCurrency(calculo.difalValor)}
                 </div>
-                <div className="text-[11px] text-blue-200">
+                <div className="text-xs text-blue-200">
                   Diferença ICMS Destino - Origem
                 </div>
               </div>
@@ -1080,7 +1088,7 @@ RESUMO DOS RECOLHAMENTOS:
                 <div className="text-2xl font-black font-mono">
                   {formatCurrency(calculo.fcpValor)}
                 </div>
-                <div className="text-[11px] text-amber-100">
+                <div className="text-xs text-amber-100">
                   Fundo de Combate à Pobreza ({aliqFcpDestino}%)
                 </div>
               </div>
@@ -1090,21 +1098,21 @@ RESUMO DOS RECOLHAMENTOS:
                 <div className="text-2xl font-black font-mono">
                   {formatCurrency(calculo.totalRecolher)}
                 </div>
-                <div className="text-[11px] text-emerald-100">
+                <div className="text-xs text-emerald-100">
                   DIFAL + FCP Unificados
                 </div>
               </div>
             </div>
 
             {/* Card Memória de Cálculo Passo a Passo */}
-            <div className="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden">
-              <div className="p-5 border-b border-slate-200 bg-slate-50 flex flex-wrap items-center justify-between gap-3">
+            <div className="bg-[var(--atlas-surface)] rounded-lg border border-[var(--atlas-border)] shadow-xs overflow-hidden">
+              <div className="p-5 border-b border-[var(--atlas-border)] bg-[var(--atlas-surface-hover)] flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <h3 className="font-bold text-slate-900 flex items-center space-x-2">
+                  <h3 className="font-bold text-[var(--atlas-text)] flex items-center space-x-2">
                     <Info className="w-4 h-4 text-blue-600" />
                     <span>Memória de Cálculo Detalhada</span>
                   </h3>
-                  <p className="text-xs text-slate-500 mt-0.5">
+                  <p className="text-xs text-[var(--atlas-text-secondary)] mt-0.5">
                     Metodologia: {modalidade === 'BASE_DUPLA' ? 'Base Dupla "Por Dentro" (LC 190/2021)' : 'Base Única "Por Fora"'}
                   </p>
                 </div>
@@ -1112,16 +1120,16 @@ RESUMO DOS RECOLHAMENTOS:
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={handleCopyReport}
-                    className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition shadow-2xs"
+                    className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--atlas-surface)] border border-[var(--atlas-border)] text-[var(--atlas-text-secondary)] hover:bg-[var(--atlas-surface-hover)] transition shadow-xs"
                   >
-                    {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-slate-500" />}
+                    {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-[var(--atlas-text-secondary)]" />}
                     <span>{copied ? 'Copiado' : 'Copiar Texto'}</span>
                   </button>
                   <button
                     onClick={handlePrint}
-                    className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition shadow-2xs"
+                    className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--atlas-surface)] border border-[var(--atlas-border)] text-[var(--atlas-text-secondary)] hover:bg-[var(--atlas-surface-hover)] transition shadow-xs"
                   >
-                    <Printer className="w-3.5 h-3.5 text-slate-500" />
+                    <Printer className="w-3.5 h-3.5 text-[var(--atlas-text-secondary)]" />
                     <span>Imprimir</span>
                   </button>
                 </div>
@@ -1129,9 +1137,9 @@ RESUMO DOS RECOLHAMENTOS:
 
               <div className="p-6 space-y-4 text-xs font-mono">
                 {/* Step 1 */}
-                <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
-                  <div className="text-slate-500 text-[11px] font-sans font-semibold">Passo 1: Apuração do ICMS de Origem (Interestadual)</div>
-                  <div className="text-slate-900 font-bold">
+                <div className="p-3.5 bg-[var(--atlas-surface-hover)] rounded-xl border border-[var(--atlas-border)] space-y-1">
+                  <div className="text-[var(--atlas-text-secondary)] text-xs font-sans font-semibold">Passo 1: Apuração do ICMS de Origem (Interestadual)</div>
+                  <div className="text-[var(--atlas-text)] font-bold">
                     ICMS Origem = {formatCurrency(calculo.baseOperacaoBruta)} &times; {aliqInterestadual}% = <span className="text-blue-700">{formatCurrency(calculo.icmsOrigemValor)}</span>
                   </div>
                 </div>
@@ -1139,48 +1147,48 @@ RESUMO DOS RECOLHAMENTOS:
                 {modalidade === 'BASE_DUPLA' ? (
                   <>
                     {/* Step 2 */}
-                    <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
-                      <div className="text-slate-500 text-[11px] font-sans font-semibold">Passo 2: Exclusão do ICMS de Origem da Base</div>
-                      <div className="text-slate-900 font-bold">
-                        Base Líquida = {formatCurrency(calculo.baseOperacaoBruta)} - {formatCurrency(calculo.icmsOrigemValor)} = <span className="text-slate-800">{formatCurrency(calculo.baseSemIcmsOrigem)}</span>
+                    <div className="p-3.5 bg-[var(--atlas-surface-hover)] rounded-xl border border-[var(--atlas-border)] space-y-1">
+                      <div className="text-[var(--atlas-text-secondary)] text-xs font-sans font-semibold">Passo 2: Exclusão do ICMS de Origem da Base</div>
+                      <div className="text-[var(--atlas-text)] font-bold">
+                        Base Líquida = {formatCurrency(calculo.baseOperacaoBruta)} - {formatCurrency(calculo.icmsOrigemValor)} = <span className="text-[var(--atlas-text)]">{formatCurrency(calculo.baseSemIcmsOrigem)}</span>
                       </div>
                     </div>
 
                     {/* Step 3 */}
                     <div className="p-3.5 bg-blue-50/50 rounded-xl border border-blue-200 space-y-1">
-                      <div className="text-blue-800 text-[11px] font-sans font-semibold">Passo 3: Recomposição da Base Dupla de Destino (Gross-Up)</div>
-                      <div className="text-slate-700 text-[11px] font-sans">
+                      <div className="text-blue-800 text-xs font-sans font-semibold">Passo 3: Recomposição da Base Dupla de Destino (Gross-Up)</div>
+                      <div className="text-[var(--atlas-text-secondary)] text-xs font-sans">
                         Divisor = 1 - ({aliqInternaDestino}% + {aliqFcpDestino}%) = <span className="font-bold font-mono">{calculo.fatorDivisor.toFixed(4)}</span>
                       </div>
-                      <div className="text-slate-900 font-bold">
+                      <div className="text-[var(--atlas-text)] font-bold">
                         Base Destino = {formatCurrency(calculo.baseSemIcmsOrigem)} &divide; {calculo.fatorDivisor.toFixed(4)} = <span className="text-blue-800 text-sm">{formatCurrency(calculo.baseDestino)}</span>
                       </div>
                     </div>
                   </>
                 ) : (
-                  <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
-                    <div className="text-slate-500 text-[11px] font-sans font-semibold">Passo 2: Base Única da Operação</div>
-                    <div className="text-slate-900 font-bold">
+                  <div className="p-3.5 bg-[var(--atlas-surface-hover)] rounded-xl border border-[var(--atlas-border)] space-y-1">
+                    <div className="text-[var(--atlas-text-secondary)] text-xs font-sans font-semibold">Passo 2: Base Única da Operação</div>
+                    <div className="text-[var(--atlas-text)] font-bold">
                       Base Destino = <span className="text-blue-800">{formatCurrency(calculo.baseDestino)}</span>
                     </div>
                   </div>
                 )}
 
                 {/* Step 4 */}
-                <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
-                  <div className="text-slate-500 text-[11px] font-sans font-semibold">Passo 4: ICMS Total Devido na UF de Destino ({ufDestino})</div>
-                  <div className="text-slate-900 font-bold">
-                    ICMS Destino Total = {formatCurrency(calculo.baseDestino)} &times; {aliqInternaDestino}% = <span className="text-slate-900">{formatCurrency(calculo.icmsDestinoValor)}</span>
+                <div className="p-3.5 bg-[var(--atlas-surface-hover)] rounded-xl border border-[var(--atlas-border)] space-y-1">
+                  <div className="text-[var(--atlas-text-secondary)] text-xs font-sans font-semibold">Passo 4: ICMS Total Devido na UF de Destino ({ufDestino})</div>
+                  <div className="text-[var(--atlas-text)] font-bold">
+                    ICMS Destino Total = {formatCurrency(calculo.baseDestino)} &times; {aliqInternaDestino}% = <span className="text-[var(--atlas-text)]">{formatCurrency(calculo.icmsDestinoValor)}</span>
                   </div>
                 </div>
 
                 {/* Step 5 */}
                 <div className="p-3.5 bg-emerald-50/60 rounded-xl border border-emerald-200 space-y-1">
-                  <div className="text-emerald-800 text-[11px] font-sans font-semibold">Passo 5: Apuração Final do DIFAL & FCP</div>
-                  <div className="text-slate-900 font-bold">
+                  <div className="text-emerald-800 text-xs font-sans font-semibold">Passo 5: Apuração Final do DIFAL & FCP</div>
+                  <div className="text-[var(--atlas-text)] font-bold">
                     DIFAL = ICMS Destino ({formatCurrency(calculo.icmsDestinoValor)}) - ICMS Origem ({formatCurrency(calculo.icmsOrigemValor)}) = <span className="text-blue-700">{formatCurrency(calculo.difalValor)}</span>
                   </div>
-                  <div className="text-slate-900 font-bold">
+                  <div className="text-[var(--atlas-text)] font-bold">
                     FCP = Base Destino ({formatCurrency(calculo.baseDestino)}) &times; {aliqFcpDestino}% = <span className="text-amber-700">{formatCurrency(calculo.fcpValor)}</span>
                   </div>
                 </div>
@@ -1199,7 +1207,7 @@ RESUMO DOS RECOLHAMENTOS:
                 </div>
               </div>
 
-              <div className="text-xs text-slate-700 leading-relaxed space-y-3 font-sans">
+              <div className="text-xs text-[var(--atlas-text-secondary)] leading-relaxed space-y-3 font-sans">
                 <p>
                   • <strong>Origem e Destino:</strong> Na operação de <strong>{ufOrigem}</strong> para <strong>{ufDestino}</strong>, a alíquota interestadual aplicável é de <strong>{aliqInterestadual}%</strong>. Sobre o valor bruto de <strong>{formatCurrency(calculo.baseOperacaoBruta)}</strong>, o estado de origem retém <strong>{formatCurrency(calculo.icmsOrigemValor)}</strong> de ICMS.
                 </p>
@@ -1221,15 +1229,15 @@ RESUMO DOS RECOLHAMENTOS:
             </div>
 
             {/* Salvar Simulação Box */}
-            <div className="bg-slate-50 p-5 rounded-lg border border-slate-200 space-y-3">
-              <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider">Salvar Simulação no Histórico</h4>
+            <div className="bg-[var(--atlas-surface-hover)] p-5 rounded-lg border border-[var(--atlas-border)] space-y-3">
+              <h4 className="text-xs font-bold text-[var(--atlas-text)] uppercase tracking-wider">Salvar Simulação no Histórico</h4>
               <div className="flex flex-col sm:flex-row gap-2">
                 <input
                   type="text"
                   placeholder="Nome/Referência (ex: Cliente A - NFe Cotação 102)"
                   value={simulacaoDesc}
                   onChange={(e) => setSimulacaoDesc(e.target.value)}
-                  className="flex-1 rounded-xl border-slate-200 text-xs p-2.5 bg-white focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 rounded-xl border-[var(--atlas-border)] text-xs p-2.5 bg-[var(--atlas-surface)] focus:ring-2 focus:ring-blue-500"
                 />
                 <button
                   onClick={handleSalvarSimulacao}

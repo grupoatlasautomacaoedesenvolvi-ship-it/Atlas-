@@ -76,21 +76,21 @@ export function RoboDashboardView({ clientes = [], activeClienteId = null, addNo
   return (
     <div className="space-y-4 pb-12 text-xs font-sans">
       {/* Top Header Bar */}
-      <div className="bg-white border border-[var(--atlas-border)] rounded-xl p-4 shadow-2xs">
+      <div className="bg-[var(--atlas-surface)] border border-[var(--atlas-border)] rounded-xl p-4 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <div className="flex items-center space-x-2 text-slate-800">
-              <Bot className="w-5 h-5 text-[#1e3a5f]" />
-              <h1 className="text-base font-bold text-slate-900 tracking-tight">
+            <div className="flex items-center space-x-2 text-[var(--atlas-text)]">
+              <Bot className="w-5 h-5 text-[var(--atlas-navy)]" />
+              <h1 className="text-base font-bold text-[var(--atlas-text)] tracking-tight">
                 Painel do Robô Fiscal (RoboDashboardView)
               </h1>
-              <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                config.ativo ? 'bg-emerald-100 text-[#0f6e56] border border-emerald-200' : 'bg-slate-100 text-slate-600 border border-slate-200'
+              <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider ${
+                config.ativo ? 'bg-emerald-100 text-[var(--atlas-accent)] border border-emerald-200' : 'bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] border border-[var(--atlas-border)]'
               }`}>
                 {config.ativo ? 'Operacional' : 'Pausado'}
               </span>
             </div>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-[var(--atlas-text-secondary)] mt-0.5">
               Monitoramento em tempo real de importações, status do processador e alertas de divergência com a Matriz Tributária.
             </p>
           </div>
@@ -98,10 +98,10 @@ export function RoboDashboardView({ clientes = [], activeClienteId = null, addNo
           <div className="flex items-center space-x-2">
             <button
               onClick={handleToggleRobot}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold shadow-2xs transition-colors flex items-center space-x-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold shadow-xs transition-colors flex items-center space-x-1.5 ${
                 config.ativo 
                   ? 'bg-amber-600 hover:bg-amber-700 text-white' 
-                  : 'bg-[#0f6e56] hover:bg-[#0b5240] text-white'
+                  : 'bg-[var(--atlas-accent)] hover:bg-[var(--atlas-accent-dark)] text-white'
               }`}
             >
               {config.ativo ? (
@@ -119,7 +119,7 @@ export function RoboDashboardView({ clientes = [], activeClienteId = null, addNo
 
             <button
               onClick={recarregar}
-              className="p-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-lg shadow-2xs transition-colors"
+              className="p-1.5 bg-[var(--atlas-surface)] border border-[var(--atlas-border)] hover:bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] rounded-lg shadow-xs transition-colors"
               title="Atualizar Logs"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
@@ -128,39 +128,39 @@ export function RoboDashboardView({ clientes = [], activeClienteId = null, addNo
         </div>
 
         {/* Summary Indicators */}
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 mt-4 pt-3 border-t border-slate-100">
-          <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 flex items-center justify-between">
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 mt-4 pt-3 border-t border-[var(--atlas-border)]">
+          <div className="bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg p-3 flex items-center justify-between">
             <div>
-              <span className="text-slate-500 text-[11px] font-medium block">Status em Tempo Real</span>
-              <span className={`text-xs font-bold mt-0.5 block ${config.ativo ? 'text-[#0f6e56]' : 'text-slate-500'}`}>
+              <span className="text-[var(--atlas-text-secondary)] text-xs font-medium block">Status em Tempo Real</span>
+              <span className={`text-xs font-bold mt-0.5 block ${config.ativo ? 'text-[var(--atlas-accent)]' : 'text-[var(--atlas-text-secondary)]'}`}>
                 {config.ativo ? 'Ativo (Varredura On)' : 'Em Pausa'}
               </span>
             </div>
-            <Activity className={`w-4 h-4 ${config.ativo ? 'text-[#0f6e56]' : 'text-slate-300'}`} />
+            <Activity className={`w-4 h-4 ${config.ativo ? 'text-[var(--atlas-accent)]' : 'text-[var(--atlas-text-muted)]'}`} />
           </div>
 
-          <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 flex items-center justify-between">
+          <div className="bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg p-3 flex items-center justify-between">
             <div>
-              <span className="text-slate-500 text-[11px] font-medium block">Total Execuções</span>
-              <span className="text-sm font-bold text-slate-900 mt-0.5 block">{totalExecucoes}</span>
+              <span className="text-[var(--atlas-text-secondary)] text-xs font-medium block">Total Execuções</span>
+              <span className="text-sm font-bold text-[var(--atlas-text)] mt-0.5 block">{totalExecucoes}</span>
             </div>
-            <FileText className="w-4 h-4 text-slate-400" />
+            <FileText className="w-4 h-4 text-[var(--atlas-text-muted)]" />
           </div>
 
-          <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 flex items-center justify-between">
+          <div className="bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg p-3 flex items-center justify-between">
             <div>
-              <span className="text-slate-500 text-[11px] font-medium block">Alertas de Inconsistência</span>
+              <span className="text-[var(--atlas-text-secondary)] text-xs font-medium block">Alertas de Inconsistência</span>
               <span className="text-sm font-bold text-rose-700 mt-0.5 block">{totalInconsistencias}</span>
             </div>
             <AlertTriangle className="w-4 h-4 text-rose-500" />
           </div>
 
-          <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 flex items-center justify-between">
+          <div className="bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg p-3 flex items-center justify-between">
             <div>
-              <span className="text-slate-500 text-[11px] font-medium block">Padrões Aprendidos</span>
-              <span className="text-sm font-bold text-[#1e3a5f] mt-0.5 block">{totalRegrasAprendidas}</span>
+              <span className="text-[var(--atlas-text-secondary)] text-xs font-medium block">Padrões Aprendidos</span>
+              <span className="text-sm font-bold text-[var(--atlas-navy)] mt-0.5 block">{totalRegrasAprendidas}</span>
             </div>
-            <CheckCircle2 className="w-4 h-4 text-[#1e3a5f]" />
+            <CheckCircle2 className="w-4 h-4 text-[var(--atlas-navy)]" />
           </div>
         </div>
       </div>
@@ -175,31 +175,31 @@ export function RoboDashboardView({ clientes = [], activeClienteId = null, addNo
 
       {/* Alertas de Inconsistência da Matriz Tributária */}
       {inconsistencyLogs.length > 0 && (
-        <div className="bg-white rounded-xl border border-rose-200 shadow-2xs overflow-hidden">
+        <div className="bg-[var(--atlas-surface)] rounded-xl border border-rose-200 shadow-xs overflow-hidden">
           <div className="bg-rose-50 px-4 py-2.5 border-b border-rose-200 font-bold text-rose-800 flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <AlertTriangle className="w-4 h-4 text-rose-600" />
               <span>Alertas Fiscais e Inconsistências Detectadas na Importação</span>
             </div>
-            <span className="text-[11px] font-mono text-rose-700">{inconsistencyLogs.length} alerta(s)</span>
+            <span className="text-xs font-mono text-rose-700">{inconsistencyLogs.length} alerta(s)</span>
           </div>
 
           <div className="divide-y divide-rose-100 text-xs">
             {inconsistencyLogs.slice(0, 5).map(inc => (
-              <div key={inc.id} className="p-3 bg-white hover:bg-rose-50/40 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div key={inc.id} className="p-3 bg-[var(--atlas-surface)] hover:bg-rose-50/40 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div>
-                  <div className="font-bold text-slate-800 flex items-center space-x-2">
+                  <div className="font-bold text-[var(--atlas-text)] flex items-center space-x-2">
                     <span className="text-rose-700">{inc.clienteNome || 'Empresa em Análise'}</span>
-                    <span className="text-slate-300">•</span>
-                    <span className="text-slate-500 text-[11px] font-mono">{new Date(inc.timestamp).toLocaleTimeString('pt-BR')}</span>
+                    <span className="text-[var(--atlas-text-muted)]">•</span>
+                    <span className="text-[var(--atlas-text-secondary)] text-xs font-mono">{new Date(inc.timestamp).toLocaleTimeString('pt-BR')}</span>
                   </div>
-                  <p className="text-slate-700 mt-0.5">{inc.mensagem}</p>
+                  <p className="text-[var(--atlas-text-secondary)] mt-0.5">{inc.mensagem}</p>
                   {inc.detalhes && (
-                    <p className="text-[11px] font-mono text-slate-500 mt-0.5">{inc.detalhes}</p>
+                    <p className="text-xs font-mono text-[var(--atlas-text-secondary)] mt-0.5">{inc.detalhes}</p>
                   )}
                 </div>
 
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-200 shrink-0 self-start sm:self-center">
+                <span className="px-2 py-0.5 rounded text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200 shrink-0 self-start sm:self-center">
                   {inc.inconsistenciasCount || 1} Inconsistência(s)
                 </span>
               </div>
@@ -209,31 +209,31 @@ export function RoboDashboardView({ clientes = [], activeClienteId = null, addNo
       )}
 
       {/* Tabela de Execuções Recentes e Arquivos Processados */}
-      <div className="bg-white rounded-xl border border-[var(--atlas-border)] shadow-2xs overflow-hidden">
+      <div className="bg-[var(--atlas-surface)] rounded-xl border border-[var(--atlas-border)] shadow-xs overflow-hidden">
         {/* Search & Filter Controls */}
-        <div className="p-3 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div className="p-3 bg-[var(--atlas-surface-hover)] border-b border-[var(--atlas-border)] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div className="relative flex-1 max-w-md">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <Search className="w-3.5 h-3.5 text-[var(--atlas-text-muted)] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
               placeholder="Pesquisar por empresa, arquivo ou mensagem..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="w-full pl-8 pr-7 py-1.5 border border-slate-300 rounded-md text-xs text-slate-800 placeholder-slate-400 focus:outline-hidden focus:border-[#1e3a5f]"
+              className="w-full pl-8 pr-7 py-1.5 border border-[var(--atlas-border)] rounded-md text-xs text-[var(--atlas-text)] placeholder-[var(--atlas-text-muted)] focus:outline-hidden focus:border-[var(--atlas-navy)]"
             />
             {searchTerm && (
-              <button onClick={() => setSearchTerm('')} className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 p-0.5">
+              <button onClick={() => setSearchTerm('')} className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--atlas-text-muted)] p-0.5">
                 <X className="w-3 h-3" />
               </button>
             )}
           </div>
 
           <div className="flex items-center space-x-2">
-            <Filter className="w-3.5 h-3.5 text-slate-400" />
+            <Filter className="w-3.5 h-3.5 text-[var(--atlas-text-muted)]" />
             <select
               value={filterType}
               onChange={e => setFilterType(e.target.value)}
-              className="border border-slate-300 rounded-md px-2 py-1.5 bg-white text-slate-700 font-medium focus:outline-hidden focus:border-[#1e3a5f]"
+              className="border border-[var(--atlas-border)] rounded-md px-2 py-1.5 bg-[var(--atlas-surface)] text-[var(--atlas-text-secondary)] font-medium focus:outline-hidden focus:border-[var(--atlas-navy)]"
             >
               <option value="todos">Todos os Eventos</option>
               <option value="PROCESSAMENTO">Processamentos</option>
@@ -246,14 +246,14 @@ export function RoboDashboardView({ clientes = [], activeClienteId = null, addNo
 
         {/* Sober Table Structure */}
         {filteredLogs.length === 0 ? (
-          <div className="p-10 text-center text-slate-500 space-y-1">
-            <Clock className="w-6 h-6 text-slate-300 mx-auto" />
-            <p className="font-semibold text-slate-700 text-xs">Nenhum registro retornado</p>
-            <p className="text-[11px]">As execuções de importação do Robô Fiscal aparecerão nesta tabela.</p>
+          <div className="p-10 text-center text-[var(--atlas-text-secondary)] space-y-1">
+            <Clock className="w-6 h-6 text-[var(--atlas-text-muted)] mx-auto" />
+            <p className="font-semibold text-[var(--atlas-text-secondary)] text-xs">Nenhum registro retornado</p>
+            <p className="text-xs">As execuções de importação do Robô Fiscal aparecerão nesta tabela.</p>
           </div>
         ) : (
           <table className="w-full text-left border-collapse text-xs">
-            <thead className="bg-slate-100 border-b border-slate-200 text-slate-600 font-semibold uppercase text-[10px] tracking-wider">
+            <thead className="bg-[var(--atlas-surface-hover)] border-b border-[var(--atlas-border)] text-[var(--atlas-text-secondary)] font-semibold uppercase text-xs tracking-wider">
               <tr>
                 <th className="py-2.5 px-3">Data / Hora</th>
                 <th className="py-2.5 px-3">Empresa / Cliente</th>
@@ -263,38 +263,38 @@ export function RoboDashboardView({ clientes = [], activeClienteId = null, addNo
                 <th className="py-2.5 px-3 text-right">Inconsistências</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-[var(--atlas-border)]">
               {filteredLogs.map(log => {
-                let badgeClass = 'bg-slate-100 text-slate-700 border-slate-200';
+                let badgeClass = 'bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] border-[var(--atlas-border)]';
                 if (log.tipoAcao === 'INCONSISTENCIA') badgeClass = 'bg-rose-100 text-rose-800 border-rose-200 font-bold';
-                if (log.tipoAcao === 'APRENDIZADO') badgeClass = 'bg-emerald-100 text-[#0f6e56] border-emerald-200 font-bold';
+                if (log.tipoAcao === 'APRENDIZADO') badgeClass = 'bg-emerald-100 text-[var(--atlas-accent)] border-emerald-200 font-bold';
                 if (log.tipoAcao === 'PROCESSAMENTO') badgeClass = 'bg-sky-100 text-sky-800 border-sky-200';
                 if (log.tipoAcao === 'ERRO') badgeClass = 'bg-amber-100 text-amber-800 border-amber-200';
 
                 return (
-                  <tr key={log.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="py-2.5 px-3 text-slate-500 font-mono text-[11px] whitespace-nowrap">
+                  <tr key={log.id} className="hover:bg-[var(--atlas-surface-hover)] transition-colors">
+                    <td className="py-2.5 px-3 text-[var(--atlas-text-secondary)] font-mono text-xs whitespace-nowrap">
                       {new Date(log.timestamp).toLocaleString('pt-BR')}
                     </td>
-                    <td className="py-2.5 px-3 font-bold text-slate-800">
+                    <td className="py-2.5 px-3 font-bold text-[var(--atlas-text)]">
                       {log.clienteNome || 'Sistema / Global'}
                     </td>
                     <td className="py-2.5 px-3 whitespace-nowrap">
-                      <span className={`px-2 py-0.5 rounded text-[10px] border ${badgeClass}`}>
+                      <span className={`px-2 py-0.5 rounded text-xs border ${badgeClass}`}>
                         {log.tipoAcao}
                       </span>
                     </td>
-                    <td className="py-2.5 px-3 font-semibold text-slate-800">
+                    <td className="py-2.5 px-3 font-semibold text-[var(--atlas-text)]">
                       {log.mensagem}
                     </td>
-                    <td className="py-2.5 px-3 text-slate-500 text-[11px] font-mono">
+                    <td className="py-2.5 px-3 text-[var(--atlas-text-secondary)] text-xs font-mono">
                       {log.detalhes || '—'}
                     </td>
                     <td className="py-2.5 px-3 text-right font-bold">
                       {log.inconsistenciasCount ? (
                         <span className="text-rose-700 font-bold">{log.inconsistenciasCount}</span>
                       ) : (
-                        <span className="text-slate-400 font-normal">0</span>
+                        <span className="text-[var(--atlas-text-muted)] font-normal">0</span>
                       )}
                     </td>
                   </tr>

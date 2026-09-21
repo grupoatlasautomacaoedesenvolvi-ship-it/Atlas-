@@ -63,13 +63,13 @@ export function FiscalTooltip({
         type="button"
         onMouseEnter={() => setIsOpen(true)}
         onMouseLeave={() => setIsOpen(false)}
-        className="inline-flex items-center text-slate-400 hover:text-[#1e3a5f] focus:outline-hidden focus:text-[#1e3a5f] transition p-0.5 rounded-md cursor-pointer group"
+        className="inline-flex items-center text-[var(--atlas-text-muted)] hover:text-[var(--atlas-navy)] focus:outline-hidden focus:text-[var(--atlas-navy)] transition p-0.5 rounded-md cursor-pointer group"
         aria-label={`Informação Didática: ${title}`}
       >
         {children ? (
           children
         ) : (
-          <IconComponent className="w-4 h-4 text-slate-400 group-hover:text-[#1e3a5f] transition" />
+          <IconComponent className="w-4 h-4 text-[var(--atlas-text-muted)] group-hover:text-[var(--atlas-navy)] transition" />
         )}
       </button>
 
@@ -78,44 +78,39 @@ export function FiscalTooltip({
         <div
           onMouseEnter={() => setIsOpen(true)}
           onMouseLeave={() => setIsOpen(false)}
-          className={`absolute z-50 w-80 sm:w-96 p-4 text-white rounded-lg shadow-2xl border border-slate-700 text-xs space-y-2.5 animate-in fade-in zoom-in-95 duration-150 ${sideClasses[side]}`}
-          style={{ backgroundColor: '#0f172a', opacity: 1, pointerEvents: 'none' }}
+          className={`absolute z-50 w-80 sm:w-96 p-5 text-white rounded-2xl shadow-2xl border border-white/10 text-xs space-y-4 animate-in fade-in zoom-in-95 duration-150 ${sideClasses[side]}`}
+          style={{ backgroundColor: 'var(--atlas-navy-dark)', opacity: 1, pointerEvents: 'none' }}
         >
           {/* Header */}
-          <div className="flex items-start justify-between gap-2 border-b border-slate-800 pb-2">
-            <div className="flex items-center space-x-2 flex-1 min-w-0">
-              <Scale className="w-4 h-4 text-sky-400 shrink-0" />
-              <h4 className="font-bold text-white leading-tight whitespace-normal break-words">{title}</h4>
+          <div className="flex items-start justify-between gap-3 border-b border-white/10 pb-3">
+            <div className="flex items-center space-x-3 flex-1 min-w-0">
+              <div className="p-2 bg-white/10 rounded-lg text-[var(--atlas-accent)]">
+                <Scale className="w-4 h-4 shrink-0" />
+              </div>
+              <h4 className="font-bold text-white leading-tight whitespace-normal break-words tracking-tight text-sm" style={{ fontFamily: 'var(--font-display)' }}>{title}</h4>
             </div>
             {badge && (
-              <span className="bg-[#1e3a5f]/40 text-sky-200 border border-[#1e3a5f] text-[10px] font-mono px-2 py-0.5 rounded-md shrink-0">
+              <span className="atlas-pill atlas-pill-accent py-0.5 px-2 text-[9px] font-black shrink-0">
                 {badge}
               </span>
             )}
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsOpen(false);
-              }}
-              className="text-slate-400 hover:text-white transition p-0.5 rounded-md shrink-0"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
           </div>
 
           {/* Description */}
-          <p className="text-slate-300 leading-relaxed text-[11px] whitespace-normal break-words">
+          <p className="text-blue-100/70 leading-relaxed text-xs whitespace-normal break-words font-medium">
             {description}
           </p>
 
           {/* Examples if present */}
           {examples && examples.length > 0 && (
-            <div className="bg-slate-800/80 p-2.5 rounded-lg border border-slate-700 space-y-1">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Exemplo Prático:</span>
-              <ul className="list-disc list-inside space-y-0.5 text-[10px] text-slate-300">
+            <div className="bg-white/5 p-3 rounded-xl border border-white/10 space-y-2">
+              <span className="text-[10px] font-black text-blue-100/40 uppercase tracking-widest block">Exemplo Prático:</span>
+              <ul className="space-y-1.5 text-xs text-blue-100/80">
                 {examples.map((ex, idx) => (
-                  <li key={idx} className="leading-tight">{ex}</li>
+                  <li key={idx} className="leading-tight flex items-start gap-2">
+                    <div className="w-1 h-1 rounded-full bg-[var(--atlas-accent)] mt-1.5 shrink-0" />
+                    <span>{ex}</span>
+                  </li>
                 ))}
               </ul>
             </div>
@@ -123,8 +118,8 @@ export function FiscalTooltip({
 
           {/* Legal Reference */}
           {lawRef && (
-            <div className="flex items-start space-x-1.5 text-[10px] text-sky-300 font-mono pt-1 border-t border-slate-800">
-              <BookOpen className="w-3 h-3 text-sky-400 shrink-0 mt-0.5" />
+            <div className="flex items-center space-x-2 text-[10px] text-[var(--atlas-accent)] font-bold uppercase tracking-widest pt-3 border-t border-white/10">
+              <BookOpen className="w-3 h-3 shrink-0" />
               <span className="whitespace-normal break-words">Embasa: {lawRef}</span>
             </div>
           )}

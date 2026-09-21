@@ -294,18 +294,28 @@ export async function createApp() {
       const targetDoc = await fetchDocWithFallback(`usuarios/${targetUid}`, req.token);
 
       if (ehAdminEscritorio && !ehSuperAdmin) {
-        if (targetDoc?.data && targetDoc.data.escritorioId !== req.escritorioId) {
-          return res.status(403).json({ error: 'Você só pode gerenciar usuários do seu próprio escritório.' });
+        if (!targetDoc?.data || targetDoc.data.escritorioId !== req.escritorioId) {
+          return res.status(403).json({ error: 'Usuário não encontrado ou fora do seu escritório.' });
         }
-        if (papel === 'super_admin' || papel === 'admin_escritorio') {
-          return res.status(403).json({ error: 'Admin de escritório não pode promover usuários a super_admin ou admin_escritorio.' });
+        if (papel === 'super_admin') {
+          return res.status(403).json({ error: 'Admin de escritório não pode promover usuários a super_admin.' });
+        }
+        if (escritorioId !== undefined && escritorioId !== req.escritorioId) {
+          return res.status(403).json({ error: 'Apenas super_admin pode mover usuários entre escritórios.' });
         }
       }
 
       const updateData: any = {};
       if (nome !== undefined) updateData.nome = nome;
-      if (papel !== undefined) updateData.papel = papel;
-      if (escritorioId !== undefined) updateData.escritorioId = escritorioId;
+      if (papel !== undefined) {
+        if (!ehSuperAdmin && papel === 'super_admin') {
+          return res.status(403).json({ error: 'Admin de escritório não pode promover usuários a super_admin.' });
+        }
+        updateData.papel = papel;
+      }
+      if (escritorioId !== undefined && ehSuperAdmin) {
+        updateData.escritorioId = escritorioId;
+      }
       if (ativo !== undefined) updateData.ativo = ativo;
 
       await setDocWithFallback(`usuarios/${targetUid}`, updateData, req.token, true);
@@ -336,16 +346,17 @@ export async function createApp() {
       }
 
       const { targetUid } = req.params;
-      const targetUser = await adminAuth.getUser(targetUid);
-      if (!targetUser || !targetUser.email) {
-        return res.status(404).json({ error: 'Usuário ou e-mail não encontrado.' });
-      }
 
       if (ehAdminEscritorio && !ehSuperAdmin) {
         const targetDoc = await fetchDocWithFallback(`usuarios/${targetUid}`, req.token);
-        if (!targetDoc || targetDoc?.data?.escritorioId !== req.escritorioId) {
-          return res.status(403).json({ error: 'Você só pode gerar links para usuários do seu próprio escritório.' });
+        if (!targetDoc?.data || targetDoc.data.escritorioId !== req.escritorioId) {
+          return res.status(403).json({ error: 'Usuário não encontrado ou fora do seu escritório.' });
         }
+      }
+
+      const targetUser = await adminAuth.getUser(targetUid);
+      if (!targetUser || !targetUser.email) {
+        return res.status(404).json({ error: 'Usuário ou e-mail não encontrado.' });
       }
 
       const linkConvite = await adminAuth.generatePasswordResetLink(targetUser.email);

@@ -604,7 +604,7 @@ export function AdvancedAuditView({
                     <tr key={item.id} className="hover:bg-[var(--atlas-surface-hover)] transition-colors">
                       <td className="p-3">
                         <div className="font-semibold text-[var(--atlas-text)]">NF {item.numDoc}</div>
-                        <div className="text-[10px] text-[var(--atlas-text-muted)] font-mono truncate max-w-[120px]" title={item.chvNfe}>{item.chvNfe || 'Sem Chave'}</div>
+                        <div className="text-xs text-[var(--atlas-text-muted)] font-mono truncate max-w-[120px]" title={item.chvNfe}>{item.chvNfe || 'Sem Chave'}</div>
                       </td>
                       <td className="p-3 text-[var(--atlas-text)]">
                         <div className="truncate max-w-xs">{item.desc}</div>
@@ -658,7 +658,7 @@ export function AdvancedAuditView({
                   <div className="relative">
                     <input type="checkbox" className="sr-only" checked={autoEnabled} onChange={handleToggleAuto} disabled={isSavingAuto} />
                     <div className={`block w-12 h-7 rounded-full transition-colors ${autoEnabled ? 'bg-[var(--atlas-accent)]' : 'bg-[var(--atlas-border)]'}`}></div>
-                    <div className={`dot absolute left-1 top-1 bg-white w-5 h-5 rounded-full transition-transform ${autoEnabled ? 'transform translate-x-5' : ''}`}></div>
+                    <div className={`dot absolute left-1 top-1 bg-[var(--atlas-surface)] w-5 h-5 rounded-full transition-transform ${autoEnabled ? 'transform translate-x-5' : ''}`}></div>
                   </div>
                   <div className="ml-3 text-xs font-medium text-[var(--atlas-text)]">
                     {autoEnabled ? 'Automação Ativada' : 'Automação Desativada'}
@@ -803,7 +803,7 @@ export function AdvancedAuditView({
           <div className="atlas-card p-5 space-y-4">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-[var(--atlas-border)]">
               <div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--atlas-navy)] block">
+                <span className="text-xs font-bold uppercase tracking-wider text-[var(--atlas-navy)] block">
                   Painel de Diagnóstico Rápido de Divergências
                 </span>
                 <h2 className="text-base font-bold text-[var(--atlas-navy)]">Triagem Automática por Nível de Risco Fiscal</h2>
@@ -837,7 +837,7 @@ export function AdvancedAuditView({
                   </span>
                   <span className="text-xl font-bold font-mono text-[var(--atlas-danger)]">{highSeverityCount}</span>
                 </div>
-                <p className="text-[11px] text-[var(--atlas-text-secondary)]">
+                <p className="text-xs text-[var(--atlas-text-secondary)]">
                   Divergências de ICMS, escrituração omissa, desalinhamento C100 x XML e apuração.
                 </p>
               </button>
@@ -858,7 +858,7 @@ export function AdvancedAuditView({
                   </span>
                   <span className="text-xl font-bold font-mono text-[var(--atlas-warning)]">{mediumSeverityCount}</span>
                 </div>
-                <p className="text-[11px] text-[var(--atlas-text-secondary)]">
+                <p className="text-xs text-[var(--atlas-text-secondary)]">
                   Incompatibilidades de MVA/CFOP, CST e divergência parcial de aliquotas.
                 </p>
               </button>
@@ -879,7 +879,7 @@ export function AdvancedAuditView({
                   </span>
                   <span className="text-xl font-bold font-mono text-[var(--atlas-navy)]">{lowSeverityCount}</span>
                 </div>
-                <p className="text-[11px] text-[var(--atlas-text-secondary)]">
+                <p className="text-xs text-[var(--atlas-text-secondary)]">
                   Falta de cBenef exigido na UF, notas de ajuste sem chave vinculada.
                 </p>
               </button>
@@ -1034,7 +1034,7 @@ export function AdvancedAuditView({
           {/* Active Audit Filters Badges Indicator Bar */}
           {activeAuditFiltersCount > 0 && (
             <div className="atlas-alert atlas-alert-info flex flex-wrap items-center gap-2 p-2.5 text-xs">
-              <div className="flex items-center font-bold text-[11px] mr-1 text-[var(--atlas-info)]">
+              <div className="flex items-center font-bold text-xs mr-1 text-[var(--atlas-info)]">
                 <Filter className="w-3.5 h-3.5 mr-1" />
                 <span>Filtros Ativos ({activeAuditFiltersCount}):</span>
               </div>
@@ -1118,31 +1118,31 @@ export function AdvancedAuditView({
 
               <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 text-xs">
                 <div className="bg-[var(--atlas-surface-hover)] p-3 rounded-lg border border-[var(--atlas-border)]">
-                  <div className="text-[11px] text-[var(--atlas-text-secondary)] font-medium">Total Débitos</div>
+                  <div className="text-xs text-[var(--atlas-text-secondary)] font-medium">Total Débitos</div>
                   <div className="text-sm font-bold text-[var(--atlas-text)] mt-0.5">R$ {spedData.apuracao.vlTotDebitos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
                 </div>
                 <div className="bg-[var(--atlas-surface-hover)] p-3 rounded-lg border border-[var(--atlas-border)]">
-                  <div className="text-[11px] text-[var(--atlas-text-secondary)] font-medium">Aj. Débitos</div>
+                  <div className="text-xs text-[var(--atlas-text-secondary)] font-medium">Aj. Débitos</div>
                   <div className="text-sm font-bold text-[var(--atlas-text)] mt-0.5">R$ {spedData.apuracao.vlAjDebitos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
                 </div>
                 <div className="bg-[var(--atlas-surface-hover)] p-3 rounded-lg border border-[var(--atlas-border)]">
-                  <div className="text-[11px] text-[var(--atlas-text-secondary)] font-medium">Estornos Crédito</div>
+                  <div className="text-xs text-[var(--atlas-text-secondary)] font-medium">Estornos Crédito</div>
                   <div className="text-sm font-bold text-[var(--atlas-text)] mt-0.5">R$ {spedData.apuracao.vlEstornosCred.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
                 </div>
                 <div className="bg-[var(--atlas-surface-hover)] p-3 rounded-lg border border-[var(--atlas-border)]">
-                  <div className="text-[11px] text-[var(--atlas-text-secondary)] font-medium">Total Créditos</div>
+                  <div className="text-xs text-[var(--atlas-text-secondary)] font-medium">Total Créditos</div>
                   <div className="text-sm font-bold text-[var(--atlas-text)] mt-0.5">R$ {spedData.apuracao.vlTotCreditos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
                 </div>
                 <div className="bg-[var(--atlas-surface-hover)] p-3 rounded-lg border border-[var(--atlas-border)]">
-                  <div className="text-[11px] text-[var(--atlas-text-secondary)] font-medium">Aj. Créditos</div>
+                  <div className="text-xs text-[var(--atlas-text-secondary)] font-medium">Aj. Créditos</div>
                   <div className="text-sm font-bold text-[var(--atlas-text)] mt-0.5">R$ {spedData.apuracao.vlAjCreditos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
                 </div>
                 <div className="bg-[var(--atlas-surface-hover)] p-3 rounded-lg border border-[var(--atlas-border)]">
-                  <div className="text-[11px] text-[var(--atlas-text-secondary)] font-medium">Saldo Credor Ant.</div>
+                  <div className="text-xs text-[var(--atlas-text-secondary)] font-medium">Saldo Credor Ant.</div>
                   <div className="text-sm font-bold text-[var(--atlas-text)] mt-0.5">R$ {spedData.apuracao.vlSldCredorAnt.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
                 </div>
                 <div className="bg-[var(--atlas-navy-tint)] p-3 rounded-lg border border-[var(--atlas-navy)]/20">
-                  <div className="text-[11px] text-[var(--atlas-navy)] font-semibold">ICMS a Recolher</div>
+                  <div className="text-xs text-[var(--atlas-navy)] font-semibold">ICMS a Recolher</div>
                   <div className="text-sm font-bold text-[var(--atlas-navy)] mt-0.5">R$ {spedData.apuracao.vlIcmsRecolher.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
                 </div>
               </div>
@@ -1248,12 +1248,12 @@ export function AdvancedAuditView({
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                               {finding.correcaoSugerida!.map((corr, idx) => (
                                 <div key={idx} className="bg-[var(--atlas-surface)] p-2.5 rounded-lg border border-[var(--atlas-border)] text-xs space-y-1">
-                                  <div className="text-[11px] text-[var(--atlas-text-secondary)]">Campo: <span className="font-mono text-[var(--atlas-text)]">{corr.campo}</span></div>
+                                  <div className="text-xs text-[var(--atlas-text-secondary)]">Campo: <span className="font-mono text-[var(--atlas-text)]">{corr.campo}</span></div>
                                   <div className="flex items-center justify-between text-xs font-medium">
                                     <span className="text-[var(--atlas-danger)]">Declarado: {String(corr.valorDeclarado)}</span>
                                     <span className="text-[var(--atlas-accent)] font-bold">Sugerido: {String(corr.valorSugerido)}</span>
                                   </div>
-                                  <div className="text-[10px] text-[var(--atlas-text-muted)] italic mt-0.5">Origem: {corr.origemSugestao}</div>
+                                  <div className="text-xs text-[var(--atlas-text-muted)] italic mt-0.5">Origem: {corr.origemSugestao}</div>
                                 </div>
                               ))}
                             </div>
@@ -1319,7 +1319,7 @@ export function AdvancedAuditView({
                             </button>
                           </>
                         ) : (
-                          <div className="text-[11px] text-[var(--atlas-text-muted)] italic text-center md:text-right px-2">
+                          <div className="text-xs text-[var(--atlas-text-muted)] italic text-center md:text-right px-2">
                             Requer investigação
                           </div>
                         )}

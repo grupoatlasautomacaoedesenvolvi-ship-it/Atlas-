@@ -106,11 +106,11 @@ export function LoginView() {
               <Layers className="w-3.5 h-3.5 text-[var(--atlas-navy)]" />
               Auditoria EFD ICMS/IPI & NF-e
             </div>
-            <h1 className="text-3xl lg:text-4xl font-extrabold text-[var(--atlas-navy)] tracking-tight leading-snug">
-              Conformidade fiscal e auditoria SPED com máxima segurança e precisão.
+            <h1 className="text-4xl lg:text-5xl font-extrabold text-[var(--atlas-navy)] tracking-tight leading-tight" style={{ fontFamily: 'var(--font-display)' }}>
+              Conformidade fiscal e auditoria SPED com máxima segurança.
             </h1>
-            <p className="text-[var(--atlas-text-secondary)] text-sm lg:text-base leading-relaxed">
-              O <strong className="text-[var(--atlas-navy)] font-semibold">Atlas Auditor Fiscal</strong> realiza o cruzamento automatizado dos seus arquivos SPED com documentos fiscais eletrônicos e regras estaduais, identificando divergências com rapidez e garantindo total conformidade antes do envio à Receita Federal.
+            <p className="text-[var(--atlas-text-secondary)] text-base lg:text-lg leading-relaxed">
+              O <strong className="text-[var(--atlas-navy)] font-bold">Atlas Auditor Fiscal</strong> realiza o cruzamento automatizado dos seus arquivos SPED com documentos fiscais eletrônicos e regras estaduais.
             </p>
           </div>
 
@@ -208,7 +208,7 @@ export function LoginView() {
               </button>
             </div>
 
-            <h2 className="text-xl font-bold text-[var(--atlas-navy)] tracking-tight">
+            <h2 className="text-2xl font-bold text-[var(--atlas-navy)] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
               {mode === 'forgot'
                 ? 'Recuperação de Senha'
                 : 'Autenticação de Usuário'}
@@ -230,7 +230,7 @@ export function LoginView() {
                 <button
                   type="button"
                   onClick={applyAtlasDomain}
-                  className="text-[11px] text-[var(--atlas-navy)]/80 hover:text-[var(--atlas-navy)] transition font-medium underline"
+                  className="text-xs text-[var(--atlas-navy)]/80 hover:text-[var(--atlas-navy)] transition font-medium underline"
                 >
                   Usar @atlas.com
                 </button>
@@ -258,7 +258,7 @@ export function LoginView() {
                     <button
                       type="button"
                       onClick={() => { setMode('forgot'); setError(''); setMessage(''); }}
-                      className="text-[11px] text-[var(--atlas-navy)]/80 hover:text-[var(--atlas-navy)] transition font-semibold"
+                      className="text-xs text-[var(--atlas-navy)]/80 hover:text-[var(--atlas-navy)] transition font-semibold"
                     >
                       Esqueceu a senha?
                     </button>
@@ -335,10 +335,10 @@ export function LoginView() {
           </form>
 
           <div className="pt-6 border-t border-[var(--atlas-border)] text-center space-y-2">
-            <p className="text-[11px] text-[var(--atlas-text-muted)]">
+            <p className="text-xs text-[var(--atlas-text-muted)]">
               Autenticação corporativa com criptografia TLS 1.3 e controle de acessos por perfil.
             </p>
-            <div className="flex items-center justify-center gap-2 text-[10px] text-[var(--atlas-text-muted)] font-mono">
+            <div className="flex items-center justify-center gap-2 text-xs text-[var(--atlas-text-muted)] font-mono">
               <Server className="w-3 h-3 text-[var(--atlas-text-muted)]" />
               <span>Servidores Ativos • EFD Schema RFB v2.4</span>
             </div>

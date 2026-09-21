@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { PeriodoAcumulado, DecisaoNotaOmissa, Achado, XmlRecord } from '../types';
 import { db, EmpresaOmissa } from '../lib/db';
-import { Upload, FileCheck, Search, Filter, CheckCircle2, XCircle, Clock, Download, FileText, Printer, Trash2, AlertTriangle, ShieldCheck, Plus, Building2, ChevronDown } from 'lucide-react';
+import { Upload, FileCheck, Search, Filter, CheckCircle2, XCircle, Clock, Download, FileText, Printer, Trash2, AlertTriangle, ShieldCheck, Plus, Building2, ChevronDown, BadgeAlert } from 'lucide-react';
 import { parseSpedContent, parseXmlFiles } from '../lib/clientParser';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -439,35 +439,37 @@ export function NotasOmissasView() {
   const buracosCount = achados.filter(a => a.tipo === 'NOTA_EM_MES_SEM_SPED').length;
 
   return (
-    <div className="max-w-7xl w-full mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8">
+    <div className="max-w-7xl w-full mx-auto py-10 px-4 space-y-10">
       
       {/* Top Company Selector Bar */}
-      <div className="bg-white p-4 rounded-xl shadow-xs border border-slate-200 flex flex-col md:flex-row items-center justify-between gap-4 no-print">
-        <div className="flex items-center space-x-3 w-full md:w-auto">
-          <div className="p-2.5 bg-blue-50 text-[#1e3a5f] rounded-lg">
+      <div className="atlas-card p-4 flex flex-col md:flex-row items-center justify-between gap-6 no-print bg-[var(--atlas-surface-hover)]/40 border-2">
+        <div className="flex items-center space-x-4 w-full md:w-auto">
+          <div className="w-12 h-12 rounded-xl bg-[#f1efe8] text-[var(--atlas-navy)] flex items-center justify-center border border-[#e5e2d9] shadow-inner">
             <Building2 className="w-6 h-6" />
           </div>
-          <div>
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Painel Multivagas / Outras Empresas</span>
-            <div className="flex items-center space-x-2 mt-0.5">
+          <div className="flex-1">
+            <span className="text-[10px] font-black text-[var(--atlas-text-muted)] uppercase tracking-widest block mb-1">Painel Multivagas / Cliente Selecionado</span>
+            <div className="relative group">
               <select
                 value={selectedCnpj}
                 onChange={e => handleSelectCompany(e.target.value)}
-                className="text-base font-bold text-slate-900 border-none bg-transparent focus:ring-0 cursor-pointer pr-8"
+                className="text-lg font-bold text-[var(--atlas-navy)] border-none bg-transparent focus:ring-0 cursor-pointer pr-10 py-0 appearance-none w-full"
+                style={{ fontFamily: 'var(--font-display)' }}
               >
                 {empresas.map(emp => (
                   <option key={emp.cnpj} value={emp.cnpj}>
-                    {emp.nome} — CNPJ: {emp.cnpj}
+                    {emp.nome} — {emp.cnpj}
                   </option>
                 ))}
               </select>
+              <ChevronDown className="w-5 h-5 text-[var(--atlas-navy)] absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity" />
             </div>
           </div>
         </div>
 
         <button
           onClick={() => setShowNewEmpresaModal(true)}
-          className="flex items-center space-x-2 bg-[#1e3a5f] hover:bg-[#142c47] text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-xs w-full md:w-auto justify-center"
+          className="atlas-btn atlas-btn-secondary py-2.5 px-5 shadow-xs w-full md:w-auto justify-center"
         >
           <Plus className="w-4 h-4" />
           <span>Cadastrar Outra Empresa</span>
@@ -475,58 +477,73 @@ export function NotasOmissasView() {
       </div>
 
       {/* Professional Header Banner */}
-      <div className="bg-slate-900 rounded-xl p-6 sm:p-8 text-white shadow-sm border border-slate-800">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <div className="inline-flex items-center space-x-2 bg-slate-800 text-slate-200 border border-slate-700 px-3 py-1 rounded-md text-xs font-semibold tracking-wide uppercase">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span>Auditoria de Notas Omissas e Terceiros</span>
+      <div className="atlas-card p-6 md:p-10 bg-gradient-to-br from-[var(--atlas-navy)] to-[var(--atlas-navy-dark)] border-0 text-white shadow-xl overflow-hidden relative">
+        <div className="absolute top-0 right-0 p-10 opacity-10 pointer-events-none rotate-12">
+          <BadgeAlert className="w-64 h-64" />
+        </div>
+
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+          <div className="space-y-4">
+            <div className="flex items-center space-x-4">
+              <div className="p-4 bg-white/15 text-emerald-400 rounded-2xl backdrop-blur-md border border-white/15 shadow-inner">
+                <ShieldCheck className="w-8 h-8" />
+              </div>
+              <div>
+                <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight leading-tight" style={{ fontFamily: 'var(--font-display)' }}>
+                  {currentEmpresa.nome}
+                </h1>
+                <div className="mt-2 flex items-center gap-2">
+                  <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-xs font-bold uppercase tracking-widest">
+                    Auditoria de Omissas
+                  </span>
+                  <span className="px-3 py-1 rounded-full bg-white/10 text-white/80 border border-white/20 text-xs font-mono">
+                    {currentEmpresa.cnpj}
+                  </span>
+                </div>
+              </div>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-              {currentEmpresa.nome}
-            </h1>
-            <p className="text-slate-300 text-sm max-w-2xl">
-              CNPJ: <span className="font-mono font-bold text-white">{currentEmpresa.cnpj}</span> | Regime: <span className="font-bold text-white">{currentEmpresa.regime}</span> | UF: <span className="font-bold text-white">{currentEmpresa.uf}</span>
+            <p className="text-base text-blue-100/80 max-w-2xl leading-relaxed">
+              Análise cruzada de registros 0000, C100 e C170 contra acervo XML. Identificação de lacunas de escrituração e reconciliação de entrada de terceiros.
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3 no-print">
             <button
               onClick={() => window.print()}
-              className="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2.5 rounded-lg border border-slate-700 text-sm font-medium transition-colors"
+              className="atlas-btn atlas-btn-secondary text-xs py-2.5 px-5 bg-white/10 border-white/20 text-white hover:bg-white/20"
             >
               <Printer className="w-4 h-4" />
-              <span>Imprimir Relatório</span>
+              <span>Imprimir</span>
             </button>
 
             <button
               onClick={generatePDF}
               disabled={achados.length === 0}
-              className="flex items-center space-x-2 bg-[#1e3a5f] hover:bg-[#142c47] text-white px-5 py-2.5 rounded-lg text-sm font-semibold shadow-sm transition-all disabled:opacity-50"
+              className="atlas-btn atlas-btn-accent py-2.5 px-6 shadow-md"
             >
               <Download className="w-4 h-4" />
-              <span>Exportar PDF (Oficial)</span>
+              <span>Exportar Oficial (PDF)</span>
             </button>
           </div>
         </div>
 
         {/* Company Meta Header Bar */}
-        <div className="mt-6 pt-6 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
-          <div>
-            <span className="text-slate-400 block mb-0.5">Períodos Acumulados</span>
-            <span className="font-bold text-slate-100 block">{periodos.length} Meses Carregados</span>
+        <div className="mt-8 pt-8 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-8 relative z-10">
+          <div className="atlas-stat-strip border-white/10 p-0 shadow-none bg-transparent">
+            <span className="text-blue-100/60 block text-[10px] uppercase font-bold tracking-widest mb-1">Períodos</span>
+            <span className="text-xl font-black text-white">{periodos.length} meses</span>
           </div>
-          <div>
-            <span className="text-slate-400 block mb-0.5">Notas Pendentes</span>
-            <span className="font-bold text-amber-400 block">{achados.length} Notas Identificadas</span>
+          <div className="atlas-stat-strip border-white/10 p-0 shadow-none bg-transparent">
+            <span className="text-blue-100/60 block text-[10px] uppercase font-bold tracking-widest mb-1">Apontamentos</span>
+            <span className="text-xl font-black text-amber-400">{achados.length} notas</span>
           </div>
-          <div>
-            <span className="text-slate-400 block mb-0.5">Omissas Confirmadas</span>
-            <span className="font-bold text-red-400 block">{omitidasCount} Notas</span>
+          <div className="atlas-stat-strip border-white/10 p-0 shadow-none bg-transparent">
+            <span className="text-blue-100/60 block text-[10px] uppercase font-bold tracking-widest mb-1">Confirmadas</span>
+            <span className="text-xl font-black text-emerald-400">{omitidasCount} omissas</span>
           </div>
-          <div>
-            <span className="text-slate-400 block mb-0.5">Meses sem SPED (Buracos)</span>
-            <span className="font-bold text-slate-200 block">{buracosCount} Períodos</span>
+          <div className="atlas-stat-strip border-white/10 p-0 shadow-none bg-transparent">
+            <span className="text-blue-100/60 block text-[10px] uppercase font-bold tracking-widest mb-1">Lacunas SPED</span>
+            <span className="text-xl font-black text-white">{buracosCount} períodos</span>
           </div>
         </div>
       </div>
@@ -539,27 +556,27 @@ export function NotasOmissasView() {
       )}
 
       {/* Carga de Períodos e Arquivos (No Print) */}
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200 no-print">
-        <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center">
-          <Upload className="w-5 h-5 mr-2 text-[#1e3a5f]" />
+      <div className="bg-[var(--atlas-surface)] p-6 rounded-lg shadow-sm border border-[var(--atlas-border)] no-print">
+        <h3 className="text-lg font-bold text-[var(--atlas-text)] mb-4 flex items-center">
+          <Upload className="w-5 h-5 mr-2 text-[var(--atlas-navy)]" />
           Carga de Períodos & Arquivos para {currentEmpresa.nome}
         </h3>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="space-y-3 border-r border-slate-100 pr-6">
-            <label className="block text-sm font-medium text-slate-700">1. Definir Intervalo Histórico</label>
+          <div className="space-y-3 border-r border-[var(--atlas-border)] pr-6">
+            <label className="block text-sm font-medium text-[var(--atlas-text-secondary)]">1. Definir Intervalo Histórico</label>
             <div className="flex space-x-2">
               <input 
                 type="month" 
                 value={dataInicio} 
                 onChange={e => setDataInicio(e.target.value)}
-                className="w-full text-sm border-slate-300 rounded-lg p-2 bg-slate-50 border"
+                className="w-full text-sm border-[var(--atlas-border)] rounded-lg p-2 bg-[var(--atlas-surface-hover)] border"
               />
               <input 
                 type="month" 
                 value={dataFim} 
                 onChange={e => setDataFim(e.target.value)}
-                className="w-full text-sm border-slate-300 rounded-lg p-2 bg-slate-50 border"
+                className="w-full text-sm border-[var(--atlas-border)] rounded-lg p-2 bg-[var(--atlas-surface-hover)] border"
               />
             </div>
             <button 
@@ -571,28 +588,28 @@ export function NotasOmissasView() {
             </button>
           </div>
 
-          <div className="space-y-3 border-r border-slate-100 pr-6">
-            <label className="block text-sm font-medium text-slate-700">2. Importar SPEDs (Múltiplos)</label>
+          <div className="space-y-3 border-r border-[var(--atlas-border)] pr-6">
+            <label className="block text-sm font-medium text-[var(--atlas-text-secondary)]">2. Importar SPEDs (Múltiplos)</label>
             <input 
               type="file" 
               multiple 
               accept=".txt"
               onChange={handleUploadMultipleSpeds}
-              className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-[#f1efe8] file:text-[#1e3a5f] hover:file:bg-[#e5e2d9] border border-slate-200 rounded-lg p-1"
+              className="w-full text-sm text-[var(--atlas-text-secondary)] file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-[#f1efe8] file:text-[var(--atlas-navy)] hover:file:bg-[#e5e2d9] border border-[var(--atlas-border)] rounded-lg p-1"
             />
-            <p className="text-xs text-slate-500">O sistema alocará cada arquivo ao mês correto.</p>
+            <p className="text-xs text-[var(--atlas-text-secondary)]">O sistema alocará cada arquivo ao mês correto.</p>
           </div>
 
           <div className="space-y-3">
-            <label className="block text-sm font-medium text-slate-700">3. Importar XMLs (Múltiplos)</label>
+            <label className="block text-sm font-medium text-[var(--atlas-text-secondary)]">3. Importar XMLs (Múltiplos)</label>
             <input 
               type="file" 
               multiple 
               accept=".xml"
               onChange={handleUploadMultipleXmls}
-              className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-[#f1efe8] file:text-[#1e3a5f] hover:file:bg-[#e5e2d9] border border-slate-200 rounded-lg p-1"
+              className="w-full text-sm text-[var(--atlas-text-secondary)] file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-[#f1efe8] file:text-[var(--atlas-navy)] hover:file:bg-[#e5e2d9] border border-[var(--atlas-border)] rounded-lg p-1"
             />
-            <p className="text-xs text-slate-500">Notas serão vinculadas ao mês de emissão.</p>
+            <p className="text-xs text-[var(--atlas-text-secondary)]">Notas serão vinculadas ao mês de emissão.</p>
           </div>
         </div>
       </div>
@@ -600,29 +617,29 @@ export function NotasOmissasView() {
       {/* Lista de Achados / Notas Omissas */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-bold text-slate-900 flex items-center">
-            <Search className="w-5 h-5 mr-2 text-[#1e3a5f]" />
+          <h3 className="text-lg font-bold text-[var(--atlas-text)] flex items-center">
+            <Search className="w-5 h-5 mr-2 text-[var(--atlas-navy)]" />
             Notas Omissas Encontradas ({achados.length})
           </h3>
-          <span className="text-xs text-slate-500">Listagem oficial pronta para conferência e remoção</span>
+          <span className="text-xs text-[var(--atlas-text-secondary)]">Listagem oficial pronta para conferência e remoção</span>
         </div>
         
         {achados.length === 0 ? (
-          <div className="bg-white p-12 rounded-lg border border-slate-200 text-center shadow-xs">
+          <div className="bg-[var(--atlas-surface)] p-12 rounded-lg border border-[var(--atlas-border)] text-center shadow-xs">
             <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-slate-900">Nenhuma nota omissa pendente para {currentEmpresa.nome}</h3>
-            <p className="text-slate-500 mt-2">Todas as notas importadas estão escrituradas ou justificadas.</p>
+            <h3 className="text-lg font-bold text-[var(--atlas-text)]">Nenhuma nota omissa pendente para {currentEmpresa.nome}</h3>
+            <p className="text-[var(--atlas-text-secondary)] mt-2">Todas as notas importadas estão escrituradas ou justificadas.</p>
           </div>
         ) : (
           <>
             {/* Bulk Selection Bar */}
-            <div className="bg-white p-3.5 rounded-lg border border-slate-200 flex flex-wrap items-center justify-between gap-3 shadow-2xs no-print">
-              <label className="flex items-center space-x-2.5 text-sm font-semibold text-slate-700 cursor-pointer">
+            <div className="bg-[var(--atlas-surface)] p-3.5 rounded-lg border border-[var(--atlas-border)] flex flex-wrap items-center justify-between gap-3 shadow-xs no-print">
+              <label className="flex items-center space-x-2.5 text-sm font-semibold text-[var(--atlas-text-secondary)] cursor-pointer">
                 <input 
                   type="checkbox"
                   checked={selectedNotas.length === achados.length && achados.length > 0}
                   onChange={toggleSelectAll}
-                  className="w-4 h-4 text-[#1e3a5f] rounded border-slate-300 focus:ring-blue-500"
+                  className="w-4 h-4 text-[var(--atlas-navy)] rounded border-[var(--atlas-border)] focus:ring-blue-500"
                 />
                 <span>Selecionar Todas ({selectedNotas.length} de {achados.length} selecionadas)</span>
               </label>
@@ -639,23 +656,23 @@ export function NotasOmissasView() {
             </div>
 
             {achados.map(achado => (
-              <div key={achado.id} className="bg-white p-5 rounded-lg shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div key={achado.id} className="bg-[var(--atlas-surface)] p-5 rounded-lg shadow-sm border border-[var(--atlas-border)] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div className="flex items-start space-x-3.5 flex-1">
                   <input 
                     type="checkbox"
                     checked={selectedNotas.includes(achado.docId)}
                     onChange={() => toggleSelectNota(achado.docId)}
-                    className="mt-1.5 w-4 h-4 text-[#1e3a5f] rounded border-slate-300 focus:ring-blue-500 no-print flex-shrink-0"
+                    className="mt-1.5 w-4 h-4 text-[var(--atlas-navy)] rounded border-[var(--atlas-border)] focus:ring-blue-500 no-print flex-shrink-0"
                   />
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-1">
                       <span className={`text-xs font-bold px-2 py-1 rounded-md uppercase ${achado.tipo === 'NOTA_EM_MES_SEM_SPED' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'}`}>
                         {achado.tipo === 'NOTA_EM_MES_SEM_SPED' ? 'Buraco (Sem SPED)' : 'Omissa'}
                       </span>
-                      <span className="text-sm font-semibold text-slate-700">Chave: {achado.docId}</span>
+                      <span className="text-sm font-semibold text-[var(--atlas-text-secondary)]">Chave: {achado.docId}</span>
                     </div>
-                    <h4 className="text-base font-bold text-slate-900">{achado.titulo}</h4>
-                    <p className="text-sm text-slate-600 mt-1">{achado.descricao}</p>
+                    <h4 className="text-base font-bold text-[var(--atlas-text)]">{achado.titulo}</h4>
+                    <p className="text-sm text-[var(--atlas-text-secondary)] mt-1">{achado.descricao}</p>
                   </div>
                 </div>
 
@@ -671,7 +688,7 @@ export function NotasOmissasView() {
                       const just = prompt('Justificativa para ignorar (ex: Nota Cancelada, Fora de Escopo):');
                       if (just !== null) registrarDecisao(achado.docId, 'ignorada_justificada', just);
                     }}
-                    className="px-3.5 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-lg text-sm font-medium transition-colors"
+                    className="px-3.5 py-2 bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] hover:bg-[var(--atlas-border)] rounded-lg text-sm font-medium transition-colors"
                   >
                     Ignorar
                   </button>
@@ -693,15 +710,15 @@ export function NotasOmissasView() {
       {/* Modal Nova Empresa */}
       {showNewEmpresaModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 border border-slate-200 space-y-4">
+          <div className="bg-[var(--atlas-surface)] rounded-xl shadow-xl max-w-md w-full p-6 border border-[var(--atlas-border)] space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-slate-900 flex items-center">
-                <Building2 className="w-5 h-5 mr-2 text-[#1e3a5f]" />
+              <h3 className="text-lg font-bold text-[var(--atlas-text)] flex items-center">
+                <Building2 className="w-5 h-5 mr-2 text-[var(--atlas-navy)]" />
                 Cadastrar Outra Empresa para Auditoria
               </h3>
               <button 
                 onClick={() => setShowNewEmpresaModal(false)}
-                className="text-slate-400 hover:text-slate-600 text-sm font-bold"
+                className="text-[var(--atlas-text-muted)] hover:text-[var(--atlas-text-secondary)] text-sm font-bold"
               >
                 ✕
               </button>
@@ -709,36 +726,36 @@ export function NotasOmissasView() {
 
             <form onSubmit={handleCreateEmpresa} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">CNPJ</label>
+                <label className="block text-xs font-semibold text-[var(--atlas-text-secondary)] uppercase mb-1">CNPJ</label>
                 <input 
                   type="text" 
                   placeholder="00.000.000/0001-00" 
                   value={newCnpj}
                   onChange={e => setNewCnpj(e.target.value)}
-                  className="w-full text-sm border border-slate-300 rounded-lg p-2.5 bg-slate-50"
+                  className="w-full text-sm border border-[var(--atlas-border)] rounded-lg p-2.5 bg-[var(--atlas-surface-hover)]"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">Razão Social / Nome da Empresa</label>
+                <label className="block text-xs font-semibold text-[var(--atlas-text-secondary)] uppercase mb-1">Razão Social / Nome da Empresa</label>
                 <input 
                   type="text" 
                   placeholder="Ex: Filial Sul Comércio Ltda" 
                   value={newNome}
                   onChange={e => setNewNome(e.target.value)}
-                  className="w-full text-sm border border-slate-300 rounded-lg p-2.5 bg-slate-50"
+                  className="w-full text-sm border border-[var(--atlas-border)] rounded-lg p-2.5 bg-[var(--atlas-surface-hover)]"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">UF</label>
+                  <label className="block text-xs font-semibold text-[var(--atlas-text-secondary)] uppercase mb-1">UF</label>
                   <select 
                     value={newUf} 
                     onChange={e => setNewUf(e.target.value)}
-                    className="w-full text-sm border border-slate-300 rounded-lg p-2.5 bg-slate-50"
+                    className="w-full text-sm border border-[var(--atlas-border)] rounded-lg p-2.5 bg-[var(--atlas-surface-hover)]"
                   >
                     {['SP', 'RJ', 'MG', 'RS', 'PR', 'SC', 'BA', 'GO', 'DF', 'ES', 'PE', 'CE', 'PA', 'AM', 'MT', 'MS', 'MA', 'PB', 'RN', 'PI', 'AL', 'SE', 'TO', 'RO', 'AC', 'AP', 'RR'].map(uf => (
                       <option key={uf} value={uf}>{uf}</option>
@@ -746,11 +763,11 @@ export function NotasOmissasView() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">Regime Tributário</label>
+                  <label className="block text-xs font-semibold text-[var(--atlas-text-secondary)] uppercase mb-1">Regime Tributário</label>
                   <select 
                     value={newRegime} 
                     onChange={e => setNewRegime(e.target.value)}
-                    className="w-full text-sm border border-slate-300 rounded-lg p-2.5 bg-slate-50"
+                    className="w-full text-sm border border-[var(--atlas-border)] rounded-lg p-2.5 bg-[var(--atlas-surface-hover)]"
                   >
                     <option value="Lucro Real">Lucro Real</option>
                     <option value="Lucro Presumido">Lucro Presumido</option>
@@ -759,17 +776,17 @@ export function NotasOmissasView() {
                 </div>
               </div>
 
-              <div className="flex justify-end space-x-3 pt-4 border-t border-slate-100">
+              <div className="flex justify-end space-x-3 pt-4 border-t border-[var(--atlas-border)]">
                 <button
                   type="button"
                   onClick={() => setShowNewEmpresaModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium"
+                  className="px-4 py-2 bg-[var(--atlas-surface-hover)] hover:bg-[var(--atlas-border)] text-[var(--atlas-text-secondary)] rounded-lg text-sm font-medium"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-[#1e3a5f] hover:bg-[#142c47] text-white rounded-lg text-sm font-semibold shadow-xs"
+                  className="px-5 py-2 bg-[var(--atlas-navy)] hover:bg-[var(--atlas-navy-dark)] text-white rounded-lg text-sm font-semibold shadow-xs"
                 >
                   Salvar Empresa
                 </button>

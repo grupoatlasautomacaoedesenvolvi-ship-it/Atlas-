@@ -506,35 +506,43 @@ export function NcmLookupView({ spedData, stateTaxRules = [] }: NcmLookupViewPro
     <div className="space-y-6">
       
       {/* Header Banner */}
-      <div className="bg-slate-900 border border-slate-800 p-6 rounded-lg text-white shadow-sm relative overflow-hidden">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
-          <div className="space-y-1.5">
-            <div className="inline-flex items-center space-x-2 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-semibold">
-              <Search className="w-4 h-4 text-emerald-400" />
-              <span>Diagnóstico & Regras Tributárias por NCM</span>
+      <div className="atlas-card p-6 md:p-8 bg-gradient-to-br from-[var(--atlas-navy)] to-[var(--atlas-navy-dark)] border-0 text-white shadow-lg overflow-hidden relative">
+        <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+          <Search className="w-48 h-48" />
+        </div>
+        
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-4">
+            <div className="flex items-center space-x-3">
+              <div className="p-3 bg-white/10 text-emerald-400 rounded-xl backdrop-blur-md border border-white/10 shadow-inner">
+                <Search className="w-6 h-6" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-white tracking-tight leading-none" style={{ fontFamily: 'var(--font-display)' }}>
+                  Diagnóstico Fiscal de NCM
+                </h1>
+                <div className="mt-2 flex items-center gap-2">
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-bold uppercase tracking-widest">
+                    Base Legal de Tributação
+                  </span>
+                </div>
+              </div>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-              Consulta e Diagnóstico Fiscal de NCM
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-300 max-w-3xl leading-relaxed">
-              Pesquise códigos NCM, selecione o Estado (UF) para verificar alíquotas internas de ICMS, FCP, Margem de ST (MVA), regras de PIS/COFINS e cruzamento automático com o SPED EFD ICMS/IPI.
+            <p className="text-sm text-blue-100/80 max-w-2xl leading-relaxed">
+              Pesquise códigos NCM e verifique alíquotas internas de ICMS, FCP, Margem de ST (MVA) e regras de PIS/COFINS por Estado.
             </p>
           </div>
 
-          <div className="bg-slate-800/80 p-4 rounded-lg border border-slate-700 text-xs space-y-1.5 min-w-[220px]">
-            <span className="text-slate-300 font-semibold block">Estatísticas do SPED:</span>
-            <div className="flex justify-between font-mono">
-              <span className="text-slate-400">NCMs Diferentes:</span>
-              <span className="font-bold text-white">{spedNcmMap.size}</span>
-            </div>
-            <div className="flex justify-between font-mono">
-              <span className="text-slate-400">Base da Tabela:</span>
-              <span className="font-bold text-emerald-300">{combinedNcmList.length} códigos</span>
+          <div className="bg-white/10 p-5 rounded-xl border border-white/10 text-xs space-y-2 min-w-[240px] backdrop-blur-md shadow-inner">
+            <span className="text-emerald-300 font-bold uppercase tracking-widest block text-[10px]">Estatísticas SPED</span>
+            <div className="flex justify-between font-mono items-center pt-1 border-t border-white/5">
+              <span className="text-blue-100/70">NCMs no Arquivo:</span>
+              <span className="font-bold text-white text-base">{spedNcmMap.size}</span>
             </div>
             {spedData?.header?.uf && (
-              <div className="pt-1 border-t border-white/10 flex justify-between font-mono text-[11px]">
-                <span className="text-emerald-300">UF do SPED:</span>
-                <span className="font-bold text-emerald-400">{spedData.header.uf}</span>
+              <div className="pt-2 border-t border-white/5 flex justify-between font-mono items-center">
+                <span className="text-emerald-300">UF do Arquivo:</span>
+                <span className="font-bold text-emerald-400 text-base">{spedData.header.uf}</span>
               </div>
             )}
           </div>
@@ -542,84 +550,82 @@ export function NcmLookupView({ spedData, stateTaxRules = [] }: NcmLookupViewPro
       </div>
 
       {/* State Selector Bar - Prominent UF Selection */}
-      <div className="bg-white p-4 sm:p-5 rounded-lg border border-slate-200 shadow-sm space-y-3">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-          
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-lg bg-[#1e3a5f] text-white flex items-center justify-center font-bold shadow-sm shrink-0">
-              <MapPin className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <label htmlFor="select-uf-main" className="text-xs font-bold uppercase text-slate-500 tracking-wider">
-                  Estado de Consulta Tributária (UF)
-                </label>
-                <FiscalTooltip
-                  title="Seleção de Estado para Tributação de ICMS"
-                  description="Selecione o Estado (UF) de destino ou onde a empresa está localizada. A alíquota modal de ICMS, o Adicional de FCP, a margem MVA de Substituição Tributária e a exigência do cBenef mudam conforme a legislação da UF selecionada."
-                  lawRef="Lei Complementar nº 87/1996 & Regulamentos do ICMS das UFs"
-                  badge="ICMS por UF"
-                />
-              </div>
-              <p className="text-xs text-slate-600 font-medium">
-                Selecione o estado para calcular alíquotas internas de ICMS, FCP e MVA de ST do produto
-              </p>
-            </div>
+      <div className="atlas-card p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 border-b-4 border-b-[var(--atlas-navy)]">
+        <div className="flex items-center space-x-4">
+          <div className="w-12 h-12 rounded-xl bg-[#f1efe8] text-[var(--atlas-navy)] flex items-center justify-center font-bold shadow-inner border border-[#e5e2d9] shrink-0">
+            <MapPin className="w-6 h-6" />
           </div>
+          <div>
+            <div className="flex items-center space-x-2">
+              <label htmlFor="select-uf-main" className="text-[10px] font-bold uppercase text-[var(--atlas-text-muted)] tracking-widest">
+                Estado de Consulta Tributária (UF)
+              </label>
+              <FiscalTooltip
+                title="Seleção de Estado para Tributação de ICMS"
+                description="Selecione o Estado (UF) de destino ou onde a empresa está localizada. A alíquota modal de ICMS, o Adicional de FCP, a margem MVA de Substituição Tributária e a exigência do cBenef mudam conforme a legislação da UF selecionada."
+                lawRef="Lei Complementar nº 87/1996 & Regulamentos do ICMS das UFs"
+                badge="ICMS por UF"
+              />
+            </div>
+            <p className="text-xs text-[var(--atlas-text-secondary)] font-medium mt-1">
+              Mudanças automáticas em ICMS, FCP e MVA conforme o estado selecionado.
+            </p>
+          </div>
+        </div>
 
-          <div className="flex items-center space-x-2 shrink-0">
-            <select
-              id="select-uf-main"
-              value={selectedUf}
-              onChange={(e) => setSelectedUf(e.target.value)}
-              className="bg-white border-2 border-[#1e3a5f] text-[#1e3a5f] font-extrabold text-sm rounded-lg px-4 py-2.5 shadow-sm focus:ring-2 focus:ring-[#1e3a5f] focus:outline-hidden cursor-pointer"
+        <div className="flex items-center space-x-3 shrink-0">
+          <select
+            id="select-uf-main"
+            value={selectedUf}
+            onChange={(e) => setSelectedUf(e.target.value)}
+            className="atlas-input bg-white border-2 border-[var(--atlas-navy)] text-[var(--atlas-navy)] font-black text-base rounded-xl px-5 py-2.5 shadow-md focus:ring-4 focus:ring-[var(--atlas-navy)]/20 transition-all cursor-pointer min-w-[140px]"
+          >
+            {BRAZIL_UFS.map((u) => (
+              <option key={u.code} value={u.code}>
+                {u.code} — {u.name}
+              </option>
+            ))}
+          </select>
+
+          {isSpedUfMatched ? (
+            <div className="atlas-pill atlas-pill-accent flex items-center gap-2 py-2.5 px-4 shadow-sm border-2">
+              <CheckCircle2 className="w-4 h-4" />
+              <span>Arquivo do SPED ({selectedUf})</span>
+            </div>
+          ) : spedData?.header?.uf ? (
+            <button
+              onClick={() => setSelectedUf(spedData.header.uf.trim().toUpperCase())}
+              className="atlas-btn atlas-btn-secondary py-2.5 px-4 text-xs font-bold shadow-sm"
+              title={`Mudar para UF do SPED: ${spedData.header.uf}`}
             >
-              {BRAZIL_UFS.map((u) => (
-                <option key={u.code} value={u.code}>
-                  {u.code} — {u.name}
-                </option>
-              ))}
-            </select>
-
-            {isSpedUfMatched ? (
-              <span className="hidden sm:inline-flex items-center space-x-1 bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-2 rounded-lg border border-emerald-200">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 mr-1" />
-                <span>UF do SPED ({selectedUf})</span>
-              </span>
-            ) : spedData?.header?.uf ? (
-              <button
-                onClick={() => setSelectedUf(spedData.header.uf.trim().toUpperCase())}
-                className="text-xs bg-[#f1efe8] hover:bg-[#e5e2d9] text-[#1e3a5f] font-bold px-3 py-2 rounded-lg transition flex items-center space-x-1"
-                title={`Mudar para UF do SPED: ${spedData.header.uf}`}
-              >
-                <RefreshCw className="w-3.5 h-3.5 mr-1 text-[#1e3a5f]" />
-                <span>Usar UF do SPED ({spedData.header.uf})</span>
-              </button>
-            ) : null}
-          </div>
-
+              <RefreshCw className="w-4 h-4" />
+              <span>SPED ({spedData.header.uf})</span>
+            </button>
+          ) : null}
         </div>
+      </div>
 
-        {/* Quick UF Chips for High-Volume States */}
-        <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-slate-200/60 text-xs">
-          <span className="text-[11px] font-bold text-slate-400 mr-1">Atalhos de UF:</span>
-          {['SP', 'RJ', 'MG', 'PR', 'RS', 'BA', 'PE', 'SC', 'GO', 'DF'].map((ufCode) => {
-            const isSel = selectedUf === ufCode;
-            return (
-              <button
-                key={ufCode}
-                onClick={() => setSelectedUf(ufCode)}
-                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${
-                  isSel
-                    ? 'bg-[#1e3a5f] text-white shadow-2xs'
-                    : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'
-                }`}
-              >
-                {ufCode}
-              </button>
-            );
-          })}
-        </div>
+      {/* Quick UF Chips for High-Volume States */}
+      <div className="flex flex-wrap items-center gap-2 text-xs">
+        <span className="text-[10px] font-bold text-[var(--atlas-text-muted)] uppercase tracking-widest mr-2 flex items-center gap-1.5">
+          <MapPin className="w-3 h-3" /> Estados Principais:
+        </span>
+        {['SP', 'RJ', 'MG', 'PR', 'RS', 'BA', 'PE', 'SC', 'GO', 'DF'].map((ufCode) => {
+          const isSel = selectedUf === ufCode;
+          return (
+            <button
+              key={ufCode}
+              onClick={() => setSelectedUf(ufCode)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                isSel
+                  ? 'bg-[var(--atlas-navy)] text-white shadow-md'
+                  : 'bg-[var(--atlas-surface)] hover:bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] border border-[var(--atlas-border)] shadow-xs'
+              }`}
+            >
+              {ufCode}
+            </button>
+          );
+        })}
       </div>
 
       {/* Main Grid: Search & Filters Left / Detailed NCM Inspector Right */}
@@ -629,28 +635,28 @@ export function NcmLookupView({ spedData, stateTaxRules = [] }: NcmLookupViewPro
         <div className="lg:col-span-7 space-y-4">
           
           {/* Search Controls Card */}
-          <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm space-y-3">
+          <div className="atlas-card p-5 space-y-4">
             
             {/* Main Search Input */}
             <div className="relative">
-              <Search className="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Search className="w-5 h-5 text-[var(--atlas-navy)] absolute left-4 top-1/2 -translate-y-1/2 opacity-60" />
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Pesquisar por Código NCM (ex: 2203.00.00), Palavra-chave (ex: Cerveja, Notebook), CEST..."
-                className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-lg text-sm font-medium text-slate-900 focus:ring-2 focus:ring-[#1e3a5f] focus:border-[#1e3a5f] transition"
+                placeholder="Pesquisar por Código NCM, Descrição, CEST..."
+                className="atlas-input w-full pl-12 pr-4 py-4 text-base font-medium shadow-sm transition-all placeholder-[var(--atlas-text-muted)]"
               />
             </div>
 
             {/* Filter Pills */}
-            <div className="flex flex-wrap items-center gap-2 pt-1">
+            <div className="flex flex-wrap items-center gap-3">
               
               {/* Regime Filter Dropdown */}
               <select
                 value={regimeFilter}
                 onChange={(e) => setRegimeFilter(e.target.value)}
-                className="bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-semibold text-slate-700 focus:ring-2 focus:ring-[#1e3a5f]"
+                className="bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg px-3 py-1.5 text-xs font-semibold text-[var(--atlas-text-secondary)] focus:ring-2 focus:ring-[var(--atlas-navy)]"
               >
                 <option value="ALL">Todos os Regimes PIS/COFINS</option>
                 <option value="MONOFASICO">Monofásico / Concentrado</option>
@@ -662,7 +668,7 @@ export function NcmLookupView({ spedData, stateTaxRules = [] }: NcmLookupViewPro
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-semibold text-slate-700 focus:ring-2 focus:ring-[#1e3a5f]"
+                className="bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg px-3 py-1.5 text-xs font-semibold text-[var(--atlas-text-secondary)] focus:ring-2 focus:ring-[var(--atlas-navy)]"
               >
                 <option value="ALL">Todos os Capítulos</option>
                 <option value="22">Cap. 22 — Bebidas & Vinagres</option>
@@ -675,12 +681,12 @@ export function NcmLookupView({ spedData, stateTaxRules = [] }: NcmLookupViewPro
               </select>
 
               {/* ST Toggle */}
-              <label className="inline-flex items-center space-x-2 bg-slate-50 hover:bg-slate-100 border border-slate-300 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-700 cursor-pointer transition">
+              <label className="inline-flex items-center space-x-2 bg-[var(--atlas-surface-hover)] hover:bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] px-3 py-1.5 rounded-lg text-xs font-semibold text-[var(--atlas-text-secondary)] cursor-pointer transition">
                 <input
                   type="checkbox"
                   checked={stOnly}
                   onChange={(e) => setStOnly(e.target.checked)}
-                  className="rounded border-slate-300 text-[#1e3a5f] focus:ring-[#1e3a5f]"
+                  className="rounded border-[var(--atlas-border)] text-[var(--atlas-navy)] focus:ring-[var(--atlas-navy)]"
                 />
                 <span>Apenas com ICMS-ST (CEST)</span>
               </label>
@@ -690,18 +696,18 @@ export function NcmLookupView({ spedData, stateTaxRules = [] }: NcmLookupViewPro
           </div>
 
           {/* Results List */}
-          <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden divide-y divide-slate-100">
-            <div className="bg-slate-50 px-5 py-3 border-b border-slate-200 flex items-center justify-between text-xs font-bold text-slate-600 uppercase tracking-wider">
+          <div className="bg-[var(--atlas-surface)] rounded-lg border border-[var(--atlas-border)] shadow-sm overflow-hidden divide-y divide-[var(--atlas-border)]">
+            <div className="bg-[var(--atlas-surface-hover)] px-5 py-3 border-b border-[var(--atlas-border)] flex items-center justify-between text-xs font-bold text-[var(--atlas-text-secondary)] uppercase tracking-wider">
               <span>Resultados NCM ({filteredNcms.length})</span>
               <span>Alíquota no Estado ({selectedUf})</span>
             </div>
 
-            <div className="max-h-[500px] overflow-y-auto divide-y divide-slate-100">
+            <div className="max-h-[500px] overflow-y-auto divide-y divide-[var(--atlas-border)]">
               {filteredNcms.length === 0 ? (
                 <div className="p-8 text-center space-y-2">
-                  <Info className="w-8 h-8 text-slate-400 mx-auto" />
-                  <p className="font-semibold text-slate-700 text-sm">Nenhuma NCM encontrada para os filtros aplicados.</p>
-                  <p className="text-xs text-slate-500">
+                  <Info className="w-8 h-8 text-[var(--atlas-text-muted)] mx-auto" />
+                  <p className="font-semibold text-[var(--atlas-text-secondary)] text-sm">Nenhuma NCM encontrada para os filtros aplicados.</p>
+                  <p className="text-xs text-[var(--atlas-text-secondary)]">
                     Tente buscar por termos genéricos como "cerveja", "arroz" ou digite o código de 4 dígitos (ex: 8471).
                   </p>
                 </div>
@@ -718,59 +724,59 @@ export function NcmLookupView({ spedData, stateTaxRules = [] }: NcmLookupViewPro
                       onClick={() => setSelectedNcmCode(item.ncm)}
                       className={`p-4 transition cursor-pointer flex items-start justify-between gap-3 ${
                         isSelected
-                          ? 'bg-[#f1efe8] border-l-4 border-[#1e3a5f]'
-                          : 'hover:bg-slate-50'
+                          ? 'bg-[#f1efe8] border-l-4 border-[var(--atlas-navy)]'
+                          : 'hover:bg-[var(--atlas-surface-hover)]'
                       }`}
                     >
                       <div className="space-y-1 pr-2">
                         <div className="flex flex-wrap items-center gap-1.5">
-                          <span className="font-mono text-sm font-black text-[#1e3a5f] bg-[#e5e2d9]/60 px-2 py-0.5 rounded">
+                          <span className="font-mono text-sm font-black text-[var(--atlas-navy)] bg-[#e5e2d9]/60 px-2 py-0.5 rounded">
                             {item.ncm}
                           </span>
 
-                          <span className="text-[10px] bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded border border-slate-200">
+                          <span className="text-xs bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] font-bold px-2 py-0.5 rounded border border-[var(--atlas-border)]">
                             UF {selectedUf}: {itemUfDetails.effectiveIcms}% ICMS
                           </span>
 
                           {item.pisCofinsRegime === 'MONOFASICO' && (
-                            <span className="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">
+                            <span className="text-xs bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">
                               PIS/COFINS Monofásico
                             </span>
                           )}
 
                           {item.pisCofinsRegime === 'ALIQUOTA_ZERO' && (
-                            <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">
+                            <span className="text-xs bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">
                               Alíquota Zero
                             </span>
                           )}
 
                           {inSpedCount > 0 && (
-                            <span className="text-[10px] bg-slate-200 text-slate-800 font-bold px-2 py-0.5 rounded-full flex items-center space-x-1">
-                              <Database className="w-3 h-3 mr-0.5 text-[#1e3a5f]" />
+                            <span className="text-xs bg-slate-200 text-[var(--atlas-text)] font-bold px-2 py-0.5 rounded-full flex items-center space-x-1">
+                              <Database className="w-3 h-3 mr-0.5 text-[var(--atlas-navy)]" />
                               <span>{inSpedCount} no SPED</span>
                             </span>
                           )}
                         </div>
 
-                        <p className="text-xs text-slate-800 font-semibold leading-snug line-clamp-2">
+                        <p className="text-xs text-[var(--atlas-text)] font-semibold leading-snug line-clamp-2">
                           {item.descricao}
                         </p>
 
-                        <p className="text-[11px] text-slate-500">
+                        <p className="text-xs text-[var(--atlas-text-secondary)]">
                           {item.capituloDescricao}
                         </p>
                       </div>
 
                       <div className="text-right whitespace-nowrap space-y-1">
-                        <span className="text-xs font-mono font-bold text-slate-700 block">
+                        <span className="text-xs font-mono font-bold text-[var(--atlas-text-secondary)] block">
                           IPI: {item.aliqIpi}
                         </span>
                         {itemUfDetails.isSt ? (
-                          <span className="text-[10px] bg-[#f1efe8] text-[#1e3a5f] font-bold px-2 py-0.5 rounded inline-block border border-[#e5e2d9]">
+                          <span className="text-xs bg-[#f1efe8] text-[var(--atlas-navy)] font-bold px-2 py-0.5 rounded inline-block border border-[#e5e2d9]">
                             ST UF {selectedUf} (CST {itemUfDetails.cstSugerido})
                           </span>
                         ) : (
-                          <span className="text-[10px] text-slate-400 block">Sem ST em {selectedUf}</span>
+                          <span className="text-xs text-[var(--atlas-text-muted)] block">Sem ST em {selectedUf}</span>
                         )}
                       </div>
                     </div>
@@ -787,15 +793,15 @@ export function NcmLookupView({ spedData, stateTaxRules = [] }: NcmLookupViewPro
           
           {/* Detailed NCM Inspector Card */}
           {activeNcmRecord && activeUfTaxDetails ? (
-            <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-6 space-y-5">
+            <div className="bg-[var(--atlas-surface)] rounded-lg border border-[var(--atlas-border)] shadow-sm p-6 space-y-5">
               
-              <div className="flex items-start justify-between border-b border-slate-100 pb-4">
+              <div className="flex items-start justify-between border-b border-[var(--atlas-border)] pb-4">
                 <div className="space-y-1">
                   <div className="flex items-center space-x-2">
-                    <span className="text-xs font-bold uppercase text-slate-400 tracking-wider">Ficha Técnica NCM</span>
+                    <span className="text-xs font-bold uppercase text-[var(--atlas-text-muted)] tracking-wider">Ficha Técnica NCM</span>
                     <button
                       onClick={() => handleCopy(activeNcmRecord.ncm)}
-                      className="text-slate-400 hover:text-[#1e3a5f] transition flex items-center space-x-1 text-xs"
+                      className="text-[var(--atlas-text-muted)] hover:text-[var(--atlas-navy)] transition flex items-center space-x-1 text-xs"
                       title="Copiar NCM"
                     >
                       {copiedText === activeNcmRecord.ncm ? (
@@ -805,14 +811,14 @@ export function NcmLookupView({ spedData, stateTaxRules = [] }: NcmLookupViewPro
                       )}
                     </button>
                   </div>
-                  <h3 className="text-2xl font-black font-mono text-[#1e3a5f]">
+                  <h3 className="text-2xl font-black font-mono text-[var(--atlas-navy)]">
                     {activeNcmRecord.ncm}
                   </h3>
                 </div>
 
                 <div className="text-right">
-                  <span className="text-xs font-semibold text-slate-500 block">Capítulo TIPI</span>
-                  <span className="font-mono font-bold text-slate-900 text-sm">Cap. {activeNcmRecord.capitulo}</span>
+                  <span className="text-xs font-semibold text-[var(--atlas-text-secondary)] block">Capítulo TIPI</span>
+                  <span className="font-mono font-bold text-[var(--atlas-text)] text-sm">Cap. {activeNcmRecord.capitulo}</span>
                 </div>
               </div>
 
@@ -821,94 +827,94 @@ export function NcmLookupView({ spedData, stateTaxRules = [] }: NcmLookupViewPro
                 <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                   <div className="flex items-center space-x-2">
                     <MapPin className="w-4 h-4 text-emerald-400" />
-                    <span className="text-xs font-bold uppercase text-slate-300 tracking-wider">
+                    <span className="text-xs font-bold uppercase text-[var(--atlas-text-muted)] tracking-wider">
                       Tributação no Estado: <strong className="text-white font-extrabold">{activeUfTaxDetails.ufName} ({selectedUf})</strong>
                     </span>
                   </div>
-                  <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-mono font-bold px-2 py-0.5 rounded border border-emerald-500/30">
+                  <span className="text-xs bg-emerald-500/20 text-emerald-300 font-mono font-bold px-2 py-0.5 rounded border border-emerald-500/30">
                     {selectedUf}
                   </span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div className="bg-white/10 p-2.5 rounded-lg border border-white/10">
-                    <span className="text-[10px] text-slate-300 block font-semibold">Alíquota ICMS (Modal + FCP)</span>
+                  <div className="bg-[var(--atlas-surface)]/10 p-2.5 rounded-lg border border-white/10">
+                    <span className="text-xs text-[var(--atlas-text-muted)] block font-semibold">Alíquota ICMS (Modal + FCP)</span>
                     <span className="font-mono font-black text-white text-base">
                       {activeUfTaxDetails.effectiveIcms.toFixed(2)}%
                     </span>
                     {activeUfTaxDetails.fcpRate > 0 && (
-                      <span className="text-[10px] text-amber-300 block">
+                      <span className="text-xs text-amber-300 block">
                         (Modal: {activeUfTaxDetails.icmsAliq}% + FCP: {activeUfTaxDetails.fcpRate}%)
                       </span>
                     )}
                   </div>
 
-                  <div className="bg-white/10 p-2.5 rounded-lg border border-white/10">
-                    <span className="text-[10px] text-slate-300 block font-semibold">Regime ICMS-ST na UF</span>
-                    <span className={`font-mono font-bold text-xs ${activeUfTaxDetails.isSt ? 'text-amber-300' : 'text-slate-300'}`}>
+                  <div className="bg-[var(--atlas-surface)]/10 p-2.5 rounded-lg border border-white/10">
+                    <span className="text-xs text-[var(--atlas-text-muted)] block font-semibold">Regime ICMS-ST na UF</span>
+                    <span className={`font-mono font-bold text-xs ${activeUfTaxDetails.isSt ? 'text-amber-300' : 'text-[var(--atlas-text-muted)]'}`}>
                       {activeUfTaxDetails.isSt ? 'Substituição Tributária' : 'Tributado Operação Própria'}
                     </span>
                     {activeUfTaxDetails.isSt && activeUfTaxDetails.mva > 0 && (
-                      <span className="text-[10px] text-slate-300 block">
+                      <span className="text-xs text-[var(--atlas-text-muted)] block">
                         MVA Interna: {activeUfTaxDetails.mva}% | MVA Ajust: {activeUfTaxDetails.mvaAjustada.toFixed(1)}%
                       </span>
                     )}
                   </div>
 
-                  <div className="bg-white/10 p-2.5 rounded-lg border border-white/10">
-                    <span className="text-[10px] text-slate-300 block font-semibold">CST e CFOP Recomendado</span>
+                  <div className="bg-[var(--atlas-surface)]/10 p-2.5 rounded-lg border border-white/10">
+                    <span className="text-xs text-[var(--atlas-text-muted)] block font-semibold">CST e CFOP Recomendado</span>
                     <span className="font-mono font-bold text-white text-xs">
                       CST {activeUfTaxDetails.cstSugerido} | CFOP {activeUfTaxDetails.cfopSaida}
                     </span>
                   </div>
 
-                  <div className="bg-white/10 p-2.5 rounded-lg border border-white/10">
-                    <span className="text-[10px] text-slate-300 block font-semibold">Exigência cBenef no SPED</span>
+                  <div className="bg-[var(--atlas-surface)]/10 p-2.5 rounded-lg border border-white/10">
+                    <span className="text-xs text-[var(--atlas-text-muted)] block font-semibold">Exigência cBenef no SPED</span>
                     <span className="font-mono font-bold text-xs text-white">
                       {activeUfTaxDetails.cbenefExigidoUf ? (
                         <span className="text-amber-300">Exigido ({activeUfTaxDetails.cbenefSugerido})</span>
                       ) : (
-                        <span className="text-slate-300">Não Obrigatório</span>
+                        <span className="text-[var(--atlas-text-muted)]">Não Obrigatório</span>
                       )}
                     </span>
                   </div>
                 </div>
 
                 {activeUfTaxDetails.matchingRule && (
-                  <div className="bg-emerald-500/20 p-2 rounded-lg border border-emerald-500/40 text-[11px] text-emerald-200 space-y-0.5">
+                  <div className="bg-emerald-500/20 p-2 rounded-lg border border-emerald-500/40 text-xs text-emerald-200 space-y-0.5">
                     <span className="font-bold flex items-center text-emerald-300">
                       <CheckCircle2 className="w-3.5 h-3.5 mr-1 text-emerald-400" />
                       Regra da Matriz Tributária Aplicada para {selectedUf}:
                     </span>
-                    <p className="text-[10px] leading-tight text-slate-200">
+                    <p className="text-xs leading-tight text-slate-200">
                       {activeUfTaxDetails.matchingRule.descricao} — CST Esperado: {activeUfTaxDetails.matchingRule.expectedCst}, CFOP: {activeUfTaxDetails.matchingRule.expectedCfop?.join(', ')}
                     </p>
                   </div>
                 )}
 
-                <div className="text-[10px] text-slate-400 border-t border-slate-800 pt-2 flex items-center justify-between">
+                <div className="text-xs text-[var(--atlas-text-muted)] border-t border-slate-800 pt-2 flex items-center justify-between">
                   <span className="truncate">Legislação: {activeUfTaxDetails.ricms}</span>
                 </div>
               </div>
 
               {/* Official Description */}
               <div className="space-y-1">
-                <span className="text-xs font-bold text-slate-500 uppercase">Descrição Oficial Mercosul</span>
-                <p className="text-xs text-slate-800 bg-slate-50 p-3 rounded-lg border border-slate-200 leading-relaxed font-medium">
+                <span className="text-xs font-bold text-[var(--atlas-text-secondary)] uppercase">Descrição Oficial Mercosul</span>
+                <p className="text-xs text-[var(--atlas-text)] bg-[var(--atlas-surface-hover)] p-3 rounded-lg border border-[var(--atlas-border)] leading-relaxed font-medium">
                   {activeNcmRecord.descricao}
                 </p>
               </div>
 
               {/* Taxonomic Hierarchy */}
               <div className="space-y-2">
-                <span className="text-xs font-bold text-slate-500 uppercase">Hierarquia Fiscal</span>
+                <span className="text-xs font-bold text-[var(--atlas-text-secondary)] uppercase">Hierarquia Fiscal</span>
                 <div className="space-y-1.5 text-xs">
-                  <div className="flex items-center space-x-2 text-slate-600 bg-slate-50 p-2 rounded-lg">
-                    <span className="font-bold text-[#1e3a5f] font-mono">Capítulo {activeNcmRecord.capitulo}:</span>
+                  <div className="flex items-center space-x-2 text-[var(--atlas-text-secondary)] bg-[var(--atlas-surface-hover)] p-2 rounded-lg">
+                    <span className="font-bold text-[var(--atlas-navy)] font-mono">Capítulo {activeNcmRecord.capitulo}:</span>
                     <span className="truncate">{activeNcmRecord.capituloDescricao}</span>
                   </div>
-                  <div className="flex items-center space-x-2 text-slate-600 bg-slate-50 p-2 rounded-lg">
-                    <span className="font-bold text-[#1e3a5f] font-mono">Posição {activeNcmRecord.posicao}:</span>
+                  <div className="flex items-center space-x-2 text-[var(--atlas-text-secondary)] bg-[var(--atlas-surface-hover)] p-2 rounded-lg">
+                    <span className="font-bold text-[var(--atlas-navy)] font-mono">Posição {activeNcmRecord.posicao}:</span>
                     <span>Classificação Primária de 4 dígitos</span>
                   </div>
                 </div>
@@ -916,26 +922,26 @@ export function NcmLookupView({ spedData, stateTaxRules = [] }: NcmLookupViewPro
 
               {/* Tax Attributes Grid */}
               <div className="grid grid-cols-2 gap-3 pt-2">
-                <div className="bg-slate-50 p-3 rounded-lg border border-slate-200">
-                  <span className="text-[10px] font-bold text-slate-500 uppercase block">Alíquota IPI (TIPI)</span>
-                  <span className="text-sm font-mono font-bold text-slate-900">{activeNcmRecord.aliqIpi}</span>
+                <div className="bg-[var(--atlas-surface-hover)] p-3 rounded-lg border border-[var(--atlas-border)]">
+                  <span className="text-xs font-bold text-[var(--atlas-text-secondary)] uppercase block">Alíquota IPI (TIPI)</span>
+                  <span className="text-sm font-mono font-bold text-[var(--atlas-text)]">{activeNcmRecord.aliqIpi}</span>
                 </div>
 
-                <div className="bg-slate-50 p-3 rounded-lg border border-slate-200">
-                  <span className="text-[10px] font-bold text-slate-500 uppercase block">Regime PIS / COFINS</span>
-                  <span className="text-xs font-bold text-slate-900">{activeNcmRecord.pisCofinsRegime}</span>
+                <div className="bg-[var(--atlas-surface-hover)] p-3 rounded-lg border border-[var(--atlas-border)]">
+                  <span className="text-xs font-bold text-[var(--atlas-text-secondary)] uppercase block">Regime PIS / COFINS</span>
+                  <span className="text-xs font-bold text-[var(--atlas-text)]">{activeNcmRecord.pisCofinsRegime}</span>
                 </div>
 
-                <div className="bg-slate-50 p-3 rounded-lg border border-slate-200">
-                  <span className="text-[10px] font-bold text-slate-500 uppercase block">Código CEST (ST)</span>
-                  <span className="text-xs font-mono font-bold text-[#1e3a5f]">
+                <div className="bg-[var(--atlas-surface-hover)] p-3 rounded-lg border border-[var(--atlas-border)]">
+                  <span className="text-xs font-bold text-[var(--atlas-text-secondary)] uppercase block">Código CEST (ST)</span>
+                  <span className="text-xs font-mono font-bold text-[var(--atlas-navy)]">
                     {activeNcmRecord.cest || 'Não Especificado'}
                   </span>
                 </div>
 
-                <div className="bg-slate-50 p-3 rounded-lg border border-slate-200">
-                  <span className="text-[10px] font-bold text-slate-500 uppercase block">Benefício Fiscal (cBenef)</span>
-                  <span className="text-xs font-mono font-bold text-slate-800">
+                <div className="bg-[var(--atlas-surface-hover)] p-3 rounded-lg border border-[var(--atlas-border)]">
+                  <span className="text-xs font-bold text-[var(--atlas-text-secondary)] uppercase block">Benefício Fiscal (cBenef)</span>
+                  <span className="text-xs font-mono font-bold text-[var(--atlas-text)]">
                     {activeUfTaxDetails.cbenefSugerido || '—'}
                   </span>
                 </div>
@@ -948,24 +954,24 @@ export function NcmLookupView({ spedData, stateTaxRules = [] }: NcmLookupViewPro
                     <Info className="w-4 h-4 mr-1 text-amber-600" />
                     Orientação de Auditoria Fiscal:
                   </span>
-                  <p className="text-[11px] leading-relaxed">{activeNcmRecord.observacaoFiscal}</p>
+                  <p className="text-xs leading-relaxed">{activeNcmRecord.observacaoFiscal}</p>
                 </div>
               )}
 
               {/* SPED File Cross-Check Section */}
-              <div className="border-t border-slate-100 pt-4 space-y-2">
-                <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center justify-between">
+              <div className="border-t border-[var(--atlas-border)] pt-4 space-y-2">
+                <h4 className="text-xs font-bold text-[var(--atlas-text-secondary)] uppercase tracking-wider flex items-center justify-between">
                   <span>Presença nos Itens do SPED</span>
-                  <Database className="w-4 h-4 text-[#1e3a5f]" />
+                  <Database className="w-4 h-4 text-[var(--atlas-navy)]" />
                 </h4>
 
                 {activeNcmSpedStats ? (
                   <div className="bg-[#f1efe8] p-3.5 rounded-lg border border-[#e5e2d9] space-y-2 text-xs">
-                    <div className="flex justify-between font-bold text-[#1e3a5f]">
+                    <div className="flex justify-between font-bold text-[var(--atlas-navy)]">
                       <span>Total de Ocorrências:</span>
                       <span>{activeNcmSpedStats.count} itens cadastrados</span>
                     </div>
-                    <div className="flex justify-between text-slate-800 font-mono">
+                    <div className="flex justify-between text-[var(--atlas-text)] font-mono">
                       <span>Valor Movimentado:</span>
                       <span>
                         R${' '}
@@ -977,17 +983,17 @@ export function NcmLookupView({ spedData, stateTaxRules = [] }: NcmLookupViewPro
                     </div>
 
                     <div className="pt-2 border-t border-[#e5e2d9] space-y-1">
-                      <span className="text-[10px] uppercase font-bold text-[#1e3a5f]">Amostra de Produtos no SPED:</span>
+                      <span className="text-xs uppercase font-bold text-[var(--atlas-navy)]">Amostra de Produtos no SPED:</span>
                       {activeNcmSpedStats.items.map((it, idx) => (
-                        <div key={idx} className="flex justify-between text-[11px] text-slate-700 truncate font-mono">
+                        <div key={idx} className="flex justify-between text-xs text-[var(--atlas-text-secondary)] truncate font-mono">
                           <span className="truncate max-w-[200px]">{it.descrItem}</span>
-                          <span className="font-bold text-slate-900 ml-2">CST {it.cstIcms}</span>
+                          <span className="font-bold text-[var(--atlas-text)] ml-2">CST {it.cstIcms}</span>
                         </div>
                       ))}
                     </div>
                   </div>
                 ) : (
-                  <p className="text-xs text-slate-400 italic bg-slate-50 p-3 rounded-lg border border-slate-200">
+                  <p className="text-xs text-[var(--atlas-text-muted)] italic bg-[var(--atlas-surface-hover)] p-3 rounded-lg border border-[var(--atlas-border)]">
                     Esta NCM não foi localizada nos itens do arquivo SPED atualmente carregado.
                   </p>
                 )}
@@ -997,13 +1003,13 @@ export function NcmLookupView({ spedData, stateTaxRules = [] }: NcmLookupViewPro
           ) : null}
 
           {/* Diagnostic Validator Sandbox */}
-          <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm space-y-3">
+          <div className="bg-[var(--atlas-surface)] p-5 rounded-lg border border-[var(--atlas-border)] shadow-sm space-y-3">
             <div className="flex items-center space-x-2">
-              <ShieldAlert className="w-5 h-5 text-[#1e3a5f]" />
-              <h3 className="font-bold text-slate-900 text-sm">Validador de Estrutura NCM ({selectedUf})</h3>
+              <ShieldAlert className="w-5 h-5 text-[var(--atlas-navy)]" />
+              <h3 className="font-bold text-[var(--atlas-text)] text-sm">Validador de Estrutura NCM ({selectedUf})</h3>
             </div>
 
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-[var(--atlas-text-secondary)]">
               Digite qualquer código NCM para testar a máscara de 8 dígitos e validar a conformidade com a TIPI e regras da UF {selectedUf}.
             </p>
 
@@ -1013,7 +1019,7 @@ export function NcmLookupView({ spedData, stateTaxRules = [] }: NcmLookupViewPro
                 value={testNcmInput}
                 onChange={(e) => setTestNcmInput(e.target.value)}
                 placeholder="Ex: 84713012 ou 22030000"
-                className="flex-1 px-3 py-2 text-xs font-mono bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1e3a5f]"
+                className="flex-1 px-3 py-2 text-xs font-mono bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg focus:ring-2 focus:ring-[var(--atlas-navy)]"
               />
             </div>
 
@@ -1031,9 +1037,9 @@ export function NcmLookupView({ spedData, stateTaxRules = [] }: NcmLookupViewPro
                   <span>Código Formatado: {testDiagnostic.formatted}</span>
                   <span>{testDiagnostic.status}</span>
                 </div>
-                <p className="text-[11px] leading-snug">{testDiagnostic.message}</p>
+                <p className="text-xs leading-snug">{testDiagnostic.message}</p>
                 {testDiagnostic.foundMatch && (
-                  <p className="text-[11px] font-semibold text-[#1e3a5f] pt-1">
+                  <p className="text-xs font-semibold text-[var(--atlas-navy)] pt-1">
                     ✔ Encontrado na base local: {testDiagnostic.foundMatch.descricao}
                   </p>
                 )}

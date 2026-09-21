@@ -117,43 +117,43 @@ export function HomeDashboardView({ clientes, logs, spedData, setActiveTab, user
         }}
       >
         {/* Efeito sutil de luz/brilho decorativo no fundo */}
-        <div className="absolute -top-24 -right-24 w-72 h-72 bg-white/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute -top-24 -right-24 w-72 h-72 bg-[var(--atlas-surface)]/5 rounded-full blur-3xl pointer-events-none"></div>
         <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-[var(--atlas-accent)]/10 rounded-full blur-3xl pointer-events-none"></div>
 
         <div className="space-y-2.5 relative z-10 max-w-2xl">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold text-blue-100 border border-white/20 bg-white/10 backdrop-blur-sm">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold text-white/90 border border-white/20 bg-[var(--atlas-surface)]/10 backdrop-blur-xs">
+            <ShieldCheck className="w-3.5 h-3.5 text-[var(--atlas-accent)]" />
             <span>Painel de Controle & Gestão Fiscal</span>
           </div>
-          <h1 className="text-[28px] font-extrabold text-white tracking-tight leading-tight !text-white" style={{ fontFamily: 'var(--font-display)' }}>
+          <h1 className="text-3xl font-extrabold text-white tracking-tight leading-tight !text-white" style={{ fontFamily: 'var(--font-display)' }}>
             Atlas Auditor Fiscal
           </h1>
-          <p className="text-sm text-blue-100/90 leading-relaxed font-normal">
+          <p className="text-base text-white/80 leading-relaxed font-normal">
             Plataforma de inteligência tributária, conciliação SPED x XML e automação de conformidade fiscal para o seu escritório.
           </p>
         </div>
 
         {/* Módulos de Gestão Rápida */}
-        <div className="flex flex-wrap items-center gap-2.5 relative z-10 shrink-0">
+        <div className="flex flex-wrap items-center gap-3 relative z-10 shrink-0">
           <button
             onClick={() => setActiveTab('admin_panel')}
-            className="atlas-btn py-2 px-4 text-xs font-bold bg-white text-[var(--atlas-navy)] hover:bg-slate-100 shadow-sm border-0 transition-all rounded-lg flex items-center gap-2"
+            className="atlas-btn py-2.5 px-5 text-xs font-bold bg-[var(--atlas-surface)] text-[var(--atlas-navy)] hover:bg-[var(--atlas-surface-hover)] shadow-xs border-0 transition-all rounded-lg flex items-center gap-2 cursor-pointer"
           >
             <ShieldCheck className="w-4 h-4 text-[var(--atlas-navy)]" />
             <span>Gestão ADM</span>
           </button>
           <button
             onClick={() => setActiveTab('clientes')}
-            className="atlas-btn py-2 px-4 text-xs font-semibold bg-white/10 hover:bg-white/20 text-white border border-white/20 backdrop-blur-sm transition-all rounded-lg flex items-center gap-2"
+            className="atlas-btn py-2.5 px-5 text-xs font-semibold bg-[var(--atlas-surface)]/10 hover:bg-[var(--atlas-surface)]/20 text-white border border-white/20 backdrop-blur-xs transition-all rounded-lg flex items-center gap-2 cursor-pointer"
           >
-            <Building2 className="w-4 h-4 text-blue-200" />
+            <Building2 className="w-4 h-4 text-white/80" />
             <span>Clientes</span>
           </button>
           <button
             onClick={() => setActiveTab('robo_fiscal')}
-            className="atlas-btn py-2 px-4 text-xs font-semibold bg-white/10 hover:bg-white/20 text-white border border-white/20 backdrop-blur-sm transition-all rounded-lg flex items-center gap-2"
+            className="atlas-btn py-2.5 px-5 text-xs font-semibold bg-[var(--atlas-surface)]/10 hover:bg-[var(--atlas-surface)]/20 text-white border border-white/20 backdrop-blur-xs transition-all rounded-lg flex items-center gap-2 cursor-pointer"
           >
-            <Bot className="w-4 h-4 text-cyan-300" />
+            <Bot className="w-4 h-4 text-white/80" />
             <span>Robô Fiscal</span>
           </button>
         </div>
@@ -163,11 +163,11 @@ export function HomeDashboardView({ clientes, logs, spedData, setActiveTab, user
       <div className="atlas-stat-strip">
         <div className="atlas-stat-item">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-[11px] font-semibold text-[var(--atlas-text-secondary)] uppercase tracking-wider">Clientes Cadastrados</span>
+            <span className="text-xs font-semibold text-[var(--atlas-text-secondary)] uppercase tracking-wider">Clientes Cadastrados</span>
             <Building2 className="w-4 h-4 text-[var(--atlas-accent)]" />
           </div>
           <div className="atlas-stat-value">{clientes.length}</div>
-          <div className="text-[10px] text-[var(--atlas-text-muted)] mt-1 flex items-center gap-1">
+          <div className="text-xs text-[var(--atlas-text-muted)] mt-1 flex items-center gap-1">
             <span>{totalNormais} Regime Normal</span>
             <span>•</span>
             <span>{totalSimples} Simples Nacional</span>
@@ -176,36 +176,36 @@ export function HomeDashboardView({ clientes, logs, spedData, setActiveTab, user
 
         <div className="atlas-stat-item">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-[11px] font-semibold text-[var(--atlas-text-secondary)] uppercase tracking-wider">Status SPED Atual</span>
+            <span className="text-xs font-semibold text-[var(--atlas-text-secondary)] uppercase tracking-wider">Status SPED Atual</span>
             <FileText className="w-4 h-4 text-[var(--atlas-navy)]" />
           </div>
           <div className="text-xl font-bold text-[var(--atlas-navy)] truncate mt-1">
             {spedData ? 'Importado & Ativo' : 'Aguardando Arquivo'}
           </div>
-          <div className="text-[10px] text-[var(--atlas-text-muted)] truncate mt-1">
+          <div className="text-xs text-[var(--atlas-text-muted)] truncate mt-1">
             {spedData?.header?.nome || 'Nenhum SPED carregado na sessão'}
           </div>
         </div>
 
         <div className="atlas-stat-item">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-[11px] font-semibold text-[var(--atlas-text-secondary)] uppercase tracking-wider">Auditorias Realizadas</span>
+            <span className="text-xs font-semibold text-[var(--atlas-text-secondary)] uppercase tracking-wider">Auditorias Realizadas</span>
             <Activity className="w-4 h-4 text-[var(--atlas-accent)]" />
           </div>
           <div className="atlas-stat-value">{logs.length}</div>
-          <div className="text-[10px] text-[var(--atlas-accent)] font-medium mt-1">
+          <div className="text-xs text-[var(--atlas-accent)] font-medium mt-1">
             {totalInconsistencias} inconsistências mapeadas
           </div>
         </div>
 
         <div className="atlas-stat-item">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-[11px] font-semibold text-[var(--atlas-text-secondary)] uppercase tracking-wider">Robô Fiscal IA</span>
+            <span className="text-xs font-semibold text-[var(--atlas-text-secondary)] uppercase tracking-wider">Robô Fiscal IA</span>
             <Bot className="w-4 h-4 text-[var(--atlas-info)]" />
           </div>
           <div className="text-xl font-bold text-[var(--atlas-text)] mt-1">Ativo 24/7</div>
-          <div className="text-[10px] text-[var(--atlas-info)] font-medium mt-1">
-            Monitoramento continuo de pastas
+          <div className="text-xs text-[var(--atlas-info)] font-medium mt-1">
+            Monitoramento contínuo de pastas
           </div>
         </div>
       </div>
@@ -230,33 +230,33 @@ export function HomeDashboardView({ clientes, logs, spedData, setActiveTab, user
 
       {/* Calendário e Prazos Fiscais Oficiais (Dividido com Linha Divisória Vertical) */}
       <div className="atlas-card p-6 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--atlas-border)] pb-4">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-[var(--atlas-navy-tint)] text-[var(--atlas-navy)] rounded-lg">
-              <Calendar className="w-5 h-5" />
+        <div className="p-6 md:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--atlas-border)] bg-[var(--atlas-surface)]">
+          <div className="flex items-center space-x-4">
+            <div className="p-3 bg-[var(--atlas-navy-tint)] text-[var(--atlas-navy)] rounded-xl">
+              <Calendar className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-[var(--atlas-navy)] capitalize">
+              <h2 className="text-xl font-bold text-[var(--atlas-navy)] capitalize" style={{ fontFamily: 'var(--font-display)' }}>
                 Prazos Fiscais & Vencimentos SPED — {nomeMes}
               </h2>
-              <p className="text-[var(--atlas-text-secondary)] text-[11px] mt-0.5">
-                Regra oficial aplicada: Se o dia 15 ou 20 cair em fim de semana ou dia não útil, o prazo é <strong>antecipado automaticamente</strong> para o dia útil anterior (Sexta-feira).
+              <p className="text-[var(--atlas-text-secondary)] text-xs mt-1">
+                Regra oficial aplicada: Se o dia 15 ou 20 cair em fim de semana ou dia não útil, o prazo é <strong className="text-[var(--atlas-navy)]">antecipado automaticamente</strong> para o dia útil anterior.
               </p>
             </div>
           </div>
 
-          <div className="flex items-center space-x-2 bg-[var(--atlas-surface-hover)] p-1 rounded-xl self-start sm:self-auto border border-[var(--atlas-border)]">
+          <div className="flex items-center space-x-2 bg-[var(--atlas-bg)] p-1 rounded-xl self-start sm:self-auto border border-[var(--atlas-border)]">
             <button
               onClick={prevMonth}
-              className="p-1.5 hover:bg-[var(--atlas-surface)] rounded-lg text-[var(--atlas-text)] transition-colors cursor-pointer"
+              className="p-2 hover:bg-[var(--atlas-surface)] rounded-lg text-[var(--atlas-text)] transition-colors cursor-pointer"
               title="Mês Anterior"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <span className="font-bold text-[var(--atlas-text)] px-2 capitalize text-xs">{nomeMes}</span>
+            <span className="font-bold text-[var(--atlas-text)] px-4 capitalize text-xs">{nomeMes}</span>
             <button
               onClick={nextMonth}
-              className="p-1.5 hover:bg-[var(--atlas-surface)] rounded-lg text-[var(--atlas-text)] transition-colors cursor-pointer"
+              className="p-2 hover:bg-[var(--atlas-surface)] rounded-lg text-[var(--atlas-text)] transition-colors cursor-pointer"
               title="Próximo Mês"
             >
               <ChevronRight className="w-4 h-4" />
@@ -267,39 +267,39 @@ export function HomeDashboardView({ clientes, logs, spedData, setActiveTab, user
         {/* Grid com Linha Divisória Vertical em Telas Maiores */}
         <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-[var(--atlas-border)] -mx-6 -mb-6">
           {/* Prazo SPED Normais (Dia 15) */}
-          <div className="p-6 space-y-4">
+          <div className="p-8 space-y-5">
             <div className="flex items-start justify-between">
-              <div className="space-y-1">
+              <div className="space-y-2">
                 <div className="flex items-center space-x-2">
                   <span className="atlas-pill atlas-pill-navy">
-                    Regime Normal (Real / Presumido)
+                    Regime Normal
                   </span>
                   <span className={`atlas-pill ${statusNormal.color}`}>
                     {statusNormal.label}
                   </span>
                 </div>
-                <h3 className="font-bold text-[var(--atlas-text)] text-sm">EFD ICMS/IPI (SPED Fiscal)</h3>
-                <p className="text-[var(--atlas-text-secondary)] text-[11px]">
+                <h3 className="font-bold text-[var(--atlas-text)] text-base" style={{ fontFamily: 'var(--font-display)' }}>EFD ICMS/IPI (SPED Fiscal)</h3>
+                <p className="text-[var(--atlas-text-secondary)] text-xs">
                   Competência Referência: <span className="font-semibold text-[var(--atlas-text)] capitalize">{nomeMesReferencia}</span>
                 </p>
               </div>
 
               <div className="text-right">
-                <span className="text-3xl font-extrabold text-[var(--atlas-navy)] block">
-                  Dia {prazoNormal.diaAjustado}
+                <span className="text-4xl font-extrabold text-[var(--atlas-navy)] block leading-none">
+                  {prazoNormal.diaAjustado}
                 </span>
-                <span className="text-[10px] font-medium text-[var(--atlas-text-muted)] uppercase tracking-wider block">
+                <span className="text-[10px] font-bold text-[var(--atlas-text-muted)] uppercase tracking-widest mt-1 block">
                   {prazoNormal.diaSemanaAjustadoStr}
                 </span>
               </div>
             </div>
 
-            <div className="atlas-alert atlas-alert-info space-y-1 text-[11px]">
-              <div className="flex items-center space-x-1.5 font-semibold text-[var(--atlas-text)]">
-                <Info className="w-3.5 h-3.5 text-[var(--atlas-info)] shrink-0" />
+            <div className="atlas-alert atlas-alert-info space-y-1 text-xs">
+              <div className="flex items-center space-x-2 font-bold text-[var(--atlas-text)]">
+                <Info className="w-4 h-4 text-[var(--atlas-info)] shrink-0" />
                 <span>Análise de Vencimento (Dia 15):</span>
               </div>
-              <p className="leading-relaxed">
+              <p className="leading-relaxed opacity-90">
                 {prazoNormal.foiAntecipado ? (
                   <span className="text-[var(--atlas-warning)] font-medium block">
                     {prazoNormal.motivoAntecipacao} (O dia 15 original era {prazoNormal.diaSemanaStr}).
@@ -312,24 +312,24 @@ export function HomeDashboardView({ clientes, logs, spedData, setActiveTab, user
               </p>
             </div>
 
-            <div className="flex items-center justify-between pt-1">
-              <span className="text-[var(--atlas-text-secondary)] text-[11px]">
+            <div className="flex items-center justify-between pt-2">
+              <span className="text-[var(--atlas-text-secondary)] text-xs">
                 Empresas afetadas: <strong className="text-[var(--atlas-text)]">{totalNormais}</strong>
               </span>
               <button
                 onClick={() => setActiveTab('clientes')}
-                className="atlas-btn atlas-btn-primary px-3 py-1.5 text-xs cursor-pointer"
+                className="atlas-btn atlas-btn-primary px-4 py-2 text-xs cursor-pointer"
               >
-                <span>Ver Clientes Normais</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <span>Ver Clientes</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </div>
 
           {/* Prazo SPED Simples Nacional (Dia 20) */}
-          <div className="p-6 space-y-4">
+          <div className="p-8 space-y-5">
             <div className="flex items-start justify-between">
-              <div className="space-y-1">
+              <div className="space-y-2">
                 <div className="flex items-center space-x-2">
                   <span className="atlas-pill atlas-pill-accent">
                     Simples Nacional
@@ -338,28 +338,28 @@ export function HomeDashboardView({ clientes, logs, spedData, setActiveTab, user
                     {statusSimples.label}
                   </span>
                 </div>
-                <h3 className="font-bold text-[var(--atlas-text)] text-sm">PGDAS-D & Obrigações Acessórias</h3>
-                <p className="text-[var(--atlas-text-secondary)] text-[11px]">
+                <h3 className="font-bold text-[var(--atlas-text)] text-base" style={{ fontFamily: 'var(--font-display)' }}>PGDAS-D & Obrigações</h3>
+                <p className="text-[var(--atlas-text-secondary)] text-xs">
                   Competência Referência: <span className="font-semibold text-[var(--atlas-text)] capitalize">{nomeMesReferencia}</span>
                 </p>
               </div>
 
               <div className="text-right">
-                <span className="text-3xl font-extrabold text-[var(--atlas-accent)] block">
-                  Dia {prazoSimples.diaAjustado}
+                <span className="text-4xl font-extrabold text-[var(--atlas-accent)] block leading-none">
+                  {prazoSimples.diaAjustado}
                 </span>
-                <span className="text-[10px] font-medium text-[var(--atlas-text-muted)] uppercase tracking-wider block">
+                <span className="text-[10px] font-bold text-[var(--atlas-text-muted)] uppercase tracking-widest mt-1 block">
                   {prazoSimples.diaSemanaAjustadoStr}
                 </span>
               </div>
             </div>
 
-            <div className="atlas-alert atlas-alert-info space-y-1 text-[11px]">
-              <div className="flex items-center space-x-1.5 font-semibold text-[var(--atlas-text)]">
-                <Info className="w-3.5 h-3.5 text-[var(--atlas-accent)] shrink-0" />
+            <div className="atlas-alert atlas-alert-info space-y-1 text-xs">
+              <div className="flex items-center space-x-2 font-bold text-[var(--atlas-text)]">
+                <Info className="w-4 h-4 text-[var(--atlas-accent)] shrink-0" />
                 <span>Análise de Vencimento (Dia 20):</span>
               </div>
-              <p className="leading-relaxed">
+              <p className="leading-relaxed opacity-90">
                 {prazoSimples.foiAntecipado ? (
                   <span className="text-[var(--atlas-warning)] font-medium block">
                     {prazoSimples.motivoAntecipacao} (O dia 20 original era {prazoSimples.diaSemanaStr}).
@@ -372,16 +372,16 @@ export function HomeDashboardView({ clientes, logs, spedData, setActiveTab, user
               </p>
             </div>
 
-            <div className="flex items-center justify-between pt-1">
-              <span className="text-[var(--atlas-text-secondary)] text-[11px]">
+            <div className="flex items-center justify-between pt-2">
+              <span className="text-[var(--atlas-text-secondary)] text-xs">
                 Empresas afetadas: <strong className="text-[var(--atlas-text)]">{totalSimples}</strong>
               </span>
               <button
                 onClick={() => setActiveTab('clientes')}
-                className="atlas-btn atlas-btn-accent px-3 py-1.5 text-xs cursor-pointer"
+                className="atlas-btn atlas-btn-accent px-4 py-2 text-xs cursor-pointer"
               >
-                <span>Ver Clientes Simples</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <span>Ver Clientes</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -395,7 +395,7 @@ export function HomeDashboardView({ clientes, logs, spedData, setActiveTab, user
             <Sparkles className="w-4 h-4 text-[var(--atlas-navy)]" />
             <span>Ferramentas & Módulos Principais</span>
           </h2>
-          <span className="text-[11px] text-[var(--atlas-text-muted)]">Acesso rápido aos fluxos de trabalho</span>
+          <span className="text-xs text-[var(--atlas-text-muted)]">Acesso rápido aos fluxos de trabalho</span>
         </div>
 
         <div className="divide-y divide-[var(--atlas-border)]">
@@ -412,7 +412,7 @@ export function HomeDashboardView({ clientes, logs, spedData, setActiveTab, user
                   <h3 className="font-bold text-[var(--atlas-text)] group-hover:text-[var(--atlas-navy)] transition-colors text-xs">Importar & Auditar SPED</h3>
                   <span className="atlas-pill atlas-pill-navy">Módulo 1</span>
                 </div>
-                <p className="text-[var(--atlas-text-secondary)] text-[11px] mt-0.5">Carregue arquivos EFD ICMS/IPI para validação completa de blocos, C170, C190 e omissas.</p>
+                <p className="text-[var(--atlas-text-secondary)] text-xs mt-0.5">Carregue arquivos EFD ICMS/IPI para validação completa de blocos, C170, C190 e omissas.</p>
               </div>
             </div>
             <div className="flex items-center space-x-1 text-xs font-semibold text-[var(--atlas-navy)] shrink-0 ml-4">
@@ -434,7 +434,7 @@ export function HomeDashboardView({ clientes, logs, spedData, setActiveTab, user
                   <h3 className="font-bold text-[var(--atlas-text)] group-hover:text-[var(--atlas-accent)] transition-colors text-xs">Clientes & Pastas Nuvem</h3>
                   <span className="atlas-pill atlas-pill-accent">Nouvem</span>
                 </div>
-                <p className="text-[var(--atlas-text-secondary)] text-[11px] mt-0.5">Gerencie o cadastro de clientes, regimes tributários e pastas monitoradas pelo robô.</p>
+                <p className="text-[var(--atlas-text-secondary)] text-xs mt-0.5">Gerencie o cadastro de clientes, regimes tributários e pastas monitoradas pelo robô.</p>
               </div>
             </div>
             <div className="flex items-center space-x-1 text-xs font-semibold text-[var(--atlas-accent)] shrink-0 ml-4">
@@ -456,7 +456,7 @@ export function HomeDashboardView({ clientes, logs, spedData, setActiveTab, user
                   <h3 className="font-bold text-[var(--atlas-text)] group-hover:text-[var(--atlas-info)] transition-colors text-xs">Robô Fiscal IA & Automação</h3>
                   <span className="atlas-pill atlas-pill-info">Automação</span>
                 </div>
-                <p className="text-[var(--atlas-text-secondary)] text-[11px] mt-0.5">Automação inteligente de varredura de arquivos fiscais e detecção de divergências.</p>
+                <p className="text-[var(--atlas-text-secondary)] text-xs mt-0.5">Automação inteligente de varredura de arquivos fiscais e detecção de divergências.</p>
               </div>
             </div>
             <div className="flex items-center space-x-1 text-xs font-semibold text-[var(--atlas-info)] shrink-0 ml-4">

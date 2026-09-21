@@ -308,230 +308,219 @@ export function C100C190IntegrityChecker({ spedData, onRecalculateStructure }: C
   };
 
   return (
-    <div className="atlas-card p-6 space-y-6">
-      
-      {/* Header & PVA Rule Explanatory Banner */}
-      <div className="atlas-card p-6 bg-[var(--atlas-navy)] text-white space-y-3 relative overflow-hidden">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <div className="atlas-pill atlas-pill-accent inline-flex items-center space-x-2 py-1 px-3 text-xs font-semibold uppercase tracking-wider">
-              <ShieldCheck className="w-4 h-4 text-[var(--atlas-accent)]" />
-              <span>Validação de Conformidade EFD ICMS/IPI — Guia Prático PVA</span>
-            </div>
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-              Checagem de Integridade dos Blocos C100, C170 e C190
+    <div className="space-y-8 animate-in fade-in duration-700">
+      {/* Header Banner */}
+      <div className="bg-[var(--atlas-navy)] p-8 sm:p-10 rounded-2xl shadow-xl flex flex-col sm:flex-row items-center justify-between gap-8 relative overflow-hidden border border-white/10">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl -mr-24 -mt-24 pointer-events-none"></div>
+        
+        <div className="flex items-center space-x-6 relative z-10">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-emerald-400 shadow-inner group transition-all hover:scale-110">
+            <ShieldCheck className="w-8 h-8 sm:w-10 sm:h-10 group-hover:animate-pulse" />
+          </div>
+          <div className="space-y-1.5">
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white leading-none" style={{ fontFamily: 'var(--font-display)' }}>
+              Cruzamento C100 / C170 / C190
             </h2>
-            <p className="text-xs sm:text-sm text-white/80 max-w-3xl leading-relaxed">
-              Cruzamento matemático automatizado entre o Valor Total da Nota (<code className="text-white font-mono">C100.VL_DOC</code>), a Somatória dos Itens (<code className="text-white font-mono">C170.VL_ITEM</code>) e o Registro Analítico de Operação (<code className="text-white font-mono">C190.VL_OPR</code>). Identifica previamente erros de cálculo e inconsistências que travam a validação no PVA da Receita Federal.
+            <p className="text-sm sm:text-base text-white/70 max-w-2xl font-medium leading-relaxed">
+              Consistência matemática entre o Valor Total (<code className="text-emerald-400 font-mono">C100</code>), Itens (<code className="text-emerald-400 font-mono">C170</code>) e Analítico (<code className="text-emerald-400 font-mono">C190</code>).
             </p>
           </div>
+        </div>
 
-          <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-center">
-            {onRecalculateStructure && (
-              <button
-                onClick={() => {
-                  onRecalculateStructure();
-                }}
-                className="atlas-btn atlas-btn-accent py-2 px-3.5 text-xs font-bold"
-                title="Recalcula totais C100, reconstrói C190 e remove todas as duplicidades de CST/CFOP/Alíquota"
-              >
-                <RefreshCw className="w-4 h-4" />
-                <span>Recalcular C100 e C190</span>
-              </button>
-            )}
-
+        <div className="flex flex-wrap items-center gap-4 self-start sm:self-center relative z-10">
+          {onRecalculateStructure && (
             <button
-              onClick={exportCSV}
-              className="atlas-btn atlas-btn-secondary py-2 px-3.5 text-xs font-bold"
+              onClick={() => onRecalculateStructure()}
+              className="atlas-btn atlas-btn-accent px-6 py-3 font-bold shadow-lg"
             >
-              <Download className="w-4 h-4" />
-              <span>Exportar Relatório PVA (CSV)</span>
+              <RefreshCw className="w-4 h-4 mr-2" />
+              <span>Sincronizar Blocos</span>
             </button>
-          </div>
+          )}
+
+          <button
+            onClick={exportCSV}
+            className="atlas-btn atlas-btn-secondary px-6 py-3 bg-white/10 border-white/10 text-white hover:bg-white/20 font-bold"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            <span>Exportar CSV</span>
+          </button>
         </div>
       </div>
 
       {/* Metric Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Total & Conformidade */}
-        <div className={`p-4 rounded-lg border ${stats.totalInconsistent === 0 ? 'bg-[var(--atlas-surface-hover)] border-[var(--atlas-accent)]/30' : 'bg-[var(--atlas-surface-hover)] border-[var(--atlas-warning)]/30'} space-y-2`}>
+        <div className="atlas-card p-6 space-y-4 border-l-4 border-l-[var(--atlas-accent)]">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-[var(--atlas-text-secondary)]">Conformidade PVA</span>
-            {stats.totalInconsistent === 0 ? (
-              <CheckCircle2 className="w-5 h-5 text-[var(--atlas-accent)]" />
-            ) : (
-              <BadgeAlert className="w-5 h-5 text-[var(--atlas-warning)]" />
-            )}
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--atlas-text-secondary)]">Índice de Integridade</span>
+            <div className={`p-2 rounded-lg ${stats.totalInconsistent === 0 ? 'bg-emerald-500/10 text-emerald-600' : 'bg-amber-500/10 text-amber-600'}`}>
+              {stats.totalInconsistent === 0 ? <CheckCircle2 className="w-5 h-5" /> : <BadgeAlert className="w-5 h-5" />}
+            </div>
           </div>
-          <div className="flex items-baseline justify-between">
-            <span className="text-3xl font-black text-[var(--atlas-navy)]">{stats.pvaPassRate}%</span>
-            <span className="text-xs text-[var(--atlas-text-secondary)] font-medium">{stats.integrosCount} de {stats.totalDocs} notas íntegras</span>
+          <div>
+            <div className="text-4xl font-black text-[var(--atlas-navy)] tracking-tight">{stats.pvaPassRate}%</div>
+            <div className="text-[11px] text-[var(--atlas-text-muted)] font-bold uppercase mt-1">{stats.integrosCount} de {stats.totalDocs} notas OK</div>
           </div>
-          <p className="text-xs text-[var(--atlas-text-secondary)]">
-            {stats.totalInconsistent === 0 ? (
-              <span className="text-[var(--atlas-accent)] font-semibold">100% dos documentos validados no cruzamento PVA.</span>
-            ) : (
-              <span className="text-[var(--atlas-warning)] font-semibold">{stats.totalInconsistent} nota(s) exigem ajuste de cálculo nos itens ou analítico.</span>
-            )}
-          </p>
+          <div className="pt-2 border-t border-[var(--atlas-border)]">
+            <p className="text-[11px] leading-relaxed font-medium">
+              {stats.totalInconsistent === 0 ? (
+                <span className="text-emerald-600">Documentação 100% validada.</span>
+              ) : (
+                <span className="text-amber-600">{stats.totalInconsistent} notas com divergência.</span>
+              )}
+            </p>
+          </div>
         </div>
 
         {/* C100 vs C170 */}
-        <div className="p-4 rounded-lg bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] space-y-2">
+        <div className="atlas-card p-6 space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-[var(--atlas-text-secondary)]">Divergência C100 x C170</span>
-            <Calculator className="w-5 h-5 text-[var(--atlas-navy)]" />
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--atlas-text-secondary)]">C100 x C170</span>
+            <div className="p-2 rounded-lg bg-[var(--atlas-navy)]/5 text-[var(--atlas-navy)]">
+              <Calculator className="w-5 h-5" />
+            </div>
           </div>
-          <div className="flex items-baseline justify-between">
-            <span className={`text-3xl font-black ${stats.divC100C170 > 0 ? 'text-[var(--atlas-danger)]' : 'text-[var(--atlas-text)]'}`}>
+          <div>
+            <div className={`text-4xl font-black tracking-tight ${stats.divC100C170 > 0 ? 'text-[var(--atlas-danger)]' : 'text-[var(--atlas-text)]'}`}>
               {stats.divC100C170}
-            </span>
-            <span className="text-xs text-[var(--atlas-text-muted)]">Notas afetadas</span>
+            </div>
+            <div className="text-[11px] text-[var(--atlas-text-muted)] font-bold uppercase mt-1">Notas Afetadas</div>
           </div>
-          <p className="text-xs text-[var(--atlas-text-muted)] leading-tight">
-            Valor do C100 (<code className="font-mono">VL_DOC</code>) difere da soma dos itens C170 (<code className="font-mono">VL_ITEM</code>).
-          </p>
+          <div className="pt-2 border-t border-[var(--atlas-border)]">
+            <p className="text-[11px] text-[var(--atlas-text-muted)] font-medium leading-relaxed">
+              Diferença entre <code className="font-mono bg-[var(--atlas-surface-hover)] px-1 rounded">VL_DOC</code> e soma dos itens.
+            </p>
+          </div>
         </div>
 
         {/* C100 vs C190 */}
-        <div className="p-4 rounded-lg bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] space-y-2">
+        <div className="atlas-card p-6 space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-[var(--atlas-text-secondary)]">Divergência C100 x C190</span>
-            <Layers className="w-5 h-5 text-[#1e3a5f]" />
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--atlas-text-secondary)]">C100 x C190</span>
+            <div className="p-2 rounded-lg bg-[var(--atlas-navy)]/5 text-[var(--atlas-navy)]">
+              <Layers className="w-5 h-5" />
+            </div>
           </div>
-          <div className="flex items-baseline justify-between">
-            <span className={`text-3xl font-black ${stats.divC100C190 > 0 ? 'text-red-600' : 'text-slate-900'}`}>
+          <div>
+            <div className={`text-4xl font-black tracking-tight ${stats.divC100C190 > 0 ? 'text-[var(--atlas-danger)]' : 'text-[var(--atlas-text)]'}`}>
               {stats.divC100C190}
-            </span>
-            <span className="text-xs text-slate-500">Notas afetadas</span>
+            </div>
+            <div className="text-[11px] text-[var(--atlas-text-muted)] font-bold uppercase mt-1">Notas Afetadas</div>
           </div>
-          <p className="text-xs text-slate-500 leading-tight">
-            Soma dos registros C190 (<code className="font-mono">VL_OPR</code>) não fecha com o total do C100.
-          </p>
+          <div className="pt-2 border-t border-[var(--atlas-border)]">
+            <p className="text-[11px] text-[var(--atlas-text-muted)] font-medium leading-relaxed">
+              Soma do analítico <code className="font-mono bg-[var(--atlas-surface-hover)] px-1 rounded">VL_OPR</code> não fecha com o total.
+            </p>
+          </div>
         </div>
 
-        {/* C170 vs C190 / C190 Ausente */}
-        <div className="p-5 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+        {/* C170 vs C190 */}
+        <div className="atlas-card p-6 space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-600">Itens x Analítico (C190)</span>
-            <Scale className="w-5 h-5 text-[#1e3a5f]" />
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--atlas-text-secondary)]">Itens x Analítico</span>
+            <div className="p-2 rounded-lg bg-[var(--atlas-navy)]/5 text-[var(--atlas-navy)]">
+              <Scale className="w-5 h-5" />
+            </div>
           </div>
-          <div className="flex items-baseline justify-between">
-            <span className={`text-3xl font-black ${(stats.divC170C190 + stats.c190Missing) > 0 ? 'text-amber-600' : 'text-slate-900'}`}>
+          <div>
+            <div className={`text-4xl font-black tracking-tight ${(stats.divC170C190 + stats.c190Missing) > 0 ? 'text-amber-600' : 'text-[var(--atlas-text)]'}`}>
               {stats.divC170C190 + stats.c190Missing}
-            </span>
-            <span className="text-xs text-slate-500">
-              {stats.c190Missing > 0 ? `${stats.c190Missing} C190 ausente` : 'Divergências'}
-            </span>
+            </div>
+            <div className="text-[11px] text-[var(--atlas-text-muted)] font-bold uppercase mt-1">
+              {stats.c190Missing > 0 ? `${stats.c190Missing} C190 Ausentes` : 'Divergências'}
+            </div>
           </div>
-          <p className="text-xs text-slate-500 leading-tight">
-            Divergência entre o agrupamento dos itens por CST/CFOP e o registro C190.
-          </p>
+          <div className="pt-2 border-t border-[var(--atlas-border)]">
+            <p className="text-[11px] text-[var(--atlas-text-muted)] font-medium leading-relaxed">
+              Agrupamento CST/CFOP dos itens não bate com C190.
+            </p>
+          </div>
         </div>
-
       </div>
 
       {/* Filter Tabs & Search Toolbar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-2">
-        
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pt-2">
         {/* Quick Filter Tabs */}
-        <div className="flex flex-wrap items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-semibold">
+        <div className="flex flex-wrap items-center gap-1 bg-[var(--atlas-surface-hover)] p-1.5 rounded-xl border border-[var(--atlas-border)] text-[10px] font-bold uppercase tracking-widest">
           <button
             onClick={() => setFilterType('ALL')}
-            className={`px-3 py-1.5 rounded-lg transition ${filterType === 'ALL' ? 'bg-white text-[#1e3a5f] shadow-2xs' : 'text-slate-600 hover:text-slate-900'}`}
+            className={`px-4 py-2 rounded-lg transition-all ${filterType === 'ALL' ? 'bg-[var(--atlas-navy)] text-white shadow-lg scale-105' : 'text-[var(--atlas-text-secondary)] hover:bg-[var(--atlas-surface)]'}`}
           >
-            Todas as Notas ({stats.totalDocs})
+            Todas ({stats.totalDocs})
           </button>
           <button
             onClick={() => setFilterType('INCONSISTENT')}
-            className={`px-3 py-1.5 rounded-lg transition ${filterType === 'INCONSISTENT' ? 'bg-white text-red-700 shadow-2xs' : 'text-slate-600 hover:text-slate-900'}`}
+            className={`px-4 py-2 rounded-lg transition-all ${filterType === 'INCONSISTENT' ? 'bg-[var(--atlas-danger)] text-white shadow-lg scale-105' : 'text-[var(--atlas-text-secondary)] hover:bg-[var(--atlas-surface)]'}`}
           >
             Inconsistências ({stats.totalInconsistent})
           </button>
           <button
             onClick={() => setFilterType('C100_C170')}
-            className={`px-3 py-1.5 rounded-lg transition ${filterType === 'C100_C170' ? 'bg-white text-[#1e3a5f] shadow-2xs' : 'text-slate-600 hover:text-slate-900'}`}
+            className={`px-4 py-2 rounded-lg transition-all ${filterType === 'C100_C170' ? 'bg-[var(--atlas-navy)] text-white shadow-lg' : 'text-[var(--atlas-text-secondary)] hover:bg-[var(--atlas-surface)]'}`}
           >
             C100 x C170 ({stats.divC100C170})
           </button>
           <button
             onClick={() => setFilterType('C100_C190')}
-            className={`px-3 py-1.5 rounded-lg transition ${filterType === 'C100_C190' ? 'bg-white text-[#1e3a5f] shadow-2xs' : 'text-slate-600 hover:text-slate-900'}`}
+            className={`px-4 py-2 rounded-lg transition-all ${filterType === 'C100_C190' ? 'bg-[var(--atlas-navy)] text-white shadow-lg' : 'text-[var(--atlas-text-secondary)] hover:bg-[var(--atlas-surface)]'}`}
           >
             C100 x C190 ({stats.divC100C190})
           </button>
           <button
             onClick={() => setFilterType('C170_C190')}
-            className={`px-3 py-1.5 rounded-lg transition ${filterType === 'C170_C190' ? 'bg-white text-[#1e3a5f] shadow-2xs' : 'text-slate-600 hover:text-slate-900'}`}
+            className={`px-4 py-2 rounded-lg transition-all ${filterType === 'C170_C190' ? 'bg-[var(--atlas-navy)] text-white shadow-lg' : 'text-[var(--atlas-text-secondary)] hover:bg-[var(--atlas-surface)]'}`}
           >
             C170 x C190 ({stats.divC170C190})
           </button>
-          {stats.c190Missing > 0 && (
-            <button
-              onClick={() => setFilterType('C190_MISSING')}
-              className={`px-3 py-1.5 rounded-lg transition ${filterType === 'C190_MISSING' ? 'bg-white text-amber-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
-            >
-              C190 Ausente ({stats.c190Missing})
-            </button>
-          )}
-          {stats.c190DuplicatesCount > 0 && (
-            <button
-              onClick={() => setFilterType('C190_DUPLICATE')}
-              className={`px-3 py-1.5 rounded-lg transition ${filterType === 'C190_DUPLICATE' ? 'bg-white text-amber-700 shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'}`}
-            >
-              C190 Duplicado ({stats.c190DuplicatesCount})
-            </button>
-          )}
-          <button
-            onClick={() => setFilterType('CANCELADO')}
-            className={`px-3 py-1.5 rounded-lg transition ${filterType === 'CANCELADO' ? 'bg-white text-rose-700 shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'}`}
-          >
-            Canceladas ({stats.canceladosCount})
-          </button>
           <button
             onClick={() => setFilterType('INTEGRO')}
-            className={`px-3 py-1.5 rounded-lg transition ${filterType === 'INTEGRO' ? 'bg-white text-emerald-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
+            className={`px-4 py-2 rounded-lg transition-all ${filterType === 'INTEGRO' ? 'bg-emerald-600 text-white shadow-lg' : 'text-[var(--atlas-text-secondary)] hover:bg-[var(--atlas-surface)]'}`}
           >
             Íntegras ({stats.integrosCount})
           </button>
         </div>
 
         {/* Search Input */}
-        <div className="relative w-full md:w-64">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+        <div className="relative w-full md:w-80">
+          <Search className="w-4 h-4 text-[var(--atlas-text-muted)] absolute left-4 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Buscar por Nº Doc, Chave, Serie..."
-            className="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1e3a5f] focus:border-[#1e3a5f]"
+            placeholder="Nº Doc, Chave, Serie..."
+            className="atlas-input pl-10 pr-4 py-2.5 w-full font-bold text-xs"
           />
         </div>
       </div>
 
       {/* Main Integrity Check Table */}
-      <div className="overflow-x-auto border border-slate-200 rounded-lg">
-        <table className="min-w-full divide-y divide-slate-200 text-xs">
-          <thead className="bg-slate-50">
-            <tr>
-              <th className="px-4 py-3.5 text-left font-bold text-slate-700 uppercase tracking-wider w-28">Nº Doc / Série</th>
-              <th className="px-4 py-3.5 text-left font-bold text-slate-700 uppercase tracking-wider">Chave de Acesso / Data</th>
-              <th className="px-4 py-3.5 text-left font-bold text-slate-700 uppercase tracking-wider">Status PVA</th>
-              <th className="px-4 py-3.5 text-right font-bold text-slate-700 uppercase tracking-wider">C100 (VL_DOC)</th>
-              <th className="px-4 py-3.5 text-right font-bold text-slate-700 uppercase tracking-wider">C170 (Soma Itens)</th>
-              <th className="px-4 py-3.5 text-right font-bold text-slate-700 uppercase tracking-wider">C190 (Soma Analítico)</th>
-              <th className="px-4 py-3.5 text-right font-bold text-slate-700 uppercase tracking-wider">Diferença C100xC170</th>
-              <th className="px-4 py-3.5 text-right font-bold text-slate-700 uppercase tracking-wider">Diferença C100xC190</th>
-              <th className="px-4 py-3.5 text-center font-bold text-slate-700 uppercase tracking-wider">Ação</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-slate-200">
+      <div className="overflow-hidden border border-[var(--atlas-border)] rounded-2xl shadow-xl bg-[var(--atlas-surface)]">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-[var(--atlas-border)] text-xs">
+            <thead className="bg-[var(--atlas-surface-hover)]">
+              <tr>
+                <th className="px-6 py-4 text-left font-bold text-[var(--atlas-text-secondary)] uppercase tracking-widest text-[10px]">Nº Doc / Série</th>
+                <th className="px-6 py-4 text-left font-bold text-[var(--atlas-text-secondary)] uppercase tracking-widest text-[10px]">Identificação</th>
+                <th className="px-6 py-4 text-left font-bold text-[var(--atlas-text-secondary)] uppercase tracking-widest text-[10px]">Status PVA</th>
+                <th className="px-6 py-4 text-right font-bold text-[var(--atlas-text-secondary)] uppercase tracking-widest text-[10px]">VL_DOC (C100)</th>
+                <th className="px-6 py-4 text-right font-bold text-[var(--atlas-text-secondary)] uppercase tracking-widest text-[10px]">Soma Itens (C170)</th>
+                <th className="px-6 py-4 text-right font-bold text-[var(--atlas-text-secondary)] uppercase tracking-widest text-[10px]">Analítico (C190)</th>
+                <th className="px-6 py-4 text-right font-bold text-[var(--atlas-text-secondary)] uppercase tracking-widest text-[10px]">Diferença</th>
+                <th className="px-6 py-4 text-center font-bold text-[var(--atlas-text-secondary)] uppercase tracking-widest text-[10px]">Ação</th>
+              </tr>
+            </thead>
+          <tbody className="divide-y divide-[var(--atlas-border)]">
             {filteredResults.length === 0 ? (
               <tr>
-                <td colSpan={9} className="px-4 py-10 text-center text-slate-400">
-                  <p className="font-semibold text-slate-600">Nenhum documento encontrado com os filtros aplicados.</p>
-                  <p className="text-xs text-slate-400 mt-1">Tente alternar as abas de filtro ou limpar a busca.</p>
+                <td colSpan={8} className="px-6 py-20 text-center">
+                  <div className="flex flex-col items-center justify-center space-y-4 opacity-40">
+                    <Search className="w-16 h-16 text-[var(--atlas-navy)]" />
+                    <div className="space-y-1">
+                      <p className="text-sm font-bold uppercase tracking-widest text-[var(--atlas-navy)]">Nenhum resultado</p>
+                      <p className="text-xs font-medium text-[var(--atlas-text-secondary)]">Ajuste os filtros para encontrar o que procura.</p>
+                    </div>
+                  </div>
                 </td>
               </tr>
             ) : (
@@ -541,264 +530,192 @@ export function C100C190IntegrityChecker({ spedData, onRecalculateStructure }: C
 
                 return (
                   <React.Fragment key={res.doc.id}>
-                    <tr className={`transition-colors ${hasError ? 'bg-red-50/30 hover:bg-red-50/60' : 'hover:bg-slate-50/80'}`}>
-                      
+                    <tr className={`atlas-list-row group ${hasError ? 'bg-red-50/20 hover:bg-red-50/40' : 'hover:bg-[var(--atlas-surface-hover)]'}`}>
                       {/* Num Doc & Serie */}
-                      <td className="px-4 py-3 font-semibold text-slate-900 whitespace-nowrap">
-                        <div className="flex items-center space-x-1.5">
-                          <span className="font-mono text-[#1e3a5f] font-bold">Nº {res.doc.numDoc}</span>
-                          <span className="text-[10px] bg-slate-100 border border-slate-200 text-slate-600 px-1.5 py-0.5 rounded font-mono">
-                            S. {res.doc.serie || '1'}
+                      <td className="px-6 py-4 font-bold whitespace-nowrap">
+                        <div className="flex items-center space-x-2">
+                          <span className="text-[var(--atlas-navy)] text-sm">#{res.doc.numDoc}</span>
+                          <span className="atlas-pill py-0.5 px-2 bg-[var(--atlas-surface-hover)] border-[var(--atlas-border)] text-[var(--atlas-text-secondary)] font-mono text-[10px]">
+                            S.{res.doc.serie || '1'}
                           </span>
                         </div>
                       </td>
 
-                      {/* Chave de Acesso */}
-                      <td className="px-4 py-3 whitespace-nowrap">
-                        <div className="space-y-0.5">
-                          {res.doc.chvNfe ? (
-                            <div className="flex items-center space-x-1">
-                              <span className="font-mono text-[11px] text-slate-600 truncate max-w-[180px]">
-                                {res.doc.chvNfe}
-                              </span>
+                      {/* Identificação */}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="space-y-1">
+                          <div className="flex items-center space-x-2">
+                            <span className="font-mono text-[10px] text-[var(--atlas-text-secondary)] truncate max-w-[140px] font-bold">
+                              {res.doc.chvNfe || 'SEM CHAVE'}
+                            </span>
+                            {res.doc.chvNfe && (
                               <button
                                 onClick={() => handleCopyChave(res.doc.chvNfe)}
-                                title="Copiar chave NFe"
-                                className="text-slate-400 hover:text-[#1e3a5f] transition p-0.5"
+                                className="text-[var(--atlas-text-muted)] hover:text-[var(--atlas-navy)] transition p-1 rounded-md hover:bg-white"
                               >
-                                {copiedKey === res.doc.chvNfe ? (
-                                  <Check className="w-3.5 h-3.5 text-emerald-600" />
-                                ) : (
-                                  <Copy className="w-3.5 h-3.5" />
-                                )}
+                                {copiedKey === res.doc.chvNfe ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
                               </button>
-                            </div>
-                          ) : (
-                            <span className="text-slate-400 italic text-[11px]">Sem Chave NFe</span>
-                          )}
-                          <span className="text-[10px] text-slate-400 block">{res.doc.dtDoc}</span>
+                            )}
+                          </div>
+                          <span className="text-[10px] text-[var(--atlas-text-muted)] font-bold uppercase tracking-wider">{res.doc.dtDoc}</span>
                         </div>
                       </td>
 
-                      {/* Status PVA Badge */}
-                      <td className="px-4 py-3 whitespace-nowrap">
-                        {res.status === 'INTEGRO' && (
-                          <span className="inline-flex items-center space-x-1 bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-full text-[11px] font-bold">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                            <span>Conforme PVA</span>
-                          </span>
-                        )}
-                        {res.status === 'CANCELADO' && (
-                          <span className="inline-flex items-center space-x-1 bg-slate-100 text-slate-600 border border-slate-200 px-2.5 py-1 rounded-full text-[11px] font-bold">
-                            <span>Documento Cancelado</span>
-                          </span>
-                        )}
-                        {res.status === 'ERRO_C100_C170' && (
-                          <span className="inline-flex items-center space-x-1 bg-red-100 text-red-800 border border-red-300 px-2.5 py-1 rounded-full text-[11px] font-bold">
-                            <XCircle className="w-3.5 h-3.5 text-red-600" />
-                            <span>Erro C100 x C170</span>
-                          </span>
-                        )}
-                        {res.status === 'ERRO_C100_C190' && (
-                          <span className="inline-flex items-center space-x-1 bg-red-100 text-red-800 border border-red-300 px-2.5 py-1 rounded-full text-[11px] font-bold">
-                            <XCircle className="w-3.5 h-3.5 text-red-600" />
-                            <span>Erro C100 x C190</span>
-                          </span>
-                        )}
-                        {res.status === 'ERRO_C170_C190' && (
-                          <span className="inline-flex items-center space-x-1 bg-amber-100 text-amber-800 border border-amber-300 px-2.5 py-1 rounded-full text-[11px] font-bold">
-                            <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
-                            <span>Erro C170 x C190</span>
-                          </span>
-                        )}
-                        {res.status === 'ERRO_C190_AUSENTE' && (
-                          <span className="inline-flex items-center space-x-1 bg-amber-100 text-amber-800 border border-amber-300 px-2.5 py-1 rounded-full text-[11px] font-bold">
-                            <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
-                            <span>C190 Ausente</span>
-                          </span>
-                        )}
-                        {res.status === 'ERRO_C190_DUPLICADO' && (
-                          <span className="inline-flex items-center space-x-1 bg-amber-100 text-amber-900 border border-amber-300 px-2.5 py-1 rounded-full text-[11px] font-bold" title="Existem múltiplos registros C190 para a mesma combinação de CST, CFOP e Alíquota">
-                            <CopyX className="w-3.5 h-3.5 text-amber-600" />
-                            <span>C190 Duplicado</span>
+                      {/* Status PVA */}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {res.status === 'INTEGRO' && <span className="atlas-pill atlas-pill-accent bg-emerald-500/10 text-emerald-700 border-emerald-500/20 px-3 py-1 font-bold">CONFORME</span>}
+                        {res.status === 'CANCELADO' && <span className="atlas-pill bg-slate-100 text-slate-500 border-slate-200 px-3 py-1 font-bold">CANCELADO</span>}
+                        {res.status.startsWith('ERRO') && (
+                          <span className="atlas-pill atlas-pill-danger bg-red-500/10 text-red-700 border-red-500/20 px-3 py-1 font-bold flex items-center space-x-1.5">
+                            <AlertTriangle className="w-3 h-3" />
+                            <span>DIVERGENTE</span>
                           </span>
                         )}
                       </td>
 
-                      {/* C100 VL_DOC */}
-                      <td className="px-4 py-3 text-right font-mono font-bold text-slate-900 whitespace-nowrap">
-                        R$ {formatMoney(res.vlDoc)}
+                      {/* C100 */}
+                      <td className="px-6 py-4 text-right font-mono font-bold text-[var(--atlas-navy)] text-sm whitespace-nowrap">
+                        {formatMoney(res.vlDoc)}
                       </td>
 
-                      {/* C170 Soma Itens */}
-                      <td className="px-4 py-3 text-right font-mono text-slate-700 whitespace-nowrap">
-                        {res.hasC170 ? (
-                          `R$ ${formatMoney(res.somaC170VlItem)}`
-                        ) : (
-                          <span className="text-slate-400 italic font-sans text-[11px]">Sem C170</span>
-                        )}
+                      {/* C170 */}
+                      <td className="px-6 py-4 text-right font-mono font-bold text-[var(--atlas-text)] whitespace-nowrap text-[11px]">
+                        {res.hasC170 ? formatMoney(res.somaC170VlItem) : '-'}
                       </td>
 
-                      {/* C190 Soma Analítico */}
-                      <td className="px-4 py-3 text-right font-mono text-slate-700 whitespace-nowrap">
-                        {res.hasC190 ? (
-                          `R$ ${formatMoney(res.somaC190VlOpr)}`
-                        ) : (
-                          <span className="text-amber-600 font-bold font-sans text-[11px]">C190 Ausente</span>
-                        )}
+                      {/* C190 */}
+                      <td className="px-6 py-4 text-right font-mono font-bold text-[var(--atlas-text)] whitespace-nowrap text-[11px]">
+                        {res.hasC190 ? formatMoney(res.somaC190VlOpr) : '-'}
                       </td>
 
-                      {/* Dif C100xC170 */}
-                      <td className="px-4 py-3 text-right font-mono font-bold whitespace-nowrap">
-                        {Math.abs(res.diffC100_C170) > 0.05 ? (
-                          <span className="text-red-600 bg-red-100/80 px-2 py-0.5 rounded">
-                            {res.diffC100_C170 > 0 ? '+' : ''}R$ {formatMoney(res.diffC100_C170)}
-                          </span>
-                        ) : (
-                          <span className="text-emerald-600">R$ 0,00</span>
-                        )}
+                      {/* Diferença */}
+                      <td className={`px-6 py-4 text-right font-mono font-bold whitespace-nowrap text-[11px] ${Math.abs(res.diffC100_C190) > 0.05 ? 'text-[var(--atlas-danger)] bg-red-50/50 px-2 rounded-md' : 'text-emerald-600'}`}>
+                        {formatMoney(res.diffC100_C190)}
                       </td>
 
-                      {/* Dif C100xC190 */}
-                      <td className="px-4 py-3 text-right font-mono font-bold whitespace-nowrap">
-                        {Math.abs(res.diffC100_C190) > 0.05 ? (
-                          <span className="text-red-600 bg-red-100/80 px-2 py-0.5 rounded">
-                            {res.diffC100_C190 > 0 ? '+' : ''}R$ {formatMoney(res.diffC100_C190)}
-                          </span>
-                        ) : (
-                          <span className="text-emerald-600">R$ 0,00</span>
-                        )}
-                      </td>
-
-                      {/* Action Expand Button */}
-                      <td className="px-4 py-3 text-center whitespace-nowrap">
+                      {/* Ação */}
+                      <td className="px-6 py-4 text-center whitespace-nowrap">
                         <button
                           onClick={() => setExpandedDocId(isExpanded ? null : res.doc.id)}
-                          className="inline-flex items-center space-x-1 text-xs text-[#1e3a5f] hover:text-[#142c47] font-semibold bg-[#f1efe8] hover:bg-[#e5e2d9] px-2.5 py-1 rounded-lg transition"
+                          className="atlas-btn atlas-btn-secondary p-2 group"
                         >
-                          <span>{isExpanded ? 'Ocultar' : 'Detalhar'}</span>
-                          {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                          {isExpanded ? <ChevronUp className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" /> : <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />}
                         </button>
                       </td>
                     </tr>
 
                     {/* Detailed Accordion Breakdown View */}
                     {isExpanded && (
-                      <tr className="bg-slate-50 border-y border-slate-200">
-                        <td colSpan={9} className="p-5 space-y-4">
-                          <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-2xs space-y-4">
-                            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                              <h4 className="font-bold text-slate-900 text-sm flex items-center">
-                                <FileCode className="w-4 h-4 text-[#1e3a5f] mr-2" />
-                                Raio-X de Auditoria e Reconciliação — Nota Nº {res.doc.numDoc} (Série {res.doc.serie})
+                      <tr className="bg-[var(--atlas-surface-hover)] border-y border-[var(--atlas-border)]">
+                        <td colSpan={8} className="p-8 space-y-6">
+                          <div className="bg-[var(--atlas-surface)] p-6 rounded-2xl border border-[var(--atlas-border)] shadow-xl space-y-6">
+                            <div className="flex items-center justify-between border-b border-[var(--atlas-border)] pb-4">
+                              <h4 className="font-bold text-[var(--atlas-navy)] text-sm flex items-center uppercase tracking-widest" style={{ fontFamily: 'var(--font-display)' }}>
+                                <FileCode className="w-5 h-5 text-[var(--atlas-navy)] mr-3" />
+                                Raio-X de Auditoria — Nota #{res.doc.numDoc}
                               </h4>
-                              <span className="text-xs text-slate-500 font-mono">
-                                Linha Original SPED: #{res.doc.numeroLinhaOriginal || '—'}
-                              </span>
+                              <div className="flex items-center space-x-3">
+                                <span className="atlas-pill atlas-pill-secondary font-mono text-[10px]">Linha #{res.doc.numeroLinhaOriginal || '—'}</span>
+                                <span className="atlas-pill bg-[var(--atlas-navy)]/5 text-[var(--atlas-navy)] text-[10px] font-bold">SPED FISCAL</span>
+                              </div>
                             </div>
 
                             {/* Triple Column Comparison Card */}
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-                              
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                               {/* C100 Column */}
-                              <div className="bg-slate-50 p-3.5 rounded-lg border border-slate-200 space-y-2">
-                                <div className="font-bold text-slate-800 flex justify-between">
-                                  <span>Bloco C100 (Cabeçalho)</span>
-                                  <span className="text-[#1e3a5f] font-mono">1 Registro</span>
+                              <div className="atlas-card p-5 bg-[var(--atlas-surface-hover)] space-y-4">
+                                <div className="font-bold text-[var(--atlas-text-secondary)] text-[10px] uppercase tracking-widest border-b border-[var(--atlas-border)] pb-2 flex justify-between">
+                                  <span>Bloco C100</span>
+                                  <span className="text-[var(--atlas-navy)]">Cabeçalho</span>
                                 </div>
-                                <div className="space-y-1 font-mono text-[11px] text-slate-600">
-                                  <div className="flex justify-between">
-                                    <span>Valor Doc (VL_DOC):</span>
-                                    <span className="font-bold text-slate-900">R$ {formatMoney(res.vlDoc)}</span>
+                                <div className="space-y-3 font-mono text-xs">
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-[var(--atlas-text-muted)]">VL_DOC:</span>
+                                    <span className="font-bold text-[var(--atlas-navy)] text-sm">R$ {formatMoney(res.vlDoc)}</span>
                                   </div>
-                                  <div className="flex justify-between">
-                                    <span>Base ICMS (VL_BC_ICMS):</span>
-                                    <span className="font-bold text-slate-900">R$ {formatMoney(res.doc.vlBcIcms || 0)}</span>
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-[var(--atlas-text-muted)]">VL_BC_ICMS:</span>
+                                    <span className="font-bold">R$ {formatMoney(res.doc.vlBcIcms || 0)}</span>
                                   </div>
-                                  <div className="flex justify-between">
-                                    <span>Valor ICMS (VL_ICMS):</span>
-                                    <span className="font-bold text-slate-900">R$ {formatMoney(res.doc.vlIcms || 0)}</span>
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-[var(--atlas-text-muted)]">VL_ICMS:</span>
+                                    <span className="font-bold">R$ {formatMoney(res.doc.vlIcms || 0)}</span>
                                   </div>
                                 </div>
                               </div>
 
                               {/* C170 Column */}
-                              <div className="bg-slate-50 p-3.5 rounded-lg border border-slate-200 space-y-2">
-                                <div className="font-bold text-slate-800 flex justify-between">
-                                  <span>Bloco C170 (Soma dos Itens)</span>
-                                  <span className="text-[#1e3a5f] font-mono">{res.doc.items.length} Itens</span>
+                              <div className="atlas-card p-5 bg-[var(--atlas-surface-hover)] space-y-4">
+                                <div className="font-bold text-[var(--atlas-text-secondary)] text-[10px] uppercase tracking-widest border-b border-[var(--atlas-border)] pb-2 flex justify-between">
+                                  <span>Bloco C170</span>
+                                  <span className="text-[var(--atlas-navy)]">{res.doc.items.length} Itens</span>
                                 </div>
-                                <div className="space-y-1 font-mono text-[11px] text-slate-600">
-                                  <div className="flex justify-between">
-                                    <span>Soma Itens (VL_ITEM):</span>
-                                    <span className={`font-bold ${Math.abs(res.diffC100_C170) > 0.05 ? 'text-red-600' : 'text-slate-900'}`}>
+                                <div className="space-y-3 font-mono text-xs">
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-[var(--atlas-text-muted)]">Soma VL_ITEM:</span>
+                                    <span className={`font-bold text-sm ${Math.abs(res.diffC100_C170) > 0.05 ? 'text-[var(--atlas-danger)]' : 'text-[var(--atlas-text)]'}`}>
                                       R$ {formatMoney(res.somaC170VlItem)}
                                     </span>
                                   </div>
-                                  <div className="flex justify-between">
-                                    <span>Soma Base ICMS:</span>
-                                    <span className="font-bold text-slate-900">R$ {formatMoney(res.somaC170VlBcIcms)}</span>
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-[var(--atlas-text-muted)]">Soma BC ICMS:</span>
+                                    <span className="font-bold">R$ {formatMoney(res.somaC170VlBcIcms)}</span>
                                   </div>
-                                  <div className="flex justify-between">
-                                    <span>Soma Valor ICMS:</span>
-                                    <span className="font-bold text-slate-900">R$ {formatMoney(res.somaC170VlIcms)}</span>
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-[var(--atlas-text-muted)]">Soma ICMS:</span>
+                                    <span className="font-bold">R$ {formatMoney(res.somaC170VlIcms)}</span>
                                   </div>
                                 </div>
                               </div>
 
                               {/* C190 Column */}
-                              <div className="bg-slate-50 p-3.5 rounded-lg border border-slate-200 space-y-2">
-                                <div className="font-bold text-slate-800 flex justify-between">
-                                  <span>Bloco C190 (Analítico PVA)</span>
-                                  <span className="text-[#1e3a5f] font-mono">{res.c190Breakdown.length} Linhas</span>
+                              <div className="atlas-card p-5 bg-[var(--atlas-surface-hover)] space-y-4">
+                                <div className="font-bold text-[var(--atlas-text-secondary)] text-[10px] uppercase tracking-widest border-b border-[var(--atlas-border)] pb-2 flex justify-between">
+                                  <span>Bloco C190</span>
+                                  <span className="text-[var(--atlas-navy)]">{res.c190Breakdown.length} Analíticos</span>
                                 </div>
-                                <div className="space-y-1 font-mono text-[11px] text-slate-600">
-                                  <div className="flex justify-between">
-                                    <span>Soma Opr (VL_OPR):</span>
-                                    <span className={`font-bold ${Math.abs(res.diffC100_C190) > 0.05 ? 'text-red-600' : 'text-slate-900'}`}>
+                                <div className="space-y-3 font-mono text-xs">
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-[var(--atlas-text-muted)]">Soma VL_OPR:</span>
+                                    <span className={`font-bold text-sm ${Math.abs(res.diffC100_C190) > 0.05 ? 'text-[var(--atlas-danger)]' : 'text-[var(--atlas-text)]'}`}>
                                       R$ {formatMoney(res.somaC190VlOpr)}
                                     </span>
                                   </div>
-                                  <div className="flex justify-between">
-                                    <span>Soma Base ICMS:</span>
-                                    <span className="font-bold text-slate-900">R$ {formatMoney(res.somaC190VlBcIcms)}</span>
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-[var(--atlas-text-muted)]">Soma BC ICMS:</span>
+                                    <span className="font-bold">R$ {formatMoney(res.somaC190VlBcIcms)}</span>
                                   </div>
-                                  <div className="flex justify-between">
-                                    <span>Soma Valor ICMS:</span>
-                                    <span className="font-bold text-slate-900">R$ {formatMoney(res.somaC190VlIcms)}</span>
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-[var(--atlas-text-muted)]">Soma ICMS:</span>
+                                    <span className="font-bold">R$ {formatMoney(res.somaC190VlIcms)}</span>
                                   </div>
                                 </div>
                               </div>
-
                             </div>
 
-                            {/* Breakdown by CST / CFOP Table */}
+                            {/* Breakdown Table */}
                             {res.c190Breakdown.length > 0 && (
-                              <div className="space-y-2 pt-2">
-                                <h5 className="font-bold text-slate-800 text-xs">
-                                  Detalhamento por CST / CFOP no Registro C190
-                                </h5>
-                                <div className="overflow-x-auto border border-slate-200 rounded-lg">
-                                  <table className="min-w-full divide-y divide-slate-200 text-[11px] font-mono">
-                                    <thead className="bg-slate-100">
+                              <div className="space-y-3 pt-2">
+                                <h5 className="font-bold text-[var(--atlas-text-secondary)] text-[10px] uppercase tracking-widest">Detalhamento Analítico C190</h5>
+                                <div className="overflow-hidden border border-[var(--atlas-border)] rounded-xl">
+                                  <table className="min-w-full divide-y divide-[var(--atlas-border)] text-[10px] font-mono">
+                                    <thead className="bg-[var(--atlas-surface-hover)]">
                                       <tr>
-                                        <th className="px-3 py-2 text-left font-bold text-slate-700">CST ICMS</th>
-                                        <th className="px-3 py-2 text-left font-bold text-slate-700">CFOP</th>
-                                        <th className="px-3 py-2 text-right font-bold text-slate-700">Alíq. ICMS (%)</th>
-                                        <th className="px-3 py-2 text-right font-bold text-slate-700">VL_OPR (R$)</th>
-                                        <th className="px-3 py-2 text-right font-bold text-slate-700">VL_BC_ICMS (R$)</th>
-                                        <th className="px-3 py-2 text-right font-bold text-slate-700">VL_ICMS (R$)</th>
+                                        <th className="px-4 py-2 text-left font-bold text-[var(--atlas-text-secondary)]">CST/CFOP</th>
+                                        <th className="px-4 py-2 text-right font-bold text-[var(--atlas-text-secondary)]">Alíq (%)</th>
+                                        <th className="px-4 py-2 text-right font-bold text-[var(--atlas-text-secondary)]">Vl. Operação</th>
+                                        <th className="px-4 py-2 text-right font-bold text-[var(--atlas-text-secondary)]">Base ICMS</th>
+                                        <th className="px-4 py-2 text-right font-bold text-[var(--atlas-text-secondary)]">Vl. ICMS</th>
                                       </tr>
                                     </thead>
-                                    <tbody className="bg-white divide-y divide-slate-200">
+                                    <tbody className="divide-y divide-[var(--atlas-border)]">
                                       {res.c190Breakdown.map((c, idx) => (
-                                        <tr key={idx} className="hover:bg-slate-50">
-                                          <td className="px-3 py-1.5 font-bold text-[#1e3a5f]">{c.cstIcms}</td>
-                                          <td className="px-3 py-1.5 font-bold text-slate-800">{c.cfop}</td>
-                                          <td className="px-3 py-1.5 text-right text-slate-600">{c.aliqIcms}%</td>
-                                          <td className="px-3 py-1.5 text-right font-bold text-slate-900">R$ {formatMoney(c.vlOpr)}</td>
-                                          <td className="px-3 py-1.5 text-right text-slate-700">R$ {formatMoney(c.vlBcIcms)}</td>
-                                          <td className="px-3 py-1.5 text-right text-slate-700">R$ {formatMoney(c.vlIcms)}</td>
+                                        <tr key={idx} className="hover:bg-[var(--atlas-surface-hover)]">
+                                          <td className="px-4 py-2 font-bold text-[var(--atlas-navy)]">{c.cstIcms} / {c.cfop}</td>
+                                          <td className="px-4 py-2 text-right">{c.aliqIcms}%</td>
+                                          <td className="px-4 py-2 text-right font-bold">R$ {formatMoney(c.vlOpr)}</td>
+                                          <td className="px-4 py-2 text-right">R$ {formatMoney(c.vlBcIcms)}</td>
+                                          <td className="px-4 py-2 text-right">R$ {formatMoney(c.vlIcms)}</td>
                                         </tr>
                                       ))}
                                     </tbody>
@@ -809,26 +726,20 @@ export function C100C190IntegrityChecker({ spedData, onRecalculateStructure }: C
 
                             {/* Recommendation / Fix Instructions */}
                             {res.status !== 'INTEGRO' && res.status !== 'CANCELADO' && (
-                              <div className="bg-amber-50 p-3.5 rounded-xl border border-amber-200 text-xs space-y-1.5 text-amber-900">
-                                <span className="font-bold flex items-center text-amber-900">
-                                  <AlertTriangle className="w-4 h-4 mr-1.5 text-amber-600" />
-                                  Instrução para Correção e Liberação no PVA:
-                                </span>
-                                <p className="text-[11px] leading-relaxed">
-                                  {res.status === 'ERRO_C100_C170' &&
-                                    `O valor total do documento C100 (R$ ${formatMoney(res.vlDoc)}) diverge da soma dos itens C170 (R$ ${formatMoney(res.somaC170VlItem)}). Ajuste o valor dos itens no registro C170 ou reajuste o total da nota no C100.`}
-                                  {res.status === 'ERRO_C100_C190' &&
-                                    `A soma do registro analítico C190 (R$ ${formatMoney(res.somaC190VlOpr)}) difere do total do documento C100 (R$ ${formatMoney(res.vlDoc)}). Atualize o registro C190 para que a soma dos valores da operação seja idêntica ao C100.`}
-                                  {res.status === 'ERRO_C170_C190' &&
-                                    `O somatório dos itens agrupados por CST/CFOP não coincide com as linhas do C190. Recalcule o C190 com base no agrupamento exato dos itens C170.`}
-                                  {res.status === 'ERRO_C190_AUSENTE' &&
-                                    `Este documento possui valor comercial mas não possui nenhum registro C190 associado. Insira o registro C190 correspondente ao enquadramento de CST e CFOP.`}
-                                  {res.status === 'ERRO_C190_DUPLICADO' &&
-                                    `Identificadas duplicidades no registro C190 (${res.duplicateC190Details.join(', ')}). Clique no botão "Recalcular C100 e C190" no topo do relatório para unificar e somar os valores das linhas duplicadas em um único registro.`}
-                                </p>
+                              <div className="atlas-alert atlas-alert-warning p-4 rounded-xl flex items-start space-x-3">
+                                <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" />
+                                <div className="space-y-1">
+                                  <span className="font-bold block uppercase tracking-widest text-[10px]">Ação Corretiva Recomendada</span>
+                                  <p className="text-xs leading-relaxed opacity-90">
+                                    {res.status === 'ERRO_C100_C170' && `Divergência entre C100 e C170. Ajuste os itens ou o total da nota.`}
+                                    {res.status === 'ERRO_C100_C190' && `Divergência entre C100 e C190. O analítico não fecha com o total.`}
+                                    {res.status === 'ERRO_C170_C190' && `O somatório dos itens agrupados não coincide com as linhas do C190.`}
+                                    {res.status === 'ERRO_C190_AUSENTE' && `Nota com valor comercial sem registro C190 associado.`}
+                                    {res.status === 'ERRO_C190_DUPLICADO' && `Registros C190 duplicados (${res.duplicateC190Details.join(', ')}). Unifique as linhas.`}
+                                  </p>
+                                </div>
                               </div>
                             )}
-
                           </div>
                         </td>
                       </tr>
@@ -840,7 +751,7 @@ export function C100C190IntegrityChecker({ spedData, onRecalculateStructure }: C
           </tbody>
         </table>
       </div>
-
     </div>
+  </div>
   );
 }

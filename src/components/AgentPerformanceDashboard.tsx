@@ -79,9 +79,9 @@ export function AgentPerformanceDashboard({ metrics }: AgentPerformanceDashboard
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Conferidos */}
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-indigo-200 transition">
+        <div className="bg-[var(--atlas-surface)] p-5 rounded-2xl shadow-sm border border-[var(--atlas-border)] hover:border-indigo-200 transition">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+            <span className="text-xs font-bold uppercase tracking-wider text-[var(--atlas-text-secondary)]">
               Itens C170 Conferidos
             </span>
             <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl">
@@ -89,18 +89,18 @@ export function AgentPerformanceDashboard({ metrics }: AgentPerformanceDashboard
             </div>
           </div>
           <div className="mt-3 flex items-baseline justify-between">
-            <span className="text-3xl font-black text-slate-900">{metrics.totalItemsAudited}</span>
+            <span className="text-3xl font-black text-[var(--atlas-text)]">{metrics.totalItemsAudited}</span>
             <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full flex items-center">
               <TrendingUp className="w-3 h-3 mr-1" /> 100% Amostragem
             </span>
           </div>
-          <p className="mt-1 text-xs text-slate-500">Varredura integral do Bloco C170</p>
+          <p className="mt-1 text-xs text-[var(--atlas-text-secondary)]">Varredura integral do Bloco C170</p>
         </div>
 
         {/* Inconformidades / Erros Encontrados */}
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-amber-200 transition">
+        <div className="bg-[var(--atlas-surface)] p-5 rounded-2xl shadow-sm border border-[var(--atlas-border)] hover:border-amber-200 transition">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+            <span className="text-xs font-bold uppercase tracking-wider text-[var(--atlas-text-secondary)]">
               Erros Encontrados
             </span>
             <div className="p-2.5 bg-amber-50 text-amber-600 rounded-xl">
@@ -108,18 +108,18 @@ export function AgentPerformanceDashboard({ metrics }: AgentPerformanceDashboard
             </div>
           </div>
           <div className="mt-3 flex items-baseline justify-between">
-            <span className="text-3xl font-black text-slate-900">{metrics.totalErrorsFound}</span>
+            <span className="text-3xl font-black text-[var(--atlas-text)]">{metrics.totalErrorsFound}</span>
             <span className="text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">
               {metrics.totalItemsAudited > 0 ? Math.round((metrics.totalErrorsFound / metrics.totalItemsAudited) * 100) : 0}% divergências
             </span>
           </div>
-          <p className="mt-1 text-xs text-slate-500">Identificados pelos 3 Agentes AI</p>
+          <p className="mt-1 text-xs text-[var(--atlas-text-secondary)]">Identificados pelos 3 Agentes AI</p>
         </div>
 
         {/* Correções Automáticas Realizadas */}
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-emerald-200 transition">
+        <div className="bg-[var(--atlas-surface)] p-5 rounded-2xl shadow-sm border border-[var(--atlas-border)] hover:border-emerald-200 transition">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+            <span className="text-xs font-bold uppercase tracking-wider text-[var(--atlas-text-secondary)]">
               Correções Automáticas
             </span>
             <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl">
@@ -132,13 +132,13 @@ export function AgentPerformanceDashboard({ metrics }: AgentPerformanceDashboard
               {metrics.totalErrorsFound > 0 ? Math.round((metrics.totalAutoCorrections / metrics.totalErrorsFound) * 100) : 100}% taxa de saneamento
             </span>
           </div>
-          <p className="mt-1 text-xs text-slate-500">Saneadas autonomamente no SPED</p>
+          <p className="mt-1 text-xs text-[var(--atlas-text-secondary)]">Saneadas autonomamente no SPED</p>
         </div>
 
         {/* Acurácia dos Agentes */}
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-purple-200 transition">
+        <div className="bg-[var(--atlas-surface)] p-5 rounded-2xl shadow-sm border border-[var(--atlas-border)] hover:border-purple-200 transition">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+            <span className="text-xs font-bold uppercase tracking-wider text-[var(--atlas-text-secondary)]">
               Acurácia da Auditoria
             </span>
             <div className="p-2.5 bg-purple-50 text-purple-600 rounded-xl">
@@ -151,18 +151,18 @@ export function AgentPerformanceDashboard({ metrics }: AgentPerformanceDashboard
               {metrics.avgProcessingTimeMs}ms / item
             </span>
           </div>
-          <p className="mt-1 text-xs text-slate-500">Baseado no feedback dos contadores</p>
+          <p className="mt-1 text-xs text-[var(--atlas-text-secondary)]">Baseado no feedback dos contadores</p>
         </div>
       </div>
 
       {/* Main Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Chart: Volume, Erros e Correções Automáticas */}
-        <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+        <div className="lg:col-span-2 bg-[var(--atlas-surface)] p-6 rounded-2xl shadow-sm border border-[var(--atlas-border)] space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-bold text-slate-900 text-base">Evolução do Volume & Saneamento do C170</h3>
-              <p className="text-xs text-slate-500">Comparativo de itens conferidos, erros identificados e auto-correções efetuadas</p>
+              <h3 className="font-bold text-[var(--atlas-text)] text-base">Evolução do Volume & Saneamento do C170</h3>
+              <p className="text-xs text-[var(--atlas-text-secondary)]">Comparativo de itens conferidos, erros identificados e auto-correções efetuadas</p>
             </div>
             <span className="text-xs font-semibold bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full">
               Visão por Lotes
@@ -188,10 +188,10 @@ export function AgentPerformanceDashboard({ metrics }: AgentPerformanceDashboard
         </div>
 
         {/* Pie Chart: Distribuição dos Tipos de Erro */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+        <div className="bg-[var(--atlas-surface)] p-6 rounded-2xl shadow-sm border border-[var(--atlas-border)] space-y-4">
           <div>
-            <h3 className="font-bold text-slate-900 text-base">Distribuição dos Erros no C170</h3>
-            <p className="text-xs text-slate-500">Inconformidades fiscais mais recorrentes</p>
+            <h3 className="font-bold text-[var(--atlas-text)] text-base">Distribuição dos Erros no C170</h3>
+            <p className="text-xs text-[var(--atlas-text-secondary)]">Inconformidades fiscais mais recorrentes</p>
           </div>
 
           <div className="h-56 w-full relative">
@@ -216,20 +216,20 @@ export function AgentPerformanceDashboard({ metrics }: AgentPerformanceDashboard
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span className="text-2xl font-black text-slate-800">{metrics.totalErrorsFound}</span>
-              <span className="text-[10px] text-slate-400 font-bold uppercase">Erros Totais</span>
+              <span className="text-2xl font-black text-[var(--atlas-text)]">{metrics.totalErrorsFound}</span>
+              <span className="text-xs text-[var(--atlas-text-muted)] font-bold uppercase">Erros Totais</span>
             </div>
           </div>
 
           {/* Legend */}
           <div className="space-y-1.5 text-xs">
             {errorDistributionData.map((item, idx) => (
-              <div key={idx} className="flex items-center justify-between text-slate-600">
+              <div key={idx} className="flex items-center justify-between text-[var(--atlas-text-secondary)]">
                 <div className="flex items-center space-x-2">
                   <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[idx % COLORS.length] }}></span>
                   <span className="truncate max-w-[170px]">{item.name}</span>
                 </div>
-                <span className="font-bold text-slate-800">{item.value}</span>
+                <span className="font-bold text-[var(--atlas-text)]">{item.value}</span>
               </div>
             ))}
           </div>
@@ -237,13 +237,13 @@ export function AgentPerformanceDashboard({ metrics }: AgentPerformanceDashboard
       </div>
 
       {/* Agent Performance Comparison Chart */}
-      <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+      <div className="bg-[var(--atlas-surface)] p-6 rounded-2xl shadow-sm border border-[var(--atlas-border)] space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h3 className="font-bold text-slate-900 text-base">Desempenho Individual dos Agentes AI</h3>
-            <p className="text-xs text-slate-500">Análise de assertividade e correções efetuadas por cada especialidade</p>
+            <h3 className="font-bold text-[var(--atlas-text)] text-base">Desempenho Individual dos Agentes AI</h3>
+            <p className="text-xs text-[var(--atlas-text-secondary)]">Análise de assertividade e correções efetuadas por cada especialidade</p>
           </div>
-          <div className="flex items-center space-x-4 text-xs font-semibold text-slate-600">
+          <div className="flex items-center space-x-4 text-xs font-semibold text-[var(--atlas-text-secondary)]">
             <div className="flex items-center space-x-1.5">
               <span className="w-3 h-3 bg-indigo-600 rounded"></span>
               <span>Analisados</span>

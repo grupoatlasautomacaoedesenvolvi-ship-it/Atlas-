@@ -314,11 +314,11 @@ export function UploadSection({
                     <span className="atlas-pill atlas-pill-navy">Pendente</span>
                   )}
                 </div>
-                <p className="text-[var(--atlas-text-secondary)] text-[11px] truncate mt-0.5">
+                <p className="text-[var(--atlas-text-secondary)] text-xs truncate mt-0.5">
                   {spedLoaded ? (spedFileName || 'SPED Ativo na Sessão') : 'Arquivo .txt oficial do SPED Fiscal'}
                 </p>
                 {loadingSped && (
-                  <div className="mt-2 text-[11px] text-[var(--atlas-navy)] font-medium flex items-center gap-2">
+                  <div className="mt-2 text-xs text-[var(--atlas-navy)] font-medium flex items-center gap-2">
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
                     <span>{spedStatusText} ({spedProgress}%)</span>
                   </div>
@@ -364,11 +364,11 @@ export function UploadSection({
                     <span className="atlas-pill atlas-pill-info">Opcional</span>
                   )}
                 </div>
-                <p className="text-[var(--atlas-text-secondary)] text-[11px] truncate mt-0.5">
+                <p className="text-[var(--atlas-text-secondary)] text-xs truncate mt-0.5">
                   NF-e Mod 55 recebidas de fornecedores de mercadoria/insumos.
                 </p>
                 {xmlLoadings['XML_TERCEIROS'] && (
-                  <div className="mt-2 text-[11px] text-[var(--atlas-accent)] font-medium flex items-center gap-2">
+                  <div className="mt-2 text-xs text-[var(--atlas-accent)] font-medium flex items-center gap-2">
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
                     <span>{xmlProgress['XML_TERCEIROS']?.text || 'Importando...'} ({xmlProgress['XML_TERCEIROS']?.pct || 0}%)</span>
                   </div>
@@ -407,11 +407,11 @@ export function UploadSection({
                     <span className="atlas-pill atlas-pill-info">Opcional</span>
                   )}
                 </div>
-                <p className="text-[var(--atlas-text-secondary)] text-[11px] truncate mt-0.5">
+                <p className="text-[var(--atlas-text-secondary)] text-xs truncate mt-0.5">
                   NF-e Mod 55 emitidas pelo próprio contribuinte.
                 </p>
                 {xmlLoadings['XML_PROPRIO'] && (
-                  <div className="mt-2 text-[11px] text-[var(--atlas-navy)] font-medium flex items-center gap-2">
+                  <div className="mt-2 text-xs text-[var(--atlas-navy)] font-medium flex items-center gap-2">
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
                     <span>Lendo XMLs próprios...</span>
                   </div>
@@ -450,11 +450,11 @@ export function UploadSection({
                     <span className="atlas-pill atlas-pill-info">Opcional</span>
                   )}
                 </div>
-                <p className="text-[var(--atlas-text-secondary)] text-[11px] truncate mt-0.5">
+                <p className="text-[var(--atlas-text-secondary)] text-xs truncate mt-0.5">
                   NFC-e Mod 65 para conciliação de cupom fiscal e vendas no varejo.
                 </p>
                 {xmlLoadings['XML_NFCE'] && (
-                  <div className="mt-2 text-[11px] text-[var(--atlas-accent)] font-medium flex items-center gap-2">
+                  <div className="mt-2 text-xs text-[var(--atlas-accent)] font-medium flex items-center gap-2">
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
                     <span>Lendo NFC-es...</span>
                   </div>

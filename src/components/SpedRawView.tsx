@@ -31,57 +31,63 @@ export function SpedRawView({ spedData, onSyncTotals }: SpedRawViewProps) {
   });
 
   return (
-    <div className="w-full mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="max-w-7xl mx-auto py-10 px-4 space-y-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Registros Brutos do SPED Fiscal</h1>
-          <p className="text-sm text-slate-500">Visualização fiel aos registros originais (0000, 0200, C100, C170, C190)</p>
+          <h1 className="text-3xl font-bold text-[var(--atlas-navy)] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
+            Registros Brutos
+          </h1>
+          <p className="text-sm text-[var(--atlas-text-secondary)] mt-2">Visualização técnica fiel aos registros originais (0000, 0200, C100, C170, C190)</p>
         </div>
 
-        <div className="flex items-center space-x-2 overflow-x-auto pb-2 md:pb-0">
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
           {['ALL', '0000', '0200', 'C100', 'C170', 'C190'].map(reg => (
             <button
               key={reg}
               onClick={() => setSelectedReg(reg)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                selectedReg === reg ? 'bg-[#1e3a5f] text-white' : 'bg-white text-slate-700 border border-slate-200'
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer shadow-xs border-2 ${
+                selectedReg === reg 
+                  ? 'bg-[var(--atlas-navy)] text-white border-[var(--atlas-navy)]' 
+                  : 'bg-[var(--atlas-surface)] text-[var(--atlas-text-secondary)] border-[var(--atlas-border)] hover:bg-[var(--atlas-surface-hover)]'
               }`}
             >
-              {reg === 'ALL' ? 'Todos' : `Registro ${reg}`}
+              {reg === 'ALL' ? 'Todos' : `Reg. ${reg}`}
             </button>
           ))}
         </div>
       </div>
 
-      <div className="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden mb-6">
-        <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-          <div className="relative w-full md:w-80">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+      <div className="atlas-card overflow-hidden">
+        <div className="p-5 border-b border-[var(--atlas-border)] flex flex-wrap gap-6 items-center justify-between bg-[var(--atlas-surface-hover)]/30">
+          <div className="relative w-full md:w-96">
+            <Search className="w-5 h-5 text-[var(--atlas-navy)] absolute left-3.5 top-1/2 -translate-y-1/2 opacity-60" />
             <input
               type="text"
               placeholder="Pesquisar nas linhas do SPED..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#1e3a5f] bg-white"
+              className="atlas-input w-full pl-11 pr-4 py-2.5 text-sm"
             />
           </div>
-          <span className="text-xs text-slate-500 font-medium">{filteredLines.length} registros exibidos</span>
+          <span className="text-[10px] font-bold text-[var(--atlas-text-muted)] uppercase tracking-widest">
+            {filteredLines.length} registros encontrados
+          </span>
         </div>
 
         <div className="overflow-x-auto max-h-[600px] font-mono text-xs">
           <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-slate-200 bg-slate-100/70 text-slate-600 uppercase">
-                <th className="p-3 w-20">Registro</th>
-                <th className="p-3">Conteúdo Bruto</th>
-                <th className="p-3 w-40 text-right">Status</th>
+            <thead className="bg-[var(--atlas-surface-hover)] border-b border-[var(--atlas-border)]">
+              <tr className="text-[10px] font-bold text-[var(--atlas-text-muted)] uppercase tracking-widest">
+                <th className="px-6 py-4 w-24">Reg.</th>
+                <th className="px-6 py-4">Conteúdo Original</th>
+                <th className="px-6 py-4 w-44 text-right">Conciliação</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-[var(--atlas-border)]">
               {filteredLines.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className="text-center py-12 text-slate-500 font-sans">
-                    Nenhum registro encontrado.
+                  <td colSpan={3} className="text-center py-20 text-[var(--atlas-text-secondary)] font-sans italic">
+                    Nenhum registro encontrado para os filtros aplicados.
                   </td>
                 </tr>
               ) : (
@@ -96,22 +102,22 @@ export function SpedRawView({ spedData, onSyncTotals }: SpedRawViewProps) {
                   }
 
                   return (
-                    <tr key={item.index} className={`hover:bg-slate-50 transition-colors ${isMalformed ? 'bg-red-50 text-red-900' : 'text-slate-800'}`}>
-                      <td className="p-3 font-bold text-blue-600">{item.reg}</td>
-                      <td className="p-3 truncate max-w-4xl" title={item.content}>{item.content}</td>
-                      <td className="p-3 text-right">
+                    <tr key={item.index} className={`hover:bg-[var(--atlas-surface-hover)]/50 transition-colors group ${isMalformed ? 'bg-red-50 text-red-900' : 'text-[var(--atlas-text)]'}`}>
+                      <td className="px-6 py-3.5 font-black text-[var(--atlas-navy)]">{item.reg}</td>
+                      <td className="px-6 py-3.5 truncate max-w-4xl text-[var(--atlas-text-secondary)] group-hover:text-[var(--atlas-text)]" title={item.content}>{item.content}</td>
+                      <td className="px-6 py-3.5 text-right">
                         {(item.reg === 'C100' || item.reg === 'C190') && item.docId && (
-                          <div className="flex items-center justify-end space-x-2">
+                          <div className="flex items-center justify-end gap-2">
                             {isDivergent ? (
                               <>
-                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-amber-100 text-amber-800">
-                                  <AlertTriangle className="w-3 h-3 mr-1" />
-                                  Divergente
-                                </span>
+                                <div className="atlas-pill atlas-pill-danger py-1 px-2 border shadow-xs">
+                                  <AlertTriangle className="w-3 h-3" />
+                                  <span>Divergente</span>
+                                </div>
                                 {onSyncTotals && (
                                   <button
                                     onClick={() => onSyncTotals(item.docId!)}
-                                    className="p-1 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                                    className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
                                     title="Sincronizar Totais"
                                   >
                                     <RefreshCw className="w-3.5 h-3.5" />
@@ -119,10 +125,10 @@ export function SpedRawView({ spedData, onSyncTotals }: SpedRawViewProps) {
                                 )}
                               </>
                             ) : (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-100 text-emerald-800">
-                                <CheckCircle className="w-3 h-3 mr-1" />
-                                Sincronizado
-                              </span>
+                              <div className="atlas-pill atlas-pill-accent py-1 px-2 border shadow-xs">
+                                <CheckCircle className="w-3 h-3" />
+                                <span>Ok</span>
+                              </div>
                             )}
                           </div>
                         )}

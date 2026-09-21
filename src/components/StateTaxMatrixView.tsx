@@ -252,61 +252,62 @@ export function StateTaxMatrixView({ rules, onSaveRules, defaultUf = 'SP' }: Sta
 
   return (
     <div className="max-w-7xl w-full mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <div className="bg-white rounded-lg border border-slate-200/60 shadow-xs hover:shadow-sm transition-shadow overflow-hidden">
-        <div className="p-8 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/50">
-          <div className="flex items-center space-x-3">
-            <div className="bg-[#0f6e56] p-3 rounded-lg text-white shadow-xs">
+      <div className="atlas-card overflow-hidden">
+        <div className="p-8 border-b border-[var(--atlas-border)] flex flex-col md:flex-row md:items-center justify-between gap-6 bg-[var(--atlas-surface-hover)]/30">
+          <div className="flex items-center space-x-4">
+            <div className="bg-[var(--atlas-accent)] p-3.5 rounded-xl text-white shadow-md">
               <Database className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-slate-800">Matriz Tributária (NCM por Estado / UF)</h2>
-              <p className="text-sm text-slate-500">Banco de dados parametrizado de CSTs e CFOPs esperados por Estado e NCM</p>
+              <h2 className="text-2xl font-bold text-[var(--atlas-navy)] tracking-tight leading-none" style={{ fontFamily: 'var(--font-display)' }}>
+                Matriz Tributária Estadual
+              </h2>
+              <p className="text-sm text-[var(--atlas-text-secondary)] mt-2">Banco de dados parametrizado de CSTs e CFOPs esperados por Estado e NCM prefixado.</p>
             </div>
           </div>
-          <div className="flex items-center flex-wrap gap-2">
+          <div className="flex items-center flex-wrap gap-3">
             {savedSuccess && (
-              <span className="inline-flex items-center space-x-1 text-emerald-700 text-sm font-medium animate-fade-in mr-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-700" />
-                <span>Matriz tributária salva</span>
+              <span className="inline-flex items-center space-x-1.5 text-emerald-700 text-sm font-bold animate-fade-in mr-2">
+                <CheckCircle2 className="w-5 h-5" />
+                <span>Matriz salva</span>
               </span>
             )}
             
             {selectedRuleIds.length > 0 && (
               <button
                 onClick={deleteSelectedRules}
-                className="flex items-center space-x-2 bg-red-600 text-white px-4 py-2.5 rounded-lg hover:bg-red-700 transition-colors text-sm font-medium shadow-xs animate-fade-in"
-                title="Excluir regras selecionadas em lote"
+                className="atlas-btn atlas-btn-danger py-2.5 px-4 text-sm font-bold shadow-sm animate-fade-in"
               >
                 <Trash2 className="w-4 h-4" />
-                <span>Excluir Selecionadas ({selectedRuleIds.length})</span>
+                <span>Excluir ({selectedRuleIds.length})</span>
               </button>
             )}
 
             <button
               onClick={handleExportTemplate}
-              className="flex items-center space-x-2 bg-slate-100 text-slate-700 px-4 py-2.5 rounded-lg hover:bg-slate-200 transition-colors text-sm font-medium shadow-xs border border-slate-200"
+              className="atlas-btn atlas-btn-secondary py-2.5 px-4 text-sm font-bold shadow-xs cursor-pointer"
               title="Baixar Modelo de Planilha Excel"
             >
               <Download className="w-4 h-4" />
-              <span>Baixar Modelo</span>
+              <span>Modelo</span>
             </button>
             <button
               onClick={() => setShowImportModal(true)}
-              className="flex items-center space-x-2 bg-[#1e3a5f] text-white px-4 py-2.5 rounded-lg hover:bg-[#142c47] transition-colors text-sm font-medium shadow-xs"
+              className="atlas-btn atlas-btn-primary py-2.5 px-4 text-sm font-bold shadow-xs cursor-pointer"
             >
               <FileSpreadsheet className="w-4 h-4" />
-              <span>Importar Planilha</span>
+              <span>Importar</span>
             </button>
             <button
               onClick={addRule}
-              className="flex items-center space-x-2 bg-[#0f6e56] text-white px-4 py-2.5 rounded-lg hover:bg-[#0b5240] transition-colors text-sm font-medium shadow-xs"
+              className="atlas-btn atlas-btn-accent py-2.5 px-4 text-sm font-bold shadow-xs cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>Nova Regra</span>
             </button>
             <button
               onClick={handleSave}
-              className="flex items-center space-x-2 bg-[#1e3a5f] text-white px-5 py-2.5 rounded-lg hover:bg-[#142c47] transition-colors text-sm font-medium shadow-xs"
+              className="atlas-btn atlas-btn-primary py-2.5 px-5 text-sm font-bold shadow-md cursor-pointer"
             >
               <Save className="w-4 h-4" />
               <span>Salvar Matriz</span>
@@ -315,24 +316,24 @@ export function StateTaxMatrixView({ rules, onSaveRules, defaultUf = 'SP' }: Sta
         </div>
 
         {/* Filters */}
-        <div className="p-4 bg-slate-100/70 border-b border-slate-200 flex flex-col sm:flex-row gap-3 items-center justify-between">
+        <div className="p-4 bg-[var(--atlas-surface-hover)]/70 border-b border-[var(--atlas-border)] flex flex-col sm:flex-row gap-3 items-center justify-between">
           <div className="relative w-full sm:w-80">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+            <Search className="w-4 h-4 text-[var(--atlas-text-muted)] absolute left-3 top-3" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Buscar por NCM ou descrição..."
-              className="w-full pl-9 pr-4 py-2 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full pl-9 pr-4 py-2 bg-[var(--atlas-surface)] border border-[var(--atlas-border)] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           </div>
           <div className="flex items-center space-x-2 w-full sm:w-auto">
-            <Filter className="w-4 h-4 text-slate-500" />
-            <span className="text-xs font-medium text-slate-600">Estado (UF):</span>
+            <Filter className="w-4 h-4 text-[var(--atlas-text-secondary)]" />
+            <span className="text-xs font-medium text-[var(--atlas-text-secondary)]">Estado (UF):</span>
             <select
               value={ufFilter}
               onChange={(e) => setUfFilter(e.target.value)}
-              className="px-3 py-2 bg-white border border-slate-300 rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="px-3 py-2 bg-[var(--atlas-surface)] border border-[var(--atlas-border)] rounded-xl text-sm font-medium text-[var(--atlas-text)] focus:outline-none focus:ring-2 focus:ring-emerald-500"
             >
               {ufs.map(uf => (
                 <option key={uf} value={uf}>{uf === 'ALL' ? 'Todos os Estados (ALL)' : uf}</option>
@@ -343,20 +344,20 @@ export function StateTaxMatrixView({ rules, onSaveRules, defaultUf = 'SP' }: Sta
 
         {/* Selection Bar */}
         {filteredRules.length > 0 && (
-          <div className="p-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between px-6 text-xs text-slate-600">
+          <div className="p-3 bg-[var(--atlas-surface-hover)] border-b border-[var(--atlas-border)] flex items-center justify-between px-6 text-xs text-[var(--atlas-text-secondary)]">
             <div className="flex items-center space-x-3">
               <input
                 type="checkbox"
                 checked={filteredRules.length > 0 && filteredRules.every(r => selectedRuleIds.includes(r.id))}
                 onChange={handleSelectAll}
-                className="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                className="w-4 h-4 rounded border-[var(--atlas-border)] text-emerald-600 focus:ring-emerald-500 cursor-pointer"
               />
               <span className="font-medium">
                 Selecionar todas visíveis ({filteredRules.length})
               </span>
             </div>
             {selectedRuleIds.length > 0 && (
-              <span className="font-semibold text-[#1e3a5f] bg-[#f1efe8] px-2.5 py-1 rounded-md border border-[#e5e2d9]">
+              <span className="font-semibold text-[var(--atlas-navy)] bg-[#f1efe8] px-2.5 py-1 rounded-md border border-[#e5e2d9]">
                 {selectedRuleIds.length} regra(s) selecionada(s)
               </span>
             )}
@@ -367,75 +368,75 @@ export function StateTaxMatrixView({ rules, onSaveRules, defaultUf = 'SP' }: Sta
         <div className="p-6">
           <div className="space-y-4">
             {filteredRules.length === 0 ? (
-              <div className="text-center py-12 text-slate-400">
+              <div className="text-center py-12 text-[var(--atlas-text-muted)]">
                 <Database className="w-12 h-12 mx-auto mb-3 opacity-40" />
                 <p className="text-sm">Nenhuma regra encontrada para os filtros selecionados.</p>
               </div>
             ) : (
               filteredRules.map((rule) => (
-                <div key={rule.id} className={`border rounded-lg p-4 bg-white transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-4 ${
-                  selectedRuleIds.includes(rule.id) ? 'border-[#1e3a5f] bg-[#f1efe8]/50 shadow-2xs' : 'border-slate-200 shadow-2xs hover:border-slate-300'
+                <div key={rule.id} className={`border rounded-lg p-4 bg-[var(--atlas-surface)] transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-4 ${
+                  selectedRuleIds.includes(rule.id) ? 'border-[var(--atlas-navy)] bg-[#f1efe8]/50 shadow-xs' : 'border-[var(--atlas-border)] shadow-xs hover:border-[var(--atlas-border)]'
                 }`}>
                   <div className="flex items-start md:items-center space-x-3 w-full">
                     <input
                       type="checkbox"
                       checked={selectedRuleIds.includes(rule.id)}
                       onChange={() => toggleSelectRule(rule.id)}
-                      className="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer mt-1 md:mt-0"
+                      className="w-4 h-4 rounded border-[var(--atlas-border)] text-emerald-600 focus:ring-emerald-500 cursor-pointer mt-1 md:mt-0"
                     />
                     <div className="grid grid-cols-1 sm:grid-cols-5 gap-3 flex-1 w-full">
                       <div>
-                        <label className="text-[10px] uppercase tracking-wider font-semibold text-slate-400 block mb-1">UF / Estado</label>
+                        <label className="text-xs uppercase tracking-wider font-semibold text-[var(--atlas-text-muted)] block mb-1">UF / Estado</label>
                         <select
                           value={rule.uf}
                           onChange={(e) => updateRule(rule.id, 'uf', e.target.value)}
-                          className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                          className="w-full px-2.5 py-1.5 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg text-xs font-medium text-[var(--atlas-text)] focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         >
                           {ufs.map(u => <option key={u} value={u}>{u}</option>)}
                         </select>
                       </div>
 
                       <div>
-                        <label className="text-[10px] uppercase tracking-wider font-semibold text-slate-400 block mb-1">Prefixo NCM</label>
+                        <label className="text-xs uppercase tracking-wider font-semibold text-[var(--atlas-text-muted)] block mb-1">Prefixo NCM</label>
                         <input
                           type="text"
                           value={rule.ncmPrefix}
                           onChange={(e) => updateRule(rule.id, 'ncmPrefix', e.target.value)}
                           placeholder="Ex: 2710"
-                          className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                          className="w-full px-2.5 py-1.5 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg text-xs font-mono text-[var(--atlas-text)] focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         />
                       </div>
 
                       <div>
-                        <label className="text-[10px] uppercase tracking-wider font-semibold text-slate-400 block mb-1">CST Esperado</label>
+                        <label className="text-xs uppercase tracking-wider font-semibold text-[var(--atlas-text-muted)] block mb-1">CST Esperado</label>
                         <input
                           type="text"
                           value={rule.expectedCst}
                           onChange={(e) => updateRule(rule.id, 'expectedCst', e.target.value)}
                           placeholder="Ex: 000, 020, 060"
-                          className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                          className="w-full px-2.5 py-1.5 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg text-xs font-mono text-[var(--atlas-text)] focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         />
                       </div>
 
                       <div>
-                        <label className="text-[10px] uppercase tracking-wider font-semibold text-slate-400 block mb-1">CFOPs (sep. vírgula)</label>
+                        <label className="text-xs uppercase tracking-wider font-semibold text-[var(--atlas-text-muted)] block mb-1">CFOPs (sep. vírgula)</label>
                         <input
                           type="text"
                           value={rule.expectedCfop.join(', ')}
                           onChange={(e) => updateRule(rule.id, 'expectedCfop', e.target.value)}
                           placeholder="Ex: 1102, 5102"
-                          className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                          className="w-full px-2.5 py-1.5 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg text-xs font-mono text-[var(--atlas-text)] focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         />
                       </div>
 
                       <div className="sm:col-span-1">
-                        <label className="text-[10px] uppercase tracking-wider font-semibold text-slate-400 block mb-1">Descrição / Operação</label>
+                        <label className="text-xs uppercase tracking-wider font-semibold text-[var(--atlas-text-muted)] block mb-1">Descrição / Operação</label>
                         <input
                           type="text"
                           value={rule.descricao}
                           onChange={(e) => updateRule(rule.id, 'descricao', e.target.value)}
                           placeholder="Descrição da regra"
-                          className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                          className="w-full px-2.5 py-1.5 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg text-xs text-[var(--atlas-text)] focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         />
                       </div>
                     </div>
@@ -444,7 +445,7 @@ export function StateTaxMatrixView({ rules, onSaveRules, defaultUf = 'SP' }: Sta
                   <div className="flex items-center self-end md:self-center">
                     <button
                       onClick={() => deleteRule(rule.id)}
-                      className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-200"
+                      className="p-2 text-[var(--atlas-text-muted)] hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-200"
                       title="Excluir regra da matriz"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -460,20 +461,20 @@ export function StateTaxMatrixView({ rules, onSaveRules, defaultUf = 'SP' }: Sta
       {/* Import Modal */}
       {showImportModal && (
         <div className="fixed inset-0 bg-slate-900/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full p-6 shadow-sm border border-slate-200 animate-fade-in">
-            <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+          <div className="bg-[var(--atlas-surface)] rounded-lg max-w-2xl w-full p-6 shadow-sm border border-[var(--atlas-border)] animate-fade-in">
+            <div className="flex items-center justify-between pb-4 border-b border-[var(--atlas-border)] mb-4">
               <div className="flex items-center space-x-3">
-                <div className="bg-slate-100 text-[#1e3a5f] p-2 rounded-lg">
+                <div className="bg-[var(--atlas-surface-hover)] text-[var(--atlas-navy)] p-2 rounded-lg">
                   <FileSpreadsheet className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900">Importar Regras via Planilha (Excel / CSV)</h3>
-                  <p className="text-xs text-slate-500">Envie um arquivo Excel (.xlsx), CSV ou cole os dados diretamente</p>
+                  <h3 className="text-lg font-bold text-[var(--atlas-text)]">Importar Regras via Planilha (Excel / CSV)</h3>
+                  <p className="text-xs text-[var(--atlas-text-secondary)]">Envie um arquivo Excel (.xlsx), CSV ou cole os dados diretamente</p>
                 </div>
               </div>
               <button
                 onClick={() => setShowImportModal(false)}
-                className="text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-100 transition-colors"
+                className="text-[var(--atlas-text-muted)] hover:text-[var(--atlas-text-secondary)] p-2 rounded-lg hover:bg-[var(--atlas-surface-hover)] transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -481,30 +482,30 @@ export function StateTaxMatrixView({ rules, onSaveRules, defaultUf = 'SP' }: Sta
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--atlas-text-secondary)] mb-1">
                   1. Carregar arquivo (Excel / CSV)
                 </label>
                 <input
                   type="file"
                   accept=".csv,.txt,.xlsx,.xls"
                   onChange={handleFileUpload}
-                  className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#f1efe8] file:text-[#1e3a5f] hover:file:bg-[#e5e2d9] cursor-pointer border border-slate-200 rounded-lg p-1"
+                  className="w-full text-sm text-[var(--atlas-text-secondary)] file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#f1efe8] file:text-[var(--atlas-navy)] hover:file:bg-[#e5e2d9] cursor-pointer border border-[var(--atlas-border)] rounded-lg p-1"
                 />
               </div>
 
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--atlas-text-secondary)]">
                     2. Ou cole o conteúdo (Formato: UF; NCM; CST; CFOP; Descrição)
                   </label>
-                  <span className="text-[11px] text-slate-400">Ex: SP; 2710; 060; 1403, 5403; Combustíveis</span>
+                  <span className="text-xs text-[var(--atlas-text-muted)]">Ex: SP; 2710; 060; 1403, 5403; Combustíveis</span>
                 </div>
                 <textarea
                   rows={8}
                   value={importText}
                   onChange={(e) => setImportText(e.target.value)}
                   placeholder={`SP; 2710; 060; 1403, 5403; Combustíveis e Lubrificantes\nALL; 1102; 000; 1102, 5102; Mercadorias em Geral\nMG; 3304; 060; 1403; Cosméticos`}
-                  className="w-full p-3 font-mono text-xs bg-slate-50 border border-slate-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#1e3a5f] text-slate-800"
+                  className="w-full p-3 font-mono text-xs bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[var(--atlas-navy)] text-[var(--atlas-text)]"
                 ></textarea>
               </div>
 
@@ -514,16 +515,16 @@ export function StateTaxMatrixView({ rules, onSaveRules, defaultUf = 'SP' }: Sta
                 </div>
               )}
 
-              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100">
+              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-[var(--atlas-border)]">
                 <button
                   onClick={() => setShowImportModal(false)}
-                  className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm font-medium transition-colors"
+                  className="px-4 py-2 text-[var(--atlas-text-secondary)] hover:bg-[var(--atlas-surface-hover)] rounded-lg text-sm font-medium transition-colors"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={processImport}
-                  className="px-5 py-2.5 bg-[#1e3a5f] text-white hover:bg-[#142c47] rounded-lg text-sm font-medium transition-colors shadow-sm"
+                  className="px-5 py-2.5 bg-[var(--atlas-navy)] text-white hover:bg-[var(--atlas-navy-dark)] rounded-lg text-sm font-medium transition-colors shadow-sm"
                 >
                   Importar e Adicionar Regras
                 </button>

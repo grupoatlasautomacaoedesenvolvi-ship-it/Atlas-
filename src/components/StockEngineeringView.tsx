@@ -75,17 +75,17 @@ export function StockEngineeringView({
         cardBg: 'bg-slate-950 border-slate-800',
         cardSubBg: 'bg-slate-900/90 border-slate-800',
         cardHighlight: 'bg-slate-900/80 border-slate-800',
-        inputBg: 'bg-slate-900 border-slate-800 text-slate-200 placeholder-slate-500',
+        inputBg: 'bg-slate-900 border-slate-800 text-slate-200 placeholder-[var(--atlas-text-muted)]',
         selectBg: 'bg-slate-900 border-slate-800 text-slate-200',
         tableContainer: 'bg-slate-950 border-slate-800',
-        tableTopBar: 'bg-slate-900/80 border-slate-800 text-slate-400',
-        tableHeaderBg: 'bg-slate-900 text-slate-400 border-slate-800',
+        tableTopBar: 'bg-slate-900/80 border-slate-800 text-[var(--atlas-text-muted)]',
+        tableHeaderBg: 'bg-slate-900 text-[var(--atlas-text-muted)] border-slate-800',
         tableRowBorder: 'divide-slate-800/80',
         tableRowHover: 'hover:bg-slate-900/50',
         textTitle: 'text-slate-100',
-        textMuted: 'text-slate-400',
-        textSub: 'text-slate-500',
-        badgeBg: 'bg-slate-800 text-slate-300 border-slate-700',
+        textMuted: 'text-[var(--atlas-text-muted)]',
+        textSub: 'text-[var(--atlas-text-secondary)]',
+        badgeBg: 'bg-slate-800 text-[var(--atlas-text-muted)] border-slate-700',
         btnSecondary: 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700',
         modalBackdrop: 'bg-slate-950/80',
         modalCard: 'bg-slate-900 border-slate-800 text-slate-100 shadow-sm',
@@ -96,39 +96,39 @@ export function StockEngineeringView({
         subtabActiveBlocoH: 'border-emerald-500 text-white bg-slate-900/90 rounded-t-xl',
         subtabActiveAltered: 'border-sky-500 text-white bg-slate-900/90 rounded-t-xl',
         subtabActiveOverview: 'border-amber-500 text-white bg-slate-900/90 rounded-t-xl',
-        subtabInactive: 'border-transparent text-slate-400 hover:text-slate-200',
+        subtabInactive: 'border-transparent text-[var(--atlas-text-muted)] hover:text-slate-200',
       };
     } else {
       return {
         isDark: false,
-        mainBg: 'bg-slate-100/70 text-slate-800',
-        headerBg: 'bg-white border-slate-200 shadow-2xs',
-        subtabBg: 'border-slate-200 bg-white',
-        cardBg: 'bg-white border-slate-200/90 shadow-xs',
-        cardSubBg: 'bg-slate-50 border-slate-200/90',
-        cardHighlight: 'bg-slate-50/90 border-slate-200 shadow-2xs',
-        inputBg: 'bg-white border-slate-300 text-slate-800 placeholder-slate-400 focus:border-indigo-500 focus:bg-white',
-        selectBg: 'bg-white border-slate-300 text-slate-800 focus:border-indigo-500',
-        tableContainer: 'bg-white border-slate-200 shadow-xs',
-        tableTopBar: 'bg-slate-50 border-slate-200 text-slate-600',
-        tableHeaderBg: 'bg-slate-100/90 text-slate-600 border-slate-200 font-semibold',
-        tableRowBorder: 'divide-slate-200',
-        tableRowHover: 'hover:bg-slate-50/80',
-        textTitle: 'text-slate-900',
-        textMuted: 'text-slate-600',
-        textSub: 'text-slate-500',
-        badgeBg: 'bg-slate-100 text-slate-700 border-slate-300',
-        btnSecondary: 'bg-white hover:bg-slate-100 text-slate-700 border-slate-300 shadow-2xs',
+        mainBg: 'bg-[var(--atlas-surface-hover)]/70 text-[var(--atlas-text)]',
+        headerBg: 'bg-[var(--atlas-surface)] border-[var(--atlas-border)] shadow-xs',
+        subtabBg: 'border-[var(--atlas-border)] bg-[var(--atlas-surface)]',
+        cardBg: 'bg-[var(--atlas-surface)] border-[var(--atlas-border)]/90 shadow-xs',
+        cardSubBg: 'bg-[var(--atlas-surface-hover)] border-[var(--atlas-border)]/90',
+        cardHighlight: 'bg-[var(--atlas-surface-hover)]/90 border-[var(--atlas-border)] shadow-xs',
+        inputBg: 'bg-[var(--atlas-surface)] border-[var(--atlas-border)] text-[var(--atlas-text)] placeholder-[var(--atlas-text-muted)] focus:border-indigo-500 focus:bg-[var(--atlas-surface)]',
+        selectBg: 'bg-[var(--atlas-surface)] border-[var(--atlas-border)] text-[var(--atlas-text)] focus:border-indigo-500',
+        tableContainer: 'bg-[var(--atlas-surface)] border-[var(--atlas-border)] shadow-xs',
+        tableTopBar: 'bg-[var(--atlas-surface-hover)] border-[var(--atlas-border)] text-[var(--atlas-text-secondary)]',
+        tableHeaderBg: 'bg-[var(--atlas-surface-hover)]/90 text-[var(--atlas-text-secondary)] border-[var(--atlas-border)] font-semibold',
+        tableRowBorder: 'divide-[var(--atlas-border)]',
+        tableRowHover: 'hover:bg-[var(--atlas-surface-hover)]/80',
+        textTitle: 'text-[var(--atlas-text)]',
+        textMuted: 'text-[var(--atlas-text-secondary)]',
+        textSub: 'text-[var(--atlas-text-secondary)]',
+        badgeBg: 'bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] border-[var(--atlas-border)]',
+        btnSecondary: 'bg-[var(--atlas-surface)] hover:bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] border-[var(--atlas-border)] shadow-xs',
         modalBackdrop: 'bg-slate-900/40 backdrop-blur-xs',
-        modalCard: 'bg-white border-slate-200 text-slate-800 shadow-sm',
-        modalInput: 'bg-slate-50 border-slate-300 text-slate-800 focus:bg-white focus:border-indigo-500',
-        alertBanner: 'bg-sky-50/90 border-sky-200 text-sky-900 shadow-2xs',
-        proofCard: 'bg-emerald-50/90 border-emerald-200 text-emerald-950 shadow-2xs',
+        modalCard: 'bg-[var(--atlas-surface)] border-[var(--atlas-border)] text-[var(--atlas-text)] shadow-sm',
+        modalInput: 'bg-[var(--atlas-surface-hover)] border-[var(--atlas-border)] text-[var(--atlas-text)] focus:bg-[var(--atlas-surface)] focus:border-indigo-500',
+        alertBanner: 'bg-sky-50/90 border-sky-200 text-sky-900 shadow-xs',
+        proofCard: 'bg-emerald-50/90 border-emerald-200 text-emerald-950 shadow-xs',
         subtabActiveAudit: 'border-indigo-600 text-indigo-950 bg-indigo-50/60 rounded-t-xl font-extrabold',
         subtabActiveBlocoH: 'border-emerald-600 text-emerald-950 bg-emerald-50/60 rounded-t-xl font-extrabold',
         subtabActiveAltered: 'border-sky-600 text-sky-950 bg-sky-50/60 rounded-t-xl font-extrabold',
         subtabActiveOverview: 'border-amber-600 text-amber-950 bg-amber-50/60 rounded-t-xl font-extrabold',
-        subtabInactive: 'border-transparent text-slate-600 hover:text-slate-900',
+        subtabInactive: 'border-transparent text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)]',
       };
     }
   }, [isDarkTheme]);
@@ -1647,7 +1647,7 @@ export function StockEngineeringView({
             className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all border ${
               isDarkTheme
                 ? 'bg-slate-800 hover:bg-slate-700 text-amber-300 border-slate-700'
-                : 'bg-white hover:bg-slate-100 text-indigo-700 border-slate-300 shadow-2xs'
+                : 'bg-[var(--atlas-surface)] hover:bg-[var(--atlas-surface-hover)] text-indigo-700 border-[var(--atlas-border)] shadow-xs'
             }`}
           >
             {isDarkTheme ? (
@@ -1698,7 +1698,7 @@ export function StockEngineeringView({
                   </p>
                 </div>
               </div>
-              <div className="pt-6 mt-4 border-t border-slate-200/60 flex items-center text-xs font-bold text-emerald-600">
+              <div className="pt-6 mt-4 border-t border-[var(--atlas-border)]/60 flex items-center text-xs font-bold text-emerald-600">
                 <span>Selecionar Arquivo</span>
                 <ArrowUpRight className="w-4 h-4 ml-1 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </div>
@@ -1722,7 +1722,7 @@ export function StockEngineeringView({
                   </p>
                 </div>
               </div>
-              <div className="pt-6 mt-4 border-t border-slate-200/60 flex items-center text-xs font-bold text-indigo-600">
+              <div className="pt-6 mt-4 border-t border-[var(--atlas-border)]/60 flex items-center text-xs font-bold text-indigo-600">
                 <span>Cadastrar Item</span>
                 <ArrowUpRight className="w-4 h-4 ml-1 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </div>
@@ -1746,7 +1746,7 @@ export function StockEngineeringView({
                   </p>
                 </div>
               </div>
-              <div className="pt-6 mt-4 border-t border-slate-200/60 flex items-center text-xs font-bold text-amber-600">
+              <div className="pt-6 mt-4 border-t border-[var(--atlas-border)]/60 flex items-center text-xs font-bold text-amber-600">
                 <span>Carregar Demonstração</span>
                 <ArrowUpRight className="w-4 h-4 ml-1 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </div>
@@ -1796,14 +1796,14 @@ export function StockEngineeringView({
                   <Plus className="w-4 h-4 text-emerald-400" />
                   <span>Novo Produto no Estoque</span>
                 </h3>
-                <button onClick={() => setIsManualAddOpen(false)} className="text-slate-400 hover:text-white">
+                <button onClick={() => setIsManualAddOpen(false)} className="text-[var(--atlas-text-muted)] hover:text-white">
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
               <div className="space-y-3 text-xs">
                 <div>
-                  <label className="block text-slate-400 font-medium mb-1">Código do Item / SKU *</label>
+                  <label className="block text-[var(--atlas-text-muted)] font-medium mb-1">Código do Item / SKU *</label>
                   <input
                     type="text"
                     value={newItemCode}
@@ -1814,7 +1814,7 @@ export function StockEngineeringView({
                 </div>
 
                 <div>
-                  <label className="block text-slate-400 font-medium mb-1">Descrição do Produto *</label>
+                  <label className="block text-[var(--atlas-text-muted)] font-medium mb-1">Descrição do Produto *</label>
                   <input
                     type="text"
                     value={newItemDescr}
@@ -1826,7 +1826,7 @@ export function StockEngineeringView({
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-slate-400 font-medium mb-1">NCM (8 dígitos)</label>
+                    <label className="block text-[var(--atlas-text-muted)] font-medium mb-1">NCM (8 dígitos)</label>
                     <input
                       type="text"
                       value={newItemNcm}
@@ -1836,7 +1836,7 @@ export function StockEngineeringView({
                     />
                   </div>
                   <div>
-                    <label className="block text-slate-400 font-medium mb-1">Unidade de Medida</label>
+                    <label className="block text-[var(--atlas-text-muted)] font-medium mb-1">Unidade de Medida</label>
                     <input
                       type="text"
                       value={newItemUnid}
@@ -1849,7 +1849,7 @@ export function StockEngineeringView({
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-slate-400 font-medium mb-1">Quantidade Física</label>
+                    <label className="block text-[var(--atlas-text-muted)] font-medium mb-1">Quantidade Física</label>
                     <input
                       type="number"
                       step="0.001"
@@ -1859,7 +1859,7 @@ export function StockEngineeringView({
                     />
                   </div>
                   <div>
-                    <label className="block text-slate-400 font-medium mb-1">Valor Unitário (R$)</label>
+                    <label className="block text-[var(--atlas-text-muted)] font-medium mb-1">Valor Unitário (R$)</label>
                     <input
                       type="number"
                       step="0.01"
@@ -1871,7 +1871,7 @@ export function StockEngineeringView({
                 </div>
 
                 <div className="p-3 bg-slate-950/60 rounded-lg border border-slate-800 flex justify-between font-mono">
-                  <span className="text-slate-400">Total do Item:</span>
+                  <span className="text-[var(--atlas-text-muted)]">Total do Item:</span>
                   <span className="font-bold text-emerald-400">
                     R$ {(newItemQtd * newItemVlUnit).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </span>
@@ -1881,7 +1881,7 @@ export function StockEngineeringView({
               <div className="pt-2 flex justify-end space-x-2">
                 <button
                   onClick={() => setIsManualAddOpen(false)}
-                  className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs"
+                  className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-[var(--atlas-text-muted)] font-semibold text-xs"
                 >
                   Cancelar
                 </button>
@@ -1927,7 +1927,7 @@ export function StockEngineeringView({
             <div>
               <div className="flex items-center space-x-2">
                 <h1 className={`text-base font-bold ${theme.textTitle}`}>Módulo de Estoque e Cadastro Fiscal</h1>
-                <span className={`text-[11px] font-mono px-2 py-0.5 rounded ${theme.badgeBg}`}>
+                <span className={`text-xs font-mono px-2 py-0.5 rounded ${theme.badgeBg}`}>
                   UF: {spedData.header.uf || 'SP'}
                 </span>
               </div>
@@ -1944,7 +1944,7 @@ export function StockEngineeringView({
               className={`flex items-center space-x-2 px-3 py-2 rounded-xl text-xs font-bold transition-all border ${
                 isDarkTheme
                   ? 'bg-slate-800 hover:bg-slate-700 text-amber-300 border-slate-700'
-                  : 'bg-white hover:bg-slate-100 text-indigo-700 border-slate-300 shadow-2xs'
+                  : 'bg-[var(--atlas-surface)] hover:bg-[var(--atlas-surface-hover)] text-indigo-700 border-[var(--atlas-border)] shadow-xs'
               }`}
               title={isDarkTheme ? "Mudar para Tela Clara (Fundo Claro)" : "Mudar para Tela Escura (Fundo Escuro)"}
             >
@@ -1990,7 +1990,7 @@ export function StockEngineeringView({
             {/* Clear / Delete Imported Stock Button */}
             <button
               onClick={() => setIsDeleteModalOpen(true)}
-              className={`flex items-center space-x-1.5 px-3 py-2 rounded-xl text-rose-600 font-semibold text-xs transition-all border border-rose-200/80 hover:bg-rose-50/80 shadow-2xs ${
+              className={`flex items-center space-x-1.5 px-3 py-2 rounded-xl text-rose-600 font-semibold text-xs transition-all border border-rose-200/80 hover:bg-rose-50/80 shadow-xs ${
                 isDarkTheme ? 'bg-slate-800 hover:bg-rose-950/80 text-rose-300 border-slate-700' : ''
               }`}
               title="Apagar dados ou limpar o arquivo do estoque importado"
@@ -2002,26 +2002,26 @@ export function StockEngineeringView({
         </div>
 
         {/* Dense Status Metrics Bar */}
-        <div className={`max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-3 mt-4 pt-3 border-t font-mono text-xs ${isDarkTheme ? 'border-slate-800/60' : 'border-slate-200/80'}`}>
+        <div className={`max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-3 mt-4 pt-3 border-t font-mono text-xs ${isDarkTheme ? 'border-slate-800/60' : 'border-[var(--atlas-border)]/80'}`}>
           <div className={`px-3.5 py-2 rounded-xl flex items-center justify-between ${theme.cardHighlight}`}>
-            <span className={`font-sans text-[11px] ${theme.textMuted}`}>Itens no 0200:</span>
+            <span className={`font-sans text-xs ${theme.textMuted}`}>Itens no 0200:</span>
             <span className={`font-bold ${theme.textTitle}`}>{items0200.length}</span>
           </div>
 
           <div className={`px-3.5 py-2 rounded-xl flex items-center justify-between ${theme.cardHighlight}`}>
-            <span className={`font-sans text-[11px] ${theme.textMuted}`}>Divergências Matriz:</span>
+            <span className={`font-sans text-xs ${theme.textMuted}`}>Divergências Matriz:</span>
             <span className={`font-bold ${auditStats.divergent > 0 ? 'text-amber-600 font-extrabold' : theme.textTitle}`}>
               {auditStats.divergent}
             </span>
           </div>
 
           <div className={`px-3.5 py-2 rounded-xl flex items-center justify-between ${theme.cardHighlight}`}>
-            <span className={`font-sans text-[11px] ${theme.textMuted}`}>Itens no H010:</span>
+            <span className={`font-sans text-xs ${theme.textMuted}`}>Itens no H010:</span>
             <span className="font-bold text-emerald-600">{blocoH.items.length}</span>
           </div>
 
           <div className={`px-3.5 py-2 rounded-xl flex items-center justify-between ${theme.cardHighlight}`}>
-            <span className={`font-sans text-[11px] ${theme.textMuted}`}>Total Inventário H005:</span>
+            <span className={`font-sans text-xs ${theme.textMuted}`}>Total Inventário H005:</span>
             <span className="font-bold text-emerald-600">
               R$ {(blocoH.vlInv || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
@@ -2041,7 +2041,7 @@ export function StockEngineeringView({
             <ShieldCheck className="w-4 h-4 text-indigo-600" />
             <span>Auditoria de Cadastros (Bloco 0200)</span>
             {auditStats.divergent > 0 && (
-              <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-700 font-mono">
+              <span className="px-1.5 py-0.5 rounded text-xs font-bold bg-amber-500/20 text-amber-700 font-mono">
                 {auditStats.divergent}
               </span>
             )}
@@ -2055,7 +2055,7 @@ export function StockEngineeringView({
           >
             <PackageCheck className="w-4 h-4 text-emerald-600" />
             <span>Livro de Inventário (Bloco H - H005 / H010)</span>
-            <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold font-mono ${theme.badgeBg}`}>
+            <span className={`px-1.5 py-0.5 rounded text-xs font-bold font-mono ${theme.badgeBg}`}>
               {blocoH.items.length}
             </span>
           </button>
@@ -2069,11 +2069,11 @@ export function StockEngineeringView({
             <History className="w-4 h-4 text-sky-600" />
             <span>Produtos Alterados</span>
             {alteredProducts.length > 0 ? (
-              <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-sky-500/20 text-sky-800 font-mono border border-sky-500/30">
+              <span className="px-1.5 py-0.5 rounded text-xs font-bold bg-sky-500/20 text-sky-800 font-mono border border-sky-500/30">
                 {alteredProducts.length}
               </span>
             ) : (
-              <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold font-mono ${theme.badgeBg}`}>
+              <span className={`px-1.5 py-0.5 rounded text-xs font-bold font-mono ${theme.badgeBg}`}>
                 0
               </span>
             )}
@@ -2101,7 +2101,7 @@ export function StockEngineeringView({
             <div className={`p-3.5 rounded-lg flex flex-col md:flex-row md:items-center md:justify-between gap-3 ${theme.cardBg}`}>
               <div className="flex items-center space-x-2 flex-1 max-w-md">
                 <div className="relative flex-1">
-                  <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
+                  <Search className="w-3.5 h-3.5 text-[var(--atlas-text-muted)] absolute left-3 top-2.5" />
                   <input
                     type="text"
                     value={search0200}
@@ -2125,7 +2125,7 @@ export function StockEngineeringView({
               <div className="flex items-center space-x-2 flex-wrap gap-y-2">
                 <button
                   onClick={handleApplyMatrixTo0200}
-                  className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs flex items-center space-x-1.5 transition-colors shadow-2xs"
+                  className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs flex items-center space-x-1.5 transition-colors shadow-xs"
                   title="Aplica alíquotas e CST esperados da Matriz nos itens 0200"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
@@ -2161,7 +2161,7 @@ export function StockEngineeringView({
 
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className={`text-[11px] uppercase tracking-wider ${theme.tableHeaderBg}`}>
+                  <thead className={`text-xs uppercase tracking-wider ${theme.tableHeaderBg}`}>
                     <tr>
                       <th className="p-3 font-mono">Código</th>
                       <th className="p-3">Descrição do Item</th>
@@ -2188,7 +2188,7 @@ export function StockEngineeringView({
                             className="w-24 bg-slate-900 border border-slate-700 text-slate-200 rounded-md px-2 py-1 text-xs focus:border-indigo-500 font-mono"
                           />
                         </td>
-                        <td className="p-3 text-slate-400">{item.unid || 'UN'}</td>
+                        <td className="p-3 text-[var(--atlas-text-muted)]">{item.unid || 'UN'}</td>
                         <td className="p-3">
                           <input
                             type="number"
@@ -2197,32 +2197,32 @@ export function StockEngineeringView({
                             className="w-16 bg-slate-900 border border-slate-700 text-slate-200 rounded-md px-2 py-1 text-xs focus:border-indigo-500 font-mono"
                           />
                         </td>
-                        <td className="p-3 font-sans text-[11px]">
+                        <td className="p-3 font-sans text-xs">
                           {matchedRule ? (
-                            <div className="text-slate-300 font-mono">
+                            <div className="text-[var(--atlas-text-muted)] font-mono">
                               <span>CST: {matchedRule.expectedCst || '-'}</span>
-                              <span className="mx-1.5 text-slate-600">|</span>
+                              <span className="mx-1.5 text-[var(--atlas-text-secondary)]">|</span>
                               <span>Alíq: {matchedRule.expectedAliqIcms !== undefined ? `${matchedRule.expectedAliqIcms}%` : '-'}</span>
                             </div>
                           ) : (
-                            <span className="text-slate-500 italic">Sem regra cadastrada</span>
+                            <span className="text-[var(--atlas-text-secondary)] italic">Sem regra cadastrada</span>
                           )}
                         </td>
                         <td className="p-3 font-sans">
                           {status === 'ok' && (
-                            <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                            <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                               <CheckCircle2 className="w-3 h-3" />
                               <span>Conforme</span>
                             </span>
                           )}
                           {status === 'divergent' && (
-                            <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                            <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
                               <AlertTriangle className="w-3 h-3" />
                               <span>Divergente</span>
                             </span>
                           )}
                           {status === 'no_rule' && (
-                            <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-slate-400 border border-slate-700">
+                            <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-800 text-[var(--atlas-text-muted)] border border-slate-700">
                               <HelpCircle className="w-3 h-3" />
                               <span>Sem Regra</span>
                             </span>
@@ -2234,7 +2234,7 @@ export function StockEngineeringView({
                               setSelected0200Codes(new Set([item.codItem]));
                               setIs0200PickerOpen(true);
                             }}
-                            className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-emerald-300 rounded-lg text-[11px] font-semibold transition-colors"
+                            className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-emerald-300 rounded-lg text-xs font-semibold transition-colors"
                           >
                             + Add Inventário
                           </button>
@@ -2243,7 +2243,7 @@ export function StockEngineeringView({
                     ))}
                     {filtered0200.length === 0 && (
                       <tr>
-                        <td colSpan={8} className="p-12 text-center text-slate-500 font-sans">
+                        <td colSpan={8} className="p-12 text-center text-[var(--atlas-text-secondary)] font-sans">
                           Nenhum produto cadastrado no Bloco 0200 encontrado.
                         </td>
                       </tr>
@@ -2280,7 +2280,7 @@ export function StockEngineeringView({
 
             {/* Action Header & Bulk Calculations */}
             <div className={`p-4 rounded-lg space-y-4 ${theme.cardBg}`}>
-              <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b pb-3.5 ${isDarkTheme ? 'border-slate-800/80' : 'border-slate-200/80'}`}>
+              <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b pb-3.5 ${isDarkTheme ? 'border-slate-800/80' : 'border-[var(--atlas-border)]/80'}`}>
                 <div>
                   <h2 className={`text-sm font-bold flex items-center space-x-2 ${theme.textTitle}`}>
                     <PackageCheck className="w-4 h-4 text-emerald-600" />
@@ -2293,7 +2293,7 @@ export function StockEngineeringView({
 
                 <div className="flex items-center space-x-2">
                   <div className="relative flex-1 sm:w-64">
-                    <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
+                    <Search className="w-3.5 h-3.5 text-[var(--atlas-text-muted)] absolute left-3 top-2.5" />
                     <input
                       type="text"
                       value={searchH010}
@@ -2305,7 +2305,7 @@ export function StockEngineeringView({
 
                   <button
                     onClick={() => setIs0200PickerOpen(true)}
-                    className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-xl flex items-center space-x-1.5 transition-colors shrink-0 shadow-2xs"
+                    className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-xl flex items-center space-x-1.5 transition-colors shrink-0 shadow-xs"
                   >
                     <Plus className="w-4 h-4" />
                     <span>Puxar do 0200</span>
@@ -2321,7 +2321,7 @@ export function StockEngineeringView({
                     <Calculator className="w-3.5 h-3.5 text-indigo-600" />
                     <span>Multiplicador de Qtd em Lote</span>
                   </div>
-                  <p className={`text-[11px] ${theme.textMuted}`}>
+                  <p className={`text-xs ${theme.textMuted}`}>
                     Aplica um fator multiplicador sobre todas as quantidades atuais (ex: 1.05 = +5%, 0.90 = -10%).
                   </p>
                   <div className="flex items-center space-x-2 pt-1">
@@ -2334,7 +2334,7 @@ export function StockEngineeringView({
                     />
                     <button
                       onClick={handleApplyBulkFactor}
-                      className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-lg text-xs transition-colors shadow-2xs"
+                      className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-lg text-xs transition-colors shadow-xs"
                     >
                       Aplicar Fator
                     </button>
@@ -2348,11 +2348,11 @@ export function StockEngineeringView({
                       <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
                       <span>Reajuste por Valor Alvo (R$)</span>
                     </div>
-                    <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-800 border border-emerald-500/30 font-mono text-[10px] font-bold">
+                    <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-800 border border-emerald-500/30 font-mono text-xs font-bold">
                       Apenas Quantidade (Qtd)
                     </span>
                   </div>
-                  <p className={`text-[11px] ${theme.textMuted}`}>
+                  <p className={`text-xs ${theme.textMuted}`}>
                     Recalcula exclusivamente as quantidades de todos os itens do Bloco H para atingir o valor H005 exato, mantendo o preço unitário fixo conforme o SPED.
                   </p>
                   <div className="flex flex-wrap items-center gap-1.5 pt-1">
@@ -2366,7 +2366,7 @@ export function StockEngineeringView({
                     />
                     <button
                       onClick={handleApplyTargetStockValue}
-                      className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg text-xs transition-colors flex items-center space-x-1 shadow-2xs"
+                      className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg text-xs transition-colors flex items-center space-x-1 shadow-xs"
                     >
                       <Calculator className="w-3.5 h-3.5" />
                       <span>Recalcular</span>
@@ -2374,7 +2374,7 @@ export function StockEngineeringView({
                   </div>
 
                   {/* Quick Preset Value Chips */}
-                  <div className={`flex flex-wrap items-center gap-1 pt-1 border-t ${isDarkTheme ? 'border-slate-800/80' : 'border-slate-200/80'}`}>
+                  <div className={`flex flex-wrap items-center gap-1 pt-1 border-t ${isDarkTheme ? 'border-slate-800/80' : 'border-[var(--atlas-border)]/80'}`}>
                     <span className={`text-[9px] font-bold uppercase ${theme.textSub}`}>Testes:</span>
                     {['5.000,00', '15.000,00', '50.000,00', '100.000,00'].map((preset) => (
                       <button
@@ -2388,7 +2388,7 @@ export function StockEngineeringView({
                         className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-bold transition-all border ${
                           isDarkTheme
                             ? 'bg-slate-950 hover:bg-emerald-600 hover:text-white text-emerald-400 border-slate-800'
-                            : 'bg-white hover:bg-emerald-600 hover:text-white text-emerald-700 border-slate-300 shadow-2xs'
+                            : 'bg-[var(--atlas-surface)] hover:bg-emerald-600 hover:text-white text-emerald-700 border-[var(--atlas-border)] shadow-xs'
                         }`}
                       >
                         R$ {preset}
@@ -2404,11 +2404,11 @@ export function StockEngineeringView({
                       <ShieldCheck className="w-3.5 h-3.5 text-sky-600" />
                       <span>Gerenciador H020 Conforme NCM (0200)</span>
                     </div>
-                    <span className="text-[10px] text-sky-600 font-mono bg-sky-500/10 border border-sky-500/20 px-1.5 py-0.5 rounded">
+                    <span className="text-xs text-sky-600 font-mono bg-sky-500/10 border border-sky-500/20 px-1.5 py-0.5 rounded">
                       Tax NCM Sync
                     </span>
                   </div>
-                  <p className={`text-[11px] ${theme.textMuted}`}>
+                  <p className={`text-xs ${theme.textMuted}`}>
                     O Registro H020 é preenchido conforme a NCM do produto e Matriz Tributária. Injete automaticamente ou filtre por NCM.
                   </p>
                   
@@ -2418,7 +2418,7 @@ export function StockEngineeringView({
                       <button
                         type="button"
                         onClick={handleInjectH020AutoNcm}
-                        className="px-2.5 py-1 bg-sky-600 hover:bg-sky-500 text-white font-semibold rounded-lg text-xs transition-colors flex items-center space-x-1 shadow-2xs"
+                        className="px-2.5 py-1 bg-sky-600 hover:bg-sky-500 text-white font-semibold rounded-lg text-xs transition-colors flex items-center space-x-1 shadow-xs"
                         title="Gerar/Injetar H020 automaticamente para todos os itens cruzando a NCM com a Matriz Tributária"
                       >
                         <Sparkles className="w-3.5 h-3.5 text-sky-100" />
@@ -2440,8 +2440,8 @@ export function StockEngineeringView({
                         onClick={handleBulkRemoveH020}
                         className={`px-2 py-1 rounded-lg text-xs font-semibold transition-colors border ${
                           isDarkTheme
-                            ? 'bg-slate-950 hover:bg-rose-950 hover:text-rose-300 text-slate-400 border-slate-800'
-                            : 'bg-white hover:bg-rose-50 text-rose-600 border-slate-300 shadow-2xs'
+                            ? 'bg-slate-950 hover:bg-rose-950 hover:text-rose-300 text-[var(--atlas-text-muted)] border-slate-800'
+                            : 'bg-[var(--atlas-surface)] hover:bg-rose-50 text-rose-600 border-[var(--atlas-border)] shadow-xs'
                         }`}
                         title="Remover H020 de todos os itens do inventário"
                       >
@@ -2450,8 +2450,8 @@ export function StockEngineeringView({
                     </div>
 
                     {/* Filter & Apply by specific NCM */}
-                    <div className={`flex flex-wrap items-center gap-1.5 pt-1.5 border-t ${isDarkTheme ? 'border-slate-800/80' : 'border-slate-200/80'}`}>
-                      <span className={`text-[10px] font-medium ${theme.textMuted}`}>Por NCM Específico:</span>
+                    <div className={`flex flex-wrap items-center gap-1.5 pt-1.5 border-t ${isDarkTheme ? 'border-slate-800/80' : 'border-[var(--atlas-border)]/80'}`}>
+                      <span className={`text-xs font-medium ${theme.textMuted}`}>Por NCM Específico:</span>
                       <select
                         value={selectedNcmFilter}
                         onChange={e => setSelectedNcmFilter(e.target.value)}
@@ -2501,7 +2501,7 @@ export function StockEngineeringView({
                     <div className="flex items-center space-x-2">
                       <h3 className={`text-sm font-bold ${theme.textTitle}`}>Painel Totalizador do Estoque (H005)</h3>
                       {lastRecalcSummary && (
-                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-800 border border-emerald-500/40">
+                        <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-800 border border-emerald-500/40">
                           ✓ Recálculo Auditado
                         </span>
                       )}
@@ -2513,7 +2513,7 @@ export function StockEngineeringView({
                 </div>
 
                 <div className="text-right font-mono">
-                  <span className={`text-[10px] uppercase font-sans block ${theme.textMuted}`}>Total do Inventário</span>
+                  <span className={`text-xs uppercase font-sans block ${theme.textMuted}`}>Total do Inventário</span>
                   <span className="text-lg md:text-xl font-extrabold text-emerald-600">
                     R$ {(blocoH.vlInv || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </span>
@@ -2523,7 +2523,7 @@ export function StockEngineeringView({
               {/* Live Metric Cards */}
               <div className="grid grid-cols-2 md:grid-cols-5 gap-2.5 font-mono">
                 <div className={`p-2.5 rounded-xl ${theme.cardHighlight}`}>
-                  <span className={`text-[10px] font-semibold uppercase block ${theme.textMuted}`}>Total H005</span>
+                  <span className={`text-xs font-semibold uppercase block ${theme.textMuted}`}>Total H005</span>
                   <div className="text-xs md:text-sm font-bold text-emerald-600 mt-1 truncate">
                     R$ {(blocoH.vlInv || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
@@ -2531,7 +2531,7 @@ export function StockEngineeringView({
                 </div>
 
                 <div className={`p-2.5 rounded-xl ${theme.cardHighlight}`}>
-                  <span className={`text-[10px] font-semibold uppercase block ${theme.textMuted}`}>Qtd Total Peças</span>
+                  <span className={`text-xs font-semibold uppercase block ${theme.textMuted}`}>Qtd Total Peças</span>
                   <div className={`text-xs md:text-sm font-bold mt-1 truncate ${theme.textTitle}`}>
                     {totalQtdInStock.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}
                   </div>
@@ -2539,7 +2539,7 @@ export function StockEngineeringView({
                 </div>
 
                 <div className={`p-2.5 rounded-xl ${theme.cardHighlight}`}>
-                  <span className={`text-[10px] font-semibold uppercase block ${theme.textMuted}`}>Preço Médio / Item</span>
+                  <span className={`text-xs font-semibold uppercase block ${theme.textMuted}`}>Preço Médio / Item</span>
                   <div className="text-xs md:text-sm font-bold text-indigo-600 mt-1 truncate">
                     R$ {avgPriceInStock.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
@@ -2547,7 +2547,7 @@ export function StockEngineeringView({
                 </div>
 
                 <div className={`p-2.5 rounded-xl ${theme.cardHighlight}`}>
-                  <span className={`text-[10px] font-semibold uppercase block ${theme.textMuted}`}>Reg. H020 Preservados</span>
+                  <span className={`text-xs font-semibold uppercase block ${theme.textMuted}`}>Reg. H020 Preservados</span>
                   <div className="text-xs md:text-sm font-bold text-sky-600 mt-1 flex items-center space-x-1">
                     <span>{totalH020Count} de {blocoH.items.length}</span>
                   </div>
@@ -2555,12 +2555,12 @@ export function StockEngineeringView({
                 </div>
 
                 <div className={`p-2.5 rounded-xl ${theme.cardHighlight}`}>
-                  <span className={`text-[10px] font-semibold uppercase block ${theme.textMuted}`}>Consistência Fiscal & Contábil</span>
+                  <span className={`text-xs font-semibold uppercase block ${theme.textMuted}`}>Consistência Fiscal & Contábil</span>
                   <div className="text-xs md:text-sm font-bold text-emerald-600 mt-1 flex items-center space-x-1">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                     <span>100% Auditado</span>
                   </div>
-                  <span className="text-[9px] text-slate-500 font-sans mt-0.5 block">Fechamento exato</span>
+                  <span className="text-[9px] text-[var(--atlas-text-secondary)] font-sans mt-0.5 block">Fechamento exato</span>
                 </div>
               </div>
 
@@ -2572,28 +2572,28 @@ export function StockEngineeringView({
                       <TrendingUp className="w-4 h-4 text-emerald-400" />
                       <span>Garantia de Recálculo Concluído ({lastRecalcSummary.timestamp})</span>
                     </span>
-                    <span className="text-[10px] font-mono text-emerald-300 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
+                    <span className="text-xs font-mono text-emerald-300 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
                       {lastRecalcSummary.itemCount} itens atualizados
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 font-mono text-[11px]">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 font-mono text-xs">
                     <div>
-                      <span className="text-slate-400 block text-[10px]">VALOR ORIGINAL</span>
-                      <span className="text-slate-300 font-bold">R$ {lastRecalcSummary.originalTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                      <span className="text-[var(--atlas-text-muted)] block text-xs">VALOR ORIGINAL</span>
+                      <span className="text-[var(--atlas-text-muted)] font-bold">R$ {lastRecalcSummary.originalTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
                     <div>
-                      <span className="text-slate-400 block text-[10px]">VALOR ALVO / FINAL</span>
+                      <span className="text-[var(--atlas-text-muted)] block text-xs">VALOR ALVO / FINAL</span>
                       <span className="text-emerald-400 font-bold text-xs">R$ {lastRecalcSummary.newTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
                     <div>
-                      <span className="text-slate-400 block text-[10px]">VARIAÇÃO NOMINAL</span>
+                      <span className="text-[var(--atlas-text-muted)] block text-xs">VARIAÇÃO NOMINAL</span>
                       <span className={`font-bold ${lastRecalcSummary.diff >= 0 ? 'text-emerald-400' : 'text-amber-400'}`}>
                         {lastRecalcSummary.diff >= 0 ? '+' : ''} R$ {lastRecalcSummary.diff.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ({lastRecalcSummary.percentChange >= 0 ? '+' : ''}{lastRecalcSummary.percentChange.toFixed(2)}%)
                       </span>
                     </div>
                     <div>
-                      <span className="text-slate-400 block text-[10px]">FATOR / MODALIDADE</span>
+                      <span className="text-[var(--atlas-text-muted)] block text-xs">FATOR / MODALIDADE</span>
                       <span className="text-slate-200 font-bold">
                         {lastRecalcSummary.ratio.toFixed(4)}x ({lastRecalcSummary.mode === 'qtd' ? 'Qtd' : 'Preço Unit.'})
                       </span>
@@ -2614,7 +2614,7 @@ export function StockEngineeringView({
 
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className={`text-[11px] uppercase tracking-wider ${theme.tableHeaderBg}`}>
+                  <thead className={`text-xs uppercase tracking-wider ${theme.tableHeaderBg}`}>
                     <tr>
                       <th className="p-3 font-mono">Cód Item</th>
                       <th className="p-3">Descrição</th>
@@ -2663,7 +2663,7 @@ export function StockEngineeringView({
                           </td>
                           <td className="p-3">
                             <div className={`flex items-center space-x-1 font-mono rounded-md px-2 py-1 text-xs w-28 ${theme.badgeBg}`} title="Preço unitário fixo conforme arquivo SPED/0200">
-                              <span className={`text-[10px] ${theme.textSub}`}>R$</span>
+                              <span className={`text-xs ${theme.textSub}`}>R$</span>
                               <span className={`font-bold ${theme.textTitle}`}>{item.vlUnit.toFixed(2)}</span>
                             </div>
                           </td>
@@ -2681,7 +2681,7 @@ export function StockEngineeringView({
                                     <select
                                       value={activeH020.cstIcms || '000'}
                                       onChange={e => handleUpdateH020Field(item.codItem, 'cstIcms', e.target.value)}
-                                      className="bg-slate-900 border border-slate-700 text-sky-300 rounded px-1 py-0.5 text-[10px] font-mono font-bold focus:border-sky-500"
+                                      className="bg-slate-900 border border-slate-700 text-sky-300 rounded px-1 py-0.5 text-xs font-mono font-bold focus:border-sky-500"
                                     >
                                       <option value="000">CST 000</option>
                                       <option value="020">CST 020</option>
@@ -2694,7 +2694,7 @@ export function StockEngineeringView({
                                     <button
                                       type="button"
                                       onClick={() => handleRestoreH020ToOriginal(item.codItem)}
-                                      className="text-slate-500 hover:text-sky-300 hover:bg-sky-950/50 p-1 rounded transition-colors"
+                                      className="text-[var(--atlas-text-secondary)] hover:text-sky-300 hover:bg-sky-950/50 p-1 rounded transition-colors"
                                       title="Manter / Restaurar H020 conforme arquivo SPED original"
                                     >
                                       <Undo2 className="w-3 h-3 text-sky-400" />
@@ -2702,7 +2702,7 @@ export function StockEngineeringView({
                                     <button
                                       type="button"
                                       onClick={() => handleAddH020(item.codItem)}
-                                      className="text-slate-500 hover:text-amber-300 hover:bg-amber-950/50 p-1 rounded transition-colors"
+                                      className="text-[var(--atlas-text-secondary)] hover:text-amber-300 hover:bg-amber-950/50 p-1 rounded transition-colors"
                                       title="Recalcular CST/BC/ICMS com base no NCM do item"
                                     >
                                       <RotateCcw className="w-3 h-3 text-amber-400" />
@@ -2710,32 +2710,32 @@ export function StockEngineeringView({
                                     <button
                                       type="button"
                                       onClick={() => handleRemoveH020(item.codItem)}
-                                      className="text-slate-500 hover:text-rose-400 hover:bg-rose-950/50 p-1 rounded transition-colors"
+                                      className="text-[var(--atlas-text-secondary)] hover:text-rose-400 hover:bg-rose-950/50 p-1 rounded transition-colors"
                                       title="Remover Registro H020 deste item"
                                     >
                                       <Trash2 className="w-3 h-3" />
                                     </button>
                                   </div>
                                 </div>
-                                <div className="grid grid-cols-2 gap-1.5 text-[10px] font-mono">
+                                <div className="grid grid-cols-2 gap-1.5 text-xs font-mono">
                                   <div>
-                                    <span className="text-[9px] text-slate-500 block">BC ICMS (R$)</span>
+                                    <span className="text-[9px] text-[var(--atlas-text-secondary)] block">BC ICMS (R$)</span>
                                     <input
                                       type="number"
                                       step="0.01"
                                       value={activeH020.vlBcIcms}
                                       onChange={e => handleUpdateH020Field(item.codItem, 'vlBcIcms', e.target.value)}
-                                      className="w-full bg-slate-900 border border-slate-700 text-slate-200 rounded px-1.5 py-0.5 text-[10px] focus:border-sky-500 font-mono"
+                                      className="w-full bg-slate-900 border border-slate-700 text-slate-200 rounded px-1.5 py-0.5 text-xs focus:border-sky-500 font-mono"
                                     />
                                   </div>
                                   <div>
-                                    <span className="text-[9px] text-slate-500 block">VL ICMS (R$)</span>
+                                    <span className="text-[9px] text-[var(--atlas-text-secondary)] block">VL ICMS (R$)</span>
                                     <input
                                       type="number"
                                       step="0.01"
                                       value={activeH020.vlIcms}
                                       onChange={e => handleUpdateH020Field(item.codItem, 'vlIcms', e.target.value)}
-                                      className="w-full bg-slate-900 border border-slate-700 text-slate-200 rounded px-1.5 py-0.5 text-[10px] focus:border-sky-500 font-mono"
+                                      className="w-full bg-slate-900 border border-slate-700 text-slate-200 rounded px-1.5 py-0.5 text-xs focus:border-sky-500 font-mono"
                                     />
                                   </div>
                                 </div>
@@ -2744,7 +2744,7 @@ export function StockEngineeringView({
                               <button
                                 type="button"
                                 onClick={() => handleAddH020(item.codItem)}
-                                className="px-2.5 py-1 bg-slate-900 hover:bg-sky-950 hover:text-sky-300 text-slate-400 border border-slate-800 hover:border-sky-700 rounded-lg text-[10px] font-semibold transition-all flex items-center space-x-1"
+                                className="px-2.5 py-1 bg-slate-900 hover:bg-sky-950 hover:text-sky-300 text-[var(--atlas-text-muted)] border border-slate-800 hover:border-sky-700 rounded-lg text-xs font-semibold transition-all flex items-center space-x-1"
                                 title="Gerar Registro H020 automaticamente com base no NCM e alíquota tributária do item"
                               >
                                 <Plus className="w-3 h-3 text-sky-400" />
@@ -2756,7 +2756,7 @@ export function StockEngineeringView({
                             <select
                               value={item.indProp || '0'}
                               onChange={e => handleUpdateH010Item(item.codItem, 'indProp', e.target.value)}
-                              className="bg-slate-900 border border-slate-700 text-slate-300 rounded-md px-2 py-1 text-[11px]"
+                              className="bg-slate-900 border border-slate-700 text-[var(--atlas-text-muted)] rounded-md px-2 py-1 text-xs"
                             >
                               <option value="0">0 - Em poder da empresa</option>
                               <option value="1">1 - Em poder de terceiros</option>
@@ -2766,7 +2766,7 @@ export function StockEngineeringView({
                           <td className="p-3 text-right">
                             <button
                               onClick={() => handleRemoveH010Item(item.codItem)}
-                              className="p-1.5 text-slate-400 hover:text-rose-400 rounded-lg hover:bg-slate-800 transition-colors"
+                              className="p-1.5 text-[var(--atlas-text-muted)] hover:text-rose-400 rounded-lg hover:bg-slate-800 transition-colors"
                               title="Remover do Inventário"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -2777,7 +2777,7 @@ export function StockEngineeringView({
                     })}
                     {filteredH010.length === 0 && (
                       <tr>
-                        <td colSpan={8} className="p-12 text-center text-slate-500 font-sans">
+                        <td colSpan={8} className="p-12 text-center text-[var(--atlas-text-secondary)] font-sans">
                           Inventário H010 está vazio. Clique em <span className="font-semibold text-emerald-400">"Puxar do 0200"</span> ou <span className="font-semibold text-emerald-400">"Importar Arquivo"</span> para incluir produtos.
                         </td>
                       </tr>
@@ -2800,14 +2800,14 @@ export function StockEngineeringView({
                     <History className="w-5 h-5 text-sky-400" />
                     <span>Resumo dos Produtos Alterados no Estoque</span>
                   </h2>
-                  <p className="text-xs text-slate-400 mt-1">
+                  <p className="text-xs text-[var(--atlas-text-muted)] mt-1">
                     Exibindo histórico detalhado dos itens modificados, reajustados, adicionados ou removidos em relação ao arquivo SPED original.
                   </p>
                 </div>
 
                 <div className="flex items-center space-x-2">
                   <div className="relative flex-1 sm:w-64">
-                    <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-2.5" />
+                    <Search className="w-3.5 h-3.5 text-[var(--atlas-text-secondary)] absolute left-3 top-2.5" />
                     <input
                       type="text"
                       value={searchAltered}
@@ -2833,37 +2833,37 @@ export function StockEngineeringView({
               {/* KPI Summary Cards */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 font-mono">
                 <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-xl">
-                  <span className="text-[10px] font-semibold text-slate-400 uppercase block">Total Alterados</span>
+                  <span className="text-xs font-semibold text-[var(--atlas-text-muted)] uppercase block">Total Alterados</span>
                   <div className="text-lg font-bold text-sky-400 mt-0.5">
-                    {alteredProducts.length} <span className="text-xs text-slate-400 font-normal">produtos</span>
+                    {alteredProducts.length} <span className="text-xs text-[var(--atlas-text-muted)] font-normal">produtos</span>
                   </div>
-                  <span className="text-[9px] text-slate-500 font-sans block mt-0.5">
+                  <span className="text-[9px] text-[var(--atlas-text-secondary)] font-sans block mt-0.5">
                     {(alteredProducts.length / Math.max(1, blocoH.items.length) * 100).toFixed(1)}% do estoque total
                   </span>
                 </div>
 
                 <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-xl">
-                  <span className="text-[10px] font-semibold text-slate-400 uppercase block">Modificados</span>
+                  <span className="text-xs font-semibold text-[var(--atlas-text-muted)] uppercase block">Modificados</span>
                   <div className="text-lg font-bold text-amber-400 mt-0.5">
                     {alteredProducts.filter(i => i.status === 'modified').length}
                   </div>
-                  <span className="text-[9px] text-slate-500 font-sans block mt-0.5">Qtd, Preço ou H020 ICMS</span>
+                  <span className="text-[9px] text-[var(--atlas-text-secondary)] font-sans block mt-0.5">Qtd, Preço ou H020 ICMS</span>
                 </div>
 
                 <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-xl">
-                  <span className="text-[10px] font-semibold text-slate-400 uppercase block">Novos Adicionados</span>
+                  <span className="text-xs font-semibold text-[var(--atlas-text-muted)] uppercase block">Novos Adicionados</span>
                   <div className="text-lg font-bold text-emerald-400 mt-0.5">
                     {alteredProducts.filter(i => i.status === 'added').length}
                   </div>
-                  <span className="text-[9px] text-slate-500 font-sans block mt-0.5">Incluídos no Bloco H</span>
+                  <span className="text-[9px] text-[var(--atlas-text-secondary)] font-sans block mt-0.5">Incluídos no Bloco H</span>
                 </div>
 
                 <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-xl">
-                  <span className="text-[10px] font-semibold text-slate-400 uppercase block">Removidos</span>
+                  <span className="text-xs font-semibold text-[var(--atlas-text-muted)] uppercase block">Removidos</span>
                   <div className="text-lg font-bold text-rose-400 mt-0.5">
                     {alteredProducts.filter(i => i.status === 'removed').length}
                   </div>
-                  <span className="text-[9px] text-slate-500 font-sans block mt-0.5">Excluídos do inventário</span>
+                  <span className="text-[9px] text-[var(--atlas-text-secondary)] font-sans block mt-0.5">Excluídos do inventário</span>
                 </div>
               </div>
             </div>
@@ -2874,14 +2874,14 @@ export function StockEngineeringView({
                 <span className="font-bold text-slate-200">
                   Listagem Detalhada de Produtos Alterados ({filteredAlteredProducts.length})
                 </span>
-                <span className="text-[11px] text-slate-400">
+                <span className="text-xs text-[var(--atlas-text-muted)]">
                   Comparações em tempo real com o arquivo SPED de origem
                 </span>
               </div>
 
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-900 text-slate-400 uppercase text-[10px] font-mono tracking-wider border-b border-slate-800">
+                  <thead className="bg-slate-900 text-[var(--atlas-text-muted)] uppercase text-xs font-mono tracking-wider border-b border-slate-800">
                     <tr>
                       <th className="p-3">Código</th>
                       <th className="p-3">Descrição & NCM</th>
@@ -2893,27 +2893,27 @@ export function StockEngineeringView({
                       <th className="p-3 text-right">Ação</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/80 font-mono text-[11px]">
+                  <tbody className="divide-y divide-slate-800/80 font-mono text-xs">
                     {filteredAlteredProducts.map(item => (
                       <tr key={item.codItem} className="hover:bg-slate-900/50 transition-colors">
                         <td className="p-3 font-bold text-slate-200">{item.codItem}</td>
                         <td className="p-3 max-w-xs">
                           <div className="font-semibold text-slate-200 truncate">{item.descrItem}</div>
-                          <div className="text-[10px] text-slate-500 font-sans">NCM: {item.ncm} | Unid: {item.unid}</div>
+                          <div className="text-xs text-[var(--atlas-text-secondary)] font-sans">NCM: {item.ncm} | Unid: {item.unid}</div>
                         </td>
                         <td className="p-3">
                           {item.status === 'added' && (
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                            <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                               Novo Adicionado
                             </span>
                           )}
                           {item.status === 'removed' && (
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                            <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">
                               Removido
                             </span>
                           )}
                           {item.status === 'modified' && (
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-300 border border-amber-500/20">
+                            <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-amber-500/10 text-amber-300 border border-amber-500/20">
                               Modificado
                             </span>
                           )}
@@ -2925,7 +2925,7 @@ export function StockEngineeringView({
                             <span className="text-rose-400 line-through">{item.oldQtd?.toLocaleString('pt-BR')} {item.unid}</span>
                           ) : (
                             <div>
-                              <span className="text-slate-500 line-through mr-1">{item.oldQtd?.toLocaleString('pt-BR')}</span>
+                              <span className="text-[var(--atlas-text-secondary)] line-through mr-1">{item.oldQtd?.toLocaleString('pt-BR')}</span>
                               <span className="text-amber-300 font-bold">→ {item.newQtd?.toLocaleString('pt-BR')} {item.unid}</span>
                             </div>
                           )}
@@ -2937,7 +2937,7 @@ export function StockEngineeringView({
                             <span className="text-rose-400 line-through">R$ {item.oldVlUnit?.toFixed(2)}</span>
                           ) : (
                             <div>
-                              <span className="text-slate-500 line-through mr-1">R$ {item.oldVlUnit?.toFixed(2)}</span>
+                              <span className="text-[var(--atlas-text-secondary)] line-through mr-1">R$ {item.oldVlUnit?.toFixed(2)}</span>
                               <span className="text-amber-300 font-bold">→ R$ {item.newVlUnit?.toFixed(2)}</span>
                             </div>
                           )}
@@ -2949,27 +2949,27 @@ export function StockEngineeringView({
                             <span className="text-rose-400 line-through">R$ {item.oldVlItem?.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
                           ) : (
                             <div>
-                              <div className="text-slate-500 line-through text-[10px]">R$ {item.oldVlItem?.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                              <div className="text-[var(--atlas-text-secondary)] line-through text-xs">R$ {item.oldVlItem?.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
                               <div className="text-amber-300 font-bold">→ R$ {item.newVlItem?.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
                             </div>
                           )}
                         </td>
-                        <td className="p-3 text-[10px]">
+                        <td className="p-3 text-xs">
                           {item.oldH020Cst !== item.newH020Cst ? (
                             <span className="text-sky-300 font-bold">
                               CST {item.oldH020Cst || 'Sem H020'} → {item.newH020Cst || 'Sem H020'}
                             </span>
                           ) : item.newH020Cst ? (
-                            <span className="text-slate-300">CST {item.newH020Cst} (BC: R$ {(item.newH020Bc || 0).toFixed(2)})</span>
+                            <span className="text-[var(--atlas-text-muted)]">CST {item.newH020Cst} (BC: R$ {(item.newH020Bc || 0).toFixed(2)})</span>
                           ) : (
-                            <span className="text-slate-500 font-sans">Sem H020</span>
+                            <span className="text-[var(--atlas-text-secondary)] font-sans">Sem H020</span>
                           )}
                         </td>
                         <td className="p-3 text-right">
                           <button
                             type="button"
                             onClick={() => handleRestoreItem(item.codItem)}
-                            className="px-2.5 py-1 bg-slate-900 hover:bg-sky-950 hover:text-sky-300 text-slate-400 border border-slate-800 hover:border-sky-700 rounded-lg text-[10px] font-semibold transition-all flex items-center space-x-1 ml-auto"
+                            className="px-2.5 py-1 bg-slate-900 hover:bg-sky-950 hover:text-sky-300 text-[var(--atlas-text-muted)] border border-slate-800 hover:border-sky-700 rounded-lg text-xs font-semibold transition-all flex items-center space-x-1 ml-auto"
                             title="Restaurar este item aos valores originais do arquivo SPED"
                           >
                             <RotateCcw className="w-3 h-3 text-sky-400" />
@@ -2980,7 +2980,7 @@ export function StockEngineeringView({
                     ))}
                     {filteredAlteredProducts.length === 0 && (
                       <tr>
-                        <td colSpan={8} className="p-12 text-center text-slate-500 font-sans">
+                        <td colSpan={8} className="p-12 text-center text-[var(--atlas-text-secondary)] font-sans">
                           {alteredProducts.length === 0 
                             ? 'Nenhum produto foi alterado ainda. Quaisquer modificações de quantidade, preço ou H020 serão listadas aqui.' 
                             : 'Nenhum produto alterado encontrado com os filtros atuais.'}
@@ -3000,20 +3000,20 @@ export function StockEngineeringView({
             {/* Top Stat Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="bg-slate-950 border border-slate-800 p-5 rounded-lg space-y-2">
-                <span className="text-xs text-slate-400 font-medium">Valor Total do Inventário</span>
+                <span className="text-xs text-[var(--atlas-text-muted)] font-medium">Valor Total do Inventário</span>
                 <p className="text-2xl font-extrabold text-emerald-400 font-mono">
                   R$ {blocoH.vlInv.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                 </p>
-                <p className="text-[11px] text-slate-500 font-mono">
+                <p className="text-xs text-[var(--atlas-text-secondary)] font-mono">
                   Calculado via {blocoH.items.length} registros H010
                 </p>
               </div>
 
               <div className="bg-slate-950 border border-slate-800 p-5 rounded-lg space-y-2">
-                <span className="text-xs text-slate-400 font-medium">Catálogo 0200 vs. Matriz Tributária</span>
+                <span className="text-xs text-[var(--atlas-text-muted)] font-medium">Catálogo 0200 vs. Matriz Tributária</span>
                 <div className="flex items-center justify-between">
                   <p className="text-2xl font-extrabold text-white font-mono">
-                    {auditStats.ok} <span className="text-xs text-slate-400 font-normal">/ {auditStats.total} OK</span>
+                    {auditStats.ok} <span className="text-xs text-[var(--atlas-text-muted)] font-normal">/ {auditStats.total} OK</span>
                   </p>
                   {auditStats.divergent > 0 && (
                     <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
@@ -3021,19 +3021,19 @@ export function StockEngineeringView({
                     </span>
                   )}
                 </div>
-                <p className="text-[11px] text-slate-500">
+                <p className="text-xs text-[var(--atlas-text-secondary)]">
                   {auditStats.noRule} itens sem regra tributária mapeada
                 </p>
               </div>
 
               <div className="bg-slate-950 border border-slate-800 p-5 rounded-lg space-y-2">
-                <span className="text-xs text-slate-400 font-medium">Situação dos Blocos SPED</span>
+                <span className="text-xs text-[var(--atlas-text-muted)] font-medium">Situação dos Blocos SPED</span>
                 <div className="space-y-1 font-mono text-xs">
-                  <div className="flex justify-between items-center text-slate-300">
+                  <div className="flex justify-between items-center text-[var(--atlas-text-muted)]">
                     <span>Bloco 0200 (Cadastros):</span>
                     <span className="text-emerald-400 font-bold">Presente ({items0200.length})</span>
                   </div>
-                  <div className="flex justify-between items-center text-slate-300">
+                  <div className="flex justify-between items-center text-[var(--atlas-text-muted)]">
                     <span>Bloco H005 / H010 (Inventário):</span>
                     <span className="text-emerald-400 font-bold">Presente ({blocoH.items.length})</span>
                   </div>
@@ -3059,19 +3059,19 @@ export function StockEngineeringView({
                     return (
                       <div key={item.codItem} className="bg-slate-900 border border-slate-800 p-3 rounded-xl flex items-center justify-between">
                         <div className="flex items-center space-x-3 truncate">
-                          <span className="w-6 h-6 rounded-full bg-slate-800 text-slate-300 font-bold flex items-center justify-center text-[10px]">
+                          <span className="w-6 h-6 rounded-full bg-slate-800 text-[var(--atlas-text-muted)] font-bold flex items-center justify-center text-xs">
                             #{idx + 1}
                           </span>
                           <div className="truncate">
                             <p className="font-bold text-slate-200 truncate">{item.codItem} - {ref0200?.descrItem || 'Produto'}</p>
-                            <p className="text-[11px] text-slate-500 font-sans">
+                            <p className="text-xs text-[var(--atlas-text-secondary)] font-sans">
                               {item.qtd} {item.unid} x R$ {item.vlUnit.toFixed(2)}
                             </p>
                           </div>
                         </div>
                         <div className="text-right shrink-0">
                           <p className="font-bold text-emerald-400">R$ {item.vlItem.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
-                          <p className="text-[10px] text-slate-500">{pct.toFixed(1)}% do estoque</p>
+                          <p className="text-xs text-[var(--atlas-text-secondary)]">{pct.toFixed(1)}% do estoque</p>
                         </div>
                       </div>
                     );
@@ -3091,7 +3091,7 @@ export function StockEngineeringView({
                 <Upload className="w-4 h-4 text-emerald-400" />
                 <span>Importar Arquivo de Estoque ou SPED</span>
               </h3>
-              <button onClick={() => setIsImportModalOpen(false)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setIsImportModalOpen(false)} className="text-[var(--atlas-text-muted)] hover:text-white">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -3104,7 +3104,7 @@ export function StockEngineeringView({
               >
                 <Upload className="w-10 h-10 text-emerald-400 mx-auto mb-3 group-hover:scale-110 transition-transform" />
                 <p className="font-bold text-white mb-1">Clique para escolher o arquivo</p>
-                <p className="text-slate-400 text-[11px]">
+                <p className="text-[var(--atlas-text-muted)] text-xs">
                   Aceita SPED Fiscal <span className="font-mono text-emerald-400">(.txt)</span> ou Planilha de Inventário <span className="font-mono text-emerald-400">(.csv / .txt)</span>
                 </p>
               </div>
@@ -3115,8 +3115,8 @@ export function StockEngineeringView({
                 </div>
               )}
 
-              <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80 space-y-1.5 text-slate-400">
-                <p className="font-bold text-slate-300">💡 Formatos Suportados:</p>
+              <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80 space-y-1.5 text-[var(--atlas-text-muted)]">
+                <p className="font-bold text-[var(--atlas-text-muted)]">💡 Formatos Suportados:</p>
                 <p>• <strong className="text-slate-200">SPED EFD ICMS/IPI (.txt)</strong>: Extrai registros 0200, H005 e H010.</p>
                 <p>• <strong className="text-slate-200">Planilha CSV/TXT de Inventário</strong>: Separada por ponto e vírgula contendo código, descrição, NCM, quantidade e valor unitário.</p>
               </div>
@@ -3125,7 +3125,7 @@ export function StockEngineeringView({
             <div className="pt-2 flex justify-end space-x-2">
               <button
                 onClick={() => setIsImportModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs"
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-[var(--atlas-text-muted)] font-semibold text-xs"
               >
                 Fechar
               </button>
@@ -3143,7 +3143,7 @@ export function StockEngineeringView({
                 <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
                 <span>Selecionar Produtos do Bloco 0200 para o Inventário</span>
               </h3>
-              <button onClick={() => setIs0200PickerOpen(false)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setIs0200PickerOpen(false)} className="text-[var(--atlas-text-muted)] hover:text-white">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -3151,7 +3151,7 @@ export function StockEngineeringView({
             <div className="space-y-3 text-xs">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div className="relative flex-1">
-                  <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-2.5" />
+                  <Search className="w-3.5 h-3.5 text-[var(--atlas-text-secondary)] absolute left-3 top-2.5" />
                   <input
                     type="text"
                     value={modalSearch}
@@ -3162,7 +3162,7 @@ export function StockEngineeringView({
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <span className="text-slate-400">Preço Padrão R$:</span>
+                  <span className="text-[var(--atlas-text-muted)]">Preço Padrão R$:</span>
                   <input
                     type="number"
                     value={importDefaultPrice}
@@ -3172,7 +3172,7 @@ export function StockEngineeringView({
                 </div>
               </div>
 
-              <div className="flex items-center justify-between text-slate-400">
+              <div className="flex items-center justify-between text-[var(--atlas-text-muted)]">
                 <span>{selected0200Codes.size} produto(s) selecionado(s)</span>
                 <button
                   onClick={() => {
@@ -3210,10 +3210,10 @@ export function StockEngineeringView({
                         />
                         <div>
                           <p className="font-bold text-slate-200 font-mono">{item.codItem}</p>
-                          <p className="text-slate-400 text-[11px] font-sans truncate max-w-sm">{item.descrItem}</p>
+                          <p className="text-[var(--atlas-text-muted)] text-xs font-sans truncate max-w-sm">{item.descrItem}</p>
                         </div>
                       </div>
-                      <span className="font-mono text-slate-500 text-[11px]">NCM: {item.ncm || '-'}</span>
+                      <span className="font-mono text-[var(--atlas-text-secondary)] text-xs">NCM: {item.ncm || '-'}</span>
                     </label>
                   );
                 })}
@@ -3223,7 +3223,7 @@ export function StockEngineeringView({
             <div className="pt-2 flex justify-end space-x-2">
               <button
                 onClick={() => setIs0200PickerOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs"
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-[var(--atlas-text-muted)] font-semibold text-xs"
               >
                 Cancelar
               </button>
@@ -3248,14 +3248,14 @@ export function StockEngineeringView({
                 <Plus className="w-4 h-4 text-emerald-400" />
                 <span>Novo Produto no Estoque</span>
               </h3>
-              <button onClick={() => setIsManualAddOpen(false)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setIsManualAddOpen(false)} className="text-[var(--atlas-text-muted)] hover:text-white">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <div className="space-y-3 text-xs">
               <div>
-                <label className="block text-slate-400 font-medium mb-1">Código do Item / SKU *</label>
+                <label className="block text-[var(--atlas-text-muted)] font-medium mb-1">Código do Item / SKU *</label>
                 <input
                   type="text"
                   value={newItemCode}
@@ -3266,7 +3266,7 @@ export function StockEngineeringView({
               </div>
 
               <div>
-                <label className="block text-slate-400 font-medium mb-1">Descrição do Produto *</label>
+                <label className="block text-[var(--atlas-text-muted)] font-medium mb-1">Descrição do Produto *</label>
                 <input
                   type="text"
                   value={newItemDescr}
@@ -3278,7 +3278,7 @@ export function StockEngineeringView({
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-400 font-medium mb-1">NCM (8 dígitos)</label>
+                  <label className="block text-[var(--atlas-text-muted)] font-medium mb-1">NCM (8 dígitos)</label>
                   <input
                     type="text"
                     value={newItemNcm}
@@ -3288,7 +3288,7 @@ export function StockEngineeringView({
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-400 font-medium mb-1">Unidade de Medida</label>
+                  <label className="block text-[var(--atlas-text-muted)] font-medium mb-1">Unidade de Medida</label>
                   <input
                     type="text"
                     value={newItemUnid}
@@ -3301,7 +3301,7 @@ export function StockEngineeringView({
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-400 font-medium mb-1">Quantidade Física</label>
+                  <label className="block text-[var(--atlas-text-muted)] font-medium mb-1">Quantidade Física</label>
                   <input
                     type="number"
                     step="0.001"
@@ -3311,7 +3311,7 @@ export function StockEngineeringView({
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-400 font-medium mb-1">Valor Unitário (R$)</label>
+                  <label className="block text-[var(--atlas-text-muted)] font-medium mb-1">Valor Unitário (R$)</label>
                   <input
                     type="number"
                     step="0.01"
@@ -3323,7 +3323,7 @@ export function StockEngineeringView({
               </div>
 
               <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800 flex justify-between font-mono">
-                <span className="text-slate-400">Total do Item:</span>
+                <span className="text-[var(--atlas-text-muted)]">Total do Item:</span>
                 <span className="font-bold text-emerald-400">
                   R$ {(newItemQtd * newItemVlUnit).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                 </span>
@@ -3333,7 +3333,7 @@ export function StockEngineeringView({
             <div className="pt-2 flex justify-end space-x-2">
               <button
                 onClick={() => setIsManualAddOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs"
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-[var(--atlas-text-muted)] font-semibold text-xs"
               >
                 Cancelar
               </button>
@@ -3357,13 +3357,13 @@ export function StockEngineeringView({
                 <Trash2 className="w-4 h-4 text-rose-400" />
                 <span>Apagar Dados de Estoque Importados</span>
               </h3>
-              <button onClick={() => setIsDeleteModalOpen(false)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setIsDeleteModalOpen(false)} className="text-[var(--atlas-text-muted)] hover:text-white">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <div className="space-y-3 text-xs">
-              <p className="text-slate-300">
+              <p className="text-[var(--atlas-text-muted)]">
                 Escolha o nível de exclusão para o arquivo do estoque carregado no sistema:
               </p>
 
@@ -3379,11 +3379,11 @@ export function StockEngineeringView({
                       <PackageCheck className="w-4 h-4 text-amber-400" />
                       <span>Limpar Apenas Inventário (Bloco H)</span>
                     </span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/20">
+                    <span className="text-xs font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/20">
                       {blocoH.items.length} itens
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-400">
+                  <p className="text-xs text-[var(--atlas-text-muted)]">
                     Zera os registros de inventário H010 e H020, mas preserva o cadastro de produtos 0200. Ideal para recarregar uma nova contagem física.
                   </p>
                 </button>
@@ -3399,11 +3399,11 @@ export function StockEngineeringView({
                       <Trash2 className="w-4 h-4 text-rose-400" />
                       <span>Apagar Tudo e Resetar Arquivo</span>
                     </span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-rose-500/10 text-rose-300 border border-rose-500/20">
+                    <span className="text-xs font-mono px-2 py-0.5 rounded bg-rose-500/10 text-rose-300 border border-rose-500/20">
                       Total Reset
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-400">
+                  <p className="text-xs text-[var(--atlas-text-muted)]">
                     Exclui completamente o cadastro 0200 importado e o Bloco H de inventário. Retorna a tela inicial para carregar outro arquivo do zero.
                   </p>
                 </button>
@@ -3413,7 +3413,7 @@ export function StockEngineeringView({
             <div className="pt-2 flex justify-end space-x-2 border-t border-slate-800">
               <button
                 onClick={() => setIsDeleteModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs"
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-[var(--atlas-text-muted)] font-semibold text-xs"
               >
                 Cancelar
               </button>

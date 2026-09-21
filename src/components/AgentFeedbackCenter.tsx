@@ -92,60 +92,60 @@ export function AgentFeedbackCenter() {
               <Sparkles className="w-4 h-4 text-purple-400" />
               <span>Contexto Injetado Automaticamente no System Prompt Gemini:</span>
             </span>
-            <span className="text-[11px] text-slate-400 font-mono">
+            <span className="text-xs text-[var(--atlas-text-muted)] font-mono">
               {reports.length} ocorrência(s) ativa(s)
             </span>
           </div>
-          <pre className="text-xs text-slate-300 font-mono whitespace-pre-wrap leading-relaxed max-h-36 overflow-y-auto bg-slate-900 p-3 rounded-lg border border-slate-800">
+          <pre className="text-xs text-[var(--atlas-text-muted)] font-mono whitespace-pre-wrap leading-relaxed max-h-36 overflow-y-auto bg-slate-900 p-3 rounded-lg border border-slate-800">
             {promptContext || '// Nenhum reporte de erro registrado até o momento. Os prompts utilizarão as diretrizes padrão.'}
           </pre>
         </div>
       </div>
 
       {/* Reports List Section */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-4">
+      <div className="bg-[var(--atlas-surface)] rounded-2xl shadow-sm border border-[var(--atlas-border)] p-6 space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h3 className="font-bold text-slate-900 text-base">Ocorrências de Equívocos Registradas</h3>
-            <p className="text-xs text-slate-500">Histórico de erros apontados para refinamento contínuo</p>
+            <h3 className="font-bold text-[var(--atlas-text)] text-base">Ocorrências de Equívocos Registradas</h3>
+            <p className="text-xs text-[var(--atlas-text-secondary)]">Histórico de erros apontados para refinamento contínuo</p>
           </div>
 
           <div className="relative">
-            <Search className="w-3.5 h-3.5 absolute left-3 top-3 text-slate-400" />
+            <Search className="w-3.5 h-3.5 absolute left-3 top-3 text-[var(--atlas-text-muted)]" />
             <input
               type="text"
               placeholder="Filtrar por item, UF, motivo..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-64"
+              className="pl-8 pr-3 py-1.5 text-xs bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-xl text-[var(--atlas-text)] focus:outline-none focus:ring-2 focus:ring-indigo-500 w-64"
             />
           </div>
         </div>
 
         {filteredReports.length === 0 ? (
-          <div className="text-center py-12 text-slate-400 space-y-2">
+          <div className="text-center py-12 text-[var(--atlas-text-muted)] space-y-2">
             <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto" />
-            <p className="font-bold text-slate-700 text-sm">Nenhum equívoco de agente registrado.</p>
-            <p className="text-xs text-slate-500">Os agentes estão operando dentro do padrão esperado.</p>
+            <p className="font-bold text-[var(--atlas-text-secondary)] text-sm">Nenhum equívoco de agente registrado.</p>
+            <p className="text-xs text-[var(--atlas-text-secondary)]">Os agentes estão operando dentro do padrão esperado.</p>
           </div>
         ) : (
           <div className="space-y-3">
             {filteredReports.map((report) => (
               <div
                 key={report.id}
-                className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-slate-50 transition space-y-3"
+                className="p-4 rounded-xl border border-[var(--atlas-border)] bg-[var(--atlas-surface-hover)]/50 hover:bg-[var(--atlas-surface-hover)] transition space-y-3"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center space-x-2">
-                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
                       {report.mistakeType}
                     </span>
-                    <span className="text-xs font-bold text-slate-800">{report.descrItem}</span>
-                    <span className="text-xs text-slate-400 font-mono">(UF: {report.uf || 'Geral'})</span>
+                    <span className="text-xs font-bold text-[var(--atlas-text)]">{report.descrItem}</span>
+                    <span className="text-xs text-[var(--atlas-text-muted)] font-mono">(UF: {report.uf || 'Geral'})</span>
                   </div>
 
                   <div className="flex items-center space-x-3">
-                    <span className="text-[11px] text-slate-400">{new Date(report.timestamp).toLocaleString('pt-BR')}</span>
+                    <span className="text-xs text-[var(--atlas-text-muted)]">{new Date(report.timestamp).toLocaleString('pt-BR')}</span>
                     <button
                       onClick={() => handleDelete(report.id)}
                       className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition"
@@ -157,17 +157,17 @@ export function AgentFeedbackCenter() {
                 </div>
 
                 {/* Values Comparison */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono bg-white p-3 rounded-lg border border-slate-200">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono bg-[var(--atlas-surface)] p-3 rounded-lg border border-[var(--atlas-border)]">
                   <div className="space-y-0.5">
-                    <span className="text-[10px] font-bold text-rose-600 uppercase">Sugestão do Agente (Incorreta)</span>
-                    <div className="text-slate-700">
+                    <span className="text-xs font-bold text-rose-600 uppercase">Sugestão do Agente (Incorreta)</span>
+                    <div className="text-[var(--atlas-text-secondary)]">
                       CST: <span className="font-bold">{report.suggestedByAgent.cst || 'N/A'}</span> | 
                       CFOP: <span className="font-bold">{report.suggestedByAgent.cfop || 'N/A'}</span>
                     </div>
                   </div>
 
                   <div className="space-y-0.5">
-                    <span className="text-[10px] font-bold text-emerald-600 uppercase">Valor Correto do Contador</span>
+                    <span className="text-xs font-bold text-emerald-600 uppercase">Valor Correto do Contador</span>
                     <div className="text-emerald-800 font-bold">
                       CST: {report.userCorrectValue.cst || 'N/A'} | 
                       CFOP: {report.userCorrectValue.cfop || 'N/A'}
@@ -176,7 +176,7 @@ export function AgentFeedbackCenter() {
                 </div>
 
                 {/* Justification */}
-                <div className="text-xs text-slate-700 bg-indigo-50/50 p-3 rounded-lg border border-indigo-100/80 leading-relaxed">
+                <div className="text-xs text-[var(--atlas-text-secondary)] bg-indigo-50/50 p-3 rounded-lg border border-indigo-100/80 leading-relaxed">
                   <span className="font-bold text-indigo-900 block mb-0.5">Fundamentação Legal / Justificativa do Contador:</span>
                   "{report.userJustification}"
                 </div>

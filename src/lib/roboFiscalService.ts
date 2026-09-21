@@ -1,6 +1,6 @@
 import { doc, getDoc, setDoc, collection, addDoc, query, orderBy, getDocs, limit } from 'firebase/firestore';
 import { db, safeWrite } from './firebase';
-import { RoboConfig, RoboExecutionLog, LearnedTaxRule, StateTaxRule, SpedData, XmlRecord, Cliente, ArquivoCliente, SpedItem } from '../types';
+import { RoboConfig, RoboExecutionLog, LearnedTaxRule, StateTaxRule, SpedData, XmlRecord, Cliente, ArquivoCliente, SpedItem, Achado, AuditFinding, CorrecaoItemC170, PlanoCorrecaoC170Result, RegimeTributario } from '../types';
 import { saveGlobalStateTaxMatrix } from './matrizService';
 import { orchestrateTaxAudit, TaxItemInput } from './aiOrchestrator';
 
@@ -656,4 +656,360 @@ export async function processarArquivosComRobo({
       regrasNovasCount: novasRegrasAprendidas.length
     }
   };
+}
+
+export interface ParametrosGerarPlanoCorrecaoC170 {
+  spedData?: SpedData | null;
+  items?: { docNumDoc?: string; docId?: string; indOper?: string; item: SpedItem }[];
+  achados?: (Achado | AuditFinding)[];
+  matrizRules?: StateTaxRule[];
+  cliente?: Cliente | { id?: string; nome?: string; uf?: string; regimeTributario?: RegimeTributario } | null;
+  uf?: string;
+  escritorioId?: string;
+}
+
+function ajustarCfopDirecao(cfop: string, indOper: string): string {
+  const cleanCfop = (cfop || '').replace(/\D/g, '').padStart(4, '0');
+  if (!cleanCfop || cleanCfop === '0000') return indOper === '0' ? '1102' : '5102';
+
+  if (indOper === '1') {
+    if (cleanCfop.startsWith('1')) return '5' + cleanCfop.substring(1);
+    if (cleanCfop.startsWith('2')) return '6' + cleanCfop.substring(1);
+    if (cleanCfop.startsWith('3')) return '7' + cleanCfop.substring(1);
+  }
+
+  if (indOper === '0') {
+    if (cleanCfop.startsWith('5')) return '1' + cleanCfop.substring(1);
+    if (cleanCfop.startsWith('6')) return '2' + cleanCfop.substring(1);
+    if (cleanCfop.startsWith('7')) return '3' + cleanCfop.substring(1);
+  }
+
+  return cleanCfop;
+}
+
+function isCstSt(cst: string): boolean {
+  const cleanCst = (cst || '').replace(/\D/g, '').padStart(3, '0');
+  const sufixo = cleanCst.substring(1);
+  return ['010', '030', '060', '070', '201', '202', '203', '500'].includes(cleanCst) || ['10', '30', '60', '70'].includes(sufixo);
+}
+
+function isCstSemCreditoSemIcmsProprio(cst: string): boolean {
+  const cleanCst = (cst || '').replace(/\D/g, '').padStart(3, '0');
+  const sufixo = cleanCst.substring(1);
+  return ['040', '041', '050', '060', '090', '102', '103', '300', '400', '500'].includes(cleanCst) || ['40', '41', '50', '60', '90'].includes(sufixo);
+}
+
+/**
+ * Consolida achados da auditoria e regras da Matriz em um plano de correção único por item C170,
+ * garantindo coerência de CST/CFOP/ICMS e a aplicação da invariante de 'status: pendente' para qualquer aprendizado.
+ */
+export async function gerarPlanoCorrecaoC170(
+  paramsOrSped: ParametrosGerarPlanoCorrecaoC170 | SpedData | null | undefined,
+  stateTaxRulesArg?: StateTaxRule[],
+  achadosArg?: (Achado | AuditFinding)[],
+  agentesResultArg?: any,
+  escritorioIdArg?: string
+): Promise<CorrecaoItemC170[] & PlanoCorrecaoC170Result> {
+  let params: ParametrosGerarPlanoCorrecaoC170;
+
+  if (
+    paramsOrSped &&
+    typeof paramsOrSped === 'object' &&
+    ('header' in paramsOrSped || 'documents' in paramsOrSped || 'reconciliation' in paramsOrSped)
+  ) {
+    // Invocação posicional: (spedData, stateTaxRules, achados, agentesResult, escritorioId)
+    params = {
+      spedData: paramsOrSped as SpedData,
+      matrizRules: stateTaxRulesArg || [],
+      achados: achadosArg || [],
+      escritorioId: escritorioIdArg || (typeof agentesResultArg === 'string' ? agentesResultArg : agentesResultArg?.escritorioId)
+    };
+  } else if (paramsOrSped && typeof paramsOrSped === 'object') {
+    params = { ...paramsOrSped } as ParametrosGerarPlanoCorrecaoC170;
+    if (stateTaxRulesArg && !params.matrizRules) params.matrizRules = stateTaxRulesArg;
+    if (achadosArg && !params.achados) params.achados = achadosArg;
+  } else {
+    params = {
+      spedData: null,
+      matrizRules: stateTaxRulesArg || [],
+      achados: achadosArg || [],
+      escritorioId: escritorioIdArg
+    };
+  }
+
+  const eid = exigirEscritorio(params.escritorioId);
+  const ufCliente = (params.uf || params.cliente?.uf || params.spedData?.header?.uf || 'SP').trim().toUpperCase();
+  const matriz = params.matrizRules || [];
+  const achados = params.achados || [];
+
+  const itensParaProcessar: {
+    docId: string;
+    numDoc: string;
+    indOper: string;
+    item: SpedItem;
+  }[] = [];
+
+  if (params.spedData && params.spedData.documents) {
+    for (const doc of params.spedData.documents) {
+      if (!doc.items) continue;
+      for (const item of doc.items) {
+        itensParaProcessar.push({
+          docId: doc.id || `doc_${doc.numDoc}`,
+          numDoc: doc.numDoc || '0',
+          indOper: doc.indOper || '1',
+          item
+        });
+      }
+    }
+  }
+
+  if (params.items && params.items.length > 0) {
+    for (const entry of params.items) {
+      itensParaProcessar.push({
+        docId: entry.docId || `doc_${entry.docNumDoc || '0'}`,
+        numDoc: entry.docNumDoc || '0',
+        indOper: entry.indOper || '1',
+        item: entry.item
+      });
+    }
+  }
+
+  const itensCorrecao: CorrecaoItemC170[] = [];
+  const novasRegrasAprendidas: LearnedTaxRule[] = [];
+
+  let totalCorrecoesCst = 0;
+  let totalCorrecoesCfop = 0;
+  let totalCorrecoesIcms = 0;
+
+  for (let idx = 0; idx < itensParaProcessar.length; idx++) {
+    const { docId, numDoc, indOper, item } = itensParaProcessar[idx];
+    const ncm = (item.ncm || '').replace(/\D/g, '');
+    const numItem = item.numItem || String(idx + 1);
+    const codItem = item.codItem || `ITEM_${idx + 1}`;
+    const descrItem = item.descrItem || `Mercadoria NCM ${ncm}`;
+
+    const cstDeclarado = (item.cstIcms || '000').padStart(3, '0');
+    const cfopDeclarado = (item.cfop || '5102').padStart(4, '0');
+    const aliqIcmsDeclarada = item.aliqIcms || 0;
+    const vlBcIcmsDeclarado = item.vlBcIcms || 0;
+    const vlIcmsDeclarado = item.vlIcms || 0;
+    const vlItem = item.vlItem || 0;
+
+    let cstSugerido = cstDeclarado;
+    let cfopSugerido = cfopDeclarado;
+    let aliqIcmsSugerida = aliqIcmsDeclarada;
+    let vlBcIcmsSugerido = vlBcIcmsDeclarado;
+    let vlIcmsSugerido = vlIcmsDeclarado;
+
+    const motivosInconsistencia: string[] = [];
+    let fonteRegra: 'MATRIZ_TRIBUTARIA' | 'AUDITORIA_ACHADOS' | 'ORQUESTRADOR_IA' | 'APRENDIZADO_ROBO' | 'CONSOLIDADO' = 'APRENDIZADO_ROBO';
+
+    // 1. Busca Regra Correspondente na Matriz Tributária
+    const matchedRule = ncm.length >= 2 ? matriz.find(r =>
+      (r.uf === ufCliente || r.uf === 'ALL') &&
+      (ncm.startsWith(r.ncmPrefix) || r.ncmPrefix === ncm.substring(0, 4) || r.ncmPrefix === ncm.substring(0, 2))
+    ) : undefined;
+
+    if (matchedRule) {
+      fonteRegra = 'MATRIZ_TRIBUTARIA';
+      if (matchedRule.expectedCst && cstDeclarado !== matchedRule.expectedCst) {
+        cstSugerido = matchedRule.expectedCst;
+        motivosInconsistencia.push(`CST ${cstDeclarado} diverge da Matriz Tributária (${matchedRule.expectedCst}) para NCM ${ncm} [UF: ${matchedRule.uf}].`);
+      }
+      if (matchedRule.expectedCfop && matchedRule.expectedCfop.length > 0 && !matchedRule.expectedCfop.includes(cfopDeclarado)) {
+        cfopSugerido = matchedRule.expectedCfop[0];
+        motivosInconsistencia.push(`CFOP ${cfopDeclarado} diverge dos esperados na Matriz [${matchedRule.expectedCfop.join(', ')}].`);
+      }
+      if (matchedRule.expectedAliqIcms !== undefined) {
+        aliqIcmsSugerida = matchedRule.expectedAliqIcms;
+      }
+    }
+
+    // 2. Busca Achados da Auditoria relacionados a este item C170
+    const itemAchados = achados.filter(a => {
+      const docMatch = ('docId' in a && a.docId === docId) || ('numDoc' in a && a.numDoc === numDoc);
+      if (!docMatch) return false;
+      if ('numItem' in a && a.numItem) return a.numItem === numItem;
+      if ('codItem' in a && a.codItem) return a.codItem === codItem;
+      return true;
+    });
+
+    for (const achado of itemAchados) {
+      if (fonteRegra === 'MATRIZ_TRIBUTARIA') {
+        fonteRegra = 'CONSOLIDADO';
+      } else {
+        fonteRegra = 'AUDITORIA_ACHADOS';
+      }
+
+      const tituloAchado = 'titulo' in achado ? achado.titulo : achado.title;
+      const descrAchado = 'descricao' in achado ? achado.descricao : achado.description;
+      motivosInconsistencia.push(`Achado [${tituloAchado}]: ${descrAchado}`);
+
+      if ('correcaoSugerida' in achado && achado.correcaoSugerida && Array.isArray(achado.correcaoSugerida)) {
+        for (const corr of achado.correcaoSugerida) {
+          if (corr.campo === 'cstIcms' && corr.valorSugerido !== undefined) {
+            cstSugerido = String(corr.valorSugerido).padStart(3, '0');
+          }
+          if (corr.campo === 'cfop' && corr.valorSugerido !== undefined) {
+            cfopSugerido = String(corr.valorSugerido).padStart(4, '0');
+          }
+          if (corr.campo === 'aliqIcms' && corr.valorSugerido !== undefined) {
+            aliqIcmsSugerida = Number(corr.valorSugerido);
+          }
+          if (corr.campo === 'vlBcIcms' && corr.valorSugerido !== undefined) {
+            vlBcIcmsSugerido = Number(corr.valorSugerido);
+          }
+          if (corr.campo === 'vlIcms' && corr.valorSugerido !== undefined) {
+            vlIcmsSugerido = Number(corr.valorSugerido);
+          }
+        }
+      }
+    }
+
+    // 3. Garantir Coerência de CST, CFOP e ICMS (Invariantes Fiscais)
+    // a) Ajustar direção do CFOP (Entrada x Saída)
+    const cfopDirecionado = ajustarCfopDirecao(cfopSugerido, indOper);
+    if (cfopDirecionado !== cfopSugerido) {
+      motivosInconsistencia.push(`CFOP ${cfopSugerido} corrigido para ${cfopDirecionado} para manter coerência com tipo de operação (${indOper === '1' ? 'Saída' : 'Entrada'}).`);
+      cfopSugerido = cfopDirecionado;
+    }
+
+    // b) Coerência de CST ST vs CFOP ST
+    const cfopsStOutbound = ['5401', '5403', '5405', '6401', '6403', '6404', '6405'];
+    const cfopsStInbound = ['1401', '1403', '1409', '2401', '2403', '2409'];
+    const isCfopSt = cfopsStOutbound.includes(cfopSugerido) || cfopsStInbound.includes(cfopSugerido);
+
+    if (isCstSt(cstSugerido) && !isCfopSt) {
+      if (indOper === '1') {
+        cfopSugerido = cfopSugerido.startsWith('6') ? '6405' : '5405';
+      } else {
+        cfopSugerido = cfopSugerido.startsWith('2') ? '2403' : '1403';
+      }
+      motivosInconsistencia.push(`CST ${cstSugerido} (Substituição Tributária) exige CFOP correlato de ST (${cfopSugerido}).`);
+    } else if (isCfopSt && !isCstSt(cstSugerido)) {
+      cstSugerido = '060';
+      motivosInconsistencia.push(`CFOP ${cfopSugerido} (Substituição Tributária) exige CST correlato de ST (${cstSugerido}).`);
+    }
+
+    // c) Recálculo e coerência de ICMS Próprio com precisão de duas casas decimais
+    if (isCstSemCreditoSemIcmsProprio(cstSugerido)) {
+      if (vlBcIcmsSugerido > 0 || vlIcmsSugerido > 0 || aliqIcmsSugerida > 0) {
+        motivosInconsistencia.push(`CST ${cstSugerido} não possui destaque de ICMS próprio. BC e ICMS zerados para conformidade.`);
+      }
+      vlBcIcmsSugerido = 0;
+      vlIcmsSugerido = 0;
+      aliqIcmsSugerida = 0;
+    } else if (cstSugerido === '000' || cstSugerido.endsWith('00')) {
+      if (vlBcIcmsSugerido === 0 && vlItem > 0) {
+        vlBcIcmsSugerido = vlItem;
+      }
+      if (aliqIcmsSugerida === 0) {
+        aliqIcmsSugerida = matchedRule?.expectedAliqIcms || (aliqIcmsDeclarada > 0 ? aliqIcmsDeclarada : 18);
+      }
+      vlIcmsSugerido = Number(((vlBcIcmsSugerido * aliqIcmsSugerida) / 100).toFixed(2));
+      if (Math.abs(vlIcmsSugerido - vlIcmsDeclarado) > 0.01) {
+        motivosInconsistencia.push(`CST ${cstSugerido} (Tributado Integralmente): Recalculado BC R$ ${vlBcIcmsSugerido.toFixed(2)}, Alíquota ${aliqIcmsSugerida}%, ICMS R$ ${vlIcmsSugerido.toFixed(2)}.`);
+      }
+    }
+
+    // 4. Invariante de Aprendizado: Novas regras aprendidas recebem SEMPRE status 'pendente'
+    if (!matchedRule && ncm.length >= 2) {
+      const ncmAprendizado = ncm.substring(0, 8);
+      const learnedRule: LearnedTaxRule = {
+        id: `learned_${Date.now()}_${ncmAprendizado}_${cstSugerido}`,
+        uf: ufCliente,
+        ncmPrefix: ncmAprendizado,
+        learnedCst: cstSugerido,
+        learnedCfop: [cfopSugerido],
+        learnedAliqIcms: aliqIcmsSugerida,
+        descricao: descrItem,
+        confiancaPercentual: 85,
+        amostrasAnalisadas: 1,
+        clienteOrigem: params.cliente?.nome || params.spedData?.header?.nome || 'Cliente Auditado',
+        status: 'pendente', // CLÁUSULA PÉTREA
+        criadoEm: new Date().toISOString()
+      };
+
+      novasRegrasAprendidas.push(learnedRule);
+      await saveLearnedRule(learnedRule, eid);
+    }
+
+    // 5. Avaliação final de necessidade de correção
+    const cstMudou = cstSugerido !== cstDeclarado;
+    const cfopMudou = cfopSugerido !== cfopDeclarado;
+    const icmsMudou = Math.abs(vlBcIcmsSugerido - vlBcIcmsDeclarado) > 0.01 ||
+                      Math.abs(vlIcmsSugerido - vlIcmsDeclarado) > 0.01 ||
+                      Math.abs(aliqIcmsSugerida - aliqIcmsDeclarada) > 0.01;
+
+    const precisaCorrecao = cstMudou || cfopMudou || icmsMudou || motivosInconsistencia.length > 0;
+
+    if (cstMudou) totalCorrecoesCst++;
+    if (cfopMudou) totalCorrecoesCfop++;
+    if (icmsMudou) totalCorrecoesIcms++;
+
+    if (!precisaCorrecao && motivosInconsistencia.length === 0) {
+      motivosInconsistencia.push('Item em conformidade fiscal com Matriz e regras de auditoria.');
+    }
+
+    const itemCorrecao: CorrecaoItemC170 = {
+      id: `plano_c170_${docId}_${numItem}_${codItem}`,
+      docId,
+      numDoc,
+      numItem,
+      codItem,
+      descrItem,
+      ncm,
+      cstDeclarado,
+      cfopDeclarado,
+      aliqIcmsDeclarada,
+      vlBcIcmsDeclarado,
+      vlIcmsDeclarado,
+      vlItem,
+      cstSugerido,
+      cfopSugerido,
+      aliqIcmsSugerida,
+      vlBcIcmsSugerido,
+      vlIcmsSugerido,
+      precisaCorrecao,
+      motivosInconsistencia,
+      fonteRegra,
+      confiancaPercentual: 90,
+      status: 'pendente' // Invariante: Todo plano de correção é gerado como 'pendente'
+    };
+
+    itensCorrecao.push(itemCorrecao);
+  }
+
+  const totalItensComCorrecao = itensCorrecao.filter(i => i.precisaCorrecao).length;
+
+  await addRoboLog({
+    timestamp: new Date().toISOString(),
+    clienteNome: params.cliente?.nome || params.spedData?.header?.nome || 'Plano de Correção C170',
+    tipoAcao: totalItensComCorrecao > 0 ? 'INCONSISTENCIA' : 'VALIDACAO_MATRIZ',
+    mensagem: `Plano de Correção C170 gerado: ${itensCorrecao.length} itens analisados, ${totalItensComCorrecao} com necessidade de ajuste.`,
+    detalhes: `CST: ${totalCorrecoesCst} ajustes | CFOP: ${totalCorrecoesCfop} ajustes | ICMS: ${totalCorrecoesIcms} ajustes | Aprendizados pendentes: ${novasRegrasAprendidas.length}`,
+    inconsistenciasCount: totalItensComCorrecao,
+    regrasAprendidasCount: novasRegrasAprendidas.length
+  }, eid);
+
+  const resultado = Object.assign(itensCorrecao, {
+    novasRegrasAprendidas,
+    resumo: {
+      totalItensAnalisados: itensCorrecao.length,
+      totalItensComCorrecao,
+      totalCorrecoesCst,
+      totalCorrecoesCfop,
+      totalCorrecoesIcms
+    }
+  }) as CorrecaoItemC170[] & PlanoCorrecaoC170Result;
+
+  Object.defineProperty(resultado, 'itensCorrecao', {
+    get() {
+      return Array.from(this);
+    },
+    enumerable: true,
+    configurable: true
+  });
+
+  return resultado;
 }

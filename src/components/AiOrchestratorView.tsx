@@ -303,46 +303,43 @@ export function AiOrchestratorView({
   return (
     <div className="space-y-6 pb-12">
       {/* Disclaimer Banner */}
-      <div className="bg-[#faf1e0] border border-[#e0c88a] text-[#7a5b14] rounded-md px-4 py-2 text-sm font-medium">
-        Recurso em validação. Os pareceres da IA são sugestões e devem sempre ser
-        conferidos por um auditor antes de qualquer decisão fiscal.
+      <div className="atlas-alert-warning px-5 py-3 rounded-xl flex items-center gap-3">
+        <AlertTriangle className="w-5 h-5 shrink-0" />
+        <p className="text-sm font-medium">
+          <strong>Ambiente Experimental:</strong> Os pareceres da IA são sugestões técnicas e devem sempre ser validados por um auditor fiscal antes de qualquer decisão tributária.
+        </p>
       </div>
 
       {/* Header Panel */}
-      <div className="bg-white text-[#2c2c2a] rounded-lg p-6 border border-[#e5e2d9] shadow-sm space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center space-x-3">
-            <div className="p-3 bg-[#1e3a5f] rounded-lg shadow-2xs">
-              <Bot className="w-7 h-7 text-white" />
+      <div className="atlas-card p-6 md:p-8 space-y-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex items-start space-x-4">
+            <div className="p-3.5 bg-[var(--atlas-navy)] text-white rounded-xl shadow-lg shrink-0">
+              <Bot className="w-7 h-7" />
             </div>
             <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-xl sm:text-2xl font-black tracking-tight text-[#1e3a5f]">
-                  Verificação por IA (em validação)
-                </h1>
-              </div>
-              <p className="text-[#5f5e5a] text-xs font-semibold mt-0.5">
-                Três agentes de IA analisam a classificação fiscal e sugerem revisões
-              </p>
-              <p className="text-[#5f5e5a] text-xs sm:text-sm mt-1">
-                A análise passa por três etapas: classificação NCM/CST, verificação de CFOP e revisão consolidada. Os resultados são sugestões que exigem revisão do auditor.
+              <h1 className="text-2xl font-bold text-[var(--atlas-navy)] tracking-tight leading-none" style={{ fontFamily: 'var(--font-display)' }}>
+                IA Orchestrator (ARCA Pipeline)
+              </h1>
+              <p className="text-sm text-[var(--atlas-text-secondary)] mt-2 max-w-2xl leading-relaxed">
+                Sistema multi-agente de auditoria fiscal. Três instâncias de IA analisam simultaneamente a classificação fiscal (NCM/CST), operações (CFOP) e conformidade global.
               </p>
             </div>
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3 shrink-0">
             <button
               onClick={() => setShowKeysModal(true)}
-              className="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-lg text-xs font-bold transition-all flex items-center space-x-2 shadow-2xs"
+              className="atlas-btn atlas-btn-secondary py-2.5 px-5 text-xs font-bold shadow-xs cursor-pointer"
             >
-              <Key className="w-4 h-4 text-[#1e3a5f]" />
-              <span>Configurar Provedores de IA</span>
+              <Key className="w-4 h-4 text-[var(--atlas-navy)]" />
+              <span>Provedores de IA</span>
             </button>
 
             <button
               onClick={handleClearMemory}
               title="Limpar Memória de Cache IA"
-              className="p-2 bg-white hover:bg-rose-50 text-slate-500 hover:text-rose-700 border border-slate-200 rounded-lg transition-all"
+              className="atlas-btn atlas-btn-secondary p-2.5 text-rose-600 hover:bg-rose-50 border-rose-100 cursor-pointer shadow-xs"
             >
               <Trash2 className="w-4 h-4" />
             </button>
@@ -350,39 +347,39 @@ export function AiOrchestratorView({
         </div>
 
         {/* Architecture Badges */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2 border-t border-[#e5e2d9]">
-          <div className="bg-slate-50 border border-[#e5e2d9] rounded-lg p-3 flex items-start space-x-3">
-            <div className="p-2 bg-[#f1efe8] text-[#1e3a5f] rounded-lg">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6 border-t border-[var(--atlas-border)]/60">
+          <div className="atlas-stat-strip p-4 flex items-start space-x-3 border-[var(--atlas-border)]/50">
+            <div className="p-2.5 bg-[#f1efe8] text-[var(--atlas-navy)] rounded-xl border border-[#e5e2d9]">
               <Cpu className="w-4 h-4" />
             </div>
             <div>
-              <p className="text-xs font-bold text-slate-800">Etapa 1 — Classificação (NCM/CST)</p>
-              <p className="text-[11px] text-slate-600 mt-0.5">
-                Análise técnica de itens, enquadramento de NCM, CEST e incidência de Substituição Tributária ou Monofásico.
+              <p className="text-xs font-bold text-[var(--atlas-text)]">Etapa 1 — Classificação</p>
+              <p className="text-[10px] leading-relaxed text-[var(--atlas-text-secondary)] mt-1">
+                Análise técnica de itens, enquadramento de NCM, CEST e incidência de ST ou Monofásico.
               </p>
             </div>
           </div>
 
-          <div className="bg-slate-50 border border-[#e5e2d9] rounded-lg p-3 flex items-start space-x-3">
-            <div className="p-2 bg-emerald-50 text-[#0f6e56] rounded-lg">
+          <div className="atlas-stat-strip p-4 flex items-start space-x-3 border-[var(--atlas-border)]/50">
+            <div className="p-2.5 bg-emerald-50 text-[var(--atlas-accent)] rounded-xl border border-emerald-100">
               <Layers className="w-4 h-4" />
             </div>
             <div>
-              <p className="text-xs font-bold text-slate-800">Etapa 2 — Operações (CFOP)</p>
-              <p className="text-[11px] text-slate-600 mt-0.5">
-                Verificação de coerência entre entradas e saídas, validação de CFOP e compatibilidade com o regime tributário.
+              <p className="text-xs font-bold text-[var(--atlas-text)]">Etapa 2 — Operações</p>
+              <p className="text-[10px] leading-relaxed text-[var(--atlas-text-secondary)] mt-1">
+                Verificação de coerência entre entradas e saídas e validação de CFOP por regime.
               </p>
             </div>
           </div>
 
-          <div className="bg-slate-50 border border-[#e5e2d9] rounded-lg p-3 flex items-start space-x-3">
-            <div className="p-2 bg-[#f1efe8] text-[#1e3a5f] rounded-lg">
+          <div className="atlas-stat-strip p-4 flex items-start space-x-3 border-[var(--atlas-border)]/50">
+            <div className="p-2.5 bg-[#f1efe8] text-[var(--atlas-navy)] rounded-xl border border-[#e5e2d9]">
               <ShieldCheck className="w-4 h-4" />
             </div>
             <div>
-              <p className="text-xs font-bold text-slate-800">Etapa 3 — Revisão consolidada</p>
-              <p className="text-[11px] text-slate-600 mt-0.5">
-                Instância revisora que consolida os pareceres técnicos e emite a sugestão final de conformidade.
+              <p className="text-xs font-bold text-[var(--atlas-text)]">Etapa 3 — Revisão</p>
+              <p className="text-[10px] leading-relaxed text-[var(--atlas-text-secondary)] mt-1">
+                Instância revisora que consolida os pareceres e emite a sugestão final de conformidade.
               </p>
             </div>
           </div>
@@ -390,17 +387,17 @@ export function AiOrchestratorView({
       </div>
 
       {/* Navigation Sub-Tabs */}
-      <div className="flex flex-wrap items-center justify-between gap-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+      <div className="flex flex-wrap items-center justify-between gap-2 bg-[var(--atlas-surface-hover)] p-1.5 rounded-xl border border-[var(--atlas-border)]">
         <div className="flex flex-wrap items-center gap-1">
           <button
             onClick={() => setActiveMainTab('dashboard')}
             className={`px-3.5 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center space-x-2 ${
               activeMainTab === 'dashboard'
-                ? 'bg-white text-[#1e3a5f] shadow-xs border border-slate-200'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                ? 'bg-[var(--atlas-surface)] text-[var(--atlas-navy)] shadow-xs border border-[var(--atlas-border)]'
+                : 'text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)] hover:bg-[var(--atlas-border)]/60'
             }`}
           >
-            <BarChart3 className="w-4 h-4 text-[#1e3a5f]" />
+            <BarChart3 className="w-4 h-4 text-[var(--atlas-navy)]" />
             <span>Dashboard de Performance</span>
           </button>
 
@@ -408,11 +405,11 @@ export function AiOrchestratorView({
             onClick={() => setActiveMainTab('terminal_c170')}
             className={`px-3.5 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center space-x-2 ${
               activeMainTab === 'terminal_c170'
-                ? 'bg-white text-[#1e3a5f] shadow-xs border border-slate-200'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                ? 'bg-[var(--atlas-surface)] text-[var(--atlas-navy)] shadow-xs border border-[var(--atlas-border)]'
+                : 'text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)] hover:bg-[var(--atlas-border)]/60'
             }`}
           >
-            <Terminal className="w-4 h-4 text-[#0f6e56]" />
+            <Terminal className="w-4 h-4 text-[var(--atlas-accent)]" />
             <span>Agente de Conferência C170</span>
             {batchLoading && (
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
@@ -423,8 +420,8 @@ export function AiOrchestratorView({
             onClick={() => setActiveMainTab('auditoria')}
             className={`px-3.5 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center space-x-2 ${
               activeMainTab === 'auditoria'
-                ? 'bg-white text-[#1e3a5f] shadow-xs border border-slate-200'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                ? 'bg-[var(--atlas-surface)] text-[var(--atlas-navy)] shadow-xs border border-[var(--atlas-border)]'
+                : 'text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)] hover:bg-[var(--atlas-border)]/60'
             }`}
           >
             <BrainCircuit className="w-4 h-4 text-emerald-600" />
@@ -435,8 +432,8 @@ export function AiOrchestratorView({
             onClick={() => setActiveMainTab('feedback_center')}
             className={`px-3.5 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center space-x-2 ${
               activeMainTab === 'feedback_center'
-                ? 'bg-white text-[#1e3a5f] shadow-xs border border-slate-200'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                ? 'bg-[var(--atlas-surface)] text-[var(--atlas-navy)] shadow-xs border border-[var(--atlas-border)]'
+                : 'text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)] hover:bg-[var(--atlas-border)]/60'
             }`}
           >
             <Brain className="w-4 h-4 text-amber-600" />
@@ -447,11 +444,11 @@ export function AiOrchestratorView({
             onClick={() => setActiveMainTab('configuracao')}
             className={`px-3.5 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center space-x-2 ${
               activeMainTab === 'configuracao'
-                ? 'bg-white text-[#1e3a5f] shadow-xs border border-slate-200'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                ? 'bg-[var(--atlas-surface)] text-[var(--atlas-navy)] shadow-xs border border-[var(--atlas-border)]'
+                : 'text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)] hover:bg-[var(--atlas-border)]/60'
             }`}
           >
-            <Sliders className="w-4 h-4 text-slate-600" />
+            <Sliders className="w-4 h-4 text-[var(--atlas-text-secondary)]" />
             <span>Parâmetros de Agente</span>
           </button>
         </div>
@@ -490,55 +487,55 @@ export function AiOrchestratorView({
         <>
           {/* Memory Metrics Banner */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-2xs space-y-1 relative overflow-hidden">
-              <div className="flex items-center justify-between text-slate-500 text-xs font-medium">
+            <div className="bg-[var(--atlas-surface)] p-5 rounded-lg border border-[var(--atlas-border)] shadow-xs space-y-1 relative overflow-hidden">
+              <div className="flex items-center justify-between text-[var(--atlas-text-secondary)] text-xs font-medium">
                 <span>Otimização de Tokens</span>
                 <Zap className="w-4 h-4 text-amber-500" />
               </div>
-              <div className="text-2xl font-black text-slate-900 tracking-tight">
-                {stats.totalTokensSaved.toLocaleString('pt-BR')} <span className="text-xs font-semibold text-slate-500">tokens</span>
+              <div className="text-2xl font-black text-[var(--atlas-text)] tracking-tight">
+                {stats.totalTokensSaved.toLocaleString('pt-BR')} <span className="text-xs font-semibold text-[var(--atlas-text-secondary)]">tokens</span>
               </div>
-              <p className="text-[11px] text-emerald-600 font-bold flex items-center space-x-1">
+              <p className="text-xs text-emerald-600 font-bold flex items-center space-x-1">
                 <TrendingDown className="w-3 h-3" />
                 <span>Economia Estimada: R$ {stats.estimatedMoneySavedBrl.toFixed(2)}</span>
               </p>
             </div>
 
-            <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-2xs space-y-1">
-              <div className="flex items-center justify-between text-slate-500 text-xs font-medium">
+            <div className="bg-[var(--atlas-surface)] p-5 rounded-lg border border-[var(--atlas-border)] shadow-xs space-y-1">
+              <div className="flex items-center justify-between text-[var(--atlas-text-secondary)] text-xs font-medium">
                 <span>Aproveitamento de Cache</span>
-                <Database className="w-4 h-4 text-[#1e3a5f]" />
+                <Database className="w-4 h-4 text-[var(--atlas-navy)]" />
               </div>
-              <div className="text-2xl font-black text-slate-900 tracking-tight">
+              <div className="text-2xl font-black text-[var(--atlas-text)] tracking-tight">
                 {stats.hitRatePercent}%
               </div>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-xs text-[var(--atlas-text-secondary)]">
                 {stats.cacheHits} consultas otimizadas por cache
               </p>
             </div>
 
-            <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-2xs space-y-1">
-              <div className="flex items-center justify-between text-slate-500 text-xs font-medium">
+            <div className="bg-[var(--atlas-surface)] p-5 rounded-lg border border-[var(--atlas-border)] shadow-xs space-y-1">
+              <div className="flex items-center justify-between text-[var(--atlas-text-secondary)] text-xs font-medium">
                 <span>Registros Indexados</span>
-                <Sparkles className="w-4 h-4 text-[#0f6e56]" />
+                <Sparkles className="w-4 h-4 text-[var(--atlas-accent)]" />
               </div>
-              <div className="text-2xl font-black text-slate-900 tracking-tight">
+              <div className="text-2xl font-black text-[var(--atlas-text)] tracking-tight">
                 {stats.memoryEntriesCount}
               </div>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-xs text-[var(--atlas-text-secondary)]">
                 Itens com histórico de auditoria
               </p>
             </div>
 
-            <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-2xs space-y-1">
-              <div className="flex items-center justify-between text-slate-500 text-xs font-medium">
+            <div className="bg-[var(--atlas-surface)] p-5 rounded-lg border border-[var(--atlas-border)] shadow-xs space-y-1">
+              <div className="flex items-center justify-between text-[var(--atlas-text-secondary)] text-xs font-medium">
                 <span>Total de Auditorias Realizadas</span>
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
               </div>
-              <div className="text-2xl font-black text-slate-900 tracking-tight">
+              <div className="text-2xl font-black text-[var(--atlas-text)] tracking-tight">
                 {stats.totalAudited}
               </div>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-xs text-[var(--atlas-text-secondary)]">
                 {stats.cacheMisses} execuções de pipeline analítico
               </p>
             </div>
@@ -547,80 +544,80 @@ export function AiOrchestratorView({
       )}
 
       {/* Simulator Section */}
-      <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm space-y-6">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+      <div className="bg-[var(--atlas-surface)] rounded-lg border border-[var(--atlas-border)] p-6 shadow-sm space-y-6">
+        <div className="flex items-center justify-between border-b border-[var(--atlas-border)] pb-4">
           <div className="flex items-center space-x-2">
-            <Bot className="w-5 h-5 text-[#1e3a5f]" />
-            <h2 className="text-base font-bold text-slate-900">
+            <Bot className="w-5 h-5 text-[var(--atlas-navy)]" />
+            <h2 className="text-base font-bold text-[var(--atlas-text)]">
               Simulador de Auditoria Frugal por Item
             </h2>
           </div>
-          <span className="text-xs font-medium text-slate-500">
+          <span className="text-xs font-medium text-[var(--atlas-text-secondary)]">
             Teste qualquer produto individualmente
           </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2">
-            <label className="block text-xs font-bold text-slate-700 mb-1">
+            <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] mb-1">
               Descrição do Produto
             </label>
             <input
               type="text"
               value={simItem.descrItem}
               onChange={(e) => setSimItem({ ...simItem, descrItem: e.target.value })}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+              className="w-full px-3 py-2 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg text-xs text-[var(--atlas-text)] font-medium focus:outline-none focus:ring-2 focus:ring-[var(--atlas-navy)]"
               placeholder="Ex: CERVEJA LATA 350ML, REFRIGERANTE, PARAFUSO SEST..."
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">
+            <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] mb-1">
               NCM Atual
             </label>
             <input
               type="text"
               value={simItem.ncm}
               onChange={(e) => setSimItem({ ...simItem, ncm: e.target.value })}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+              className="w-full px-3 py-2 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg text-xs text-[var(--atlas-text)] font-medium focus:outline-none focus:ring-2 focus:ring-[var(--atlas-navy)]"
               placeholder="Ex: 22030000"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">
+            <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] mb-1">
               CFOP Atual
             </label>
             <input
               type="text"
               value={simItem.cfop}
               onChange={(e) => setSimItem({ ...simItem, cfop: e.target.value })}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+              className="w-full px-3 py-2 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg text-xs text-[var(--atlas-text)] font-medium focus:outline-none focus:ring-2 focus:ring-[var(--atlas-navy)]"
               placeholder="Ex: 5102"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">
+            <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] mb-1">
               CST/CSOSN ICMS
             </label>
             <input
               type="text"
               value={simItem.cstIcms}
               onChange={(e) => setSimItem({ ...simItem, cstIcms: e.target.value })}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+              className="w-full px-3 py-2 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg text-xs text-[var(--atlas-text)] font-medium focus:outline-none focus:ring-2 focus:ring-[var(--atlas-navy)]"
               placeholder="Ex: 000, 060, 500"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">
+            <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] mb-1">
               Regime Tributário
             </label>
             <select
               value={simItem.regimeEmpresa}
               onChange={(e) => setSimItem({ ...simItem, regimeEmpresa: e.target.value })}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+              className="w-full px-3 py-2 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg text-xs text-[var(--atlas-text)] font-medium focus:outline-none focus:ring-2 focus:ring-[var(--atlas-navy)]"
             >
               <option value="Lucro Presumido">Lucro Presumido</option>
               <option value="Lucro Real">Lucro Real</option>
@@ -633,7 +630,7 @@ export function AiOrchestratorView({
           <button
             onClick={handleRunSimulation}
             disabled={loadingSim || !simItem.descrItem || !simItem.ncm}
-            className="px-5 py-2.5 bg-[#1e3a5f] hover:bg-[#142c47] text-white font-bold text-xs rounded-lg shadow-sm transition-all flex items-center space-x-2 disabled:opacity-50 cursor-pointer"
+            className="px-5 py-2.5 bg-[var(--atlas-navy)] hover:bg-[var(--atlas-navy-dark)] text-white font-bold text-xs rounded-lg shadow-sm transition-all flex items-center space-x-2 disabled:opacity-50 cursor-pointer"
           >
             {loadingSim ? (
               <>
@@ -651,17 +648,17 @@ export function AiOrchestratorView({
 
         {/* Loading Step Animation */}
         {loadingSim && (
-          <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg space-y-3">
-            <div className="flex items-center space-x-3 text-xs font-bold text-slate-700">
-              <span className={`w-2 h-2 rounded-full ${simStep >= 1 ? 'bg-[#1e3a5f] animate-ping' : 'bg-slate-300'}`} />
+          <div className="p-4 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg space-y-3">
+            <div className="flex items-center space-x-3 text-xs font-bold text-[var(--atlas-text-secondary)]">
+              <span className={`w-2 h-2 rounded-full ${simStep >= 1 ? 'bg-[var(--atlas-navy)] animate-ping' : 'bg-slate-300'}`} />
               <span>1. Consultando Memória Semântica Frugal (0 tokens se houver cache)...</span>
             </div>
-            <div className="flex items-center space-x-3 text-xs font-bold text-slate-700">
-              <span className={`w-2 h-2 rounded-full ${simStep >= 2 ? 'bg-[#1e3a5f] animate-ping' : 'bg-slate-300'}`} />
+            <div className="flex items-center space-x-3 text-xs font-bold text-[var(--atlas-text-secondary)]">
+              <span className={`w-2 h-2 rounded-full ${simStep >= 2 ? 'bg-[var(--atlas-navy)] animate-ping' : 'bg-slate-300'}`} />
               <span>2. Agente 1 (NCM/CST) & Agente 2 (CFOP/Operação) analisando em paralelo...</span>
             </div>
-            <div className="flex items-center space-x-3 text-xs font-bold text-slate-700">
-              <span className={`w-2 h-2 rounded-full ${simStep >= 3 ? 'bg-[#0f6e56] animate-ping' : 'bg-slate-300'}`} />
+            <div className="flex items-center space-x-3 text-xs font-bold text-[var(--atlas-text-secondary)]">
+              <span className={`w-2 h-2 rounded-full ${simStep >= 3 ? 'bg-[var(--atlas-accent)] animate-ping' : 'bg-slate-300'}`} />
               <span>3. Agente 3 (Consenso & Auditor Chefe) unificando veredito...</span>
             </div>
           </div>
@@ -669,9 +666,9 @@ export function AiOrchestratorView({
 
         {/* Simulation Output Card */}
         {simResult && !loadingSim && (
-          <div className="p-5 bg-slate-50 border border-slate-200 rounded-lg space-y-5 animate-fadeIn">
+          <div className="p-5 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg space-y-5 animate-fadeIn">
             {/* Verdict Header */}
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--atlas-border)] pb-4">
               <div className="flex items-center space-x-3">
                 <span
                   className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider flex items-center space-x-1.5 ${
@@ -692,8 +689,8 @@ export function AiOrchestratorView({
                   <span>Risco Fiscal {simResult.overallRisk}</span>
                 </span>
 
-                <span className="text-xs font-bold text-slate-600">
-                  Assertividade: <strong className="text-[#1e3a5f]">{simResult.confidenceScore}%</strong>
+                <span className="text-xs font-bold text-[var(--atlas-text-secondary)]">
+                  Assertividade: <strong className="text-[var(--atlas-navy)]">{simResult.confidenceScore}%</strong>
                 </span>
               </div>
 
@@ -704,8 +701,8 @@ export function AiOrchestratorView({
                     <span>Resolvido via Memória (0 Tokens Consumidos)</span>
                   </span>
                 ) : (
-                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#f1efe8] text-[#1e3a5f] border border-[#e5e2d9] flex items-center space-x-1.5">
-                    <Bot className="w-3.5 h-3.5 text-[#1e3a5f]" />
+                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#f1efe8] text-[var(--atlas-navy)] border border-[#e5e2d9] flex items-center space-x-1.5">
+                    <Bot className="w-3.5 h-3.5 text-[var(--atlas-navy)]" />
                     <span>Pipeline Executada ({simResult.tokensUsed} tokens)</span>
                   </span>
                 )}
@@ -713,19 +710,19 @@ export function AiOrchestratorView({
             </div>
 
             {/* Verdict Text */}
-            <div className="bg-white p-4 rounded-lg border border-slate-200 space-y-1">
-              <h4 className="text-xs font-black uppercase text-slate-500 tracking-wider">
+            <div className="bg-[var(--atlas-surface)] p-4 rounded-lg border border-[var(--atlas-border)] space-y-1">
+              <h4 className="text-xs font-black uppercase text-[var(--atlas-text-secondary)] tracking-wider">
                 Parecer Conclusivo do Auditor Chefe (Agente 3)
               </h4>
-              <p className="text-sm font-semibold text-slate-900 leading-relaxed">
+              <p className="text-sm font-semibold text-[var(--atlas-text)] leading-relaxed">
                 {simResult.finalVerdict}
               </p>
             </div>
 
             {/* Suggestion Table Comparison */}
-            <div className="overflow-x-auto bg-white rounded-lg border border-slate-200">
+            <div className="overflow-x-auto bg-[var(--atlas-surface)] rounded-lg border border-[var(--atlas-border)]">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-100 text-slate-700 font-bold uppercase text-[10px]">
+                <thead className="bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] font-bold uppercase text-xs">
                   <tr>
                     <th className="p-3">Parâmetro Fiscal</th>
                     <th className="p-3">Informado Atualmente</th>
@@ -733,14 +730,14 @@ export function AiOrchestratorView({
                     <th className="p-3">Status de Conformidade</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
+                <tbody className="divide-y divide-[var(--atlas-border)] font-medium text-[var(--atlas-text)]">
                   <tr>
-                    <td className="p-3 font-bold text-slate-900">NCM (Classificação)</td>
+                    <td className="p-3 font-bold text-[var(--atlas-text)]">NCM (Classificação)</td>
                     <td className="p-3 font-mono">{simItem.ncm}</td>
-                    <td className="p-3 font-mono font-bold text-[#1e3a5f]">{simResult.suggestedNcm}</td>
+                    <td className="p-3 font-mono font-bold text-[var(--atlas-navy)]">{simResult.suggestedNcm}</td>
                     <td className="p-3">
                       {simItem.ncm === simResult.suggestedNcm ? (
-                        <span className="text-[#0f6e56] font-bold">✓ Conforme</span>
+                        <span className="text-[var(--atlas-accent)] font-bold">✓ Conforme</span>
                       ) : (
                         <span className="text-rose-700 font-bold">Recomenda Alteração</span>
                       )}
@@ -748,12 +745,12 @@ export function AiOrchestratorView({
                   </tr>
 
                   <tr>
-                    <td className="p-3 font-bold text-slate-900">CST ICMS</td>
+                    <td className="p-3 font-bold text-[var(--atlas-text)]">CST ICMS</td>
                     <td className="p-3 font-mono">{simItem.cstIcms}</td>
-                    <td className="p-3 font-mono font-bold text-[#1e3a5f]">{simResult.suggestedCst}</td>
+                    <td className="p-3 font-mono font-bold text-[var(--atlas-navy)]">{simResult.suggestedCst}</td>
                     <td className="p-3">
                       {simItem.cstIcms === simResult.suggestedCst ? (
-                        <span className="text-[#0f6e56] font-bold">✓ Conforme</span>
+                        <span className="text-[var(--atlas-accent)] font-bold">✓ Conforme</span>
                       ) : (
                         <span className="text-rose-700 font-bold">Recomenda Alteração</span>
                       )}
@@ -761,12 +758,12 @@ export function AiOrchestratorView({
                   </tr>
 
                   <tr>
-                    <td className="p-3 font-bold text-slate-900">CFOP Operacional</td>
+                    <td className="p-3 font-bold text-[var(--atlas-text)]">CFOP Operacional</td>
                     <td className="p-3 font-mono">{simItem.cfop}</td>
-                    <td className="p-3 font-mono font-bold text-[#1e3a5f]">{simResult.suggestedCfop}</td>
+                    <td className="p-3 font-mono font-bold text-[var(--atlas-navy)]">{simResult.suggestedCfop}</td>
                     <td className="p-3">
                       {simItem.cfop === simResult.suggestedCfop ? (
-                        <span className="text-[#0f6e56] font-bold">✓ Conforme</span>
+                        <span className="text-[var(--atlas-accent)] font-bold">✓ Conforme</span>
                       ) : (
                         <span className="text-rose-700 font-bold">Recomenda Alteração</span>
                       )}
@@ -778,32 +775,32 @@ export function AiOrchestratorView({
 
             {/* Individual Agent Reasoning Breakdown */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
-              <div className="bg-white p-3.5 rounded-lg border border-slate-200 text-xs space-y-1">
-                <div className="flex items-center justify-between font-bold text-slate-900">
+              <div className="bg-[var(--atlas-surface)] p-3.5 rounded-lg border border-[var(--atlas-border)] text-xs space-y-1">
+                <div className="flex items-center justify-between font-bold text-[var(--atlas-text)]">
                   <span>Agente 1 (NCM/CST)</span>
-                  <span className="text-[10px] text-slate-500">{simResult.agent1NcmCst.modelUsed}</span>
+                  <span className="text-xs text-[var(--atlas-text-secondary)]">{simResult.agent1NcmCst.modelUsed}</span>
                 </div>
-                <p className="text-slate-600 text-[11px] leading-relaxed">
+                <p className="text-[var(--atlas-text-secondary)] text-xs leading-relaxed">
                   {simResult.agent1NcmCst.notes}
                 </p>
               </div>
 
-              <div className="bg-white p-3.5 rounded-lg border border-slate-200 text-xs space-y-1">
-                <div className="flex items-center justify-between font-bold text-slate-900">
+              <div className="bg-[var(--atlas-surface)] p-3.5 rounded-lg border border-[var(--atlas-border)] text-xs space-y-1">
+                <div className="flex items-center justify-between font-bold text-[var(--atlas-text)]">
                   <span>Agente 2 (CFOP/Operação)</span>
-                  <span className="text-[10px] text-slate-500">{simResult.agent2CfopOperacao.modelUsed}</span>
+                  <span className="text-xs text-[var(--atlas-text-secondary)]">{simResult.agent2CfopOperacao.modelUsed}</span>
                 </div>
-                <p className="text-slate-600 text-[11px] leading-relaxed">
+                <p className="text-[var(--atlas-text-secondary)] text-xs leading-relaxed">
                   {simResult.agent2CfopOperacao.notes}
                 </p>
               </div>
 
-              <div className="bg-white p-3.5 rounded-lg border border-slate-200 text-xs space-y-1">
-                <div className="flex items-center justify-between font-bold text-slate-900">
+              <div className="bg-[var(--atlas-surface)] p-3.5 rounded-lg border border-[var(--atlas-border)] text-xs space-y-1">
+                <div className="flex items-center justify-between font-bold text-[var(--atlas-text)]">
                   <span>Agente 3 (Sintetizador)</span>
-                  <span className="text-[10px] text-slate-500">{simResult.agent3Consenso.modelUsed}</span>
+                  <span className="text-xs text-[var(--atlas-text-secondary)]">{simResult.agent3Consenso.modelUsed}</span>
                 </div>
-                <p className="text-slate-600 text-[11px] leading-relaxed">
+                <p className="text-[var(--atlas-text-secondary)] text-xs leading-relaxed">
                   {simResult.agent3Consenso.notes}
                 </p>
               </div>
@@ -814,14 +811,14 @@ export function AiOrchestratorView({
 
       {/* Batch Audit for SPED Current Document */}
       {spedData && spedData.items0200 && (
-        <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm space-y-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+        <div className="bg-[var(--atlas-surface)] rounded-lg border border-[var(--atlas-border)] p-6 shadow-sm space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--atlas-border)] pb-4">
             <div>
-              <h3 className="text-base font-bold text-slate-900 flex items-center space-x-2">
-                <FileCheck className="w-5 h-5 text-[#1e3a5f]" />
+              <h3 className="text-base font-bold text-[var(--atlas-text)] flex items-center space-x-2">
+                <FileCheck className="w-5 h-5 text-[var(--atlas-navy)]" />
                 <span>Auditoria em Lote do SPED Atual (Bloco 0200)</span>
               </h3>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-xs text-[var(--atlas-text-secondary)] mt-0.5">
                 {spedData.items0200.length} produtos cadastrados no arquivo SPED Fiscal carregado.
               </p>
             </div>
@@ -830,7 +827,7 @@ export function AiOrchestratorView({
               <button
                 onClick={handleRunBatchAudit}
                 disabled={batchLoading}
-                className="px-4 py-2 bg-[#1e3a5f] hover:bg-[#142c47] text-white font-bold text-xs rounded-lg shadow-sm transition-all flex items-center space-x-2 disabled:opacity-50 cursor-pointer"
+                className="px-4 py-2 bg-[var(--atlas-navy)] hover:bg-[var(--atlas-navy-dark)] text-white font-bold text-xs rounded-lg shadow-sm transition-all flex items-center space-x-2 disabled:opacity-50 cursor-pointer"
               >
                 {batchLoading ? (
                   <>
@@ -851,15 +848,15 @@ export function AiOrchestratorView({
           {batchResults.length > 0 && (
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <span className="text-xs font-bold text-slate-600">Filtrar por Risco:</span>
+                <span className="text-xs font-bold text-[var(--atlas-text-secondary)]">Filtrar por Risco:</span>
                 {(['Todos', 'Alto', 'Médio', 'Baixo'] as const).map((r) => (
                   <button
                     key={r}
                     onClick={() => setFilterRisk(r)}
                     className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
                       filterRisk === r
-                        ? 'bg-[#1e3a5f] text-white shadow-sm'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        ? 'bg-[var(--atlas-navy)] text-white shadow-sm'
+                        : 'bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] hover:bg-[var(--atlas-border)]'
                     }`}
                   >
                     {r}
@@ -867,7 +864,7 @@ export function AiOrchestratorView({
                 ))}
               </div>
 
-              <span className="text-xs text-slate-500 font-medium">
+              <span className="text-xs text-[var(--atlas-text-secondary)] font-medium">
                 Mostrando {filteredBatchResults.length} de {batchResults.length} auditados
               </span>
             </div>
@@ -875,9 +872,9 @@ export function AiOrchestratorView({
 
           {/* Results Table */}
           {batchResults.length > 0 && (
-            <div className="overflow-x-auto rounded-lg border border-slate-200">
+            <div className="overflow-x-auto rounded-lg border border-[var(--atlas-border)]">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-100 text-slate-700 font-bold uppercase text-[10px]">
+                <thead className="bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] font-bold uppercase text-xs">
                   <tr>
                     <th className="p-3">Origem</th>
                     <th className="p-3">Descrição do Produto</th>
@@ -888,14 +885,14 @@ export function AiOrchestratorView({
                     <th className="p-3 text-right">Ações de Refinamento</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
+                <tbody className="divide-y divide-[var(--atlas-border)] font-medium text-[var(--atlas-text)]">
                   {filteredBatchResults.map((item, idx) => (
-                    <tr key={idx} className="hover:bg-slate-50 transition-colors">
+                    <tr key={idx} className="hover:bg-[var(--atlas-surface-hover)] transition-colors">
                       <td className="p-3">
                         {item.fromCache ? (
                           <span
                             title="Auditado via Memória (0 Tokens)"
-                            className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300 flex items-center space-x-1 w-fit"
+                            className="px-2 py-0.5 rounded text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300 flex items-center space-x-1 w-fit"
                           >
                             <Zap className="w-3 h-3 text-amber-600" />
                             <span>0 Tokens</span>
@@ -903,20 +900,20 @@ export function AiOrchestratorView({
                         ) : (
                           <span
                             title="Auditado via Pipeline Multi-IA"
-                            className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#f1efe8] text-[#1e3a5f] border border-[#e5e2d9] flex items-center space-x-1 w-fit"
+                            className="px-2 py-0.5 rounded text-xs font-bold bg-[#f1efe8] text-[var(--atlas-navy)] border border-[#e5e2d9] flex items-center space-x-1 w-fit"
                           >
-                            <Bot className="w-3 h-3 text-[#1e3a5f]" />
+                            <Bot className="w-3 h-3 text-[var(--atlas-navy)]" />
                             <span>Multi-IA</span>
                           </span>
                         )}
                       </td>
 
-                      <td className="p-3 font-bold text-slate-900 max-w-xs truncate">
+                      <td className="p-3 font-bold text-[var(--atlas-text)] max-w-xs truncate">
                         {item.descrItem}
                       </td>
 
                       <td className="p-3">
-                        <span className="font-mono text-slate-600">{item.itemKey.split('_')[0]}</span>
+                        <span className="font-mono text-[var(--atlas-text-secondary)]">{item.itemKey.split('_')[0]}</span>
                         {item.suggestedNcm !== item.itemKey.split('_')[0] && (
                           <span className="font-mono font-bold text-rose-600 ml-1.5">
                             → {item.suggestedNcm}
@@ -925,7 +922,7 @@ export function AiOrchestratorView({
                       </td>
 
                       <td className="p-3">
-                        <span className="font-mono text-slate-600">{item.itemKey.split('_')[1]}</span>
+                        <span className="font-mono text-[var(--atlas-text-secondary)]">{item.itemKey.split('_')[1]}</span>
                         {item.suggestedCst !== item.itemKey.split('_')[1] && (
                           <span className="font-mono font-bold text-rose-600 ml-1.5">
                             → {item.suggestedCst}
@@ -935,7 +932,7 @@ export function AiOrchestratorView({
 
                       <td className="p-3">
                         <span
-                          className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                          className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${
                             item.overallRisk === 'Alto'
                               ? 'bg-rose-100 text-rose-800 border border-rose-300'
                               : item.overallRisk === 'Médio'
@@ -947,7 +944,7 @@ export function AiOrchestratorView({
                         </span>
                       </td>
 
-                      <td className="p-3 text-slate-600 max-w-sm truncate" title={item.finalVerdict}>
+                      <td className="p-3 text-[var(--atlas-text-secondary)] max-w-sm truncate" title={item.finalVerdict}>
                         {item.finalVerdict}
                       </td>
 
@@ -962,7 +959,7 @@ export function AiOrchestratorView({
                             suggestedCst: item.suggestedCst,
                             suggestedCfop: item.suggestedCfop
                           })}
-                          className="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 rounded-lg text-[11px] font-bold transition flex items-center space-x-1 ml-auto shadow-2xs cursor-pointer"
+                          className="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 rounded-lg text-xs font-bold transition flex items-center space-x-1 ml-auto shadow-xs cursor-pointer"
                           title="Enviar feedback para aprendizado do prompt"
                         >
                           <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
@@ -982,15 +979,15 @@ export function AiOrchestratorView({
       {activeMainTab === 'configuracao' && (
         <div className="space-y-6 animate-fadeIn">
           {/* Header Action Bar */}
-          <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm flex flex-wrap items-center justify-between gap-4">
+          <div className="bg-[var(--atlas-surface)] rounded-lg border border-[var(--atlas-border)] p-6 shadow-sm flex flex-wrap items-center justify-between gap-4">
             <div>
               <div className="flex items-center space-x-2">
-                <Sliders className="w-5 h-5 text-[#1e3a5f]" />
-                <h2 className="text-lg font-black text-slate-900 tracking-tight">
+                <Sliders className="w-5 h-5 text-[var(--atlas-navy)]" />
+                <h2 className="text-lg font-black text-[var(--atlas-text)] tracking-tight">
                   Matriz de Configuração dos Agentes de IA
                 </h2>
               </div>
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-[var(--atlas-text-secondary)] mt-1">
                 Selecione quais modelos de IA atuam em cada etapa da auditoria, defina níveis de criticidade e os focos operacionais.
               </p>
             </div>
@@ -998,7 +995,7 @@ export function AiOrchestratorView({
             <div className="flex items-center space-x-2">
               <button
                 onClick={handleResetArcaConfig}
-                className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer"
+                className="px-3.5 py-2 bg-[var(--atlas-surface-hover)] hover:bg-[var(--atlas-border)] text-[var(--atlas-text-secondary)] rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>Restaurar Padrões</span>
@@ -1006,7 +1003,7 @@ export function AiOrchestratorView({
 
               <button
                 onClick={handleSaveArcaConfig}
-                className="px-4 py-2 bg-[#1e3a5f] hover:bg-[#142c47] text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center space-x-1.5 cursor-pointer"
+                className="px-4 py-2 bg-[var(--atlas-navy)] hover:bg-[var(--atlas-navy-dark)] text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center space-x-1.5 cursor-pointer"
               >
                 <Check className="w-4 h-4" />
                 <span>Salvar configuração</span>
@@ -1015,15 +1012,15 @@ export function AiOrchestratorView({
           </div>
 
           {/* Global Pipeline Strictness */}
-          <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm space-y-4">
-            <h3 className="text-sm font-extrabold text-slate-900 flex items-center space-x-2">
-              <Settings className="w-4 h-4 text-[#1e3a5f]" />
+          <div className="bg-[var(--atlas-surface)] rounded-lg border border-[var(--atlas-border)] p-6 shadow-sm space-y-4">
+            <h3 className="text-sm font-extrabold text-[var(--atlas-text)] flex items-center space-x-2">
+              <Settings className="w-4 h-4 text-[var(--atlas-navy)]" />
               <span>1. Diretriz Global de Rigor e Memória</span>
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] mb-1">
                   Nível de Rigor da Pipeline Fiscal
                 </label>
                 <div className="grid grid-cols-3 gap-2">
@@ -1036,29 +1033,29 @@ export function AiOrchestratorView({
                           ? mode === 'Rigorosa'
                             ? 'bg-rose-50 text-rose-800 border-rose-300'
                             : mode === 'Equilibrada'
-                            ? 'bg-[#f1efe8] text-[#1e3a5f] border-[#1e3a5f]'
+                            ? 'bg-[#f1efe8] text-[var(--atlas-navy)] border-[var(--atlas-navy)]'
                             : 'bg-emerald-50 text-emerald-800 border-emerald-300'
-                          : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                          : 'bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] border-[var(--atlas-border)] hover:bg-[var(--atlas-surface-hover)]'
                       }`}
                     >
                       {mode}
                     </button>
                   ))}
                 </div>
-                <p className="text-[11px] text-slate-500 mt-1.5">
+                <p className="text-xs text-[var(--atlas-text-secondary)] mt-1.5">
                   {arcaConfig.globalStrictness === 'Rigorosa' && 'Rigor Máximo: qualquer desvio de NCM, CST ou CFOP gera notificação de Risco Alto.'}
                   {arcaConfig.globalStrictness === 'Equilibrada' && 'Equilibrado: validações segundo regras oficiais SEFAZ com margem de adequação.'}
                   {arcaConfig.globalStrictness === 'Permissiva' && 'Permissivo: aciona alertas apenas para incongruências graves de transmissão.'}
                 </p>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-200">
+              <div className="flex items-center justify-between p-4 bg-[var(--atlas-surface-hover)] rounded-lg border border-[var(--atlas-border)]">
                 <div>
-                  <label className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
-                    <Database className="w-4 h-4 text-[#1e3a5f]" />
+                  <label className="text-xs font-bold text-[var(--atlas-text)] flex items-center space-x-1.5">
+                    <Database className="w-4 h-4 text-[var(--atlas-navy)]" />
                     <span>Memória Semântica de Frugalidade (Cache de 0 Tokens)</span>
                   </label>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
+                  <p className="text-xs text-[var(--atlas-text-secondary)] mt-0.5">
                     Evita consultas repetidas para os mesmos produtos reutilizando pareceres anteriores sem consumo de tokens.
                   </p>
                 </div>
@@ -1067,7 +1064,7 @@ export function AiOrchestratorView({
                   type="checkbox"
                   checked={arcaConfig.cacheEnabled}
                   onChange={(e) => setArcaConfig((prev) => ({ ...prev, cacheEnabled: e.target.checked }))}
-                  className="w-5 h-5 text-[#1e3a5f] rounded-md focus:ring-[#1e3a5f] cursor-pointer"
+                  className="w-5 h-5 text-[var(--atlas-navy)] rounded-md focus:ring-[var(--atlas-navy)] cursor-pointer"
                 />
               </div>
             </div>
@@ -1075,27 +1072,27 @@ export function AiOrchestratorView({
 
           {/* Individual Agent Configuration Cards */}
           <div className="space-y-4">
-            <h3 className="text-sm font-extrabold text-slate-900 flex items-center space-x-2">
-              <BrainCircuit className="w-4 h-4 text-[#1e3a5f]" />
+            <h3 className="text-sm font-extrabold text-[var(--atlas-text)] flex items-center space-x-2">
+              <BrainCircuit className="w-4 h-4 text-[var(--atlas-navy)]" />
               <span>2. Configuração Individual dos Agentes de IA</span>
             </h3>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* AGENTE 1: ANALISTA NCM/CST */}
-              <div className={`bg-white rounded-lg border transition-all p-5 space-y-4 ${
-                arcaConfig.agents.agent1.active ? 'border-[#e5e2d9] shadow-sm' : 'border-slate-200 opacity-60'
+              <div className={`bg-[var(--atlas-surface)] rounded-lg border transition-all p-5 space-y-4 ${
+                arcaConfig.agents.agent1.active ? 'border-[#e5e2d9] shadow-sm' : 'border-[var(--atlas-border)] opacity-60'
               }`}>
-                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div className="flex items-center justify-between border-b border-[var(--atlas-border)] pb-3">
                   <div className="flex items-center space-x-2.5">
-                    <div className="p-2 bg-[#f1efe8] text-[#1e3a5f] rounded-lg">
+                    <div className="p-2 bg-[#f1efe8] text-[var(--atlas-navy)] rounded-lg">
                       <Cpu className="w-5 h-5" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-extrabold text-slate-900 flex items-center space-x-1">
+                      <h4 className="text-sm font-extrabold text-[var(--atlas-text)] flex items-center space-x-1">
                         <span>{arcaConfig.agents.agent1.moduleCode}</span>
-                        <span className="text-[10px] bg-[#f1efe8] text-[#1e3a5f] px-2 py-0.5 rounded-md font-bold">NCM/CST</span>
+                        <span className="text-xs bg-[#f1efe8] text-[var(--atlas-navy)] px-2 py-0.5 rounded-md font-bold">NCM/CST</span>
                       </h4>
-                      <p className="text-[11px] text-slate-500">Mapeamento & Classificação Fiscal</p>
+                      <p className="text-xs text-[var(--atlas-text-secondary)]">Mapeamento & Classificação Fiscal</p>
                     </div>
                   </div>
 
@@ -1103,13 +1100,13 @@ export function AiOrchestratorView({
                     type="checkbox"
                     checked={arcaConfig.agents.agent1.active}
                     onChange={(e) => updateAgentSetting('agent1', 'active', e.target.checked)}
-                    className="w-4 h-4 text-[#1e3a5f] rounded cursor-pointer"
+                    className="w-4 h-4 text-[var(--atlas-navy)] rounded cursor-pointer"
                   />
                 </div>
 
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                    <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] mb-1">
                       Provedor de Inteligência Artificial
                     </label>
                     <select
@@ -1120,7 +1117,7 @@ export function AiOrchestratorView({
                         updateAgentSetting('agent1', 'provider', prov);
                         updateAgentSetting('agent1', 'modelName', model);
                       }}
-                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold focus:ring-2 focus:ring-[#1e3a5f]"
+                      className="w-full px-3 py-2 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg text-xs font-semibold focus:ring-2 focus:ring-[var(--atlas-navy)]"
                     >
                       <option value="gemini">Google Gemini (Gemini 2.5 Flash / Pro)</option>
                       <option value="openai">OpenAI (GPT-4o / GPT-4o-mini)</option>
@@ -1129,7 +1126,7 @@ export function AiOrchestratorView({
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                    <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] mb-1">
                       Nível de Criticidade
                     </label>
                     <div className="grid grid-cols-3 gap-1.5">
@@ -1137,10 +1134,10 @@ export function AiOrchestratorView({
                         <button
                           key={crit}
                           onClick={() => updateAgentSetting('agent1', 'criticality', crit)}
-                          className={`py-1.5 px-2 rounded-lg text-[11px] font-bold border transition-all ${
+                          className={`py-1.5 px-2 rounded-lg text-xs font-bold border transition-all ${
                             arcaConfig.agents.agent1.criticality === crit
-                              ? 'bg-[#1e3a5f] text-white border-[#142c47]'
-                              : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                              ? 'bg-[var(--atlas-navy)] text-white border-[#142c47]'
+                              : 'bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] border-[var(--atlas-border)] hover:bg-[var(--atlas-surface-hover)]'
                           }`}
                         >
                           {crit}
@@ -1150,13 +1147,13 @@ export function AiOrchestratorView({
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                    <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] mb-1">
                       Foco Prioritário
                     </label>
                     <select
                       value={arcaConfig.agents.agent1.priorityFocus}
                       onChange={(e) => updateAgentSetting('agent1', 'priorityFocus', e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold focus:ring-2 focus:ring-[#1e3a5f]"
+                      className="w-full px-3 py-2 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg text-xs font-semibold focus:ring-2 focus:ring-[var(--atlas-navy)]"
                     >
                       <option value="Classificação NCM/CST">Classificação NCM/CST/CEST (Padrão)</option>
                       <option value="Análise de Isenções e Monofásicos">Destaque de Monofásicos & Isenções PIS/COFINS</option>
@@ -1167,20 +1164,20 @@ export function AiOrchestratorView({
               </div>
 
               {/* AGENTE 2: AUDITOR OPERACIONAL */}
-              <div className={`bg-white rounded-lg border transition-all p-5 space-y-4 ${
-                arcaConfig.agents.agent2.active ? 'border-emerald-200 shadow-sm' : 'border-slate-200 opacity-60'
+              <div className={`bg-[var(--atlas-surface)] rounded-lg border transition-all p-5 space-y-4 ${
+                arcaConfig.agents.agent2.active ? 'border-emerald-200 shadow-sm' : 'border-[var(--atlas-border)] opacity-60'
               }`}>
-                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div className="flex items-center justify-between border-b border-[var(--atlas-border)] pb-3">
                   <div className="flex items-center space-x-2.5">
-                    <div className="p-2 bg-emerald-100 text-[#0f6e56] rounded-lg">
+                    <div className="p-2 bg-emerald-100 text-[var(--atlas-accent)] rounded-lg">
                       <Layers className="w-5 h-5" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-extrabold text-slate-900 flex items-center space-x-1">
+                      <h4 className="text-sm font-extrabold text-[var(--atlas-text)] flex items-center space-x-1">
                         <span>{arcaConfig.agents.agent2.moduleCode}</span>
-                        <span className="text-[10px] bg-emerald-100 text-[#0f6e56] px-2 py-0.5 rounded-md font-bold">CFOP/Operação</span>
+                        <span className="text-xs bg-emerald-100 text-[var(--atlas-accent)] px-2 py-0.5 rounded-md font-bold">CFOP/Operação</span>
                       </h4>
-                      <p className="text-[11px] text-slate-500">Fluxos Operacionais & CFOP</p>
+                      <p className="text-xs text-[var(--atlas-text-secondary)]">Fluxos Operacionais & CFOP</p>
                     </div>
                   </div>
 
@@ -1188,13 +1185,13 @@ export function AiOrchestratorView({
                     type="checkbox"
                     checked={arcaConfig.agents.agent2.active}
                     onChange={(e) => updateAgentSetting('agent2', 'active', e.target.checked)}
-                    className="w-4 h-4 text-[#0f6e56] rounded cursor-pointer"
+                    className="w-4 h-4 text-[var(--atlas-accent)] rounded cursor-pointer"
                   />
                 </div>
 
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                    <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] mb-1">
                       Provedor de Inteligência Artificial
                     </label>
                     <select
@@ -1205,7 +1202,7 @@ export function AiOrchestratorView({
                         updateAgentSetting('agent2', 'provider', prov);
                         updateAgentSetting('agent2', 'modelName', model);
                       }}
-                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold focus:ring-2 focus:ring-[#0f6e56]"
+                      className="w-full px-3 py-2 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg text-xs font-semibold focus:ring-2 focus:ring-[#0f6e56]"
                     >
                       <option value="openai">OpenAI (GPT-4o / GPT-4o-mini)</option>
                       <option value="gemini">Google Gemini (Gemini 2.5 Flash / Pro)</option>
@@ -1214,7 +1211,7 @@ export function AiOrchestratorView({
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                    <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] mb-1">
                       Nível de Criticidade
                     </label>
                     <div className="grid grid-cols-3 gap-1.5">
@@ -1222,10 +1219,10 @@ export function AiOrchestratorView({
                         <button
                           key={crit}
                           onClick={() => updateAgentSetting('agent2', 'criticality', crit)}
-                          className={`py-1.5 px-2 rounded-lg text-[11px] font-bold border transition-all ${
+                          className={`py-1.5 px-2 rounded-lg text-xs font-bold border transition-all ${
                             arcaConfig.agents.agent2.criticality === crit
-                              ? 'bg-[#0f6e56] text-white border-[#0b5341]'
-                              : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                              ? 'bg-[var(--atlas-accent)] text-white border-[#0b5341]'
+                              : 'bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] border-[var(--atlas-border)] hover:bg-[var(--atlas-surface-hover)]'
                           }`}
                         >
                           {crit}
@@ -1235,13 +1232,13 @@ export function AiOrchestratorView({
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                    <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] mb-1">
                       Foco Prioritário
                     </label>
                     <select
                       value={arcaConfig.agents.agent2.priorityFocus}
                       onChange={(e) => updateAgentSetting('agent2', 'priorityFocus', e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold focus:ring-2 focus:ring-[#0f6e56]"
+                      className="w-full px-3 py-2 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg text-xs font-semibold focus:ring-2 focus:ring-[#0f6e56]"
                     >
                       <option value="Operações & CFOP">Incompatibilidade Entrada vs Saída (Padrão)</option>
                       <option value="Cruze de Regimes Tributários">Cruze de Regime (Simples vs Lucro Real/Presumido)</option>
@@ -1252,20 +1249,20 @@ export function AiOrchestratorView({
               </div>
 
               {/* AGENTE 3: CONSELHO FISCAL */}
-              <div className={`bg-white rounded-lg border transition-all p-5 space-y-4 ${
-                arcaConfig.agents.agent3.active ? 'border-[#e5e2d9] shadow-sm' : 'border-slate-200 opacity-60'
+              <div className={`bg-[var(--atlas-surface)] rounded-lg border transition-all p-5 space-y-4 ${
+                arcaConfig.agents.agent3.active ? 'border-[#e5e2d9] shadow-sm' : 'border-[var(--atlas-border)] opacity-60'
               }`}>
-                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div className="flex items-center justify-between border-b border-[var(--atlas-border)] pb-3">
                   <div className="flex items-center space-x-2.5">
-                    <div className="p-2 bg-[#f1efe8] text-[#1e3a5f] rounded-lg">
+                    <div className="p-2 bg-[#f1efe8] text-[var(--atlas-navy)] rounded-lg">
                       <ShieldCheck className="w-5 h-5" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-extrabold text-slate-900 flex items-center space-x-1">
+                      <h4 className="text-sm font-extrabold text-[var(--atlas-text)] flex items-center space-x-1">
                         <span>{arcaConfig.agents.agent3.moduleCode}</span>
-                        <span className="text-[10px] bg-[#f1efe8] text-[#1e3a5f] px-2 py-0.5 rounded-md font-bold">Consenso</span>
+                        <span className="text-xs bg-[#f1efe8] text-[var(--atlas-navy)] px-2 py-0.5 rounded-md font-bold">Consenso</span>
                       </h4>
-                      <p className="text-[11px] text-slate-500">Auditor Chefe & Parecerista Final</p>
+                      <p className="text-xs text-[var(--atlas-text-secondary)]">Auditor Chefe & Parecerista Final</p>
                     </div>
                   </div>
 
@@ -1273,13 +1270,13 @@ export function AiOrchestratorView({
                     type="checkbox"
                     checked={arcaConfig.agents.agent3.active}
                     onChange={(e) => updateAgentSetting('agent3', 'active', e.target.checked)}
-                    className="w-4 h-4 text-[#1e3a5f] rounded cursor-pointer"
+                    className="w-4 h-4 text-[var(--atlas-navy)] rounded cursor-pointer"
                   />
                 </div>
 
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                    <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] mb-1">
                       Provedor de Inteligência Artificial
                     </label>
                     <select
@@ -1290,7 +1287,7 @@ export function AiOrchestratorView({
                         updateAgentSetting('agent3', 'provider', prov);
                         updateAgentSetting('agent3', 'modelName', model);
                       }}
-                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold focus:ring-2 focus:ring-[#1e3a5f]"
+                      className="w-full px-3 py-2 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg text-xs font-semibold focus:ring-2 focus:ring-[var(--atlas-navy)]"
                     >
                       <option value="claude">Anthropic Claude (Claude 3.5 Sonnet)</option>
                       <option value="gemini">Google Gemini (Gemini 2.5 Flash / Pro)</option>
@@ -1299,7 +1296,7 @@ export function AiOrchestratorView({
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                    <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] mb-1">
                       Nível de Criticidade
                     </label>
                     <div className="grid grid-cols-3 gap-1.5">
@@ -1307,10 +1304,10 @@ export function AiOrchestratorView({
                         <button
                           key={crit}
                           onClick={() => updateAgentSetting('agent3', 'criticality', crit)}
-                          className={`py-1.5 px-2 rounded-lg text-[11px] font-bold border transition-all ${
+                          className={`py-1.5 px-2 rounded-lg text-xs font-bold border transition-all ${
                             arcaConfig.agents.agent3.criticality === crit
-                              ? 'bg-[#1e3a5f] text-white border-[#142c47]'
-                              : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                              ? 'bg-[var(--atlas-navy)] text-white border-[#142c47]'
+                              : 'bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] border-[var(--atlas-border)] hover:bg-[var(--atlas-surface-hover)]'
                           }`}
                         >
                           {crit}
@@ -1320,13 +1317,13 @@ export function AiOrchestratorView({
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                    <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] mb-1">
                       Foco Prioritário
                     </label>
                     <select
                       value={arcaConfig.agents.agent3.priorityFocus}
                       onChange={(e) => updateAgentSetting('agent3', 'priorityFocus', e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold focus:ring-2 focus:ring-[#1e3a5f]"
+                      className="w-full px-3 py-2 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg text-xs font-semibold focus:ring-2 focus:ring-[var(--atlas-navy)]"
                     >
                       <option value="Consenso & Juiz Final">Síntese de Consenso & Veredito Final (Padrão)</option>
                       <option value="Blindagem Antiautuação Fiscal">Blindagem Preventiva para Malha Fina</option>
@@ -1339,34 +1336,34 @@ export function AiOrchestratorView({
           </div>
 
           {/* Active Pipeline Preview Card */}
-          <div className="bg-white text-[#2c2c2a] rounded-lg p-5 border border-[#e5e2d9] shadow-sm space-y-3">
+          <div className="bg-[var(--atlas-surface)] text-[#2c2c2a] rounded-lg p-5 border border-[#e5e2d9] shadow-sm space-y-3">
             <div className="flex items-center justify-between border-b border-[#e5e2d9] pb-2">
-              <h4 className="text-xs font-bold text-[#1e3a5f] uppercase tracking-wider flex items-center space-x-2">
-                <BrainCircuit className="w-4 h-4 text-[#1e3a5f]" />
+              <h4 className="text-xs font-bold text-[var(--atlas-navy)] uppercase tracking-wider flex items-center space-x-2">
+                <BrainCircuit className="w-4 h-4 text-[var(--atlas-navy)]" />
                 <span>Resumo da Configuração de IA</span>
               </h4>
-              <span className="text-[11px] font-mono text-slate-500">Rigor: {arcaConfig.globalStrictness}</span>
+              <span className="text-xs font-mono text-[var(--atlas-text-secondary)]">Rigor: {arcaConfig.globalStrictness}</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-              <div className="bg-slate-50 p-3 rounded-lg border border-[#e5e2d9]">
-                <p className="font-bold text-[#1e3a5f]">{arcaConfig.agents.agent1.moduleCode}</p>
-                <p className="text-slate-600 text-[11px] mt-0.5">
-                  Provedor: <strong className="text-slate-900">{arcaConfig.agents.agent1.provider.toUpperCase()}</strong> | Criticidade: <strong className="text-slate-900">{arcaConfig.agents.agent1.criticality}</strong>
+              <div className="bg-[var(--atlas-surface-hover)] p-3 rounded-lg border border-[#e5e2d9]">
+                <p className="font-bold text-[var(--atlas-navy)]">{arcaConfig.agents.agent1.moduleCode}</p>
+                <p className="text-[var(--atlas-text-secondary)] text-xs mt-0.5">
+                  Provedor: <strong className="text-[var(--atlas-text)]">{arcaConfig.agents.agent1.provider.toUpperCase()}</strong> | Criticidade: <strong className="text-[var(--atlas-text)]">{arcaConfig.agents.agent1.criticality}</strong>
                 </p>
               </div>
 
-              <div className="bg-slate-50 p-3 rounded-lg border border-[#e5e2d9]">
-                <p className="font-bold text-[#0f6e56]">{arcaConfig.agents.agent2.moduleCode}</p>
-                <p className="text-slate-600 text-[11px] mt-0.5">
-                  Provedor: <strong className="text-slate-900">{arcaConfig.agents.agent2.provider.toUpperCase()}</strong> | Criticidade: <strong className="text-slate-900">{arcaConfig.agents.agent2.criticality}</strong>
+              <div className="bg-[var(--atlas-surface-hover)] p-3 rounded-lg border border-[#e5e2d9]">
+                <p className="font-bold text-[var(--atlas-accent)]">{arcaConfig.agents.agent2.moduleCode}</p>
+                <p className="text-[var(--atlas-text-secondary)] text-xs mt-0.5">
+                  Provedor: <strong className="text-[var(--atlas-text)]">{arcaConfig.agents.agent2.provider.toUpperCase()}</strong> | Criticidade: <strong className="text-[var(--atlas-text)]">{arcaConfig.agents.agent2.criticality}</strong>
                 </p>
               </div>
 
-              <div className="bg-slate-50 p-3 rounded-lg border border-[#e5e2d9]">
-                <p className="font-bold text-[#1e3a5f]">{arcaConfig.agents.agent3.moduleCode}</p>
-                <p className="text-slate-600 text-[11px] mt-0.5">
-                  Provedor: <strong className="text-slate-900">{arcaConfig.agents.agent3.provider.toUpperCase()}</strong> | Criticidade: <strong className="text-slate-900">{arcaConfig.agents.agent3.criticality}</strong>
+              <div className="bg-[var(--atlas-surface-hover)] p-3 rounded-lg border border-[#e5e2d9]">
+                <p className="font-bold text-[var(--atlas-navy)]">{arcaConfig.agents.agent3.moduleCode}</p>
+                <p className="text-[var(--atlas-text-secondary)] text-xs mt-0.5">
+                  Provedor: <strong className="text-[var(--atlas-text)]">{arcaConfig.agents.agent3.provider.toUpperCase()}</strong> | Criticidade: <strong className="text-[var(--atlas-text)]">{arcaConfig.agents.agent3.criticality}</strong>
                 </p>
               </div>
             </div>
@@ -1377,29 +1374,29 @@ export function AiOrchestratorView({
       {/* Modal for API Keys Configuration */}
       {showKeysModal && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg max-w-md w-full p-6 shadow-sm space-y-5 border border-slate-200 animate-scaleUp">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div className="bg-[var(--atlas-surface)] rounded-lg max-w-md w-full p-6 shadow-sm space-y-5 border border-[var(--atlas-border)] animate-scaleUp">
+            <div className="flex items-center justify-between border-b border-[var(--atlas-border)] pb-3">
               <div className="flex items-center space-x-2">
-                <Key className="w-5 h-5 text-[#1e3a5f]" />
-                <h3 className="text-base font-bold text-slate-900">
+                <Key className="w-5 h-5 text-[var(--atlas-navy)]" />
+                <h3 className="text-base font-bold text-[var(--atlas-text)]">
                   Configuração de Chaves de IA
                 </h3>
               </div>
               <button
                 onClick={() => setShowKeysModal(false)}
-                className="text-slate-400 hover:text-slate-600 text-sm font-bold cursor-pointer"
+                className="text-[var(--atlas-text-muted)] hover:text-[var(--atlas-text-secondary)] text-sm font-bold cursor-pointer"
               >
                 ✕
               </button>
             </div>
 
-            <p className="text-xs text-slate-600 leading-relaxed">
+            <p className="text-xs text-[var(--atlas-text-secondary)] leading-relaxed">
               O orquestrador pode integrar chamadas diretas às APIs do OpenAI (GPT-4o), Anthropic (Claude 3.5 Sonnet) e Gemini. Caso não informe chaves personalizadas, o sistema executará com o modelo Gemini nativo configurado no servidor.
             </p>
 
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] mb-1">
                   OpenAI API Key (Opcional - GPT-4o)
                 </label>
                 <input
@@ -1407,12 +1404,12 @@ export function AiOrchestratorView({
                   value={openAiKey}
                   onChange={(e) => setOpenAiKey(e.target.value)}
                   placeholder="sk-..."
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+                  className="w-full px-3 py-2 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg text-xs font-mono focus:outline-none focus:ring-2 focus:ring-[var(--atlas-navy)]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] mb-1">
                   Anthropic API Key (Opcional - Claude 3.5)
                 </label>
                 <input
@@ -1420,12 +1417,12 @@ export function AiOrchestratorView({
                   value={anthropicKey}
                   onChange={(e) => setAnthropicKey(e.target.value)}
                   placeholder="sk-ant-..."
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+                  className="w-full px-3 py-2 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg text-xs font-mono focus:outline-none focus:ring-2 focus:ring-[var(--atlas-navy)]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] mb-1">
                   Gemini API Key (Opcional)
                 </label>
                 <input
@@ -1433,12 +1430,12 @@ export function AiOrchestratorView({
                   value={geminiKey}
                   onChange={(e) => setGeminiKey(e.target.value)}
                   placeholder="AIzaSy..."
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+                  className="w-full px-3 py-2 bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg text-xs font-mono focus:outline-none focus:ring-2 focus:ring-[var(--atlas-navy)]"
                 />
               </div>
             </div>
 
-            <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+            <div className="flex items-center justify-between pt-2 border-t border-[var(--atlas-border)]">
               <button
                 onClick={handleClearKeys}
                 className="px-3 py-1.5 text-xs text-rose-600 font-bold hover:underline cursor-pointer"
@@ -1449,13 +1446,13 @@ export function AiOrchestratorView({
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => setShowKeysModal(false)}
-                  className="px-4 py-2 bg-slate-100 text-slate-700 font-bold text-xs rounded-lg hover:bg-slate-200 cursor-pointer"
+                  className="px-4 py-2 bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] font-bold text-xs rounded-lg hover:bg-[var(--atlas-border)] cursor-pointer"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleSaveKeys}
-                  className="px-4 py-2 bg-[#1e3a5f] text-white font-bold text-xs rounded-lg hover:bg-[#142c47] shadow-sm cursor-pointer"
+                  className="px-4 py-2 bg-[var(--atlas-navy)] text-white font-bold text-xs rounded-lg hover:bg-[var(--atlas-navy-dark)] shadow-sm cursor-pointer"
                 >
                   Salvar Preferências
                 </button>

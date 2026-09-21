@@ -64,7 +64,7 @@ export function ThemeSelector({ compact = true, className = '' }: ThemeSelectorP
           onClick={() => handleModeChange('light')}
           className={`p-1.2 rounded-md transition-all ${
             mode === 'light'
-              ? 'bg-[var(--atlas-surface)] text-[var(--atlas-navy)] shadow-2xs font-bold'
+              ? 'bg-[var(--atlas-surface)] text-[var(--atlas-navy)] shadow-xs font-bold'
               : 'text-[var(--atlas-text-muted)] hover:text-[var(--atlas-text)]'
           }`}
           title="Modo Claro"
@@ -76,7 +76,7 @@ export function ThemeSelector({ compact = true, className = '' }: ThemeSelectorP
           onClick={() => handleModeChange('dark')}
           className={`p-1.2 rounded-md transition-all ${
             mode === 'dark'
-              ? 'bg-[var(--atlas-navy)] text-white shadow-2xs font-bold'
+              ? 'bg-[var(--atlas-navy)] text-white shadow-xs font-bold'
               : 'text-[var(--atlas-text-muted)] hover:text-[var(--atlas-text)]'
           }`}
           title="Modo Escuro"

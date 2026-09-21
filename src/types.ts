@@ -359,6 +359,51 @@ export interface ArquivoCliente {
   observacoes?: string;
 }
 
+export type CorrecaoC170 = CorrecaoItemC170;
+export interface CorrecaoItemC170 {
+  id: string;
+  docId: string;
+  numDoc: string;
+  numItem: string;
+  codItem: string;
+  descrItem: string;
+  ncm: string;
+
+  // Valores declarados (Origem SPED C170)
+  cstDeclarado: string;
+  cfopDeclarado: string;
+  aliqIcmsDeclarada: number;
+  vlBcIcmsDeclarado: number;
+  vlIcmsDeclarado: number;
+  vlItem: number;
+
+  // Valores sugeridos no Plano de Correção
+  cstSugerido: string;
+  cfopSugerido: string;
+  aliqIcmsSugerida: number;
+  vlBcIcmsSugerido: number;
+  vlIcmsSugerido: number;
+
+  // Diagnóstico
+  precisaCorrecao: boolean;
+  motivosInconsistencia: string[];
+  fonteRegra: 'MATRIZ_TRIBUTARIA' | 'AUDITORIA_ACHADOS' | 'ORQUESTRADOR_IA' | 'APRENDIZADO_ROBO' | 'CONSOLIDADO';
+  confiancaPercentual?: number;
+  status: 'pendente' | 'aprovado' | 'rejeitado';
+}
+
+export interface PlanoCorrecaoC170Result {
+  itensCorrecao: CorrecaoItemC170[];
+  novasRegrasAprendidas: LearnedTaxRule[];
+  resumo: {
+    totalItensAnalisados: number;
+    totalItensComCorrecao: number;
+    totalCorrecoesCst: number;
+    totalCorrecoesCfop: number;
+    totalCorrecoesIcms: number;
+  };
+}
+
 export interface LearnedTaxRule {
   id: string;
   uf: string;

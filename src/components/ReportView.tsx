@@ -419,28 +419,40 @@ Foram identificados um total de ${totalFindings} apontamentos de divergência. A
   }
 
   return (
-    <div className="max-w-7xl w-full mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-6 text-[var(--atlas-text)]">
+    <div className="max-w-7xl w-full mx-auto py-10 px-4 space-y-10 text-[var(--atlas-text)]">
       
       {/* Header Banner */}
-      <div className="atlas-card p-6 sm:p-8 bg-[var(--atlas-navy)] text-white space-y-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <div className="atlas-pill atlas-pill-accent inline-flex items-center space-x-2 py-1 px-3 text-xs font-semibold uppercase tracking-wider">
-              <ShieldCheck className="w-4 h-4 text-[var(--atlas-accent)]" />
-              <span>Parecer Técnico do Analista Fiscal Senior</span>
+      <div className="atlas-card p-6 md:p-10 bg-gradient-to-br from-[var(--atlas-navy)] to-[var(--atlas-navy-dark)] border-0 text-white shadow-xl overflow-hidden relative">
+        <div className="absolute top-0 right-0 p-10 opacity-10 pointer-events-none rotate-12">
+          <FileText className="w-64 h-64" />
+        </div>
+
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+          <div className="space-y-4">
+            <div className="flex items-center space-x-4">
+              <div className="p-4 bg-white/15 text-emerald-400 rounded-2xl backdrop-blur-md border border-white/15 shadow-inner">
+                <ShieldCheck className="w-8 h-8" />
+              </div>
+              <div>
+                <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight leading-tight" style={{ fontFamily: 'var(--font-display)' }}>
+                  Relatório de Auditoria
+                </h1>
+                <div className="mt-2 flex items-center gap-2">
+                  <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-xs font-bold uppercase tracking-widest">
+                    Analista Fiscal Senior
+                  </span>
+                </div>
+              </div>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-              Relatório de Auditoria & Correções Fiscais
-            </h1>
-            <p className="text-white/80 text-xs max-w-2xl leading-relaxed">
-              Consolidação técnica oficial contendo a sanitização do SPED TXT, resgate de notas omissas, readequação da Matriz Fiscal da UF <span className="font-bold text-white">{companyUf}</span> e reconciliação dos saldos de ICMS.
+            <p className="text-base text-blue-100/80 max-w-2xl leading-relaxed">
+              Parecer Técnico e Relatório de Correções Fiscais. Consolidação da sanitização do SPED TXT e readequação da Matriz Fiscal (UF: <span className="font-bold text-white">{companyUf}</span>).
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2 no-print">
             <button
               onClick={() => window.print()}
-              className="atlas-btn atlas-btn-secondary text-xs py-2 px-3.5"
+              className="atlas-btn atlas-btn-secondary text-xs py-2.5 px-5 bg-white/10 border-white/20 text-white hover:bg-white/20"
             >
               <Printer className="w-4 h-4" />
               <span>Imprimir</span>
@@ -448,16 +460,16 @@ Foram identificados um total de ${totalFindings} apontamentos de divergência. A
 
             <button
               onClick={generateExcel}
-              className="atlas-btn atlas-btn-accent text-xs py-2 px-3.5"
+              className="atlas-btn atlas-btn-secondary text-xs py-2.5 px-5 bg-white/10 border-white/20 text-white hover:bg-white/20"
             >
               <FileSpreadsheet className="w-4 h-4" />
-              <span>Exportar Excel (.XLSX)</span>
+              <span>Excel</span>
             </button>
 
             <button
               onClick={generatePDF}
               disabled={generating}
-              className="atlas-btn atlas-btn-primary text-xs py-2 px-3.5"
+              className="atlas-btn atlas-btn-accent py-2.5 px-6 shadow-md"
             >
               <Download className="w-4 h-4" />
               <span>{generating ? 'Gerando PDF...' : 'Exportar Parecer (PDF)'}</span>
@@ -531,25 +543,25 @@ Foram identificados um total de ${totalFindings} apontamentos de divergência. A
             <div className="atlas-stat-item">
               <span className="atlas-stat-label">Inconsistências</span>
               <span className="atlas-stat-value text-[var(--atlas-warning)]">{totalFindings}</span>
-              <span className="text-[11px] text-[var(--atlas-text-secondary)] mt-1">{pendingCount} pendentes</span>
+              <span className="text-xs text-[var(--atlas-text-secondary)] mt-1">{pendingCount} pendentes</span>
             </div>
 
             <div className="atlas-stat-item">
               <span className="atlas-stat-label">Correções SPED TXT</span>
               <span className="atlas-stat-value text-[var(--atlas-accent)]">{totalCorrectionsApplied}</span>
-              <span className="text-[11px] text-[var(--atlas-text-secondary)] mt-1">Linhas ajustadas</span>
+              <span className="text-xs text-[var(--atlas-text-secondary)] mt-1">Linhas ajustadas</span>
             </div>
 
             <div className="atlas-stat-item">
               <span className="atlas-stat-label">Notas Omissas Resgatadas</span>
               <span className="atlas-stat-value text-[var(--atlas-navy)]">{missingNotesInsertedCount}</span>
-              <span className="text-[11px] text-[var(--atlas-text-secondary)] mt-1">Via cruzamento XML</span>
+              <span className="text-xs text-[var(--atlas-text-secondary)] mt-1">Via cruzamento XML</span>
             </div>
 
             <div className="atlas-stat-item">
               <span className="atlas-stat-label">Sanitização Fiscal</span>
               <span className="atlas-stat-value text-[var(--atlas-navy)]">{sanitizationRate}%</span>
-              <span className="text-[11px] text-[var(--atlas-text-secondary)] mt-1">Conformidade Guia EFD</span>
+              <span className="text-xs text-[var(--atlas-text-secondary)] mt-1">Conformidade Guia EFD</span>
             </div>
           </div>
 
@@ -560,7 +572,7 @@ Foram identificados um total de ${totalFindings} apontamentos de divergência. A
                 <FileText className="w-5 h-5 text-[var(--atlas-navy)]" />
                 <h2 className="text-base font-bold text-[var(--atlas-navy)]">Parecer Técnico e Considerações do Auditor</h2>
               </div>
-              <span className="atlas-pill atlas-pill-navy font-mono text-[10px]">
+              <span className="atlas-pill atlas-pill-navy font-mono text-xs">
                 EFD Layout v3.1.x / RICMS-{companyUf}
               </span>
             </div>
@@ -595,28 +607,28 @@ Foram identificados um total de ${totalFindings} apontamentos de divergência. A
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
                 <div className="bg-[var(--atlas-surface-hover)] p-4 rounded-lg border border-[var(--atlas-border)]">
-                  <span className="text-[11px] font-semibold text-[var(--atlas-text-secondary)] uppercase block">Total de Débitos</span>
+                  <span className="text-xs font-semibold text-[var(--atlas-text-secondary)] uppercase block">Total de Débitos</span>
                   <span className="text-base font-bold text-[var(--atlas-text)] mt-1 block">
                     R$ {spedData.apuracao.vlTotDebitos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
 
                 <div className="bg-[var(--atlas-surface-hover)] p-4 rounded-lg border border-[var(--atlas-border)]">
-                  <span className="text-[11px] font-semibold text-[var(--atlas-text-secondary)] uppercase block">Total de Créditos</span>
+                  <span className="text-xs font-semibold text-[var(--atlas-text-secondary)] uppercase block">Total de Créditos</span>
                   <span className="text-base font-bold text-[var(--atlas-text)] mt-1 block">
                     R$ {spedData.apuracao.vlTotCreditos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
 
                 <div className="bg-[var(--atlas-surface-hover)] p-4 rounded-lg border border-[var(--atlas-border)]">
-                  <span className="text-[11px] font-semibold text-[var(--atlas-text-secondary)] uppercase block">Saldo Apurado</span>
+                  <span className="text-xs font-semibold text-[var(--atlas-text-secondary)] uppercase block">Saldo Apurado</span>
                   <span className="text-base font-bold text-[var(--atlas-navy)] mt-1 block">
                     R$ {spedData.apuracao.vlSldApurado.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
 
                 <div className="bg-[var(--atlas-accent-tint)] p-4 rounded-lg border border-[var(--atlas-accent)]/30">
-                  <span className="text-[11px] font-semibold text-[var(--atlas-accent)] uppercase block">Saldo Credor a Transportar</span>
+                  <span className="text-xs font-semibold text-[var(--atlas-accent)] uppercase block">Saldo Credor a Transportar</span>
                   <span className="text-base font-bold text-[var(--atlas-accent)] mt-1 block">
                     R$ {spedData.apuracao.vlSldCredorTransportar.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </span>

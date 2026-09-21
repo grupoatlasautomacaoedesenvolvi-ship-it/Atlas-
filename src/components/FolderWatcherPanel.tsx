@@ -241,23 +241,23 @@ export function FolderWatcherPanel({ clientes, activeClienteId, addNotification,
   };
 
   return (
-    <div className="bg-white rounded-xl border border-[var(--atlas-border)] p-4 shadow-2xs space-y-3 text-xs">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
-        <div className="flex items-center space-x-2.5">
-          <div className="p-1.5 bg-[#1e3a5f]/10 text-[#1e3a5f] rounded-lg">
-            <FolderSearch className="w-5 h-5" />
+    <div className="atlas-card p-6 space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-[var(--atlas-border)] pb-6">
+        <div className="flex items-center space-x-4">
+          <div className="w-12 h-12 rounded-xl bg-[#f1efe8] text-[var(--atlas-navy)] flex items-center justify-center border border-[#e5e2d9] shadow-inner">
+            <FolderSearch className="w-6 h-6" />
           </div>
           <div>
-            <h3 className="font-bold text-slate-900 text-sm flex items-center space-x-2">
-              <span>Monitoramento de Pasta Local (File System API)</span>
-              <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                isWatching ? 'bg-emerald-100 text-[#0f6e56] border border-emerald-200' : 'bg-slate-100 text-slate-600 border border-slate-200'
+            <h3 className="text-xl font-bold text-[var(--atlas-navy)] tracking-tight flex items-center gap-3" style={{ fontFamily: 'var(--font-display)' }}>
+              <span>Monitoramento Local</span>
+              <div className={`atlas-pill text-[10px] py-0.5 px-2 border-2 ${
+                isWatching ? 'atlas-pill-accent border-emerald-200' : 'bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] border-[var(--atlas-border)]'
               }`}>
                 {isWatching ? 'Varredura Ativa' : 'Pausado'}
-              </span>
+              </div>
             </h3>
-            <p className="text-slate-500 text-xs mt-0.5">
-              Observa automaticamente um diretório local do Windows/Linux e dispara o evento <code className="font-mono bg-slate-100 px-1 py-0.5 rounded text-[11px] text-slate-800">atlas_file_saved</code> para o Robô Fiscal.
+            <p className="text-[var(--atlas-text-secondary)] text-xs mt-1">
+              Observa automaticamente um diretório e dispara o evento <code className="font-mono bg-[var(--atlas-surface-hover)] px-1 py-0.5 rounded text-[var(--atlas-text)]">atlas_file_saved</code>.
             </p>
           </div>
         </div>
@@ -265,19 +265,19 @@ export function FolderWatcherPanel({ clientes, activeClienteId, addNotification,
         <div className="flex items-center space-x-2 shrink-0">
           <button
             onClick={handleSelectDirectory}
-            className="px-3 py-2 bg-[#1e3a5f] hover:bg-[#142c47] text-white rounded-lg font-semibold text-xs transition-colors flex items-center space-x-1.5"
+            className="atlas-btn atlas-btn-primary py-2.5 px-5 shadow-xs flex items-center space-x-2"
           >
             <FolderSearch className="w-4 h-4" />
-            <span>{folderName ? 'Alterar Pasta' : 'Selecionar Pasta de Importação'}</span>
+            <span>{folderName ? 'Alterar Pasta' : 'Selecionar Pasta'}</span>
           </button>
 
           {dirHandle && (
             <button
               onClick={toggleWatching}
-              className={`p-2 rounded-lg border text-xs font-semibold shadow-2xs transition-colors ${
+              className={`atlas-btn p-2.5 shadow-xs transition-all border-2 ${
                 isWatching 
-                  ? 'bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100' 
-                  : 'bg-emerald-50 text-[#0f6e56] border-emerald-300 hover:bg-emerald-100'
+                  ? 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' 
+                  : 'bg-emerald-50 text-[var(--atlas-accent)] border-emerald-200 hover:bg-emerald-100'
               }`}
               title={isWatching ? 'Pausar observador' : 'Iniciar observador'}
             >
@@ -288,30 +288,30 @@ export function FolderWatcherPanel({ clientes, activeClienteId, addNotification,
       </div>
 
       {!isSupported && (
-        <div className="p-3 bg-amber-50 border border-amber-200 text-amber-800 rounded-lg flex items-center space-x-2">
-          <AlertCircle className="w-4 h-4 shrink-0" />
-          <span>Este navegador não possui suporte para a File System Access API. Recomendamos o Google Chrome ou Microsoft Edge.</span>
+        <div className="atlas-alert-danger">
+          <AlertCircle className="w-5 h-5 shrink-0" />
+          <span>Este navegador não possui suporte para a File System Access API. Recomendamos o Google Chrome.</span>
         </div>
       )}
 
       {/* Directory Status Card */}
       {dirHandle ? (
-        <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 space-y-2">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+        <div className="bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-2xl p-5 space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <div>
-              <span className="text-slate-500 text-[11px] block">Pasta Selecionada</span>
-              <span className="font-bold text-slate-900 flex items-center space-x-1.5 mt-0.5">
-                <HardDrive className="w-3.5 h-3.5 text-[#1e3a5f]" />
-                <span className="font-mono text-xs">{folderName}</span>
+              <span className="text-[10px] font-bold text-[var(--atlas-text-muted)] uppercase tracking-widest block mb-1.5">Pasta Conectada</span>
+              <span className="font-bold text-[var(--atlas-navy)] flex items-center space-x-2">
+                <HardDrive className="w-4 h-4 opacity-70" />
+                <span className="font-mono text-sm">{folderName}</span>
               </span>
             </div>
 
             <div>
-              <span className="text-slate-500 text-[11px] block">Empresa Destino</span>
+              <span className="text-[10px] font-bold text-[var(--atlas-text-muted)] uppercase tracking-widest block mb-1.5">Cliente Destino</span>
               <select
                 value={selectedClienteId}
                 onChange={e => setSelectedClienteId(e.target.value)}
-                className="mt-0.5 border border-slate-300 rounded px-2 py-1 text-xs bg-white text-slate-800 font-medium"
+                className="atlas-input w-full py-1.5 text-xs font-bold"
               >
                 {clientes.map(c => (
                   <option key={c.id} value={c.id}>{c.nome} ({c.uf})</option>
@@ -320,28 +320,35 @@ export function FolderWatcherPanel({ clientes, activeClienteId, addNotification,
             </div>
 
             <div>
-              <span className="text-slate-500 text-[11px] block">Última Checagem</span>
-              <span className="font-semibold text-slate-700 mt-0.5 block font-mono text-[11px]">
+              <span className="text-[10px] font-bold text-[var(--atlas-text-muted)] uppercase tracking-widest block mb-1.5">Última Varredura</span>
+              <span className="font-bold text-[var(--atlas-text-secondary)] font-mono text-sm">
                 {lastCheckTime ? lastCheckTime.toLocaleTimeString('pt-BR') : 'Aguardando...'}
               </span>
             </div>
           </div>
 
-          <div className="pt-2 border-t border-slate-200/80 flex items-center justify-between text-[11px] text-slate-500">
-            <span className="flex items-center space-x-1">
-              <CheckCircle2 className="w-3.5 h-3.5 text-[#0f6e56]" />
-              <span>{filesFoundCount} arquivo(s) encontrado(s) no diretório • {processedFileNames.size} importado(s) pelo Robô</span>
+          <div className="pt-4 border-t border-[var(--atlas-border)] flex items-center justify-between text-xs text-[var(--atlas-text-secondary)]">
+            <span className="flex items-center space-x-2 font-medium">
+              <CheckCircle2 className="w-4 h-4 text-[var(--atlas-accent)]" />
+              <span>{filesFoundCount} arquivos detectados • {processedFileNames.size} importados</span>
             </span>
 
-            <span className="font-mono text-slate-400">
-              Varredura automática a cada 5 seg
+            <span className="font-mono text-[var(--atlas-text-muted)] text-[10px] uppercase font-bold tracking-widest">
+              Refresh a cada 5 seg
             </span>
           </div>
         </div>
       ) : (
-        <div className="p-4 bg-slate-50/60 border border-dashed border-slate-300 rounded-lg text-center text-slate-500 space-y-1">
-          <p className="font-semibold text-slate-700 text-xs">Nenhum diretório local conectado</p>
-          <p className="text-[11px]">Clique em "Selecionar Pasta de Importação" para que o sistema monitore novos arquivos salvos e dispare a auditoria em tempo real.</p>
+        <div className="p-8 bg-[var(--atlas-surface-hover)]/40 border-2 border-dashed border-[var(--atlas-border)] rounded-2xl text-center space-y-3">
+          <div className="w-12 h-12 rounded-full bg-[var(--atlas-surface)] border border-[var(--atlas-border)] flex items-center justify-center mx-auto text-[var(--atlas-text-muted)]">
+            <HardDrive className="w-6 h-6" />
+          </div>
+          <div className="space-y-1">
+            <p className="font-bold text-[var(--atlas-navy)]">Nenhum diretório conectado</p>
+            <p className="text-xs text-[var(--atlas-text-secondary)] max-w-sm mx-auto">
+              Conecte uma pasta local para que o sistema monitore novos arquivos e dispare a auditoria em tempo real.
+            </p>
+          </div>
         </div>
       )}
     </div>

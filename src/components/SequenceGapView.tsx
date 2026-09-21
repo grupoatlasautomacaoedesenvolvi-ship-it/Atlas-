@@ -231,9 +231,9 @@ export function SequenceGapView({
   if (!spedData) {
     return (
       <div className="max-w-6xl mx-auto py-12 px-4 text-center">
-        <ListOrdered className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-        <h2 className="text-xl font-bold text-slate-800">Nenhum Arquivo SPED Fiscal Carregado</h2>
-        <p className="text-sm text-slate-500 mt-2 max-w-md mx-auto">
+        <ListOrdered className="w-16 h-16 text-[var(--atlas-text-muted)] mx-auto mb-4" />
+        <h2 className="text-xl font-bold text-[var(--atlas-text)]">Nenhum Arquivo SPED Fiscal Carregado</h2>
+        <p className="text-sm text-[var(--atlas-text-secondary)] mt-2 max-w-md mx-auto">
           Faça o upload do arquivo SPED na aba de Importação para conferir automaticamente as quebras de sequência de numeração das notas fiscais.
         </p>
         {onNavigateTab && (
@@ -251,15 +251,15 @@ export function SequenceGapView({
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-lg border border-slate-200 shadow-xs">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[var(--atlas-surface)] p-6 rounded-lg border border-[var(--atlas-border)] shadow-xs">
         <div>
           <div className="flex items-center space-x-3">
-            <div className="p-2.5 bg-slate-100 text-[#1e3a5f] rounded-lg">
+            <div className="p-2.5 bg-[var(--atlas-surface-hover)] text-[var(--atlas-navy)] rounded-lg">
               <ListOrdered className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="text-2xl font-black text-slate-900 tracking-tight">Análise de Quebra de Sequência de Documentos</h1>
-              <p className="text-sm text-slate-500 mt-0.5">
+              <h1 className="text-2xl font-black text-[var(--atlas-text)] tracking-tight">Análise de Quebra de Sequência de Documentos</h1>
+              <p className="text-sm text-[var(--atlas-text-secondary)] mt-0.5">
                 Verificação automatizada da numeração contínua de Notas Fiscais (Modelos 55, 65) escrituradas no SPED x XML.
               </p>
             </div>
@@ -271,7 +271,7 @@ export function SequenceGapView({
             <button
               onClick={handleImportAllMissing}
               disabled={isImporting}
-              className="bg-[#0f6e56] hover:bg-[#0b5240] disabled:bg-[#0f6e56]/50 text-white px-5 py-2.5 rounded-lg text-xs font-bold flex items-center space-x-2 shadow-xs transition"
+              className="bg-[var(--atlas-accent)] hover:bg-[var(--atlas-accent-dark)] disabled:bg-[var(--atlas-accent)]/50 text-white px-5 py-2.5 rounded-lg text-xs font-bold flex items-center space-x-2 shadow-xs transition"
             >
               <PlusCircle className="w-4 h-4" />
               <span>
@@ -283,7 +283,7 @@ export function SequenceGapView({
           {onNavigateTab && (
             <button
               onClick={() => onNavigateTab('omissas')}
-              className="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-4 py-2.5 rounded-lg text-xs font-semibold flex items-center space-x-2 transition"
+              className="bg-[var(--atlas-surface-hover)] hover:bg-[var(--atlas-border)] text-[var(--atlas-text-secondary)] border border-[var(--atlas-border)] px-4 py-2.5 rounded-lg text-xs font-semibold flex items-center space-x-2 transition"
             >
               <FileCheck className="w-4 h-4" />
               <span>Ver no Módulo Omissas</span>
@@ -294,17 +294,17 @@ export function SequenceGapView({
 
       {/* Summary Metrics Banner */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-xs flex items-center space-x-4">
-          <div className="w-12 h-12 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center font-bold">
+        <div className="bg-[var(--atlas-surface)] p-5 rounded-lg border border-[var(--atlas-border)] shadow-xs flex items-center space-x-4">
+          <div className="w-12 h-12 rounded-lg bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] flex items-center justify-center font-bold">
             <ListOrdered className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-semibold text-slate-500 uppercase">Séries Analisadas</p>
-            <p className="text-2xl font-black text-slate-900">{gapGroups.length}</p>
+            <p className="text-xs font-semibold text-[var(--atlas-text-secondary)] uppercase">Séries Analisadas</p>
+            <p className="text-2xl font-black text-[var(--atlas-text)]">{gapGroups.length}</p>
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-lg border border-emerald-200 shadow-xs flex items-center space-x-4">
+        <div className="bg-[var(--atlas-surface)] p-5 rounded-lg border border-emerald-200 shadow-xs flex items-center space-x-4">
           <div className="w-12 h-12 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold">
             <CheckCircle2 className="w-6 h-6" />
           </div>
@@ -316,60 +316,60 @@ export function SequenceGapView({
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-xs flex items-center space-x-4">
-          <div className="w-12 h-12 rounded-lg bg-slate-100 text-[#1e3a5f] flex items-center justify-center font-bold">
+        <div className="bg-[var(--atlas-surface)] p-5 rounded-lg border border-[var(--atlas-border)] shadow-xs flex items-center space-x-4">
+          <div className="w-12 h-12 rounded-lg bg-[var(--atlas-surface-hover)] text-[var(--atlas-navy)] flex items-center justify-center font-bold">
             <FileCode className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-semibold text-slate-700 uppercase">Faltam no SPED (XML OK)</p>
-            <p className="text-2xl font-black text-[#1e3a5f]">{totalGapsXmlAvailable}</p>
-            <p className="text-[10px] text-slate-500 font-medium">Prontas p/ inserção à parte</p>
+            <p className="text-xs font-semibold text-[var(--atlas-text-secondary)] uppercase">Faltam no SPED (XML OK)</p>
+            <p className="text-2xl font-black text-[var(--atlas-navy)]">{totalGapsXmlAvailable}</p>
+            <p className="text-xs text-[var(--atlas-text-secondary)] font-medium">Prontas p/ inserção à parte</p>
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-lg border border-amber-200 shadow-xs flex items-center space-x-4">
+        <div className="bg-[var(--atlas-surface)] p-5 rounded-lg border border-amber-200 shadow-xs flex items-center space-x-4">
           <div className="w-12 h-12 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center font-bold">
             <AlertTriangle className="w-6 h-6" />
           </div>
           <div>
             <p className="text-xs font-semibold text-amber-900 uppercase">Quebras sem XML</p>
             <p className="text-2xl font-black text-amber-700">{totalGapsNoXml}</p>
-            <p className="text-[10px] text-amber-800 font-medium">Necessita inutilização/justificativa</p>
+            <p className="text-xs text-amber-800 font-medium">Necessita inutilização/justificativa</p>
           </div>
         </div>
       </div>
 
       {/* Layperson explanation callout */}
-      <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 flex items-start space-x-3 text-sm text-slate-800">
-        <HelpCircle className="w-5 h-5 text-[#1e3a5f] shrink-0 mt-0.5" />
+      <div className="bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg p-4 flex items-start space-x-3 text-sm text-[var(--atlas-text)]">
+        <HelpCircle className="w-5 h-5 text-[var(--atlas-navy)] shrink-0 mt-0.5" />
         <div>
-          <p className="font-bold text-slate-900">Como funciona o ajuste para leigos?</p>
-          <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">
-            As notas destacadas em <span className="font-bold text-[#1e3a5f]">Azul (XML Disponível)</span> constam nos arquivos da empresa, mas foram esquecidas no SPED Fiscal. Ao clicar no botão <strong>"Importar Nota(s) Faltantes no SPED"</strong>, o sistema cria automaticamente os registros fiscais (C100, C170 e C190) diretamente no arquivo do SPED para exportação oficial completa.
+          <p className="font-bold text-[var(--atlas-text)]">Como funciona o ajuste para leigos?</p>
+          <p className="text-xs text-[var(--atlas-text-secondary)] mt-0.5 leading-relaxed">
+            As notas destacadas em <span className="font-bold text-[var(--atlas-navy)]">Azul (XML Disponível)</span> constam nos arquivos da empresa, mas foram esquecidas no SPED Fiscal. Ao clicar no botão <strong>"Importar Nota(s) Faltantes no SPED"</strong>, o sistema cria automaticamente os registros fiscais (C100, C170 e C190) diretamente no arquivo do SPED para exportação oficial completa.
           </p>
         </div>
       </div>
 
       {/* Filter Toolbar */}
-      <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-4">
+      <div className="bg-[var(--atlas-surface)] p-4 rounded-lg border border-[var(--atlas-border)] shadow-xs flex flex-wrap items-center justify-between gap-4">
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative w-64">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+            <Search className="w-4 h-4 text-[var(--atlas-text-muted)] absolute left-3 top-2.5" />
             <input
               type="text"
               placeholder="Buscar número de nota..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#1e3a5f]"
+              className="w-full pl-9 pr-3 py-1.5 text-xs border border-[var(--atlas-border)] rounded-lg focus:outline-none focus:ring-1 focus:ring-[var(--atlas-navy)]"
             />
           </div>
 
           <div className="flex items-center space-x-2">
-            <Filter className="w-4 h-4 text-slate-400" />
+            <Filter className="w-4 h-4 text-[var(--atlas-text-muted)]" />
             <select
               value={selectedStatusFilter}
               onChange={(e) => setSelectedStatusFilter(e.target.value)}
-              className="text-xs border border-slate-200 rounded-lg px-3 py-1.5 bg-white text-slate-700 font-medium focus:outline-none focus:ring-1 focus:ring-[#1e3a5f]"
+              className="text-xs border border-[var(--atlas-border)] rounded-lg px-3 py-1.5 bg-[var(--atlas-surface)] text-[var(--atlas-text-secondary)] font-medium focus:outline-none focus:ring-1 focus:ring-[var(--atlas-navy)]"
             >
               <option value="ALL">Todos os Status</option>
               <option value="MISSING_IN_SPED_HAS_XML">Faltante no SPED (Com XML)</option>
@@ -382,7 +382,7 @@ export function SequenceGapView({
             <select
               value={selectedSerieFilter}
               onChange={(e) => setSelectedSerieFilter(e.target.value)}
-              className="text-xs border border-slate-200 rounded-lg px-3 py-1.5 bg-white text-slate-700 font-medium focus:outline-none focus:ring-1 focus:ring-[#1e3a5f]"
+              className="text-xs border border-[var(--atlas-border)] rounded-lg px-3 py-1.5 bg-[var(--atlas-surface)] text-[var(--atlas-text-secondary)] font-medium focus:outline-none focus:ring-1 focus:ring-[var(--atlas-navy)]"
             >
               <option value="ALL">Todas as Séries</option>
               {gapGroups.map(g => (
@@ -395,15 +395,15 @@ export function SequenceGapView({
         <div className="flex items-center space-x-3 text-xs">
           <div className="flex items-center space-x-1.5">
             <span className="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
-            <span className="text-slate-600 font-medium">OK no SPED</span>
+            <span className="text-[var(--atlas-text-secondary)] font-medium">OK no SPED</span>
           </div>
           <div className="flex items-center space-x-1.5">
-            <span className="w-3 h-3 rounded-full bg-[#1e3a5f] inline-block"></span>
-            <span className="text-slate-600 font-medium">XML Faltante no SPED</span>
+            <span className="w-3 h-3 rounded-full bg-[var(--atlas-navy)] inline-block"></span>
+            <span className="text-[var(--atlas-text-secondary)] font-medium">XML Faltante no SPED</span>
           </div>
           <div className="flex items-center space-x-1.5">
             <span className="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
-            <span className="text-slate-600 font-medium">Quebra (Sem XML)</span>
+            <span className="text-[var(--atlas-text-secondary)] font-medium">Quebra (Sem XML)</span>
           </div>
         </div>
       </div>
@@ -422,14 +422,14 @@ export function SequenceGapView({
             if (filteredItems.length === 0) return null;
 
             return (
-              <div key={`${group.mod}_${group.serie}`} className="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden">
-                <div className="bg-slate-50 px-6 py-4 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div key={`${group.mod}_${group.serie}`} className="bg-[var(--atlas-surface)] rounded-lg border border-[var(--atlas-border)] shadow-xs overflow-hidden">
+                <div className="bg-[var(--atlas-surface-hover)] px-6 py-4 border-b border-[var(--atlas-border)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
                     <div className="flex items-center space-x-2">
-                      <span className="text-base font-bold text-slate-900">Série {group.serie}</span>
-                      <span className="bg-slate-200 text-slate-700 px-2 py-0.5 rounded text-xs font-semibold">Modelo {group.mod}</span>
+                      <span className="text-base font-bold text-[var(--atlas-text)]">Série {group.serie}</span>
+                      <span className="bg-slate-200 text-[var(--atlas-text-secondary)] px-2 py-0.5 rounded text-xs font-semibold">Modelo {group.mod}</span>
                     </div>
-                    <p className="text-xs text-slate-500 mt-0.5">
+                    <p className="text-xs text-[var(--atlas-text-secondary)] mt-0.5">
                       Faixa Numérica: NFs {group.minNum} até {group.maxNum} ({group.totalEsperado} números no total)
                     </p>
                   </div>
@@ -439,7 +439,7 @@ export function SequenceGapView({
                       {group.totalPresentesSped} escrituradas
                     </span>
                     {group.totalFaltantesXmlDisponivel > 0 && (
-                      <span className="bg-slate-100 text-[#1e3a5f] px-2.5 py-1 rounded border border-slate-300 font-semibold">
+                      <span className="bg-[var(--atlas-surface-hover)] text-[var(--atlas-navy)] px-2.5 py-1 rounded border border-[var(--atlas-border)] font-semibold">
                         {group.totalFaltantesXmlDisponivel} faltam no SPED (Com XML)
                       </span>
                     )}
@@ -466,7 +466,7 @@ export function SequenceGapView({
                               <span className="text-xs font-bold text-emerald-900">NF {item.formattedNum}</span>
                               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                             </div>
-                            <span className="text-[10px] text-emerald-700 font-semibold mt-2">No SPED</span>
+                            <span className="text-xs text-emerald-700 font-semibold mt-2">No SPED</span>
                           </div>
                         );
                       }
@@ -475,21 +475,21 @@ export function SequenceGapView({
                         return (
                           <div
                             key={item.numDoc}
-                            className="bg-slate-50 border border-slate-300 rounded-lg p-3 flex flex-col justify-between shadow-2xs hover:bg-slate-100 transition"
+                            className="bg-[var(--atlas-surface-hover)] border border-[var(--atlas-border)] rounded-lg p-3 flex flex-col justify-between shadow-xs hover:bg-[var(--atlas-surface-hover)] transition"
                             title={`NF ${item.formattedNum} — Disponível em XML, mas NÃO escriturada no SPED`}
                           >
                             <div className="flex items-center justify-between">
-                              <span className="text-xs font-black text-slate-900">NF {item.formattedNum}</span>
-                              <FileCode className="w-3.5 h-3.5 text-[#1e3a5f]" />
+                              <span className="text-xs font-black text-[var(--atlas-text)]">NF {item.formattedNum}</span>
+                              <FileCode className="w-3.5 h-3.5 text-[var(--atlas-navy)]" />
                             </div>
                             <div className="mt-2">
-                              <span className="text-[10px] font-bold bg-slate-200 text-[#1e3a5f] px-1.5 py-0.5 rounded block text-center">
+                              <span className="text-xs font-bold bg-slate-200 text-[var(--atlas-navy)] px-1.5 py-0.5 rounded block text-center">
                                 Com XML
                               </span>
                               {item.xmlRecord && (
                                 <button
                                   onClick={() => onImportMissingToSped([item.xmlRecord!])}
-                                  className="mt-1.5 w-full bg-[#1e3a5f] hover:bg-[#142c47] text-white text-[9px] font-bold py-1 rounded transition text-center"
+                                  className="mt-1.5 w-full bg-[var(--atlas-navy)] hover:bg-[var(--atlas-navy-dark)] text-white text-[9px] font-bold py-1 rounded transition text-center"
                                 >
                                   + Inserir SPED
                                 </button>
@@ -509,25 +509,25 @@ export function SequenceGapView({
                             <span className="text-xs font-bold text-amber-950">NF {item.formattedNum}</span>
                             <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
                           </div>
-                          <span className="text-[10px] text-amber-800 font-bold mt-2">Sem XML</span>
+                          <span className="text-xs text-amber-800 font-bold mt-2">Sem XML</span>
                         </div>
                       );
                     })}
                   </div>
 
                   {filteredItems.length > displayLimit && (
-                    <div className="mt-4 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
+                    <div className="mt-4 pt-4 border-t border-[var(--atlas-border)] flex flex-wrap items-center justify-between gap-3 text-xs text-[var(--atlas-text-secondary)]">
                       <span>Exibindo os primeiros {displayLimit} de {filteredItems.length} itens desta série</span>
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={() => setDisplayLimit(prev => prev + 120)}
-                          className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg font-medium transition"
+                          className="bg-[var(--atlas-surface-hover)] hover:bg-[var(--atlas-border)] text-[var(--atlas-text-secondary)] px-3 py-1.5 rounded-lg font-medium transition"
                         >
                           Carregar mais (+120)
                         </button>
                         <button
                           onClick={() => setDisplayLimit(filteredItems.length)}
-                          className="bg-slate-100 text-[#1e3a5f] hover:bg-slate-200 px-3 py-1.5 rounded-lg font-medium transition"
+                          className="bg-[var(--atlas-surface-hover)] text-[var(--atlas-navy)] hover:bg-[var(--atlas-border)] px-3 py-1.5 rounded-lg font-medium transition"
                         >
                           Mostrar Todos ({filteredItems.length})
                         </button>
@@ -540,7 +540,7 @@ export function SequenceGapView({
           })}
 
         {gapGroups.length === 0 && (
-          <div className="bg-white p-12 text-center rounded-lg border border-slate-200 text-slate-500">
+          <div className="bg-[var(--atlas-surface)] p-12 text-center rounded-lg border border-[var(--atlas-border)] text-[var(--atlas-text-secondary)]">
             Nenhuma série ou documento identificado no arquivo.
           </div>
         )}

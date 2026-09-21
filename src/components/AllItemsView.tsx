@@ -112,51 +112,51 @@ function MultiSelectDropdown({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`px-3 py-1.5 border rounded-lg bg-white text-xs font-medium flex items-center space-x-1.5 transition-colors shadow-2xs ${
+        className={`px-3 py-1.5 border rounded-lg bg-[var(--atlas-surface)] text-xs font-medium flex items-center space-x-1.5 transition-colors shadow-xs ${
           countSelected > 0
-            ? 'border-[#1e3a5f] bg-slate-50 text-[#1e3a5f] font-semibold'
-            : 'border-slate-200 text-slate-700 hover:bg-slate-50'
+            ? 'border-[var(--atlas-navy)] bg-[var(--atlas-surface-hover)] text-[var(--atlas-navy)] font-semibold'
+            : 'border-[var(--atlas-border)] text-[var(--atlas-text-secondary)] hover:bg-[var(--atlas-surface-hover)]'
         }`}
       >
         {icon}
         <span>{label}</span>
         {countSelected > 0 && (
-          <span className="ml-1 px-1.5 py-0.2 bg-[#1e3a5f] text-white rounded-full text-[10px] font-bold">
+          <span className="ml-1 px-1.5 py-0.2 bg-[var(--atlas-navy)] text-white rounded-full text-xs font-bold">
             {countSelected}
           </span>
         )}
-        <ChevronDown className="w-3 h-3 text-slate-400 ml-0.5" />
+        <ChevronDown className="w-3 h-3 text-[var(--atlas-text-muted)] ml-0.5" />
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 mt-1 w-64 bg-white rounded-xl shadow-xl border border-slate-200 z-50 p-3 space-y-2">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-            <span className="text-xs font-bold text-slate-800">{label}</span>
-            <div className="space-x-2 text-[11px]">
-              <button type="button" onClick={selectAll} className="text-[#1e3a5f] hover:underline font-semibold">Todos</button>
-              <span className="text-slate-300">|</span>
+        <div className="absolute left-0 mt-1 w-64 bg-[var(--atlas-surface)] rounded-xl shadow-xl border border-[var(--atlas-border)] z-50 p-3 space-y-2">
+          <div className="flex items-center justify-between pb-2 border-b border-[var(--atlas-border)]">
+            <span className="text-xs font-bold text-[var(--atlas-text)]">{label}</span>
+            <div className="space-x-2 text-xs">
+              <button type="button" onClick={selectAll} className="text-[var(--atlas-navy)] hover:underline font-semibold">Todos</button>
+              <span className="text-[var(--atlas-text-muted)]">|</span>
               <button type="button" onClick={clearAll} className="text-rose-600 hover:underline font-semibold">Limpar</button>
             </div>
           </div>
 
           <div className="relative">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2" />
+            <Search className="w-3.5 h-3.5 text-[var(--atlas-text-muted)] absolute left-2.5 top-2" />
             <input
               type="text"
               placeholder="Filtrar opções..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-8 pr-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#1e3a5f]"
+              className="w-full pl-8 pr-3 py-1.5 text-xs border border-[var(--atlas-border)] rounded-lg focus:outline-none focus:ring-1 focus:ring-[var(--atlas-navy)]"
             />
           </div>
 
           <div className="max-h-48 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
-            <label className="flex items-center space-x-2 px-2 py-1.5 hover:bg-slate-50 rounded-md cursor-pointer text-xs font-medium text-slate-700">
+            <label className="flex items-center space-x-2 px-2 py-1.5 hover:bg-[var(--atlas-surface-hover)] rounded-md cursor-pointer text-xs font-medium text-[var(--atlas-text-secondary)]">
               <input
                 type="checkbox"
                 checked={isAll}
                 onChange={selectAll}
-                className="rounded border-slate-300 text-[#1e3a5f] focus:ring-[#1e3a5f]"
+                className="rounded border-[var(--atlas-border)] text-[var(--atlas-navy)] focus:ring-[var(--atlas-navy)]"
               />
               <span>(Todos)</span>
             </label>
@@ -164,12 +164,12 @@ function MultiSelectDropdown({
             {filteredOptions.map(opt => {
               const checked = !isAll && selectedValues.has(opt.value);
               return (
-                <label key={opt.value} className="flex items-center space-x-2 px-2 py-1.5 hover:bg-slate-50 rounded-md cursor-pointer text-xs text-slate-700">
+                <label key={opt.value} className="flex items-center space-x-2 px-2 py-1.5 hover:bg-[var(--atlas-surface-hover)] rounded-md cursor-pointer text-xs text-[var(--atlas-text-secondary)]">
                   <input
                     type="checkbox"
                     checked={checked}
                     onChange={() => toggleOption(opt.value)}
-                    className="rounded border-slate-300 text-[#1e3a5f] focus:ring-[#1e3a5f]"
+                    className="rounded border-[var(--atlas-border)] text-[var(--atlas-navy)] focus:ring-[var(--atlas-navy)]"
                   />
                   <span className="truncate" title={opt.label}>{opt.label}</span>
                 </label>
@@ -1495,16 +1495,18 @@ export function AllItemsView({
   return (
     <div className="p-6 max-w-[1780px] mx-auto space-y-6">
       {/* Header Banner */}
-      <div className="atlas-card p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center space-x-2">
-            <Layers className="w-6 h-6 text-[var(--atlas-navy)]" />
-            <h1 className="text-xl font-extrabold text-[var(--atlas-navy)] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
-              Todos os Itens & Comparativo SPED vs XML vs Matriz Fiscal
+      <div className="atlas-card p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div className="space-y-1">
+          <div className="flex items-center space-x-3">
+            <div className="p-2.5 bg-[var(--atlas-navy)]/5 rounded-xl border border-[var(--atlas-navy)]/10">
+              <Layers className="w-6 h-6 text-[var(--atlas-navy)]" />
+            </div>
+            <h1 className="text-2xl font-extrabold text-[var(--atlas-navy)] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
+              Comparativo SPED vs XML vs Matriz Fiscal
             </h1>
           </div>
-          <p className="text-xs text-[var(--atlas-text-secondary)] mt-1">
-            Confronto minucioso entre o SPED EFD (C170), os arquivos XML das notas e o Banco de Dados de Regras Tributárias estaduais.
+          <p className="text-sm text-[var(--atlas-text-secondary)] font-medium">
+            Auditoria minuciosa entre SPED EFD, arquivos XML e Banco de Dados de Regras Tributárias.
           </p>
         </div>
 
@@ -1512,161 +1514,151 @@ export function AllItemsView({
           {hasHistory && onUndoChanges && (
             <button
               onClick={onUndoChanges}
-              className="atlas-btn atlas-btn-secondary py-2 px-3.5 text-xs"
+              className="atlas-btn atlas-btn-secondary h-10 px-4"
             >
-              <span>Desfazer Alterações</span>
+              <RefreshCw className="w-4 h-4 mr-2" />
+              <span>Desfazer</span>
             </button>
           )}
 
           <button
             onClick={handleFixIcmsBaseAll}
-            className="atlas-btn atlas-btn-primary py-2 px-3.5 text-xs font-bold"
+            className="atlas-btn atlas-btn-primary h-10 px-4"
             title="Ajustar automaticamente todas as diferenças de base e valor de ICMS com base nos arquivos XML"
           >
-            <RefreshCw className="w-3.5 h-3.5" />
-            <span>Ajustar Bases ICMS pelo XML</span>
+            <RefreshCw className="w-4 h-4 mr-2" />
+            <span>Ajustar Bases (XML)</span>
           </button>
-
-          {onExportSped && (
-            <button
-              onClick={onExportSped}
-              className="atlas-btn atlas-btn-primary py-2 px-3.5 text-xs font-bold"
-            >
-              <FileText className="w-3.5 h-3.5" />
-              <span>Exportar SPED Ajustado TXT</span>
-            </button>
-          )}
 
           {onRecalculateStructure && (
             <button
               onClick={onRecalculateStructure}
-              className="atlas-btn atlas-btn-primary py-2 px-3.5 text-xs font-bold"
-              title="Sincronizar Estrutura C100/C190: Força o recálculo dos totais dos blocos C190 baseados nos itens atuais do SPED, corrigindo eventuais duplicidades de registros órfãos"
+              className="atlas-btn atlas-btn-primary h-10 px-4"
+              title="Sincronizar Estrutura C100/C190"
             >
-              <RefreshCw className="w-3.5 h-3.5" />
-              <span>Sincronizar Estrutura C100/C190</span>
+              <RefreshCw className="w-4 h-4 mr-2" />
+              <span>Sincronizar Estrutura</span>
             </button>
           )}
 
           <button
             onClick={handleRunRobotC170Correction}
-            className="atlas-btn atlas-btn-primary py-2 px-3.5 text-xs font-bold"
-            title="Atuação do Robô C170: Corrige automaticamente CST e CFOP divergentes com base na Matriz Tributária e Aprendizagem Constante"
+            className="atlas-btn atlas-btn-accent h-10 px-4"
+            title="Robô C170: Corrige CST e CFOP com base na Matriz"
           >
-            <RefreshCw className="w-3.5 h-3.5 animate-spin-slow" />
-            <span>Executar Robô C170 (CST/CFOP)</span>
+            <RefreshCw className="w-4 h-4 mr-2 animate-spin-slow" />
+            <span>Robô C170</span>
           </button>
 
           <button
             onClick={handleRunAgentAuditC170}
-            className="atlas-btn py-2 px-3.5 text-xs font-bold bg-indigo-700 hover:bg-indigo-800 text-white flex items-center space-x-1.5 shadow-xs cursor-pointer"
-            title="Executar Auditoria de Agentes IA: Valida regras da Matriz Tributária e calcula o FCP (2%) em NCMs de perfumaria/cosméticos (3303, 3304, 3305, 3307)"
+            className="atlas-btn h-10 px-4 bg-indigo-700 hover:bg-indigo-800 text-white font-bold shadow-md hover:shadow-lg transition-all"
+            title="Valida regras da Matriz e calcula FCP (2%) em cosméticos"
           >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Executar Auditoria de Agentes</span>
+            <Sparkles className="w-4 h-4 mr-2" />
+            <span>Auditoria IA</span>
           </button>
 
-          <button
-            onClick={handleExportMissingXmlPDF}
-            className="atlas-btn atlas-btn-primary py-2 px-3.5 text-xs font-bold"
-            title="Exportar relatório em PDF das notas fiscais e XMLs faltantes/omissos"
-          >
-            <FileText className="w-3.5 h-3.5" />
-            <span>Exportar Notas Faltantes</span>
-            {totalMissingXmlCount > 0 && (
-              <span className="atlas-pill atlas-pill-navy bg-white/20 text-white ml-1 border-white/30">
-                {totalMissingXmlCount}
-              </span>
-            )}
-          </button>
+          <div className="h-8 w-px bg-[var(--atlas-border)] mx-1 hidden lg:block" />
 
           <button
             onClick={handleExportCsv}
-            className="atlas-btn atlas-btn-primary py-2 px-3.5 text-xs font-bold"
+            className="atlas-btn atlas-btn-secondary h-10 px-4"
           >
-            <Download className="w-3.5 h-3.5" />
-            <span>Exportar CSV</span>
+            <Download className="w-4 h-4 mr-2" />
+            <span>CSV</span>
           </button>
+
+          {onExportSped && (
+            <button
+              onClick={onExportSped}
+              className="atlas-btn atlas-btn-primary h-10 px-4"
+            >
+              <FileText className="w-4 h-4 mr-2" />
+              <span>Exportar SPED</span>
+            </button>
+          )}
         </div>
       </div>
 
       {/* Lembrete Discreto: XMLs Faltantes ou Omissos */}
       {totalMissingXmlCount > 0 && (
-        <div className="bg-[var(--atlas-warning-bg)] border-b-2 border-[var(--atlas-warning)] rounded-xl px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
-          <div className="flex items-center space-x-2.5 min-w-0">
-            <span className="inline-flex items-center justify-center p-1.5 bg-[var(--atlas-surface)] text-[var(--atlas-warning)] rounded-md shrink-0 border border-[var(--atlas-border)]">
-              <AlertTriangle className="w-4 h-4 text-[var(--atlas-warning)]" />
-            </span>
-            <div className="flex items-center space-x-2 flex-wrap text-[var(--atlas-text)]">
-              <span className="font-bold text-[var(--atlas-text)]" style={{ fontFamily: 'var(--font-display)' }}>Notas Faltantes Mapeadas:</span>
-              <span className="atlas-pill atlas-pill-warning font-bold">
-                {totalMissingXmlCount} pendência(s)
-              </span>
-              <span className="text-[var(--atlas-text-secondary)] hidden md:inline">
-                ({missingXmlDocs.length} SPED sem XML | {omissaXmls.length} XMLs sem SPED)
-              </span>
+        <div className="atlas-alert atlas-alert-warning p-4 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center space-x-3.5">
+            <div className="p-2 bg-amber-100 rounded-lg border border-amber-200">
+              <AlertTriangle className="w-5 h-5 text-amber-700" />
+            </div>
+            <div className="space-y-0.5">
+              <span className="font-bold text-amber-900 text-sm uppercase tracking-widest" style={{ fontFamily: 'var(--font-display)' }}>Inconsistências de Arquivo</span>
+              <div className="flex items-center space-x-3 text-amber-800 font-medium">
+                <span className="atlas-pill bg-amber-200 text-amber-900 border-amber-300 font-bold px-2 py-0.5">
+                  {totalMissingXmlCount} pendências
+                </span>
+                <span className="hidden md:inline text-xs opacity-80">
+                  • {missingXmlDocs.length} SPED sem XML | {omissaXmls.length} XMLs sem SPED
+                </span>
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center space-x-2 shrink-0 self-end sm:self-auto">
+          <div className="flex items-center space-x-2">
             <button
               onClick={() => setMissingXmlModalOpen(true)}
-              className="atlas-btn atlas-btn-primary py-1 px-2.5 text-xs cursor-pointer"
+              className="atlas-btn bg-white hover:bg-amber-50 text-amber-900 border-amber-200 text-xs px-3 py-1.5"
             >
-              <Eye className="w-3.5 h-3.5" />
+              <Eye className="w-4 h-4 mr-1.5" />
               <span>Ver Detalhes</span>
             </button>
 
             <button
               onClick={handleExportMissingXmlPDF}
-              className="atlas-btn atlas-btn-primary py-1 px-2.5 text-xs cursor-pointer"
-              title="Baixar relatório PDF das notas faltantes"
+              className="atlas-btn bg-amber-700 hover:bg-amber-800 text-white text-xs px-3 py-1.5"
             >
-              <FileText className="w-3.5 h-3.5" />
-              <span>PDF Faltantes</span>
-            </button>
-
-            <button
-              onClick={handleExportMissingXmlCSV}
-              className="atlas-btn atlas-btn-primary py-1 px-2.5 text-xs cursor-pointer"
-              title="Baixar planilha CSV das notas faltantes"
-            >
-              <Download className="w-3.5 h-3.5" />
-              <span>CSV</span>
+              <FileText className="w-4 h-4 mr-1.5" />
+              <span>Relatório PDF</span>
             </button>
           </div>
         </div>
       )}
 
-      {/* Aprendizagem Constante & Status Banner (Card Executivo Marinho de Alto Contraste) */}
+      {/* Aprendizagem Constante & Status Banner */}
       <div 
-        className="atlas-card p-5 shadow-md flex flex-col md:flex-row items-center justify-between gap-4 border-0 text-white"
+        className="atlas-card p-6 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 border-0 overflow-hidden relative"
         style={{ background: 'linear-gradient(135deg, var(--atlas-navy) 0%, var(--atlas-navy-dark) 100%)' }}
       >
-        <div className="flex items-center space-x-3.5">
-          <div className="p-3 bg-white/10 rounded-xl backdrop-blur-sm shrink-0 border border-white/10">
-            <RefreshCw className="w-5 h-5 text-emerald-300 animate-spin-slow" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -mr-32 -mt-32" />
+        
+        <div className="flex items-center space-x-5 relative z-10">
+          <div className="p-4 bg-white/10 rounded-2xl backdrop-blur-md border border-white/20 shrink-0 shadow-lg">
+            <RefreshCw className="w-6 h-6 text-emerald-300 animate-spin-slow" />
           </div>
-          <div>
-            <h2 className="text-sm font-bold text-white flex items-center gap-2" style={{ fontFamily: 'var(--font-display)' }}>
-              <span>Módulo Robô C170 & Aprendizagem Constante Ativa</span>
-              <span className="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 px-2 py-0.5 rounded-full font-mono uppercase tracking-wider font-semibold">IA Ativa</span>
-            </h2>
-            <p className="text-xs text-blue-100/90 mt-0.5">
-              O robô atua no painel C170 validando e corrigindo autonomamente divergências de <strong>CST e CFOP</strong> com confirmação da Matriz. Cada conferência alimenta o motor de aprendizagem para auditorias futuras.
+          <div className="space-y-1">
+            <div className="flex items-center gap-3">
+              <h2 className="text-lg font-bold text-white uppercase tracking-widest" style={{ fontFamily: 'var(--font-display)' }}>
+                Robô C170 Ativo
+              </h2>
+              <span className="atlas-pill bg-emerald-500 text-white border-emerald-400 px-3 py-0.5 font-bold animate-pulse text-[10px]">IA ONLINE</span>
+            </div>
+            <p className="text-sm text-blue-100/80 leading-relaxed max-w-2xl">
+              Monitoramento autônomo de <strong>CST e CFOP</strong> em tempo real. Cada conferência alimenta o motor de aprendizagem heurística para auditorias futuras de alta precisão.
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-4 bg-white/10 px-5 py-2.5 rounded-xl backdrop-blur-sm text-xs font-mono shrink-0 border border-white/10">
-          <div>
-            <span className="block text-[10px] text-blue-200 uppercase tracking-wider font-sans font-semibold">Padrões Aprendidos</span>
-            <span className="font-bold text-white text-sm">{learnedPatternsCount} regras</span>
+
+        <div className="flex items-center gap-6 bg-white/5 p-4 rounded-2xl backdrop-blur-md border border-white/10 relative z-10">
+          <div className="text-center space-y-1">
+            <span className="block text-[10px] text-blue-200 uppercase tracking-widest font-bold">Padrões Memorizados</span>
+            <span className="text-2xl font-black text-white font-mono">{learnedPatternsCount}</span>
           </div>
-          <div className="border-l border-white/20 pl-4">
-            <span className="block text-[10px] text-blue-200 uppercase tracking-wider font-sans font-semibold">Conferência Analista</span>
-            <span className="font-bold text-emerald-300 text-sm">
-              {enrichedItems.filter(i => i.item.analystConfirmed).length} / {counts.total} conferidos
-            </span>
+          <div className="w-px h-10 bg-white/20" />
+          <div className="text-center space-y-1">
+            <span className="block text-[10px] text-emerald-200 uppercase tracking-widest font-bold">Conferência Humana</span>
+            <div className="flex items-baseline justify-center gap-1">
+              <span className="text-2xl font-black text-emerald-300 font-mono">
+                {enrichedItems.filter(i => i.item.analystConfirmed).length}
+              </span>
+              <span className="text-xs text-white/50 font-bold">/ {counts.total}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -1686,116 +1678,129 @@ export function AllItemsView({
                 badge="C170 vs XML"
               />
             </span>
-            <span className="atlas-pill atlas-pill-navy">
-              {totals.itemCount} item(ns)
-            </span>
-          </div>
-          <div className="mt-4 space-y-2">
-            <div className="flex justify-between items-baseline text-xs">
-              <span className="text-[var(--atlas-text-secondary)] font-medium">SPED (C170):</span>
-              <span className="font-bold font-mono text-[var(--atlas-navy)] text-sm">
-                {totals.spedVlItem.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+            <div className="flex items-center gap-2">
+              <span className="atlas-pill atlas-pill-navy text-[10px]">
+                {totals.itemCount} itens
               </span>
             </div>
-            <div className="flex justify-between items-baseline text-xs">
-              <span className="text-[var(--atlas-text-secondary)] font-medium">XML (Notas):</span>
-              <span className="font-bold font-mono text-[var(--atlas-text)] text-sm">
+          </div>
+          <div className="mt-8 space-y-4">
+            <div className="flex justify-between items-end">
+              <div className="space-y-0.5">
+                <span className="block text-[10px] text-[var(--atlas-text-muted)] uppercase font-bold tracking-wider">SPED (C170)</span>
+                <span className="text-2xl font-black text-[var(--atlas-navy)] font-mono">
+                  {totals.spedVlItem.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                </span>
+              </div>
+            </div>
+            
+            <div className="pt-4 border-t border-[var(--atlas-border)] flex justify-between items-center text-xs">
+              <span className="text-[var(--atlas-text-secondary)] font-bold">XML vinculado:</span>
+              <span className="font-mono font-bold text-[var(--atlas-text)]">
                 {totals.xmlVlItem.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               </span>
             </div>
-            <div className="pt-2 border-t border-[var(--atlas-border)] flex justify-between items-center text-xs">
-              <span className="text-[var(--atlas-text-muted)] font-semibold">Diferença SPED - XML:</span>
-              <span className={`font-bold font-mono px-2 py-0.5 rounded-md text-xs ${
-                Math.abs(totals.diffVlItem) <= 0.05
-                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                  : 'bg-amber-50 text-amber-800 border border-amber-200'
-              }`}>
+
+            <div className={`flex justify-between items-center text-xs font-bold p-2 rounded-lg ${Math.abs(totals.diffVlItem) > 0.05 ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700'}`}>
+              <span className="uppercase tracking-widest text-[9px]">Divergência:</span>
+              <span className="font-mono">
                 {totals.diffVlItem.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               </span>
             </div>
           </div>
         </div>
 
-        {/* Card 2: Base de Cálculo do ICMS */}
-        <div className="atlas-card p-5 flex flex-col justify-between">
+        {/* Card 2: Base de Cálculo ICMS */}
+        <div className="atlas-card p-6 flex flex-col justify-between group hover:border-[var(--atlas-navy)]/30 transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-[var(--atlas-navy)] uppercase tracking-wider flex items-center gap-1.5" style={{ fontFamily: 'var(--font-display)' }}>
-              <Scale className="w-4 h-4 text-[var(--atlas-navy)]" />
-              <span>Base de Cálculo ICMS (vlBcIcms)</span>
-              <FiscalTooltip
-                title="Base de Cálculo do ICMS (Regra de Entrada/Saída)"
-                description="Valor sobre o qual incide a alíquota. Nas entradas de ativo/uso consumo, a BC deve conferir com a nota do fornecedor. Em operações com isenção ou redução, a BC é menor que o valor total do item."
-                lawRef="Art. 13 da Lei Complementar nº 87/1996"
-                badge="LC 87/96"
-              />
-            </span>
-            <span className="atlas-pill atlas-pill-accent">
-              {totals.itemsWithXmlCount} c/ XML
-            </span>
-          </div>
-          <div className="mt-4 space-y-2">
-            <div className="flex justify-between items-baseline text-xs">
-              <span className="text-[var(--atlas-text-secondary)] font-medium">SPED (C170):</span>
-              <span className="font-bold font-mono text-[var(--atlas-navy)] text-sm">
-                {totals.spedVlBcIcms.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-[var(--atlas-navy)]/5 rounded-lg">
+                <Scale className="w-5 h-5 text-[var(--atlas-navy)]" />
+              </div>
+              <span className="text-sm font-bold text-[var(--atlas-navy)] uppercase tracking-widest" style={{ fontFamily: 'var(--font-display)' }}>
+                Base Cálculo ICMS
               </span>
             </div>
-            <div className="flex justify-between items-baseline text-xs">
-              <span className="text-[var(--atlas-text-secondary)] font-medium">XML (Notas):</span>
-              <span className="font-bold font-mono text-[var(--atlas-text)] text-sm">
+            <FiscalTooltip
+              title="Base de Cálculo do ICMS"
+              description="Valor sobre o qual incide a alíquota do ICMS para apuração do imposto devido."
+              lawRef="RICMS - Base de Cálculo"
+              badge="BC ICMS"
+            />
+          </div>
+
+          <div className="mt-8 space-y-4">
+            <div className="flex justify-between items-end">
+              <div className="space-y-0.5">
+                <span className="block text-[10px] text-[var(--atlas-text-muted)] uppercase font-bold tracking-wider">SPED (C170)</span>
+                <span className="text-2xl font-black text-[var(--atlas-navy)] font-mono">
+                  {totals.spedVlBcIcms.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                </span>
+              </div>
+              <span className="atlas-pill atlas-pill-accent text-[10px]">
+                {totals.itemsWithXmlCount} c/ XML
+              </span>
+            </div>
+
+            <div className="pt-4 border-t border-[var(--atlas-border)] flex justify-between items-center text-xs">
+              <span className="text-[var(--atlas-text-secondary)] font-bold">XML vinculado:</span>
+              <span className="font-mono font-bold text-[var(--atlas-text)]">
                 {totals.xmlVlBcIcms.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               </span>
             </div>
-            <div className="pt-2 border-t border-[var(--atlas-border)] flex justify-between items-center text-xs">
-              <span className="text-[var(--atlas-text-muted)] font-semibold">Diferença SPED - XML:</span>
-              <span className={`font-bold font-mono px-2 py-0.5 rounded-md text-xs ${
-                Math.abs(totals.diffVlBcIcms) <= 0.05
-                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                  : 'bg-amber-50 text-amber-800 border border-amber-200'
-              }`}>
+
+            <div className={`flex justify-between items-center text-xs font-bold p-2 rounded-lg ${Math.abs(totals.diffVlBcIcms) > 0.05 ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700'}`}>
+              <span className="uppercase tracking-widest text-[9px]">Divergência:</span>
+              <span className="font-mono">
                 {totals.diffVlBcIcms.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               </span>
             </div>
           </div>
         </div>
 
-        {/* Card 3: Valor do ICMS */}
-        <div className="atlas-card p-5 flex flex-col justify-between">
+        {/* Card 3: Valor Total do ICMS */}
+        <div className="atlas-card p-6 flex flex-col justify-between group hover:border-[var(--atlas-navy)]/30 transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-[var(--atlas-navy)] uppercase tracking-wider flex items-center gap-1.5" style={{ fontFamily: 'var(--font-display)' }}>
-              <FileText className="w-4 h-4 text-[var(--atlas-navy)]" />
-              <span>Valor do ICMS (vlIcms)</span>
-              <FiscalTooltip
-                title="Imposto Debitado ou Creditado"
-                description="O crédito de ICMS em entradas só é permitido quando a mercadoria se destina a comercialização, industrialização ou insumos tributados na saída. Imobilizado possui apropriação via CIAP (1/48 avos)."
-                lawRef="Art. 19 e 20 da Lei Complementar nº 87/1996"
-                badge="Crédito / Débito"
-              />
-            </span>
-            <span className="atlas-pill atlas-pill-navy">
-              {activeFiltersCount > 0 ? `${activeFiltersCount} filtro(s)` : 'Todos'}
-            </span>
-          </div>
-          <div className="mt-4 space-y-2">
-            <div className="flex justify-between items-baseline text-xs">
-              <span className="text-[var(--atlas-text-secondary)] font-medium">SPED (C170):</span>
-              <span className="font-bold font-mono text-[var(--atlas-navy)] text-sm">
-                {totals.spedVlIcms.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-[var(--atlas-navy)]/5 rounded-lg">
+                <CheckCircle className="w-5 h-5 text-[var(--atlas-navy)]" />
+              </div>
+              <span className="text-sm font-bold text-[var(--atlas-navy)] uppercase tracking-widest" style={{ fontFamily: 'var(--font-display)' }}>
+                Valor Total ICMS
               </span>
             </div>
-            <div className="flex justify-between items-baseline text-xs">
-              <span className="text-[var(--atlas-text-secondary)] font-medium">XML (Notas):</span>
-              <span className="font-bold font-mono text-[var(--atlas-text)] text-sm">
+            <FiscalTooltip
+              title="Valor do ICMS"
+              description="Valor do imposto debitado ou creditado na operação, calculado como BC x Alíquota."
+              lawRef="Regra Geral: Débito / Crédito"
+            />
+          </div>
+
+          <div className="mt-8 space-y-4">
+            <div className="flex justify-between items-end">
+              <div className="space-y-0.5">
+                <span className="block text-[10px] text-[var(--atlas-text-muted)] uppercase font-bold tracking-wider">SPED (C170)</span>
+                <span className="text-2xl font-black text-[var(--atlas-navy)] font-mono">
+                  {totals.spedVlIcms.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                </span>
+              </div>
+              {activeFiltersCount > 0 && (
+                <span className="atlas-pill atlas-pill-navy text-[10px]">
+                  {activeFiltersCount} filtro(s)
+                </span>
+              )}
+            </div>
+
+            <div className="pt-4 border-t border-[var(--atlas-border)] flex justify-between items-center text-xs">
+              <span className="text-[var(--atlas-text-secondary)] font-bold">XML vinculado:</span>
+              <span className="font-mono font-bold text-[var(--atlas-text)]">
                 {totals.xmlVlIcms.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               </span>
             </div>
-            <div className="pt-2 border-t border-[var(--atlas-border)] flex justify-between items-center text-xs">
-              <span className="text-[var(--atlas-text-muted)] font-semibold">Diferença SPED - XML:</span>
-              <span className={`font-bold font-mono px-2 py-0.5 rounded-md text-xs ${
-                Math.abs(totals.diffVlIcms) <= 0.05
-                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                  : 'bg-amber-50 text-amber-800 border border-amber-200'
-              }`}>
+
+            <div className={`flex justify-between items-center text-xs font-bold p-2 rounded-lg ${Math.abs(totals.diffVlIcms) > 0.05 ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700'}`}>
+              <span className="uppercase tracking-widest text-[9px]">Divergência:</span>
+              <span className="font-mono">
                 {totals.diffVlIcms.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               </span>
             </div>
@@ -1806,38 +1811,46 @@ export function AllItemsView({
       {/* Main Table Container */}
       <div className="atlas-card p-0 overflow-hidden">
         {/* Filters and Controls */}
-        <div className="p-4 border-b border-[var(--atlas-border)] bg-[var(--atlas-surface)] flex flex-col space-y-3">
+        <div className="p-4 border-b border-[var(--atlas-border)] bg-[var(--atlas-surface)] flex flex-col space-y-4">
           {/* Row 1: Status pills & Search */}
-          <div className="flex flex-col md:flex-row items-center justify-between gap-3">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
               <button
                 onClick={() => { setStatusFilter(new Set(['ALL'])); setCurrentPage(1); }}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
-                  statusFilter.has('ALL') ? 'bg-[#1e3a5f] text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                className={`atlas-btn h-9 px-4 text-xs font-bold transition-all ${
+                  statusFilter.has('ALL') 
+                    ? 'atlas-btn-primary' 
+                    : 'bg-[var(--atlas-surface)] text-[var(--atlas-text-secondary)] border border-[var(--atlas-border)] hover:bg-[var(--atlas-surface-hover)]'
                 }`}
               >
                 Todos ({counts.total})
               </button>
               <button
                 onClick={() => { setStatusFilter(new Set(['OK'])); setCurrentPage(1); }}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
-                  statusFilter.has('OK') ? 'bg-emerald-600 text-white' : 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
+                className={`atlas-btn h-9 px-4 text-xs font-bold transition-all ${
+                  statusFilter.has('OK') 
+                    ? 'bg-emerald-600 text-white border-emerald-700 shadow-md' 
+                    : 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
                 }`}
               >
                 Conformes ({counts.ok})
               </button>
               <button
                 onClick={() => { setStatusFilter(new Set(['DIVERGENT'])); setCurrentPage(1); }}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
-                  statusFilter.has('DIVERGENT') ? 'bg-amber-600 text-white' : 'bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100'
+                className={`atlas-btn h-9 px-4 text-xs font-bold transition-all ${
+                  statusFilter.has('DIVERGENT') 
+                    ? 'bg-amber-600 text-white border-amber-700 shadow-md' 
+                    : 'bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100'
                 }`}
               >
                 Divergentes ({counts.divergent})
               </button>
               <button
                 onClick={() => { setStatusFilter(new Set(['CANCELLED'])); setCurrentPage(1); }}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
-                  statusFilter.has('CANCELLED') ? 'bg-rose-600 text-white' : 'bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100'
+                className={`atlas-btn h-9 px-4 text-xs font-bold transition-all ${
+                  statusFilter.has('CANCELLED') 
+                    ? 'bg-rose-600 text-white border-rose-700 shadow-md' 
+                    : 'bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100'
                 }`}
               >
                 Cancelados ({counts.cancelledCount})
@@ -1846,34 +1859,36 @@ export function AllItemsView({
               {stateTaxRules.length > 0 && (
                 <button
                   onClick={() => { setStatusFilter(new Set(['MATRIZ_DIFF'])); setCurrentPage(1); }}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors flex items-center space-x-1 ${
-                    statusFilter.has('MATRIZ_DIFF') ? 'bg-indigo-600 text-white' : 'bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100'
+                  className={`atlas-btn h-9 px-4 text-xs font-bold transition-all flex items-center space-x-1.5 ${
+                    statusFilter.has('MATRIZ_DIFF') 
+                      ? 'bg-indigo-600 text-white border-indigo-700 shadow-md' 
+                      : 'bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100'
                   }`}
                 >
                   <Database className="w-3.5 h-3.5" />
-                  <span>Divergência Matriz/Banco ({counts.matrizDiffCount})</span>
+                  <span>Divergência Matriz ({counts.matrizDiffCount})</span>
                 </button>
               )}
             </div>
 
             {/* Search Input */}
             <div className="relative w-full md:w-80">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              <Search className="w-4 h-4 text-[var(--atlas-text-muted)] absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 placeholder="Buscar item, NCM, doc, CNPJ, chave..."
                 value={searchTerm}
                 onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                className="w-full pl-9 pr-4 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] bg-white shadow-2xs"
+                className="atlas-input w-full pl-9 pr-4 h-10 text-xs"
               />
             </div>
           </div>
 
           {/* Row 2: Precision Dropdown Filters */}
-          <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-200/60 text-xs">
-            <div className="flex items-center text-slate-500 font-semibold text-[11px] mr-1">
-              <Filter className="w-3.5 h-3.5 mr-1" />
-              <span>Filtros Precisos:</span>
+          <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-[var(--atlas-border)] text-xs">
+            <div className="flex items-center text-[var(--atlas-text-secondary)] font-bold text-[10px] uppercase tracking-widest mr-2">
+              <Filter className="w-3.5 h-3.5 mr-1.5 text-[var(--atlas-navy)]" />
+              <span>Filtros Precisos</span>
             </div>
 
             {/* Operation Type Filter */}
@@ -1921,9 +1936,9 @@ export function AllItemsView({
 
             {/* Modified Status Filter */}
             <MultiSelectDropdown
-              label="Status de Alteração"
+              label="Status Alteração"
               options={[
-                { value: 'MODIFIED', label: 'Itens Modificados / Alterados' },
+                { value: 'MODIFIED', label: 'Itens Modificados' },
                 { value: 'UNMODIFIED', label: 'Itens Não Alterados' }
               ]}
               selectedValues={modifiedFilter}
@@ -1932,13 +1947,13 @@ export function AllItemsView({
 
             {/* Divergence Type Filter */}
             <MultiSelectDropdown
-              label="Tipo de Divergência"
+              label="Divergência"
               options={[
-                { value: 'CST_DIF', label: 'Divergência de CST' },
-                { value: 'CFOP_DIF', label: 'Divergência de CFOP' },
-                { value: 'ALIQ_DIF', label: 'Divergência de Alíquota ICMS' },
-                { value: 'VALUE_DIF', label: 'Divergência de Valor' },
-                { value: 'SEQUENCE_MISMATCH', label: 'Desalinhamento de Sequência (SPED x XML)' }
+                { value: 'CST_DIF', label: 'CST' },
+                { value: 'CFOP_DIF', label: 'CFOP' },
+                { value: 'ALIQ_DIF', label: 'Alíquota ICMS' },
+                { value: 'VALUE_DIF', label: 'Valor' },
+                { value: 'SEQUENCE_MISMATCH', label: 'Sequência (SPED x XML)' }
               ]}
               selectedValues={divergenceTypeFilter}
               onChange={(val) => { setDivergenceTypeFilter(val); setCurrentPage(1); }}
@@ -2004,10 +2019,10 @@ export function AllItemsView({
             {activeFiltersCount > 0 && (
               <button
                 onClick={resetAllFilters}
-                className="ml-auto px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg font-semibold flex items-center space-x-1 transition-colors"
+                className="ml-auto atlas-btn h-8 px-3 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-[10px] font-bold uppercase tracking-wider"
                 title="Redefinir todos os filtros de pesquisa"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-3 h-3 mr-1.5" />
                 <span>Limpar Filtros ({activeFiltersCount})</span>
               </button>
             )}
@@ -2015,88 +2030,88 @@ export function AllItemsView({
 
           {/* Active Filters Badges Indicator Bar */}
           {activeFiltersCount > 0 && (
-            <div className="flex flex-wrap items-center gap-2 pt-2.5 mt-2.5 border-t border-slate-200/80 text-xs bg-indigo-50/60 p-2.5 rounded-xl">
-              <div className="flex items-center text-indigo-900 font-bold text-[11px] mr-1">
-                <Filter className="w-3.5 h-3.5 mr-1 text-indigo-600" />
-                <span>Filtros Ativos ({activeFiltersCount}):</span>
+            <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-[var(--atlas-border)]/50">
+              <div className="flex items-center text-[var(--atlas-text-secondary)] font-bold text-[10px] uppercase tracking-widest mr-2">
+                <Filter className="w-3.5 h-3.5 mr-1.5 text-[var(--atlas-navy)]" />
+                <span>Filtros Ativos ({activeFiltersCount})</span>
               </div>
 
               {searchTerm.trim() !== '' && (
-                <span className="inline-flex items-center px-2 py-1 rounded-lg bg-white border border-indigo-200 text-indigo-900 text-[11px] font-medium shadow-2xs">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[var(--atlas-navy)]/5 border border-[var(--atlas-navy)]/10 text-[var(--atlas-navy)] text-[11px] font-bold">
                   Busca: "{searchTerm}"
-                  <button onClick={() => { setSearchTerm(''); setCurrentPage(1); }} className="ml-1 text-slate-400 hover:text-rose-600">
+                  <button onClick={() => { setSearchTerm(''); setCurrentPage(1); }} className="hover:text-rose-600 transition-colors">
                     <X className="w-3 h-3" />
                   </button>
                 </span>
               )}
 
               {!operFilter.has('ALL') && (
-                <span className="inline-flex items-center px-2 py-1 rounded-lg bg-white border border-indigo-200 text-indigo-900 text-[11px] font-medium shadow-2xs">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[var(--atlas-navy)]/5 border border-[var(--atlas-navy)]/10 text-[var(--atlas-navy)] text-[11px] font-bold shadow-xs">
                   Operação: {Array.from(operFilter).join(', ')}
-                  <button onClick={() => { setOperFilter(new Set(['ALL'])); setCurrentPage(1); }} className="ml-1 text-slate-400 hover:text-rose-600">
+                  <button onClick={() => { setOperFilter(new Set(['ALL'])); setCurrentPage(1); }} className="hover:text-rose-600 transition-colors">
                     <X className="w-3 h-3" />
                   </button>
                 </span>
               )}
 
               {!statusFilter.has('ALL') && (
-                <span className="inline-flex items-center px-2 py-1 rounded-lg bg-white border border-indigo-200 text-indigo-900 text-[11px] font-medium shadow-2xs">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[var(--atlas-navy)]/5 border border-[var(--atlas-navy)]/10 text-[var(--atlas-navy)] text-[11px] font-bold shadow-xs">
                   Status: {Array.from(statusFilter).join(', ')}
-                  <button onClick={() => { setStatusFilter(new Set(['ALL'])); setCurrentPage(1); }} className="ml-1 text-slate-400 hover:text-rose-600">
+                  <button onClick={() => { setStatusFilter(new Set(['ALL'])); setCurrentPage(1); }} className="hover:text-rose-600 transition-colors">
                     <X className="w-3 h-3" />
                   </button>
                 </span>
               )}
 
               {!xmlFilter.has('ALL') && (
-                <span className="inline-flex items-center px-2 py-1 rounded-lg bg-white border border-indigo-200 text-indigo-900 text-[11px] font-medium shadow-2xs">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[var(--atlas-navy)]/5 border border-[var(--atlas-navy)]/10 text-[var(--atlas-navy)] text-[11px] font-bold shadow-xs">
                   Vínculo XML
-                  <button onClick={() => { setXmlFilter(new Set(['ALL'])); setCurrentPage(1); }} className="ml-1 text-slate-400 hover:text-rose-600">
+                  <button onClick={() => { setXmlFilter(new Set(['ALL'])); setCurrentPage(1); }} className="hover:text-rose-600 transition-colors">
                     <X className="w-3 h-3" />
                   </button>
                 </span>
               )}
 
               {!cfopFilter.has('ALL') && (
-                <span className="inline-flex items-center px-2 py-1 rounded-lg bg-white border border-indigo-200 text-indigo-900 text-[11px] font-medium shadow-2xs">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[var(--atlas-navy)]/5 border border-[var(--atlas-navy)]/10 text-[var(--atlas-navy)] text-[11px] font-bold shadow-xs">
                   CFOP: {Array.from(cfopFilter).join(', ')}
-                  <button onClick={() => { setCfopFilter(new Set(['ALL'])); setCurrentPage(1); }} className="ml-1 text-slate-400 hover:text-rose-600">
+                  <button onClick={() => { setCfopFilter(new Set(['ALL'])); setCurrentPage(1); }} className="hover:text-rose-600 transition-colors">
                     <X className="w-3 h-3" />
                   </button>
                 </span>
               )}
 
               {!cstFilter.has('ALL') && (
-                <span className="inline-flex items-center px-2 py-1 rounded-lg bg-white border border-indigo-200 text-indigo-900 text-[11px] font-medium shadow-2xs">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[var(--atlas-navy)]/5 border border-[var(--atlas-navy)]/10 text-[var(--atlas-navy)] text-[11px] font-bold shadow-xs">
                   CST: {Array.from(cstFilter).join(', ')}
-                  <button onClick={() => { setCstFilter(new Set(['ALL'])); setCurrentPage(1); }} className="ml-1 text-slate-400 hover:text-rose-600">
+                  <button onClick={() => { setCstFilter(new Set(['ALL'])); setCurrentPage(1); }} className="hover:text-rose-600 transition-colors">
                     <X className="w-3 h-3" />
                   </button>
                 </span>
               )}
 
               {!ncmFilter.has('ALL') && (
-                <span className="inline-flex items-center px-2 py-1 rounded-lg bg-white border border-indigo-200 text-indigo-900 text-[11px] font-medium shadow-2xs">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[var(--atlas-navy)]/5 border border-[var(--atlas-navy)]/10 text-[var(--atlas-navy)] text-[11px] font-bold shadow-xs">
                   NCM: {Array.from(ncmFilter).join(', ')}
-                  <button onClick={() => { setNcmFilter(new Set(['ALL'])); setCurrentPage(1); }} className="ml-1 text-slate-400 hover:text-rose-600">
+                  <button onClick={() => { setNcmFilter(new Set(['ALL'])); setCurrentPage(1); }} className="hover:text-rose-600 transition-colors">
                     <X className="w-3 h-3" />
                   </button>
                 </span>
               )}
 
               {!divergenceTypeFilter.has('ALL') && (
-                <span className="inline-flex items-center px-2 py-1 rounded-lg bg-white border border-indigo-200 text-indigo-900 text-[11px] font-medium shadow-2xs">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[var(--atlas-navy)]/5 border border-[var(--atlas-navy)]/10 text-[var(--atlas-navy)] text-[11px] font-bold shadow-xs">
                   Divergência
-                  <button onClick={() => { setDivergenceTypeFilter(new Set(['ALL'])); setCurrentPage(1); }} className="ml-1 text-slate-400 hover:text-rose-600">
+                  <button onClick={() => { setDivergenceTypeFilter(new Set(['ALL'])); setCurrentPage(1); }} className="hover:text-rose-600 transition-colors">
                     <X className="w-3 h-3" />
                   </button>
                 </span>
               )}
 
               {!ufFilter.has('ALL') && (
-                <span className="inline-flex items-center px-2 py-1 rounded-lg bg-white border border-indigo-200 text-indigo-900 text-[11px] font-medium shadow-2xs">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[var(--atlas-navy)]/5 border border-[var(--atlas-navy)]/10 text-[var(--atlas-navy)] text-[11px] font-bold shadow-xs">
                   UF Origem: {Array.from(ufFilter).join(', ')}
-                  <button onClick={() => { setUfFilter(new Set(['ALL'])); setCurrentPage(1); }} className="ml-1 text-slate-400 hover:text-rose-600">
+                  <button onClick={() => { setUfFilter(new Set(['ALL'])); setCurrentPage(1); }} className="hover:text-rose-600 transition-colors">
                     <X className="w-3 h-3" />
                   </button>
                 </span>
@@ -2104,11 +2119,11 @@ export function AllItemsView({
 
               <button
                 onClick={resetAllFilters}
-                className="ml-auto px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-lg font-semibold text-[11px] flex items-center space-x-1 shadow-2xs transition-colors"
-                title="Limpar todos os filtros ativados com 1 clique"
+                className="ml-auto atlas-btn h-7 px-3 bg-rose-600 hover:bg-rose-700 text-white rounded-lg font-bold text-[10px] uppercase tracking-wider shadow-sm transition-colors"
+                title="Limpar todos os filtros"
               >
-                <X className="w-3.5 h-3.5" />
-                <span>Limpar Filtros</span>
+                <X className="w-3 h-3 mr-1" />
+                <span>Limpar Tudo</span>
               </button>
             </div>
           )}
@@ -2118,20 +2133,20 @@ export function AllItemsView({
         <div className="overflow-x-auto custom-scrollbar pb-2 px-4">
           <div className="min-w-[1380px]">
             {/* Header */}
-            <div className="c170-header-row sticky top-0 z-20 border-b border-[var(--atlas-border)] bg-[var(--atlas-surface)] text-[10px] font-bold text-[var(--atlas-navy)] uppercase tracking-wider whitespace-nowrap shadow-xs">
-              <div className="px-1.5 py-2 text-center">
-                <button onClick={toggleSelectAll} className="text-slate-500 hover:text-slate-700">
+            <div className="c170-header-row sticky top-0 z-20 border-b border-[var(--atlas-border)] bg-[var(--atlas-surface)] text-[10px] font-bold text-[var(--atlas-navy)] uppercase tracking-widest whitespace-nowrap shadow-xs">
+              <div className="px-2 py-3 text-center border-r border-[var(--atlas-border)]/50">
+                <button onClick={toggleSelectAll} className="text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-navy)] transition-colors">
                   {selectedKeys.size > 0 && selectedKeys.size === filteredItems.length ? (
-                    <CheckSquare className="w-3.5 h-3.5 text-[var(--atlas-navy)]" />
+                    <CheckSquare className="w-4 h-4 text-[var(--atlas-navy)]" />
                   ) : (
-                    <Square className="w-3.5 h-3.5" />
+                    <Square className="w-4 h-4" />
                   )}
                 </button>
               </div>
-              <div className="px-1.5 py-2">Status</div>
-              <div className="px-1.5 py-2">
+              <div className="px-2 py-3 border-r border-[var(--atlas-border)]/50">Status</div>
+              <div className="px-2 py-3 border-r border-[var(--atlas-border)]/50">
                 <div className="flex items-center justify-between gap-1">
-                  <span className="whitespace-normal leading-tight text-[10px]">Doc / Série</span>
+                  <span className="whitespace-normal leading-tight">Doc / Série</span>
                   <FiscalTooltip
                     className="shrink-0"
                     side="bottom"
@@ -2142,9 +2157,9 @@ export function AllItemsView({
                   />
                 </div>
               </div>
-              <div className="px-1.5 py-2">
+              <div className="px-2 py-3 border-r border-[var(--atlas-border)]/50">
                 <div className="flex items-center justify-between gap-1">
-                  <span className="whitespace-normal leading-tight text-[10px]">Origem</span>
+                  <span className="whitespace-normal leading-tight">Origem</span>
                   <FiscalTooltip
                     className="shrink-0"
                     side="bottom"
@@ -2155,10 +2170,10 @@ export function AllItemsView({
                   />
                 </div>
               </div>
-              <div className="px-1.5 py-2" style={{ fontFamily: 'var(--font-display)' }}>Item (C170)</div>
-               <div className="px-1.5 py-2">
+              <div className="px-2 py-3 border-r border-[var(--atlas-border)]/50 font-display">Item (C170)</div>
+              <div className="px-2 py-3 border-r border-[var(--atlas-border)]/50">
                 <div className="flex items-center justify-between gap-1">
-                  <span className="whitespace-normal leading-tight text-[10px]">NCM (SPED/XML/Matriz)</span>
+                  <span className="whitespace-normal leading-tight">NCM (SPED/XML/Matriz)</span>
                   <FiscalTooltip
                     className="shrink-0"
                     side="bottom"
@@ -2169,9 +2184,9 @@ export function AllItemsView({
                   />
                 </div>
               </div>
-              <div className="px-1.5 py-2">
+              <div className="px-2 py-3 border-r border-[var(--atlas-border)]/50">
                 <div className="flex items-center justify-between gap-1">
-                  <span className="whitespace-normal leading-tight text-[10px]">CFOP (SPED/XML)</span>
+                  <span className="whitespace-normal leading-tight">CFOP (SPED/XML)</span>
                   <FiscalTooltip
                     className="shrink-0"
                     side="bottom"
@@ -2182,9 +2197,9 @@ export function AllItemsView({
                   />
                 </div>
               </div>
-              <div className="px-1.5 py-2">
+              <div className="px-2 py-3 border-r border-[var(--atlas-border)]/50">
                 <div className="flex items-center justify-between gap-1">
-                  <span className="whitespace-normal leading-tight text-[10px]">CST (SPED/XML/Matriz)</span>
+                  <span className="whitespace-normal leading-tight">CST (SPED/XML/Matriz)</span>
                   <FiscalTooltip
                     className="shrink-0"
                     side="bottom"
@@ -2195,10 +2210,10 @@ export function AllItemsView({
                   />
                 </div>
               </div>
-              <div className="px-1.5 py-2 text-right">Valor Item</div>
-              <div className="px-1.5 py-2 text-right">
+              <div className="px-2 py-3 border-r border-[var(--atlas-border)]/50 text-right">Valor Item</div>
+              <div className="px-2 py-3 border-r border-[var(--atlas-border)]/50 text-right">
                 <div className="flex items-center justify-end gap-1">
-                  <span className="whitespace-normal leading-tight text-[10px]">Tributação ICMS</span>
+                  <span className="whitespace-normal leading-tight">Tributação ICMS</span>
                   <FiscalTooltip
                     className="shrink-0"
                     side="bottom"
@@ -2208,9 +2223,9 @@ export function AllItemsView({
                   />
                 </div>
               </div>
-              <div className="px-1.5 py-2 text-center">
+              <div className="px-2 py-3 text-center">
                 <div className="flex items-center justify-center gap-1">
-                  <span className="whitespace-normal leading-tight text-[10px]">Ações</span>
+                  <span className="whitespace-normal leading-tight">Ações</span>
                   <FiscalTooltip
                     className="shrink-0"
                     side="bottom"
@@ -2224,7 +2239,7 @@ export function AllItemsView({
             </div>
 
             {/* Body */}
-            <div className="divide-y divide-[var(--atlas-border)] text-[11px]">
+            <div className="divide-y divide-[var(--atlas-border)] text-xs">
               {paginatedItems.length === 0 ? (
                 <div className="text-center py-12 text-[var(--atlas-text-muted)]">
                   Nenhum item encontrado com os filtros selecionados.
@@ -2234,11 +2249,11 @@ export function AllItemsView({
                   const key = `${doc.id}_${item.numItem}`;
                   const isSelected = selectedKeys.has(key);
                   const rowBg = isSelected
-                    ? 'bg-blue-50/70'
+                    ? 'bg-[var(--atlas-navy)]/5 border-l-2 border-[var(--atlas-navy)]'
                     : status === 'MALFORMED'
-                    ? 'bg-red-50/60 hover:bg-red-100/60'
+                    ? 'bg-rose-50/40 hover:bg-rose-50/60'
                     : status === 'DIVERGENT' || matrizDiff
-                    ? 'bg-amber-50/60 hover:bg-amber-100/60'
+                    ? 'bg-amber-50/40 hover:bg-amber-50/60'
                     : 'hover:bg-[var(--atlas-surface-hover)]';
 
                   const ncmDiff = xmlItem && xmlItem.ncm && xmlItem.ncm !== item.ncm;
@@ -2255,50 +2270,50 @@ export function AllItemsView({
                   const isMatrizAliqDiff = expAliq !== undefined && expAliq !== null ? Math.abs(curAliq - expAliq) > 0.01 : false;
 
                   return (
-                    <div key={key} className={`c170-item-row transition-colors ${rowBg}`}>
-                      <div className="px-1 py-1.5 text-center">
-                        <button onClick={() => toggleSelectItem(doc.id, item.numItem)} className="text-slate-500 hover:text-slate-700">
-                          {isSelected ? <CheckSquare className="w-3.5 h-3.5 text-[var(--atlas-navy)]" /> : <Square className="w-3.5 h-3.5 text-slate-400" />}
+                    <div key={key} className={`atlas-list-row transition-all border-b border-[var(--atlas-border)] ${rowBg}`}>
+                      <div className="px-2 py-3 text-center border-r border-[var(--atlas-border)]/30">
+                        <button onClick={() => toggleSelectItem(doc.id, item.numItem)} className="text-[var(--atlas-text-muted)] hover:text-[var(--atlas-navy)] transition-colors">
+                          {isSelected ? <CheckSquare className="w-4 h-4 text-[var(--atlas-navy)]" /> : <Square className="w-4 h-4" />}
                         </button>
                       </div>
-                      <div className="px-1.5 py-1.5 space-y-1 min-w-0">
-                        <div className="flex items-center flex-wrap gap-1">
+                      <div className="px-2 py-3 space-y-2 min-w-0 border-r border-[var(--atlas-border)]/30">
+                        <div className="flex items-center flex-wrap gap-1.5">
                           {status === 'OK' && !matrizDiff && (
-                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                            <span className="atlas-pill-emerald text-[9px] font-bold px-1.5 h-4 flex items-center uppercase tracking-wider">
                               OK
                             </span>
                           )}
                           {status === 'MALFORMED' && (
-                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-red-100 text-red-800 border border-red-200 cursor-help" title={reason}>
-                              Malformado
+                            <span className="atlas-pill-danger text-[9px] font-bold px-1.5 h-4 flex items-center uppercase tracking-wider cursor-help" title={reason}>
+                              Erro
                             </span>
                           )}
                           {(status === 'DIVERGENT' || matrizDiff) && (
-                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-100 text-amber-800 border border-amber-200 cursor-help" title={`${reason} ${matrizDiffReason || ''}`}>
+                            <span className="atlas-pill-warning text-[9px] font-bold px-1.5 h-4 flex items-center uppercase tracking-wider cursor-help" title={`${reason} ${matrizDiffReason || ''}`}>
                               Divergente
                             </span>
                           )}
                           <button
                             onClick={() => handleToggleAnalystConfirm(doc.id, item.numItem, item.analystConfirmed)}
-                            className={`inline-flex items-center justify-center px-1.5 py-0.5 rounded text-[9px] font-bold transition-colors ${
+                            className={`inline-flex items-center justify-center px-1.5 py-0.5 rounded text-[9px] font-bold transition-all h-4 uppercase tracking-wider ${
                               item.analystConfirmed
-                                ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border border-emerald-300'
-                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200'
+                                ? 'bg-emerald-600 text-white shadow-sm border border-emerald-700'
+                                : 'bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] hover:bg-[var(--atlas-navy)] hover:text-white border border-[var(--atlas-border)]'
                             }`}
-                            title="Clique para alternar o status de conferência do analista fiscal"
+                            title="Clique para alternar o status de conferência"
                           >
                             {item.analystConfirmed ? 'Conferido' : 'Pendente'}
                           </button>
                         </div>
                         {(item.isModified || item.correctedByRobot) && (
-                          <div className="flex items-center flex-wrap gap-1">
+                          <div className="flex items-center flex-wrap gap-1.5">
                             {item.isModified && (
-                              <span className="inline-flex items-center px-1 py-0.5 rounded text-[8px] font-bold bg-blue-100 text-blue-800 border border-blue-200" title="Este produto/item já foi alterado ou corrigido.">
+                              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold bg-blue-600 text-white h-3.5 uppercase tracking-tighter" title="Este produto/item já foi alterado ou corrigido.">
                                 Alterado
                               </span>
                             )}
                             {item.correctedByRobot && (
-                              <span className="inline-flex items-center px-1 py-0.5 rounded text-[8px] font-bold bg-purple-100 text-purple-800 border border-purple-200" title={item.robotCorrectionReason || 'Corrigido pelo Robô com base na Matriz'}>
+                              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold bg-indigo-600 text-white h-3.5 uppercase tracking-tighter" title={item.robotCorrectionReason || 'Corrigido pelo Robô com base na Matriz'}>
                                 Robô
                               </span>
                             )}
@@ -2317,164 +2332,164 @@ export function AllItemsView({
                               });
                               setReportModalOpen(true);
                             }}
-                            className="inline-flex items-center gap-1 text-[8px] font-medium text-amber-800 hover:text-amber-900 bg-amber-50 hover:bg-amber-100 px-1 py-0.5 rounded border border-amber-200/80 transition-colors"
-                            title="Reportar equívoco do Agente AI para refinamento do prompt"
+                            className="inline-flex items-center gap-1 text-[9px] font-bold text-amber-700 hover:text-amber-800 transition-colors underline decoration-dotted underline-offset-2"
+                            title="Reportar equívoco do Agente AI"
                           >
                             Reportar Erro
                           </button>
                         </div>
                       </div>
-                      <div className="px-1.5 py-1.5 text-[var(--atlas-text)] font-medium text-[10px]">
-                        <div className="font-semibold text-[var(--atlas-text)]">Doc: {doc.numDoc} <span className="text-[9px] font-normal text-[var(--atlas-text-muted)]">(Sér. {doc.serie || '0'})</span></div>
-                        <div className="text-[9px] font-mono text-[var(--atlas-text-secondary)] truncate max-w-[110px]">{doc.cnpjEmit}</div>
+                      <div className="px-2 py-3 space-y-1.5 min-w-0 border-r border-[var(--atlas-border)]/30">
+                        <div className="font-bold text-[var(--atlas-text)] text-[11px]">Doc: {doc.numDoc} <span className="text-[9px] font-normal text-[var(--atlas-text-muted)]">(Sér. {doc.serie || '0'})</span></div>
+                        <div className="text-[10px] font-mono text-[var(--atlas-text-secondary)] truncate max-w-[110px]">{doc.cnpjEmit}</div>
 
                         {['02', '03', '04', '05'].includes(doc.codSit) && (
-                          <div className="mt-0.5">
-                            <span className="inline-flex items-center px-1 py-0.5 rounded text-[8px] font-bold bg-rose-100 text-rose-800 border border-rose-200" title={`Documento Cancelado no SPED (COD_SIT ${doc.codSit})`}>
+                          <div className="mt-1">
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold bg-rose-600 text-white shadow-sm uppercase tracking-tighter" title={`Documento Cancelado no SPED (COD_SIT ${doc.codSit})`}>
                               Cancelado SPED ({doc.codSit})
                             </span>
                           </div>
                         )}
                         {xmlItem && xmlItem.isCancelada && (
-                          <div className="mt-0.5">
-                            <span className="inline-flex items-center px-1 py-0.5 rounded text-[8px] font-bold bg-rose-600 text-white shadow-xs" title={xmlItem.xMotivo || 'XML consta como CANCELADO na SEFAZ'}>
-                              XML Cancelado SEFAZ
+                          <div className="mt-1">
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold bg-rose-700 text-white shadow-sm uppercase tracking-tighter" title={xmlItem.xMotivo || 'XML consta como CANCELADO na SEFAZ'}>
+                              XML Cancelado
                             </span>
                           </div>
                         )}
                       </div>
-                      <div className="px-1 py-1.5 flex items-center justify-center">
+                      <div className="px-2 py-3 flex items-center justify-center border-r border-[var(--atlas-border)]/30">
                         <span
-                          className={`inline-flex items-center justify-center px-1.5 py-0.5 rounded text-[10px] font-bold font-mono border transition-colors ${
+                          className={`inline-flex items-center justify-center w-8 h-5 rounded text-[10px] font-bold font-mono border transition-all ${
                             isInterstate
-                              ? 'bg-purple-50 text-purple-900 border-purple-200'
-                              : 'bg-slate-100 text-slate-800 border-slate-200'
+                              ? 'bg-purple-600 text-white border-purple-700 shadow-sm'
+                              : 'bg-[var(--atlas-surface-hover)] text-[var(--atlas-navy)] border-[var(--atlas-border)]'
                           }`}
-                          title={`UF de Origem: ${noteUf}${isInterstate ? ` (SPED Escriturado em ${companyUf} - Operação Interestadual)` : ' (Operação Interna)'}`}
+                          title={`UF de Origem: ${noteUf}${isInterstate ? ` (Interestadual)` : ' (Interna)'}`}
                         >
                           {noteUf}
                         </span>
                       </div>
-                      <div className="px-1.5 py-1.5 min-w-0">
-                        <div className="font-bold text-[var(--atlas-navy)] text-[10px] truncate c170-item-title" style={{ fontFamily: 'var(--font-display)' }}>
+                      <div className="px-2 py-3 min-w-0 border-r border-[var(--atlas-border)]/30">
+                        <div className="font-bold text-[var(--atlas-navy)] text-[11px] truncate" style={{ fontFamily: 'var(--font-display)' }}>
                           #{item.numItem} - {item.codItem}
                         </div>
-                        <div className="text-[10px] text-[var(--atlas-text)] font-medium leading-snug line-clamp-2 mt-0.5 break-words c170-item-title" style={{ fontFamily: 'var(--font-display)' }} title={item.descrItem}>
+                        <div className="text-[11px] text-[var(--atlas-text)] font-medium leading-relaxed line-clamp-2 mt-1 break-words" style={{ fontFamily: 'var(--font-display)' }} title={item.descrItem}>
                           {item.descrItem}
                         </div>
                         {fuzzyMatch && fuzzyMatch.isSequenceMismatch && (
-                          <div className="mt-0.5 inline-flex items-center gap-1 px-1 py-0.5 rounded text-[9px] font-semibold bg-amber-100 text-amber-900 border border-amber-200" title={`Desalinhamento de Sequência: Mapeado para o item ${fuzzyMatch.xmlNItem} do XML (cProd: ${fuzzyMatch.xmlItem?.cProd || 'N/A'}) com ${fuzzyMatch.score}% de similaridade`}>
-                            <span>Item XML #{fuzzyMatch.xmlNItem}</span>
-                            <span className="text-[8px] bg-amber-200/80 px-0.5 rounded font-bold">{fuzzyMatch.score}% match</span>
+                          <div className="mt-1.5 inline-flex flex-wrap items-center gap-1.5 px-2 py-1 rounded bg-amber-50 text-amber-900 border border-amber-200" title={`Mapeado para o item ${fuzzyMatch.xmlNItem} do XML`}>
+                            <span className="text-[9px] font-bold">Item XML #{fuzzyMatch.xmlNItem}</span>
+                            <span className="text-[8px] bg-amber-200 px-1 rounded font-black">{fuzzyMatch.score}% MATCH</span>
                           </div>
                         )}
                         {fuzzyMatch && !fuzzyMatch.isSequenceMismatch && fuzzyMatch.score >= 40 && (
-                          <div className="mt-0.5 inline-flex items-center gap-1 text-[8px] text-emerald-700 bg-emerald-50 px-1 py-0.5 rounded border border-emerald-100" title={`Fuzzy match: ${fuzzyMatch.reasons.join(', ')}`}>
-                            <span>Fuzzy Match XML #{fuzzyMatch.xmlNItem} ({fuzzyMatch.score}%)</span>
+                          <div className="mt-1 inline-flex items-center gap-1.5 text-[8px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100 uppercase tracking-tighter" title={`Fuzzy match: ${fuzzyMatch.reasons.join(', ')}`}>
+                            <span>Match XML #{fuzzyMatch.xmlNItem} ({fuzzyMatch.score}%)</span>
                           </div>
                         )}
                       </div>
                       
                       {/* NCM Column */}
-                      <div className="px-1.5 py-1.5 font-mono text-[10px] whitespace-nowrap">
-                        <div className="text-[var(--atlas-text)] font-bold text-[10px]" title="NCM cadastrado no arquivo SPED">SPED: {item.ncm || '-'}</div>
+                      <div className="px-2 py-3 font-mono text-[11px] whitespace-nowrap border-r border-[var(--atlas-border)]/30">
+                        <div className="text-[var(--atlas-text)] font-bold" title="NCM SPED">SPED: {item.ncm || '-'}</div>
                         {xmlItem ? (
-                          <div className={`mt-0.5 px-1 py-0.5 rounded inline-block text-[9px] font-semibold ${ncmDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-slate-100 text-slate-700'}`} title="NCM na Nota Fiscal XML">
+                          <div className={`mt-1 px-1.5 py-0.5 rounded inline-block text-[10px] font-bold ${ncmDiff ? 'bg-amber-600 text-white shadow-sm' : 'bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)]'}`} title="NCM XML">
                             XML: {xmlItem.ncm || '-'}
                           </div>
                         ) : (
-                          <div className="text-[9px] text-slate-400 italic mt-0.5">XML não vinculado</div>
+                          <div className="text-[9px] text-[var(--atlas-text-muted)] italic mt-1 font-sans">XML não vinculado</div>
                         )}
                         {matrizRule ? (
-                          <div className="mt-0.5 text-[9px] font-sans font-medium text-indigo-700 bg-indigo-50 border border-indigo-100 px-1 py-0.5 rounded block truncate max-w-[150px]" title={`Regra Matriz NCM ${matrizRule.ncmPrefix}: ${matrizRule.descricao || matrizRule.description || ''}`}>
+                          <div className="mt-1 text-[9px] font-sans font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 px-1.5 py-0.5 rounded block truncate max-w-[150px]" title={`Regra Matriz: ${matrizRule.descricao || matrizRule.description || ''}`}>
                             Matriz: {matrizRule.ncmPrefix}
                           </div>
                         ) : (
-                          <div className="text-[9px] text-slate-400 italic mt-0.5">Sem cadastro na matriz</div>
+                          <div className="text-[9px] text-[var(--atlas-text-muted)] italic mt-1 font-sans">Sem matriz</div>
                         )}
                       </div>
 
                       {/* CFOP Column */}
-                      <div className="px-1.5 py-1.5 font-mono text-[10px] whitespace-nowrap">
+                      <div className="px-2 py-3 font-mono text-[11px] whitespace-nowrap border-r border-[var(--atlas-border)]/30">
                         {inlineEditingKey === key ? (
                           <div>
                             <input
                               type="text"
                               value={inlineCfop}
                               onChange={(e) => setInlineCfop(e.target.value)}
-                              className="w-14 px-1 py-0.5 border border-indigo-400 rounded text-[10px] font-mono bg-white text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500/20"
+                              className="w-14 px-1.5 py-1 border border-indigo-400 rounded text-[11px] font-mono bg-[var(--atlas-surface)] text-[var(--atlas-text)] outline-none focus:ring-2 focus:ring-indigo-500/20 shadow-sm"
                               placeholder="CFOP"
                             />
                           </div>
                         ) : (
-                          <div className="text-[var(--atlas-text)] font-bold text-[10px]">SPED: {item.cfop || '-'}</div>
+                          <div className="text-[var(--atlas-text)] font-bold">SPED: {item.cfop || '-'}</div>
                         )}
                         {xmlItem ? (
-                          <div className={`mt-0.5 px-1 py-0.5 rounded inline-block text-[9px] font-semibold ${cfopDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-slate-100 text-slate-700'}`}>
+                          <div className={`mt-1 px-1.5 py-0.5 rounded inline-block text-[10px] font-bold ${cfopDiff ? 'bg-amber-600 text-white shadow-sm' : 'bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)]'}`}>
                             XML: {xmlItem.cfop || '-'}
                           </div>
                         ) : (
-                          <div className="text-[9px] text-slate-400 italic mt-0.5">XML não vinculado</div>
+                          <div className="text-[9px] text-[var(--atlas-text-muted)] italic mt-1 font-sans">Sem XML</div>
                         )}
                       </div>
 
                       {/* CST Column */}
-                      <div className="px-1.5 py-1.5 font-mono text-[10px] whitespace-nowrap">
+                      <div className="px-2 py-3 font-mono text-[11px] whitespace-nowrap border-r border-[var(--atlas-border)]/30">
                         {inlineEditingKey === key ? (
                           <div>
                             <input
                               type="text"
                               value={inlineCst}
                               onChange={(e) => setInlineCst(e.target.value)}
-                              className="w-12 px-1 py-0.5 border border-indigo-400 rounded text-[10px] font-mono bg-white text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500/20"
+                              className="w-12 px-1.5 py-1 border border-indigo-400 rounded text-[11px] font-mono bg-[var(--atlas-surface)] text-[var(--atlas-text)] outline-none focus:ring-2 focus:ring-indigo-500/20 shadow-sm"
                               placeholder="CST"
                             />
                           </div>
                         ) : (
-                          <div className="text-[var(--atlas-text)] font-bold text-[10px]">SPED: {item.cstIcms ? item.cstIcms.padStart(3, '0') : '-'}</div>
+                          <div className="text-[var(--atlas-text)] font-bold">SPED: {item.cstIcms ? item.cstIcms.padStart(3, '0') : '-'}</div>
                         )}
                         {xmlItem && (
-                          <div className={`mt-0.5 px-1 py-0.5 rounded inline-block text-[9px] font-semibold ${cstDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-slate-100 text-slate-700'}`}>
+                          <div className={`mt-1 px-1.5 py-0.5 rounded inline-block text-[10px] font-bold ${cstDiff ? 'bg-amber-600 text-white shadow-sm' : 'bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)]'}`}>
                             XML: {xmlItem.cst ? xmlItem.cst.padStart(3, '0') : '-'}
                           </div>
                         )}
                         {matrizRule?.expectedCst && (
-                          <div className={`mt-0.5 px-1 py-0.5 rounded block text-[9px] font-semibold font-sans ${isMatrizCstDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-emerald-50 text-emerald-800'}`} title="CST esperado no Banco de Dados Cadastrado">
+                          <div className={`mt-1 px-1.5 py-0.5 rounded block text-[9px] font-bold font-sans ${isMatrizCstDiff ? 'bg-amber-600 text-white shadow-sm' : 'bg-emerald-50 text-emerald-800'}`} title="CST esperado na Matriz">
                             Matriz: {matrizRule.expectedCst}
                           </div>
                         )}
                       </div>
 
                       {/* Valor Item Column */}
-                      <div className="px-1.5 py-1.5 text-right whitespace-nowrap font-mono text-[10px]">
+                      <div className="px-2 py-3 text-right whitespace-nowrap font-mono text-[11px] border-r border-[var(--atlas-border)]/30">
                         {inlineEditingKey === key ? (
                           <div className="flex justify-end">
                             <input
                               type="text"
                               value={inlineVlItem}
                               onChange={(e) => setInlineVlItem(e.target.value)}
-                              className="w-20 px-1 py-0.5 border border-indigo-400 rounded text-[10px] font-mono bg-white text-slate-900 outline-none text-right"
+                              className="w-20 px-1.5 py-1 border border-indigo-400 rounded text-[11px] font-mono bg-[var(--atlas-surface)] text-[var(--atlas-text)] outline-none text-right shadow-sm"
                               placeholder="0.00"
                             />
                           </div>
                         ) : (
-                          <div className="text-[var(--atlas-navy)] font-bold text-[10px]">SPED: R$ {item.vlItem.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                          <div className="text-[var(--atlas-navy)] font-bold">SPED: R$ {item.vlItem.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
                         )}
                         {xmlItem ? (
-                          <div className={`mt-0.5 px-1 py-0.5 rounded inline-block text-[9px] font-semibold ${valDiff ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-slate-100 text-slate-700'}`}>
+                          <div className={`mt-1 px-1.5 py-0.5 rounded inline-block text-[10px] font-bold ${valDiff ? 'bg-amber-600 text-white shadow-sm' : 'bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)]'}`}>
                             XML: R$ {(xmlItem.vProd || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                           </div>
                         ) : (
-                          <div className="text-[9px] text-slate-400 italic mt-0.5">XML não vinculado</div>
+                          <div className="text-[9px] text-[var(--atlas-text-muted)] italic mt-1 font-sans">Sem XML</div>
                         )}
                       </div>
 
                       {/* ICMS Column */}
-                      <div className="px-1.5 py-1.5 text-right whitespace-nowrap font-mono text-[10px]">
+                      <div className="px-1.5 py-1.5 text-right whitespace-nowrap font-mono text-xs">
                         {inlineEditingKey === key ? (
                           <div className="space-y-1">
                             <div className="flex items-center justify-end gap-1">
-                              <span className="text-[9px] text-slate-500">BC:</span>
+                              <span className="text-[9px] text-[var(--atlas-text-secondary)]">BC:</span>
                               <input
                                 type="text"
                                 value={inlineVlBc}
@@ -2485,12 +2500,12 @@ export function AllItemsView({
                                   const a = parseFloat(inlineAliq.replace(',', '.')) || 0;
                                   setInlineVlIcms(((bc * a) / 100).toFixed(2));
                                 }}
-                                className="w-14 px-1 py-0.5 border border-indigo-400 rounded text-[10px] font-mono bg-white text-slate-900 outline-none"
+                                className="w-14 px-1 py-0.5 border border-indigo-400 rounded text-xs font-mono bg-[var(--atlas-surface)] text-[var(--atlas-text)] outline-none"
                                 placeholder="BC"
                               />
                             </div>
                             <div className="flex items-center justify-end gap-1">
-                              <span className="text-[9px] text-slate-500">Alíq%:</span>
+                              <span className="text-[9px] text-[var(--atlas-text-secondary)]">Alíq%:</span>
                               <input
                                 type="text"
                                 value={inlineAliq}
@@ -2501,23 +2516,23 @@ export function AllItemsView({
                                   const bc = parseFloat(inlineVlBc.replace(',', '.')) || item.vlItem || 0;
                                   setInlineVlIcms(((bc * a) / 100).toFixed(2));
                                 }}
-                                className="w-10 px-1 py-0.5 border border-indigo-400 rounded text-[10px] font-mono bg-white text-slate-900 outline-none"
+                                className="w-10 px-1 py-0.5 border border-indigo-400 rounded text-xs font-mono bg-[var(--atlas-surface)] text-[var(--atlas-text)] outline-none"
                                 placeholder="%"
                               />
                             </div>
                             <div className="flex items-center justify-end gap-1">
-                              <span className="text-[9px] text-slate-500">VlIcms:</span>
+                              <span className="text-[9px] text-[var(--atlas-text-secondary)]">VlIcms:</span>
                               <input
                                 type="text"
                                 value={inlineVlIcms}
                                 onChange={(e) => setInlineVlIcms(e.target.value)}
-                                className="w-14 px-1 py-0.5 border border-indigo-400 rounded text-[10px] font-mono bg-white text-slate-900 outline-none"
+                                className="w-14 px-1 py-0.5 border border-indigo-400 rounded text-xs font-mono bg-[var(--atlas-surface)] text-[var(--atlas-text)] outline-none"
                                 placeholder="0.00"
                               />
                             </div>
                           </div>
                         ) : (
-                          <div className="text-[var(--atlas-navy)] font-bold text-[10px]" title="Base de Cálculo, Alíquota e Valor do ICMS no SPED">
+                          <div className="text-[var(--atlas-navy)] font-bold text-xs" title="Base de Cálculo, Alíquota e Valor do ICMS no SPED">
                             <span className="text-[var(--atlas-text-secondary)] font-medium text-[9px]">SPED:</span> BC R$ {(item.vlBcIcms || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-[var(--atlas-text-muted)] font-normal">|</span> {item.aliqIcms}% <span className="text-[var(--atlas-text-muted)] font-normal">|</span> R$ {(item.vlIcms || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                           </div>
                         )}
@@ -2555,7 +2570,7 @@ export function AllItemsView({
                             </button>
                             <button
                               onClick={cancelInlineEdit}
-                              className="p-1 bg-slate-200 text-slate-700 rounded hover:bg-slate-300 transition"
+                              className="p-1 bg-slate-200 text-[var(--atlas-text-secondary)] rounded hover:bg-slate-300 transition"
                               title="Cancelar Edição"
                             >
                               <X className="w-3.5 h-3.5" />
@@ -2565,14 +2580,14 @@ export function AllItemsView({
                           <div className="flex items-center justify-center gap-1">
                             <button
                               onClick={() => startInlineEdit(doc.id, item)}
-                              className={`p-1 rounded transition ${item.analystConfirmed ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100'}`}
+                              className={`p-1 rounded transition ${item.analystConfirmed ? 'bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-muted)] cursor-not-allowed' : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100'}`}
                               title={item.analystConfirmed ? 'Item conferido. Desmarque para editar.' : 'Edição Rápida Inline (Lápis)'}
                             >
                               <Pencil className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={() => startEditing(doc.id, item)}
-                              className={`p-1 border rounded transition-colors ${item.analystConfirmed ? 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed' : 'bg-white border-slate-200 text-[#1e3a5f] hover:bg-[#1e3a5f]/10'}`}
+                              className={`p-1 border rounded transition-colors ${item.analystConfirmed ? 'bg-[var(--atlas-surface-hover)] border-[var(--atlas-border)] text-[var(--atlas-text-muted)] cursor-not-allowed' : 'bg-[var(--atlas-surface)] border-[var(--atlas-border)] text-[var(--atlas-navy)] hover:bg-[var(--atlas-navy)]/10'}`}
                               title={item.analystConfirmed ? 'Item conferido. Desmarque para editar.' : 'Abrir Edição Completa (Janela Modal)'}
                             >
                               <SlidersHorizontal className="w-3.5 h-3.5" />
@@ -2589,29 +2604,29 @@ export function AllItemsView({
         </div>
 
         {/* Pagination Footer */}
-        <div className="p-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50">
-          <div className="text-xs text-slate-500">
-            Mostrando <span className="font-semibold text-slate-700">{filteredItems.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}</span> a{' '}
-            <span className="font-semibold text-slate-700">{Math.min(currentPage * itemsPerPage, filteredItems.length)}</span> de{' '}
-            <span className="font-semibold text-slate-700">{filteredItems.length}</span> itens filtrados (Total geral: {counts.total})
+        <div className="p-4 border-t border-[var(--atlas-border)] flex flex-col sm:flex-row items-center justify-between gap-4 bg-[var(--atlas-surface-hover)]">
+          <div className="text-xs text-[var(--atlas-text-secondary)]">
+            Mostrando <span className="font-semibold text-[var(--atlas-text-secondary)]">{filteredItems.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}</span> a{' '}
+            <span className="font-semibold text-[var(--atlas-text-secondary)]">{Math.min(currentPage * itemsPerPage, filteredItems.length)}</span> de{' '}
+            <span className="font-semibold text-[var(--atlas-text-secondary)]">{filteredItems.length}</span> itens filtrados (Total geral: {counts.total})
           </div>
 
           <div className="flex items-center space-x-2">
             <button
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
-              className="px-3 py-1.5 border border-slate-200 rounded-lg text-xs font-medium text-slate-700 bg-white hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1"
+              className="px-3 py-1.5 border border-[var(--atlas-border)] rounded-lg text-xs font-medium text-[var(--atlas-text-secondary)] bg-[var(--atlas-surface)] hover:bg-[var(--atlas-surface-hover)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1"
             >
               <ChevronLeft className="w-4 h-4" />
               <span>Anterior</span>
             </button>
-            <span className="text-xs text-slate-600 px-2">
+            <span className="text-xs text-[var(--atlas-text-secondary)] px-2">
               Página {currentPage} de {totalPages || 1}
             </span>
             <button
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
               disabled={currentPage >= totalPages}
-              className="px-3 py-1.5 border border-slate-200 rounded-lg text-xs font-medium text-slate-700 bg-white hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1"
+              className="px-3 py-1.5 border border-[var(--atlas-border)] rounded-lg text-xs font-medium text-[var(--atlas-text-secondary)] bg-[var(--atlas-surface)] hover:bg-[var(--atlas-surface-hover)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1"
             >
               <span>Próxima</span>
               <ChevronRight className="w-4 h-4" />
@@ -2622,9 +2637,9 @@ export function AllItemsView({
 
       {/* Floating Bulk Action Bar */}
       {selectedKeys.size > 0 && (
-        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-[#1e3a5f] text-white px-6 py-4 rounded-lg shadow-sm flex flex-wrap items-center space-x-4 z-50 border border-slate-700 animate-fade-in">
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-[var(--atlas-navy)] text-white px-6 py-4 rounded-lg shadow-sm flex flex-wrap items-center space-x-4 z-50 border border-slate-700 animate-fade-in">
           <div className="flex items-center space-x-2">
-            <span className="bg-white text-[#1e3a5f] font-bold text-xs px-2.5 py-1 rounded-full">{selectedKeys.size}</span>
+            <span className="bg-[var(--atlas-surface)] text-[var(--atlas-navy)] font-bold text-xs px-2.5 py-1 rounded-full">{selectedKeys.size}</span>
             <span className="text-xs font-semibold">itens selecionados</span>
           </div>
 
@@ -2636,28 +2651,28 @@ export function AllItemsView({
               placeholder="Novo NCM"
               value={bulkNcmInput}
               onChange={(e) => setBulkNcmInput(e.target.value)}
-              className="w-24 px-2.5 py-1.5 bg-slate-800 border border-slate-600 rounded-lg text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 font-mono"
+              className="w-24 px-2.5 py-1.5 bg-slate-800 border border-slate-600 rounded-lg text-xs text-white placeholder-[var(--atlas-text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-400 font-mono"
             />
             <input
               type="text"
               placeholder="Novo CST"
               value={bulkCstInput}
               onChange={(e) => setBulkCstInput(e.target.value)}
-              className="w-20 px-2.5 py-1.5 bg-slate-800 border border-slate-600 rounded-lg text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 font-mono"
+              className="w-20 px-2.5 py-1.5 bg-slate-800 border border-slate-600 rounded-lg text-xs text-white placeholder-[var(--atlas-text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-400 font-mono"
             />
             <input
               type="text"
               placeholder="Novo CFOP"
               value={bulkCfopInput}
               onChange={(e) => setBulkCfopInput(e.target.value)}
-              className="w-20 px-2.5 py-1.5 bg-slate-800 border border-slate-600 rounded-lg text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 font-mono"
+              className="w-20 px-2.5 py-1.5 bg-slate-800 border border-slate-600 rounded-lg text-xs text-white placeholder-[var(--atlas-text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-400 font-mono"
             />
             <input
               type="text"
               placeholder="Base ICMS (R$)"
               value={bulkVlBcInput}
               onChange={(e) => setBulkVlBcInput(e.target.value)}
-              className="w-24 px-2.5 py-1.5 bg-slate-800 border border-slate-600 rounded-lg text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 font-mono"
+              className="w-24 px-2.5 py-1.5 bg-slate-800 border border-slate-600 rounded-lg text-xs text-white placeholder-[var(--atlas-text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-400 font-mono"
               title="Nova Base de Cálculo de ICMS para os itens selecionados"
             />
             <input
@@ -2665,7 +2680,7 @@ export function AllItemsView({
               placeholder="Alíq. ICMS (%)"
               value={bulkAliqInput}
               onChange={(e) => setBulkAliqInput(e.target.value)}
-              className="w-24 px-2.5 py-1.5 bg-slate-800 border border-slate-600 rounded-lg text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 font-mono"
+              className="w-24 px-2.5 py-1.5 bg-slate-800 border border-slate-600 rounded-lg text-xs text-white placeholder-[var(--atlas-text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-400 font-mono"
               title="Nova Alíquota de ICMS para os itens selecionados"
             />
             <input
@@ -2673,13 +2688,13 @@ export function AllItemsView({
               placeholder="Val. ICMS (R$)"
               value={bulkVlIcmsInput}
               onChange={(e) => setBulkVlIcmsInput(e.target.value)}
-              className="w-24 px-2.5 py-1.5 bg-slate-800 border border-slate-600 rounded-lg text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 font-mono"
+              className="w-24 px-2.5 py-1.5 bg-slate-800 border border-slate-600 rounded-lg text-xs text-white placeholder-[var(--atlas-text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-400 font-mono"
               title="Novo Valor de ICMS para os itens selecionados"
             />
 
             <button
               onClick={() => handleBulkApply('manual')}
-              className="px-3.5 py-1.5 bg-white text-[#1e3a5f] hover:bg-slate-100 text-xs font-bold rounded-lg shadow-2xs transition-colors flex items-center space-x-1"
+              className="px-3.5 py-1.5 bg-[var(--atlas-surface)] text-[var(--atlas-navy)] hover:bg-[var(--atlas-surface-hover)] text-xs font-bold rounded-lg shadow-xs transition-colors flex items-center space-x-1"
             >
               <Check className="w-3.5 h-3.5" />
               <span>Aplicar Manual</span>
@@ -2688,7 +2703,7 @@ export function AllItemsView({
             {stateTaxRules.length > 0 && (
               <button
                 onClick={() => handleBulkApply('matriz')}
-                className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg shadow-2xs transition-colors flex items-center space-x-1.5"
+                className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg shadow-xs transition-colors flex items-center space-x-1.5"
                 title="Aplica NCM, CST e Alíquota cadastrados no Banco de Dados para os NCMs selecionados"
               >
                 <Database className="w-3.5 h-3.5" />
@@ -2698,7 +2713,7 @@ export function AllItemsView({
 
             <button
               onClick={() => handleBulkApply('xml')}
-              className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg shadow-2xs transition-colors flex items-center space-x-1.5"
+              className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg shadow-xs transition-colors flex items-center space-x-1.5"
               title="Preenche NCM, CST e CFOP com os dados do XML da Nota"
             >
               <CheckCircle className="w-3.5 h-3.5" />
@@ -2719,7 +2734,7 @@ export function AllItemsView({
 
           <button
             onClick={() => setSelectedKeys(new Set())}
-            className="text-slate-300 hover:text-white text-xs font-medium underline"
+            className="text-[var(--atlas-text-muted)] hover:text-white text-xs font-medium underline"
           >
             Limpar
           </button>
@@ -2729,17 +2744,17 @@ export function AllItemsView({
       {/* Manual Editing Overlay Modal */}
       {editingItemData && (
         <div className="fixed inset-0 bg-slate-900/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-sm max-w-2xl w-full border border-slate-200 overflow-hidden animate-fade-in max-h-[90vh] flex flex-col">
-            <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+          <div className="bg-[var(--atlas-surface)] rounded-lg shadow-sm max-w-2xl w-full border border-[var(--atlas-border)] overflow-hidden animate-fade-in max-h-[90vh] flex flex-col">
+            <div className="p-5 border-b border-[var(--atlas-border)] flex items-center justify-between bg-[var(--atlas-surface-hover)]">
               <div>
-                <h3 className="text-base font-bold text-[#1e3a5f]">Editar Tributação & NCM do Item</h3>
-                <p className="text-xs text-slate-500 mt-0.5 font-mono">
+                <h3 className="text-base font-bold text-[var(--atlas-navy)]">Editar Tributação & NCM do Item</h3>
+                <p className="text-xs text-[var(--atlas-text-secondary)] mt-0.5 font-mono">
                   Item #{editingItemData.item.numItem} • Cód. {editingItemData.item.codItem}
                 </p>
               </div>
               <button
                 onClick={cancelEditing}
-                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-200 transition-colors"
+                className="p-1.5 text-[var(--atlas-text-muted)] hover:text-[var(--atlas-text-secondary)] rounded-lg hover:bg-[var(--atlas-border)] transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -2747,38 +2762,38 @@ export function AllItemsView({
 
             <div className="p-6 overflow-y-auto space-y-5 flex-1">
               {/* Product description */}
-              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 text-xs text-slate-700">
-                <span className="font-bold text-[#1e3a5f]">Descrição do Item:</span> {editingItemData.item.descrItem}
+              <div className="bg-[var(--atlas-surface-hover)] p-3 rounded-xl border border-[var(--atlas-border)]/80 text-xs text-[var(--atlas-text-secondary)]">
+                <span className="font-bold text-[var(--atlas-navy)]">Descrição do Item:</span> {editingItemData.item.descrItem}
               </div>
 
               {/* Cross-Reference Summary Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                 {/* XML Reference Card */}
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <div className="p-3 bg-[var(--atlas-surface-hover)] rounded-xl border border-[var(--atlas-border)]">
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="font-bold text-slate-700 flex items-center gap-1">
-                      <FileText className="w-3.5 h-3.5 text-slate-600" />
+                    <span className="font-bold text-[var(--atlas-text-secondary)] flex items-center gap-1">
+                      <FileText className="w-3.5 h-3.5 text-[var(--atlas-text-secondary)]" />
                       Dados no XML da Nota
                     </span>
                     {editingXmlItem && (
                       <button
                         type="button"
                         onClick={applyXmlToModal}
-                        className="text-[11px] text-amber-700 hover:text-amber-900 font-bold underline flex items-center gap-1"
+                        className="text-xs text-amber-700 hover:text-amber-900 font-bold underline flex items-center gap-1"
                       >
                         Copiar XML <ArrowRight className="w-3 h-3" />
                       </button>
                     )}
                   </div>
                   {editingXmlItem ? (
-                    <div className="space-y-1 font-mono text-[11px] text-slate-600">
-                      <div>NCM: <strong className="text-slate-800">{editingXmlItem.ncm || '-'}</strong></div>
-                      <div>CST: <strong className="text-slate-800">{editingXmlItem.cst || '-'}</strong></div>
-                      <div>CFOP: <strong className="text-slate-800">{editingXmlItem.cfop || '-'}</strong></div>
-                      <div>Alíq ICMS: <strong className="text-slate-800">{editingXmlItem.pIcms ?? 0}%</strong></div>
+                    <div className="space-y-1 font-mono text-xs text-[var(--atlas-text-secondary)]">
+                      <div>NCM: <strong className="text-[var(--atlas-text)]">{editingXmlItem.ncm || '-'}</strong></div>
+                      <div>CST: <strong className="text-[var(--atlas-text)]">{editingXmlItem.cst || '-'}</strong></div>
+                      <div>CFOP: <strong className="text-[var(--atlas-text)]">{editingXmlItem.cfop || '-'}</strong></div>
+                      <div>Alíq ICMS: <strong className="text-[var(--atlas-text)]">{editingXmlItem.pIcms ?? 0}%</strong></div>
                     </div>
                   ) : (
-                    <p className="text-[11px] text-slate-400 italic">XML não vinculado a este documento.</p>
+                    <p className="text-xs text-[var(--atlas-text-muted)] italic">XML não vinculado a este documento.</p>
                   )}
                 </div>
 
@@ -2793,21 +2808,21 @@ export function AllItemsView({
                       <button
                         type="button"
                         onClick={applyMatrizToModal}
-                        className="text-[11px] text-indigo-800 hover:text-indigo-950 font-bold underline flex items-center gap-1"
+                        className="text-xs text-indigo-800 hover:text-indigo-950 font-bold underline flex items-center gap-1"
                       >
                         Copiar Matriz <ArrowRight className="w-3 h-3" />
                       </button>
                     )}
                   </div>
                   {editingMatrizRule ? (
-                    <div className="space-y-1 font-mono text-[11px] text-indigo-900">
+                    <div className="space-y-1 font-mono text-xs text-indigo-900">
                       <div>Prefixo NCM: <strong>{editingMatrizRule.ncmPrefix}</strong></div>
                       <div>CST Esperado: <strong>{editingMatrizRule.expectedCst || '-'}</strong></div>
                       <div>Alíq. Esperada: <strong>{editingMatrizRule.expectedAliqIcms ?? '-'}%</strong></div>
-                      <div className="font-sans text-[10px] text-indigo-700 truncate">{editingMatrizRule.descricao || editingMatrizRule.description}</div>
+                      <div className="font-sans text-xs text-indigo-700 truncate">{editingMatrizRule.descricao || editingMatrizRule.description}</div>
                     </div>
                   ) : (
-                    <p className="text-[11px] text-indigo-400 italic">Nenhuma regra cadastrada na matriz para este NCM/UF.</p>
+                    <p className="text-xs text-indigo-400 italic">Nenhuma regra cadastrada na matriz para este NCM/UF.</p>
                   )}
                 </div>
               </div>
@@ -2817,7 +2832,7 @@ export function AllItemsView({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="text-xs font-semibold text-slate-700">CST ICMS</label>
+                      <label className="text-xs font-semibold text-[var(--atlas-text-secondary)]">CST ICMS</label>
                       <FiscalTooltip
                         title="Regras de CST para Entradas e Saídas"
                         description="Para mercadorias tributadas integralmente use 000 (nacional) ou 100/200 (estrangeira). Para mercadorias com ICMS-ST cobrado anteriormente pelo fornecedor, use CST 060."
@@ -2834,13 +2849,13 @@ export function AllItemsView({
                       type="text"
                       value={editCst}
                       onChange={(e) => setEditCst(e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono bg-white text-slate-900 focus:border-[#1e3a5f] focus:ring-2 focus:ring-[#1e3a5f]/15 outline-none"
+                      className="w-full px-3 py-2 border border-[var(--atlas-border)] rounded-xl text-xs font-mono bg-[var(--atlas-surface)] text-[var(--atlas-text)] focus:border-[var(--atlas-navy)] focus:ring-2 focus:ring-[var(--atlas-navy)]/15 outline-none"
                       placeholder="Ex: 000, 060"
                     />
                   </div>
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="text-xs font-semibold text-slate-700">CFOP</label>
+                      <label className="text-xs font-semibold text-[var(--atlas-text-secondary)]">CFOP</label>
                       <FiscalTooltip
                         title="Correspondência de CFOP de Entrada"
                         description="Na escrituração de compras (entradas), o CFOP 5.102 da nota fiscal do fornecedor deve ser escriturado como 1.102 (compra para comercialização) ou 1.556 (uso/consumo)."
@@ -2851,7 +2866,7 @@ export function AllItemsView({
                       type="text"
                       value={editCfop}
                       onChange={(e) => setEditCfop(e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono bg-white text-slate-900 focus:border-[#1e3a5f] focus:ring-2 focus:ring-[#1e3a5f]/15 outline-none"
+                      className="w-full px-3 py-2 border border-[var(--atlas-border)] rounded-xl text-xs font-mono bg-[var(--atlas-surface)] text-[var(--atlas-text)] focus:border-[var(--atlas-navy)] focus:ring-2 focus:ring-[var(--atlas-navy)]/15 outline-none"
                       placeholder="Ex: 5102, 1403"
                     />
                   </div>
@@ -2860,7 +2875,7 @@ export function AllItemsView({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="text-xs font-semibold text-slate-700">Valor do Item (R$) (vlItem)</label>
+                      <label className="text-xs font-semibold text-[var(--atlas-text-secondary)]">Valor do Item (R$) (vlItem)</label>
                       <FiscalTooltip
                         title="Valor Total do Item"
                         description="Valor bruto do item escriturado no SPED C170. Ajuste caso haja divergência com o XML."
@@ -2870,13 +2885,13 @@ export function AllItemsView({
                       type="text"
                       value={editVlItem}
                       onChange={(e) => setEditVlItem(e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono bg-white text-slate-900 focus:border-[#1e3a5f] focus:ring-2 focus:ring-[#1e3a5f]/15 outline-none"
+                      className="w-full px-3 py-2 border border-[var(--atlas-border)] rounded-xl text-xs font-mono bg-[var(--atlas-surface)] text-[var(--atlas-text)] focus:border-[var(--atlas-navy)] focus:ring-2 focus:ring-[var(--atlas-navy)]/15 outline-none"
                       placeholder="0.00"
                     />
                   </div>
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="text-xs font-semibold text-slate-700">Base de Cálculo ICMS (R$)</label>
+                      <label className="text-xs font-semibold text-[var(--atlas-text-secondary)]">Base de Cálculo ICMS (R$)</label>
                       <FiscalTooltip
                         title="Validação da Base do ICMS"
                         description="Certifique-se de que a Base de Cálculo reflete corretamente o valor do produto acrescido de frete/despesas e reduzido de eventuais isenções ou reduções de base."
@@ -2895,7 +2910,7 @@ export function AllItemsView({
                           setEditVlIcms(((bc * aliq) / 100).toFixed(2));
                         }
                       }}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono bg-white text-slate-900 focus:border-[#1e3a5f] focus:ring-2 focus:ring-[#1e3a5f]/15 outline-none"
+                      className="w-full px-3 py-2 border border-[var(--atlas-border)] rounded-xl text-xs font-mono bg-[var(--atlas-surface)] text-[var(--atlas-text)] focus:border-[var(--atlas-navy)] focus:ring-2 focus:ring-[var(--atlas-navy)]/15 outline-none"
                       placeholder="0.00"
                     />
                   </div>
@@ -2904,7 +2919,7 @@ export function AllItemsView({
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="text-xs font-semibold text-slate-700">Alíquota ICMS (%)</label>
+                      <label className="text-xs font-semibold text-[var(--atlas-text-secondary)]">Alíquota ICMS (%)</label>
                       <FiscalTooltip
                         title="Alíquota Interna ou Interestadual"
                         description="Verifique a alíquota interna do estado de destino para a mercadoria ou a alíquota interestadual (4%, 7% ou 12%)."
@@ -2922,13 +2937,13 @@ export function AllItemsView({
                           setEditVlIcms(((bc * aliq) / 100).toFixed(2));
                         }
                       }}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono bg-white text-slate-900 focus:border-[#1e3a5f] focus:ring-2 focus:ring-[#1e3a5f]/15 outline-none"
+                      className="w-full px-3 py-2 border border-[var(--atlas-border)] rounded-xl text-xs font-mono bg-[var(--atlas-surface)] text-[var(--atlas-text)] focus:border-[var(--atlas-navy)] focus:ring-2 focus:ring-[var(--atlas-navy)]/15 outline-none"
                       placeholder="0.00"
                     />
                   </div>
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="text-xs font-semibold text-slate-700">Valor ICMS (R$)</label>
+                      <label className="text-xs font-semibold text-[var(--atlas-text-secondary)]">Valor ICMS (R$)</label>
                       <FiscalTooltip
                         title="Cálculo do Valor do ICMS"
                         description="O valor do ICMS é a multiplicação da Base de Cálculo pela Alíquota. (VlIcms = VlBcIcms * AliqIcms / 100)."
@@ -2938,7 +2953,7 @@ export function AllItemsView({
                       type="text"
                       value={editVlIcms}
                       onChange={(e) => setEditVlIcms(e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono bg-white text-slate-900 focus:border-[#1e3a5f] focus:ring-2 focus:ring-[#1e3a5f]/15 outline-none"
+                      className="w-full px-3 py-2 border border-[var(--atlas-border)] rounded-xl text-xs font-mono bg-[var(--atlas-surface)] text-[var(--atlas-text)] focus:border-[var(--atlas-navy)] focus:ring-2 focus:ring-[var(--atlas-navy)]/15 outline-none"
                       placeholder="0.00"
                     />
                   </div>
@@ -2946,18 +2961,18 @@ export function AllItemsView({
               </div>
             </div>
 
-            <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end space-x-3">
+            <div className="p-4 bg-[var(--atlas-surface-hover)] border-t border-[var(--atlas-border)] flex items-center justify-end space-x-3">
               <button
                 type="button"
                 onClick={cancelEditing}
-                className="px-4 py-2 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 bg-white hover:bg-slate-100 transition-all"
+                className="px-4 py-2 border border-[var(--atlas-border)] rounded-xl text-xs font-semibold text-[var(--atlas-text-secondary)] bg-[var(--atlas-surface)] hover:bg-[var(--atlas-surface-hover)] transition-all"
               >
                 Cancelar
               </button>
               <button
                 type="button"
                 onClick={saveEditing}
-                className="px-5 py-2 bg-[#1e3a5f] hover:bg-[#162b47] text-white rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center space-x-1.5"
+                className="px-5 py-2 bg-[var(--atlas-navy)] hover:bg-[#162b47] text-white rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center space-x-1.5"
               >
                 <Check className="w-4 h-4" />
                 <span>Salvar Alterações</span>
@@ -2977,34 +2992,34 @@ export function AllItemsView({
       {/* Modal de Detalhamento e Exportação de XMLs Faltantes */}
       {missingXmlModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-150">
+          <div className="bg-[var(--atlas-surface)] rounded-2xl max-w-4xl w-full shadow-2xl border border-[var(--atlas-border)] overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-150">
             {/* Modal Header */}
-            <div className="bg-[#1e3a5f] text-white p-5 flex items-center justify-between">
+            <div className="bg-[var(--atlas-navy)] text-white p-5 flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <AlertTriangle className="w-6 h-6 text-amber-400 shrink-0" />
                 <div>
                   <h3 className="text-lg font-bold">Relatório de Notas Faltantes & XMLs Omissos</h3>
-                  <p className="text-xs text-slate-300 mt-0.5">
+                  <p className="text-xs text-[var(--atlas-text-muted)] mt-0.5">
                     Empresa: {spedData?.header?.nome || 'SPED Importado'} — CNPJ: {spedData?.header?.cnpj || 'N/I'}
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setMissingXmlModalOpen(false)}
-                className="text-slate-300 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
+                className="text-[var(--atlas-text-muted)] hover:text-white p-1 rounded-lg hover:bg-[var(--atlas-surface)]/10 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Sub-Tabs */}
-            <div className="flex border-b border-slate-200 bg-slate-50 px-5 pt-3">
+            <div className="flex border-b border-[var(--atlas-border)] bg-[var(--atlas-surface-hover)] px-5 pt-3">
               <button
                 onClick={() => setMissingXmlModalTab('sped_no_xml')}
                 className={`px-4 py-2 text-xs font-bold border-b-2 transition-colors flex items-center space-x-2 cursor-pointer ${
                   missingXmlModalTab === 'sped_no_xml'
-                    ? 'border-[#1e3a5f] text-[#1e3a5f] bg-white rounded-t-lg'
-                    : 'border-transparent text-slate-600 hover:text-slate-900'
+                    ? 'border-[var(--atlas-navy)] text-[var(--atlas-navy)] bg-[var(--atlas-surface)] rounded-t-lg'
+                    : 'border-transparent text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)]'
                 }`}
               >
                 <span>Notas SPED sem XML ({missingXmlDocs.length})</span>
@@ -3013,8 +3028,8 @@ export function AllItemsView({
                 onClick={() => setMissingXmlModalTab('xml_no_sped')}
                 className={`px-4 py-2 text-xs font-bold border-b-2 transition-colors flex items-center space-x-2 cursor-pointer ${
                   missingXmlModalTab === 'xml_no_sped'
-                    ? 'border-[#1e3a5f] text-[#1e3a5f] bg-white rounded-t-lg'
-                    : 'border-transparent text-slate-600 hover:text-slate-900'
+                    ? 'border-[var(--atlas-navy)] text-[var(--atlas-navy)] bg-[var(--atlas-surface)] rounded-t-lg'
+                    : 'border-transparent text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)]'
                 }`}
               >
                 <span>XMLs Omissos sem SPED ({omissaXmls.length})</span>
@@ -3025,14 +3040,14 @@ export function AllItemsView({
             <div className="p-5 max-h-[60vh] overflow-y-auto space-y-4">
               {missingXmlModalTab === 'sped_no_xml' ? (
                 missingXmlDocs.length === 0 ? (
-                  <div className="text-center py-12 text-slate-500 text-xs">
+                  <div className="text-center py-12 text-[var(--atlas-text-secondary)] text-xs">
                     <CheckCircle className="w-8 h-8 text-emerald-500 mx-auto mb-2" />
                     <span>Excelente! Todas as notas escrituradas no SPED possuem seus respectivos XMLs na base.</span>
                   </div>
                 ) : (
-                  <div className="overflow-x-auto custom-scrollbar border border-slate-200 rounded-xl">
-                    <table className="w-full text-xs text-left text-slate-700">
-                      <thead className="bg-slate-100 text-slate-800 font-bold border-b border-slate-200">
+                  <div className="overflow-x-auto custom-scrollbar border border-[var(--atlas-border)] rounded-xl">
+                    <table className="w-full text-xs text-left text-[var(--atlas-text-secondary)]">
+                      <thead className="bg-[var(--atlas-surface-hover)] text-[var(--atlas-text)] font-bold border-b border-[var(--atlas-border)]">
                         <tr>
                           <th className="px-3 py-2">Nº Doc</th>
                           <th className="px-3 py-2">Série</th>
@@ -3042,19 +3057,19 @@ export function AllItemsView({
                           <th className="px-3 py-2 text-right">Valor Total</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100">
+                      <tbody className="divide-y divide-[var(--atlas-border)]">
                         {missingXmlDocs.map((doc, idx) => (
                           <tr key={doc.id || idx} className="hover:bg-amber-50/40">
-                            <td className="px-3 py-2 font-mono font-bold text-slate-900">{doc.numDoc || '-'}</td>
-                            <td className="px-3 py-2 text-slate-600">{doc.serie || '1'}</td>
-                            <td className="px-3 py-2 text-slate-600">{doc.dtDoc || '-'}</td>
-                            <td className="px-3 py-2 font-mono text-[11px] text-slate-700 truncate max-w-[200px]" title={doc.chvNfe}>
+                            <td className="px-3 py-2 font-mono font-bold text-[var(--atlas-text)]">{doc.numDoc || '-'}</td>
+                            <td className="px-3 py-2 text-[var(--atlas-text-secondary)]">{doc.serie || '1'}</td>
+                            <td className="px-3 py-2 text-[var(--atlas-text-secondary)]">{doc.dtDoc || '-'}</td>
+                            <td className="px-3 py-2 font-mono text-xs text-[var(--atlas-text-secondary)] truncate max-w-[200px]" title={doc.chvNfe}>
                               {doc.chvNfe || 'Sem Chave Informada'}
                             </td>
-                            <td className="px-3 py-2 text-slate-700 font-medium">
+                            <td className="px-3 py-2 text-[var(--atlas-text-secondary)] font-medium">
                               {(doc as any).nomeEmit || doc.cnpjEmit || 'Não identificado'}
                             </td>
-                            <td className="px-3 py-2 text-right font-mono font-bold text-slate-900">
+                            <td className="px-3 py-2 text-right font-mono font-bold text-[var(--atlas-text)]">
                               {(doc.vlDoc || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                             </td>
                           </tr>
@@ -3065,14 +3080,14 @@ export function AllItemsView({
                 )
               ) : (
                 omissaXmls.length === 0 ? (
-                  <div className="text-center py-12 text-slate-500 text-xs">
+                  <div className="text-center py-12 text-[var(--atlas-text-secondary)] text-xs">
                     <CheckCircle className="w-8 h-8 text-emerald-500 mx-auto mb-2" />
                     <span>Nenhum XML de terceiro pendente de escrituração encontrado.</span>
                   </div>
                 ) : (
-                  <div className="overflow-x-auto custom-scrollbar border border-slate-200 rounded-xl">
-                    <table className="w-full text-xs text-left text-slate-700">
-                      <thead className="bg-slate-100 text-slate-800 font-bold border-b border-slate-200">
+                  <div className="overflow-x-auto custom-scrollbar border border-[var(--atlas-border)] rounded-xl">
+                    <table className="w-full text-xs text-left text-[var(--atlas-text-secondary)]">
+                      <thead className="bg-[var(--atlas-surface-hover)] text-[var(--atlas-text)] font-bold border-b border-[var(--atlas-border)]">
                         <tr>
                           <th className="px-3 py-2">Nº NF</th>
                           <th className="px-3 py-2">Série</th>
@@ -3082,19 +3097,19 @@ export function AllItemsView({
                           <th className="px-3 py-2 text-right">Valor Total XML</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100">
+                      <tbody className="divide-y divide-[var(--atlas-border)]">
                         {omissaXmls.map((xml, idx) => (
                           <tr key={xml.chvNfe || idx} className="hover:bg-rose-50/40">
-                            <td className="px-3 py-2 font-mono font-bold text-slate-900">{xml.nNF || '-'}</td>
-                            <td className="px-3 py-2 text-slate-600">{xml.serie || '1'}</td>
-                            <td className="px-3 py-2 text-slate-600">{xml.dhEmi ? xml.dhEmi.substring(0, 10) : '-'}</td>
-                            <td className="px-3 py-2 font-mono text-[11px] text-slate-700 truncate max-w-[200px]" title={xml.chvNfe}>
+                            <td className="px-3 py-2 font-mono font-bold text-[var(--atlas-text)]">{xml.nNF || '-'}</td>
+                            <td className="px-3 py-2 text-[var(--atlas-text-secondary)]">{xml.serie || '1'}</td>
+                            <td className="px-3 py-2 text-[var(--atlas-text-secondary)]">{xml.dhEmi ? xml.dhEmi.substring(0, 10) : '-'}</td>
+                            <td className="px-3 py-2 font-mono text-xs text-[var(--atlas-text-secondary)] truncate max-w-[200px]" title={xml.chvNfe}>
                               {xml.chvNfe || '-'}
                             </td>
-                            <td className="px-3 py-2 text-slate-700 font-medium">
+                            <td className="px-3 py-2 text-[var(--atlas-text-secondary)] font-medium">
                               {xml.emitNome || xml.emitCnpj || 'Não informado'}
                             </td>
-                            <td className="px-3 py-2 text-right font-mono font-bold text-slate-900">
+                            <td className="px-3 py-2 text-right font-mono font-bold text-[var(--atlas-text)]">
                               {(xml.vNF || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                             </td>
                           </tr>
@@ -3107,8 +3122,8 @@ export function AllItemsView({
             </div>
 
             {/* Modal Footer */}
-            <div className="p-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
-              <span className="text-xs text-slate-500">
+            <div className="p-4 bg-[var(--atlas-surface-hover)] border-t border-[var(--atlas-border)] flex flex-col sm:flex-row items-center justify-between gap-3">
+              <span className="text-xs text-[var(--atlas-text-secondary)]">
                 Total de {totalMissingXmlCount} item(ns) identificados nesta conferência.
               </span>
               <div className="flex items-center space-x-2">
@@ -3121,14 +3136,14 @@ export function AllItemsView({
                 </button>
                 <button
                   onClick={handleExportMissingXmlCSV}
-                  className="px-4 py-2 bg-[#1e3a5f] hover:bg-[#142c47] text-white rounded-xl text-xs font-bold transition-colors flex items-center space-x-1.5 shadow-xs cursor-pointer"
+                  className="px-4 py-2 bg-[var(--atlas-navy)] hover:bg-[var(--atlas-navy-dark)] text-white rounded-xl text-xs font-bold transition-colors flex items-center space-x-1.5 shadow-xs cursor-pointer"
                 >
                   <Download className="w-4 h-4" />
                   <span>Exportar Excel (CSV)</span>
                 </button>
                 <button
                   onClick={() => setMissingXmlModalOpen(false)}
-                  className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-bold transition-colors cursor-pointer"
+                  className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-[var(--atlas-text-secondary)] rounded-xl text-xs font-bold transition-colors cursor-pointer"
                 >
                   Fechar
                 </button>
@@ -3140,7 +3155,7 @@ export function AllItemsView({
 
       {agentAuditModalOpen && agentAuditResult && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white rounded-xl shadow-2xl border border-slate-200 max-w-2xl w-full overflow-hidden flex flex-col max-h-[90vh]">
+          <div className="bg-[var(--atlas-surface)] rounded-xl shadow-2xl border border-[var(--atlas-border)] max-w-2xl w-full overflow-hidden flex flex-col max-h-[90vh]">
             <div className="p-4 bg-indigo-900 text-white flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Sparkles className="w-5 h-5 text-indigo-300" />
@@ -3148,16 +3163,16 @@ export function AllItemsView({
               </div>
               <button
                 onClick={() => setAgentAuditModalOpen(false)}
-                className="text-white/80 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors"
+                className="text-white/80 hover:text-white p-1 rounded-lg hover:bg-[var(--atlas-surface)]/10 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <div className="p-6 overflow-y-auto space-y-6 text-sm text-slate-700">
+            <div className="p-6 overflow-y-auto space-y-6 text-sm text-[var(--atlas-text-secondary)]">
               <div className="grid grid-cols-3 gap-4">
-                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
-                  <div className="text-xs font-semibold text-slate-500 uppercase">Itens Analisados</div>
-                  <div className="text-2xl font-bold text-slate-900 mt-1">{agentAuditResult.totalItems}</div>
+                <div className="bg-[var(--atlas-surface-hover)] p-4 rounded-xl border border-[var(--atlas-border)] text-center">
+                  <div className="text-xs font-semibold text-[var(--atlas-text-secondary)] uppercase">Itens Analisados</div>
+                  <div className="text-2xl font-bold text-[var(--atlas-text)] mt-1">{agentAuditResult.totalItems}</div>
                 </div>
                 <div className="bg-amber-50 p-4 rounded-xl border border-amber-200 text-center">
                   <div className="text-xs font-semibold text-amber-700 uppercase">Divergências Matriz</div>
@@ -3171,10 +3186,10 @@ export function AllItemsView({
 
               {agentAuditResult.fcpList.length > 0 && (
                 <div className="space-y-2">
-                  <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">Itens de Perfumaria/Cosméticos (FCP 2% s/ NCM 3303/4/5/7)</h4>
-                  <div className="border border-slate-200 rounded-xl overflow-hidden max-h-48 overflow-y-auto">
+                  <h4 className="font-bold text-[var(--atlas-text)] text-xs uppercase tracking-wider">Itens de Perfumaria/Cosméticos (FCP 2% s/ NCM 3303/4/5/7)</h4>
+                  <div className="border border-[var(--atlas-border)] rounded-xl overflow-hidden max-h-48 overflow-y-auto">
                     <table className="w-full text-left border-collapse text-xs">
-                      <thead className="bg-slate-100 text-slate-700 uppercase tracking-wider font-semibold sticky top-0">
+                      <thead className="bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] uppercase tracking-wider font-semibold sticky top-0">
                         <tr>
                           <th className="p-2.5">NF</th>
                           <th className="p-2.5">Item</th>
@@ -3183,12 +3198,12 @@ export function AllItemsView({
                           <th className="p-2.5 text-right">FCP (2%)</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100">
+                      <tbody className="divide-y divide-[var(--atlas-border)]">
                         {agentAuditResult.fcpList.map((f, idx) => (
-                          <tr key={idx} className="hover:bg-slate-50">
+                          <tr key={idx} className="hover:bg-[var(--atlas-surface-hover)]">
                             <td className="p-2.5 font-medium">{f.docNum}</td>
                             <td className="p-2.5 truncate max-w-[140px]">{f.descr}</td>
-                            <td className="p-2.5 font-mono text-slate-600">{f.ncm}</td>
+                            <td className="p-2.5 font-mono text-[var(--atlas-text-secondary)]">{f.ncm}</td>
                             <td className="p-2.5 text-right">R$ {f.vProd.toFixed(2)}</td>
                             <td className="p-2.5 text-right font-bold text-indigo-700">R$ {f.fcpVal.toFixed(2)}</td>
                           </tr>
@@ -3201,10 +3216,10 @@ export function AllItemsView({
 
               {agentAuditResult.divergentList.length > 0 && (
                 <div className="space-y-2">
-                  <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">Divergências de CST/CFOP Encontradas</h4>
-                  <div className="border border-slate-200 rounded-xl overflow-hidden max-h-48 overflow-y-auto">
+                  <h4 className="font-bold text-[var(--atlas-text)] text-xs uppercase tracking-wider">Divergências de CST/CFOP Encontradas</h4>
+                  <div className="border border-[var(--atlas-border)] rounded-xl overflow-hidden max-h-48 overflow-y-auto">
                     <table className="w-full text-left border-collapse text-xs">
-                      <thead className="bg-slate-100 text-slate-700 uppercase tracking-wider font-semibold sticky top-0">
+                      <thead className="bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] uppercase tracking-wider font-semibold sticky top-0">
                         <tr>
                           <th className="p-2.5">NF</th>
                           <th className="p-2.5">Produto</th>
@@ -3213,12 +3228,12 @@ export function AllItemsView({
                           <th className="p-2.5">CST Esperado</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100">
+                      <tbody className="divide-y divide-[var(--atlas-border)]">
                         {agentAuditResult.divergentList.map((d, idx) => (
-                          <tr key={idx} className="hover:bg-slate-50">
+                          <tr key={idx} className="hover:bg-[var(--atlas-surface-hover)]">
                             <td className="p-2.5 font-medium">{d.docNum}</td>
                             <td className="p-2.5 truncate max-w-[140px]">{d.descr}</td>
-                            <td className="p-2.5 font-mono text-slate-600">{d.ncm}</td>
+                            <td className="p-2.5 font-mono text-[var(--atlas-text-secondary)]">{d.ncm}</td>
                             <td className="p-2.5 text-red-600 font-bold">{d.cstCur}</td>
                             <td className="p-2.5 text-emerald-600 font-bold">{d.cstExp}</td>
                           </tr>
@@ -3235,7 +3250,7 @@ export function AllItemsView({
                 </div>
               )}
             </div>
-            <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-end space-x-2">
+            <div className="p-4 bg-[var(--atlas-surface-hover)] border-t border-[var(--atlas-border)] flex items-center justify-end space-x-2">
               {agentAuditResult.divergentCount > 0 && (
                 <button
                   onClick={() => {
@@ -3250,7 +3265,7 @@ export function AllItemsView({
               )}
               <button
                 onClick={() => setAgentAuditModalOpen(false)}
-                className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-bold transition-colors cursor-pointer"
+                className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-[var(--atlas-text-secondary)] rounded-xl text-xs font-bold transition-colors cursor-pointer"
               >
                 Fechar
               </button>

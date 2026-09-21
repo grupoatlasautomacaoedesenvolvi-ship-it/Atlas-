@@ -173,10 +173,14 @@ export function SettingsView() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 space-y-8 text-[var(--atlas-text)]">
+    <div className="max-w-5xl mx-auto px-4 py-10 space-y-10 text-[var(--atlas-text)]">
       <div className="mb-2">
-        <h2 className="text-2xl font-bold tracking-tight text-[var(--atlas-navy)]">Configurações & Aparência</h2>
-        <p className="text-[var(--atlas-text-secondary)] mt-1">Gerencie sua conta, cadastros de escritórios e preferências visuais do sistema</p>
+        <h1 className="text-3xl font-bold tracking-tight text-[var(--atlas-navy)]" style={{ fontFamily: 'var(--font-display)' }}>
+          Configurações do Sistema
+        </h1>
+        <p className="text-base text-[var(--atlas-text-secondary)] mt-2">
+          Gerencie sua conta, cadastros de escritórios e preferências visuais do Atlas Auditor.
+        </p>
       </div>
 
       {/* Seletor de Tema Visual */}
@@ -287,7 +291,7 @@ export function SettingsView() {
                   <div key={esc.id} className="atlas-list-row justify-between flex-col items-start gap-2">
                     <div className="flex items-center justify-between w-full">
                       <h5 className="font-bold text-[var(--atlas-text)] text-sm">{esc.nome}</h5>
-                      <span className="text-[11px] text-[var(--atlas-text-muted)] font-mono">{esc.cnpj || 'Sem CNPJ'}</span>
+                      <span className="text-xs text-[var(--atlas-text-muted)] font-mono">{esc.cnpj || 'Sem CNPJ'}</span>
                     </div>
                     <div className="text-xs text-[var(--atlas-text-secondary)]">
                       <span className="font-semibold text-[var(--atlas-text)]">Usuários Vinculados ({vinculados.length}):</span>
@@ -394,7 +398,7 @@ export function SettingsView() {
               {userData?.papel === 'super_admin' && (
                 <>
                   <div>
-                    <label className="block text-[11px] font-semibold text-[var(--atlas-text)] mb-1">Escritório de Destino *</label>
+                    <label className="block text-xs font-semibold text-[var(--atlas-text)] mb-1">Escritório de Destino *</label>
                     <select
                       required
                       value={escritorioDestinoColab}
@@ -408,7 +412,7 @@ export function SettingsView() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-[var(--atlas-text)] mb-1">Papel *</label>
+                    <label className="block text-xs font-semibold text-[var(--atlas-text)] mb-1">Papel *</label>
                     <select
                       value={papelColab}
                       onChange={(e) => setPapelColab(e.target.value as any)}
@@ -423,7 +427,7 @@ export function SettingsView() {
               )}
               {userData?.papel === 'admin_escritorio' && (
                 <div>
-                  <label className="block text-[11px] font-semibold text-[var(--atlas-text)] mb-1">Papel *</label>
+                  <label className="block text-xs font-semibold text-[var(--atlas-text)] mb-1">Papel *</label>
                   <select
                     value={papelColab}
                     onChange={(e) => setPapelColab(e.target.value as any)}
@@ -435,7 +439,7 @@ export function SettingsView() {
                 </div>
               )}
               <div>
-                <label className="block text-[11px] font-semibold text-[var(--atlas-text)] mb-1">Nome Completo *</label>
+                <label className="block text-xs font-semibold text-[var(--atlas-text)] mb-1">Nome Completo *</label>
                 <input
                   type="text"
                   required
@@ -446,7 +450,7 @@ export function SettingsView() {
                 />
               </div>
               <div>
-                <label className="block text-[11px] font-semibold text-[var(--atlas-text)] mb-1">E-mail de Acesso *</label>
+                <label className="block text-xs font-semibold text-[var(--atlas-text)] mb-1">E-mail de Acesso *</label>
                 <input
                   type="email"
                   required

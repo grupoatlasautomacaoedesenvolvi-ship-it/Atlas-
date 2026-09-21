@@ -280,7 +280,7 @@ export function AdminPanelView() {
     setEditingUsuario(null);
     setUserFormNome('');
     setUserFormEmail('');
-    setUserFormEscritorioId(escritorios.length > 0 ? escritorios[0].id : '');
+    setUserFormEscritorioId(userData?.papel === 'super_admin' ? (escritorios.length > 0 ? escritorios[0].id : '') : (userData?.escritorioId || ''));
     setUserFormPapel('colaborador');
     setUserMsg('');
     setShowNewUsuarioModal(true);
@@ -529,44 +529,23 @@ export function AdminPanelView() {
                   cnpj: escCnpj
                 })
               });
-              if (res.ok) {
-                const data = await res.json();
+              const data = await res.json();
+              if (res.ok && data.success) {
                 setEscMsg(`Escritório criado. ${data.linkConvite ? 'Convite enviado.' : ''}`);
                 success = true;
+              } else {
+                setEscMsg(`Erro ao criar escritório: ${data.error || 'Falha no servidor'}`);
               }
+            } else {
+              setEscMsg('Erro: Sessão expirada.');
             }
-          } catch (apiErr) {
-            console.warn('API error, saving to Firestore directly:', apiErr);
+          } catch (apiErr: any) {
+            console.error('API error ao criar escritório:', apiErr);
+            setEscMsg(`Erro: ${apiErr.message || 'Falha na comunicação com o servidor'}`);
           }
 
           if (!success) {
-            const escRef = doc(collection(db, 'escritorios'));
-            await safeWrite(async () => {
-              await setDoc(escRef, {
-                nome: escNome,
-                cnpj: escCnpj || '',
-                ativo: true,
-                emailAdmin: escEmailAdmin,
-                nomeAdmin: escNomeAdmin,
-                dataCriacao: serverTimestamp()
-              });
-            });
-
-            if (escEmailAdmin) {
-              const userDocRef = doc(collection(db, 'usuarios'));
-              await safeWrite(async () => {
-                await setDoc(userDocRef, {
-                  email: escEmailAdmin,
-                  nome: escNomeAdmin || escNome,
-                  papel: 'admin_escritorio',
-                  escritorioId: escRef.id,
-                  ativo: true,
-                  dataCriacao: serverTimestamp()
-                });
-              });
-            }
-
-            setEscMsg(`Escritório "${escNome}" registrado.`);
+            return;
           }
         }
       }
@@ -1105,12 +1084,12 @@ export function AdminPanelView() {
 
   if (!isAuthorizedAdmin) {
     return (
-      <div className="max-w-3xl mx-auto my-12 p-8 bg-white rounded-2xl border border-slate-200 shadow-md text-center space-y-4">
+      <div className="max-w-3xl mx-auto my-12 p-8 bg-[var(--atlas-surface)] rounded-2xl border border-[var(--atlas-border)] shadow-md text-center space-y-4">
         <div className="w-16 h-16 bg-rose-100 text-rose-600 rounded-2xl flex items-center justify-center mx-auto">
           <ShieldAlert className="w-8 h-8" />
         </div>
-        <h2 className="text-xl font-bold text-slate-900">Acesso Restrito ao Painel Administrativo</h2>
-        <p className="text-sm text-slate-600 max-w-lg mx-auto">
+        <h2 className="text-xl font-bold text-[var(--atlas-text)]">Acesso Restrito ao Painel Administrativo</h2>
+        <p className="text-sm text-[var(--atlas-text-secondary)] max-w-lg mx-auto">
           Este painel e seus relatórios de logins e conferências por empresa são visíveis apenas para usuários com hierarquia de <strong>Admin Escritório</strong> ou superior (<strong>Super Admin</strong>).
         </p>
       </div>
@@ -1120,102 +1099,119 @@ export function AdminPanelView() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
       {/* Top Banner Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#1e3a5f] p-6 rounded-xl text-white shadow-sm">
-        <div>
-          <div className="flex items-center space-x-2">
-            <ShieldCheck className="w-6 h-6 text-emerald-400" />
-            <h1 className="text-2xl font-bold tracking-tight">Painel de Administração Global (ADM)</h1>
-          </div>
-          <p className="text-slate-300 text-sm mt-1">
-            Gestão centralizada de Escritórios Contábeis e carteira unificada de clientes vinculados.
-          </p>
+      <div className="atlas-card p-6 md:p-8 bg-gradient-to-br from-[var(--atlas-navy)] to-[var(--atlas-navy-dark)] border-0 text-white shadow-lg overflow-hidden relative">
+        <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+          <ShieldCheck className="w-48 h-48" />
         </div>
+        
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-4">
+            <div className="flex items-center space-x-3">
+              <div className="p-3 bg-white/10 text-emerald-400 rounded-xl backdrop-blur-md border border-white/10 shadow-inner">
+                <ShieldCheck className="w-6 h-6" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-white tracking-tight leading-none" style={{ fontFamily: 'var(--font-display)' }}>
+                  Painel de Administração Global
+                </h1>
+                <div className="mt-2 flex items-center gap-2">
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-bold uppercase tracking-widest">
+                    Sistema Operacional
+                  </span>
+                </div>
+              </div>
+            </div>
+            <p className="text-sm text-blue-100/80 max-w-2xl leading-relaxed">
+              Gestão centralizada de Escritórios Contábeis e carteira unificada de clientes vinculados. Monitore logs, usuários e status de rede.
+            </p>
+          </div>
 
-        <div className="flex items-center space-x-3 shrink-0">
-          <button
-            onClick={loadData}
-            className="p-2.5 bg-white/10 hover:bg-white/20 text-white rounded-lg text-xs font-semibold backdrop-blur-xs transition-all flex items-center space-x-1.5"
-            title="Atualizar Dados"
-          >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-            <span className="hidden sm:inline">Atualizar</span>
-          </button>
-          
-          {userData?.papel === 'super_admin' && (
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
             <button
-              onClick={handleOpenCreateEscritorio}
-              className="px-4 py-2.5 bg-[#0f6e56] hover:bg-[#0c5945] text-white rounded-lg text-xs font-bold shadow-xs transition-all flex items-center space-x-2"
+              onClick={loadData}
+              className="atlas-btn py-2.5 px-5 text-sm font-bold bg-white/10 hover:bg-white/20 text-white border-white/20 backdrop-blur-md shadow-xs cursor-pointer transition-all"
+              title="Atualizar Dados"
             >
-              <PlusCircle className="w-4 h-4" />
-              <span>Novo Escritório</span>
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+              <span>Sincronizar</span>
             </button>
-          )}
+            
+            {userData?.papel === 'super_admin' && (
+              <button
+                onClick={handleOpenCreateEscritorio}
+                className="atlas-btn atlas-btn-accent py-2.5 px-5 text-sm font-bold shadow-md cursor-pointer transition-all"
+              >
+                <PlusCircle className="w-4 h-4" />
+                <span>Novo Escritório</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
       {/* KPI Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-2xs flex items-center justify-between">
+        <div className="atlas-stat-strip p-5 flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Escritórios Ativos</p>
+            <p className="text-[10px] font-bold text-[var(--atlas-text-muted)] uppercase tracking-widest">Escritórios Ativos</p>
             <div className="flex items-baseline space-x-2 mt-1">
-              <span className="text-2xl font-black text-slate-900">{totalEscritoriosAtivos}</span>
-              <span className="text-xs text-slate-400">/ {escritorios.length} total</span>
+              <span className="text-2xl font-black text-[var(--atlas-navy)]">{totalEscritoriosAtivos}</span>
+              <span className="text-xs text-[var(--atlas-text-muted)] font-medium">/ {escritorios.length} total</span>
             </div>
           </div>
-          <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center shrink-0">
-            <Building2 className="w-6 h-6 text-[#1e3a5f]" />
+          <div className="p-3 bg-[var(--atlas-surface-hover)] text-[var(--atlas-navy)] rounded-xl border border-[var(--atlas-border)]/50">
+            <Building2 className="w-6 h-6" />
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-2xs flex items-center justify-between">
+        <div className="atlas-stat-strip p-5 flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total de Clientes</p>
+            <p className="text-[10px] font-bold text-[var(--atlas-text-muted)] uppercase tracking-widest">Total de Clientes</p>
             <div className="flex items-baseline space-x-2 mt-1">
-              <span className="text-2xl font-black text-slate-900">{totalClientes}</span>
-              <span className="text-xs text-emerald-600 font-semibold">Empresas</span>
+              <span className="text-2xl font-black text-[var(--atlas-navy)]">{totalClientes}</span>
+              <span className="text-xs text-[var(--atlas-accent)] font-bold">Empresas</span>
             </div>
           </div>
-          <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center shrink-0">
-            <Users className="w-6 h-6 text-[#1e3a5f]" />
+          <div className="p-3 bg-[var(--atlas-surface-hover)] text-[var(--atlas-navy)] rounded-xl border border-[var(--atlas-border)]/50">
+            <Users className="w-6 h-6" />
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-2xs flex items-center justify-between">
+        <div className="atlas-stat-strip p-5 flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">SPEDs Processados</p>
+            <p className="text-[10px] font-bold text-[var(--atlas-text-muted)] uppercase tracking-widest">SPEDs Processados</p>
             <div className="flex items-baseline space-x-2 mt-1">
-              <span className="text-2xl font-black text-slate-900">{spedsMes}</span>
-              <span className="text-xs text-slate-400">arquivos</span>
+              <span className="text-2xl font-black text-[var(--atlas-accent)]">{spedsMes}</span>
+              <span className="text-xs text-[var(--atlas-text-muted)] font-medium">arquivos</span>
             </div>
           </div>
-          <div className="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center shrink-0">
-            <Activity className="w-6 h-6 text-[#0f6e56]" />
+          <div className="p-3 bg-emerald-50 text-[var(--atlas-accent)] rounded-xl border border-emerald-100">
+            <Activity className="w-6 h-6" />
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-2xs flex items-center justify-between">
+        <div className="atlas-stat-strip p-5 flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Status do Sistema</p>
-            <div className="flex items-center space-x-1.5 mt-2">
+            <p className="text-[10px] font-bold text-[var(--atlas-text-muted)] uppercase tracking-widest">Status do Sistema</p>
+            <div className="flex items-center space-x-2 mt-2">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
               <span className="text-xs font-bold text-emerald-700">Multi-tenant Ativo</span>
             </div>
           </div>
-          <div className="w-12 h-12 bg-[#f1efe8] rounded-lg flex items-center justify-center shrink-0">
-            <Sparkles className="w-6 h-6 text-[#1e3a5f]" />
+          <div className="p-3 bg-[#f1efe8] text-[var(--atlas-navy)] rounded-xl border border-[#e5e2d9]">
+            <Sparkles className="w-6 h-6" />
           </div>
         </div>
       </div>
 
       {/* Main Tabs Header */}
-      <div className="flex border-b border-slate-200 space-x-6">
+      <div className="flex border-b border-[var(--atlas-border)] space-x-6">
         <button
           onClick={() => setActiveTab('escritorios')}
           className={`pb-3 text-sm font-bold flex items-center space-x-2 transition-colors border-b-2 ${
             activeTab === 'escritorios'
-              ? 'border-[#1e3a5f] text-[#1e3a5f]'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
+              ? 'border-[var(--atlas-navy)] text-[var(--atlas-navy)]'
+              : 'border-transparent text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)]'
           }`}
         >
           <Building2 className="w-4 h-4" />
@@ -1226,8 +1222,8 @@ export function AdminPanelView() {
           onClick={() => setActiveTab('clientes')}
           className={`pb-3 text-sm font-bold flex items-center space-x-2 transition-colors border-b-2 ${
             activeTab === 'clientes'
-              ? 'border-[#1e3a5f] text-[#1e3a5f]'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
+              ? 'border-[var(--atlas-navy)] text-[var(--atlas-navy)]'
+              : 'border-transparent text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)]'
           }`}
         >
           <Users className="w-4 h-4" />
@@ -1238,8 +1234,8 @@ export function AdminPanelView() {
           onClick={() => setActiveTab('usuarios')}
           className={`pb-3 text-sm font-bold flex items-center space-x-2 transition-colors border-b-2 ${
             activeTab === 'usuarios'
-              ? 'border-[#1e3a5f] text-[#1e3a5f]'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
+              ? 'border-[var(--atlas-navy)] text-[var(--atlas-navy)]'
+              : 'border-transparent text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)]'
           }`}
         >
           <UserPlus className="w-4 h-4" />
@@ -1250,11 +1246,11 @@ export function AdminPanelView() {
           onClick={() => setActiveTab('logs')}
           className={`pb-3 text-sm font-bold flex items-center space-x-2 transition-colors border-b-2 ${
             activeTab === 'logs'
-              ? 'border-[#1e3a5f] text-[#1e3a5f]'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
+              ? 'border-[var(--atlas-navy)] text-[var(--atlas-navy)]'
+              : 'border-transparent text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)]'
           }`}
         >
-          <BarChart2 className="w-4 h-4 text-[#0f6e56]" />
+          <BarChart2 className="w-4 h-4 text-[var(--atlas-accent)]" />
           <span>Relatórios ADM (Logins & Tempo)</span>
         </button>
 
@@ -1263,13 +1259,13 @@ export function AdminPanelView() {
           className={`pb-3 text-sm font-bold flex items-center space-x-2 transition-colors border-b-2 relative ${
             activeTab === 'erros'
               ? 'border-red-600 text-red-600'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
+              : 'border-transparent text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)]'
           }`}
         >
           <AlertTriangle className="w-4 h-4 text-red-500" />
           <span>Monitor de Erros & Rede</span>
           {systemErrors.length > 0 && (
-            <span className="ml-1 px-1.5 py-0.5 bg-red-100 text-red-700 text-[10px] font-extrabold rounded-full">
+            <span className="ml-1 px-1.5 py-0.5 bg-red-100 text-red-700 text-xs font-extrabold rounded-full">
               {systemErrors.length}
             </span>
           )}
@@ -1279,14 +1275,14 @@ export function AdminPanelView() {
       {/* TAB 5: MONITOR DE ERROS & REDE */}
       {activeTab === 'erros' && (
         <div className="space-y-6">
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs space-y-4">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+          <div className="bg-[var(--atlas-surface)] p-5 rounded-xl border border-[var(--atlas-border)] shadow-xs space-y-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[var(--atlas-border)] pb-4">
               <div>
-                <h3 className="text-base font-bold text-slate-900 flex items-center space-x-2">
+                <h3 className="text-base font-bold text-[var(--atlas-text)] flex items-center space-x-2">
                   <Activity className="w-5 h-5 text-red-600 animate-pulse" />
                   <span>Monitor de Erros Críticos e Falhas de Rede em Tempo Real</span>
                 </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-[var(--atlas-text-secondary)] mt-0.5">
                   Registro em tempo real de falhas de conexão Firestore, timeouts de API e erros de exceção do sistema.
                 </p>
               </div>
@@ -1307,18 +1303,18 @@ export function AdminPanelView() {
 
             {/* Metrics overview */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="bg-slate-50 p-3.5 rounded-lg border border-slate-200">
-                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Total de Erros Registrados</p>
-                <p className="text-2xl font-black text-slate-900 mt-1">{systemErrors.length}</p>
+              <div className="bg-[var(--atlas-surface-hover)] p-3.5 rounded-lg border border-[var(--atlas-border)]">
+                <p className="text-xs font-bold text-[var(--atlas-text-secondary)] uppercase tracking-wider">Total de Erros Registrados</p>
+                <p className="text-2xl font-black text-[var(--atlas-text)] mt-1">{systemErrors.length}</p>
               </div>
               <div className="bg-red-50/70 p-3.5 rounded-lg border border-red-200">
-                <p className="text-[11px] font-bold text-red-700 uppercase tracking-wider">Falhas Críticas / Rede</p>
+                <p className="text-xs font-bold text-red-700 uppercase tracking-wider">Falhas Críticas / Rede</p>
                 <p className="text-2xl font-black text-red-700 mt-1">
                   {systemErrors.filter(e => e.sev === 'critical' || e.context === 'Network' || e.context === 'Firestore').length}
                 </p>
               </div>
               <div className="bg-amber-50/70 p-3.5 rounded-lg border border-amber-200">
-                <p className="text-[11px] font-bold text-amber-700 uppercase tracking-wider">Avisos / Warnings</p>
+                <p className="text-xs font-bold text-amber-700 uppercase tracking-wider">Avisos / Warnings</p>
                 <p className="text-2xl font-black text-amber-700 mt-1">
                   {systemErrors.filter(e => e.sev === 'warning').length}
                 </p>
@@ -1328,20 +1324,20 @@ export function AdminPanelView() {
             {/* Filters */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
               <div className="relative flex-1">
-                <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
+                <Search className="w-4 h-4 absolute left-3 top-2.5 text-[var(--atlas-text-muted)]" />
                 <input
                   type="text"
                   placeholder="Filtrar por mensagem de erro, stack ou contexto..."
                   value={errorSearch}
                   onChange={e => setErrorSearch(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full pl-9 pr-4 py-2 border border-[var(--atlas-border)] rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-red-500"
                 />
               </div>
 
               <select
                 value={errorSevFilter}
                 onChange={e => setErrorSevFilter(e.target.value as any)}
-                className="px-3 py-2 border border-slate-200 rounded-lg text-xs bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="px-3 py-2 border border-[var(--atlas-border)] rounded-lg text-xs bg-[var(--atlas-surface)] text-[var(--atlas-text-secondary)] focus:outline-none focus:ring-2 focus:ring-red-500"
               >
                 <option value="todos">Severidade: Todas</option>
                 <option value="critical">Críticas</option>
@@ -1352,15 +1348,15 @@ export function AdminPanelView() {
           </div>
 
           {/* Errors List */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
+          <div className="bg-[var(--atlas-surface)] rounded-xl border border-[var(--atlas-border)] shadow-xs overflow-hidden">
             {systemErrors.length === 0 ? (
-              <div className="py-16 text-center text-slate-400 space-y-2">
+              <div className="py-16 text-center text-[var(--atlas-text-muted)] space-y-2">
                 <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto" />
-                <p className="text-sm font-semibold text-slate-700">Nenhum erro ou falha de rede registrado.</p>
-                <p className="text-xs text-slate-400">O sistema está operando perfeitamente sem falhas ativas.</p>
+                <p className="text-sm font-semibold text-[var(--atlas-text-secondary)]">Nenhum erro ou falha de rede registrado.</p>
+                <p className="text-xs text-[var(--atlas-text-muted)]">O sistema está operando perfeitamente sem falhas ativas.</p>
               </div>
             ) : (
-              <div className="divide-y divide-slate-100 max-h-[600px] overflow-y-auto">
+              <div className="divide-y divide-[var(--atlas-border)] max-h-[600px] overflow-y-auto">
                 {systemErrors
                   .filter(err => {
                     if (errorSevFilter !== 'todos' && err.sev !== errorSevFilter) return false;
@@ -1376,7 +1372,7 @@ export function AdminPanelView() {
                     return true;
                   })
                   .map(err => (
-                    <div key={err.id} className="p-4 hover:bg-slate-50/80 transition-colors flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div key={err.id} className="p-4 hover:bg-[var(--atlas-surface-hover)]/80 transition-colors flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                       <div className="flex items-start space-x-3">
                         <div className={`p-2 rounded-lg shrink-0 mt-0.5 ${
                           err.sev === 'critical' ? 'bg-red-100 text-red-700' :
@@ -1388,24 +1384,24 @@ export function AdminPanelView() {
                         </div>
                         <div>
                           <div className="flex items-center space-x-2">
-                            <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${
+                            <span className={`px-2 py-0.5 rounded text-xs font-black uppercase tracking-wider ${
                               err.sev === 'critical' ? 'bg-red-100 text-red-800 border border-red-200' :
                               err.sev === 'warning' ? 'bg-amber-100 text-amber-800 border border-amber-200' :
                               'bg-blue-100 text-blue-800 border border-blue-200'
                             }`}>
                               {err.context} ({err.sev})
                             </span>
-                            <span className="text-[11px] text-slate-400 font-mono">
+                            <span className="text-xs text-[var(--atlas-text-muted)] font-mono">
                               {new Date(err.timestamp).toLocaleString('pt-BR')}
                             </span>
                           </div>
-                          <p className="text-xs font-bold text-slate-900 mt-1 font-mono break-all">{err.message}</p>
+                          <p className="text-xs font-bold text-[var(--atlas-text)] mt-1 font-mono break-all">{err.message}</p>
                           {err.userEmail && (
-                            <p className="text-[11px] text-slate-500 mt-0.5">Usuário: {err.userEmail}</p>
+                            <p className="text-xs text-[var(--atlas-text-secondary)] mt-0.5">Usuário: {err.userEmail}</p>
                           )}
                           {err.stack && (
-                            <details className="mt-2 text-[10px] font-mono text-slate-600 bg-slate-100 p-2 rounded overflow-x-auto max-w-2xl">
-                              <summary className="cursor-pointer font-bold text-slate-700">Ver Stack Trace</summary>
+                            <details className="mt-2 text-xs font-mono text-[var(--atlas-text-secondary)] bg-[var(--atlas-surface-hover)] p-2 rounded overflow-x-auto max-w-2xl">
+                              <summary className="cursor-pointer font-bold text-[var(--atlas-text-secondary)]">Ver Stack Trace</summary>
                               <pre className="mt-1 whitespace-pre-wrap">{err.stack}</pre>
                             </details>
                           )}
@@ -1423,18 +1419,18 @@ export function AdminPanelView() {
       {activeTab === 'escritorios' && (
         <div className="space-y-6">
           {/* Controls Bar */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-2xs">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-[var(--atlas-surface)] p-4 rounded-xl border border-[var(--atlas-border)] shadow-xs">
             <div className="relative flex-1">
-              <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+              <Search className="w-4 h-4 absolute left-3 top-3 text-[var(--atlas-text-muted)]" />
               <input
                 type="text"
                 placeholder="Buscar escritório por nome, CNPJ ou e-mail do admin..."
                 value={searchEscritorio}
                 onChange={e => setSearchEscritorio(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+                className="w-full pl-9 pr-4 py-2 border border-[var(--atlas-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--atlas-navy)]"
               />
               {searchEscritorio && (
-                <button onClick={() => setSearchEscritorio('')} className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
+                <button onClick={() => setSearchEscritorio('')} className="absolute right-3 top-2.5 text-[var(--atlas-text-muted)] hover:text-[var(--atlas-text-secondary)]">
                   <X className="w-4 h-4" />
                 </button>
               )}
@@ -1443,7 +1439,7 @@ export function AdminPanelView() {
             {userData?.papel === 'super_admin' && (
               <button
                 onClick={handleOpenCreateEscritorio}
-                className="px-4 py-2 bg-[#1e3a5f] hover:bg-[#142c47] text-white rounded-lg text-xs font-semibold shadow-2xs transition-all flex items-center justify-center space-x-1.5 shrink-0"
+                className="px-4 py-2 bg-[var(--atlas-navy)] hover:bg-[var(--atlas-navy-dark)] text-white rounded-lg text-xs font-semibold shadow-xs transition-all flex items-center justify-center space-x-1.5 shrink-0"
               >
                 <PlusCircle className="w-4 h-4" />
                 <span>Cadastrar Novo Escritório</span>
@@ -1458,8 +1454,8 @@ export function AdminPanelView() {
               return (
                 <div 
                   key={esc.id}
-                  className={`bg-white rounded-xl border transition-all shadow-2xs hover:shadow-md flex flex-col justify-between overflow-hidden ${
-                    esc.ativo ? 'border-slate-200' : 'border-red-200 bg-red-50/20'
+                  className={`bg-[var(--atlas-surface)] rounded-xl border transition-all shadow-xs hover:shadow-md flex flex-col justify-between overflow-hidden ${
+                    esc.ativo ? 'border-[var(--atlas-border)]' : 'border-red-200 bg-red-50/20'
                   }`}
                 >
                   <div className="p-5 space-y-4">
@@ -1467,17 +1463,17 @@ export function AdminPanelView() {
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center space-x-3">
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 ${
-                          esc.ativo ? 'bg-[#1e3a5f] text-white' : 'bg-slate-200 text-slate-600'
+                          esc.ativo ? 'bg-[var(--atlas-navy)] text-white' : 'bg-slate-200 text-[var(--atlas-text-secondary)]'
                         }`}>
                           <Building className="w-5 h-5" />
                         </div>
                         <div>
-                          <h3 className="font-bold text-slate-900 text-base leading-snug line-clamp-1">{esc.nome}</h3>
-                          <p className="text-xs text-slate-500 font-mono">CNPJ: {esc.cnpj || 'Não informado'}</p>
+                          <h3 className="font-bold text-[var(--atlas-text)] text-base leading-snug line-clamp-1">{esc.nome}</h3>
+                          <p className="text-xs text-[var(--atlas-text-secondary)] font-mono">CNPJ: {esc.cnpj || 'Não informado'}</p>
                         </div>
                       </div>
 
-                      <span className={`px-2.5 py-1 text-[11px] font-bold rounded-full shrink-0 flex items-center space-x-1 ${
+                      <span className={`px-2.5 py-1 text-xs font-bold rounded-full shrink-0 flex items-center space-x-1 ${
                         esc.ativo ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'
                       }`}>
                         {esc.ativo ? <CheckCircle2 className="w-3 h-3 mr-1" /> : <XCircle className="w-3 h-3 mr-1" />}
@@ -1486,31 +1482,31 @@ export function AdminPanelView() {
                     </div>
 
                     {/* Admin Info */}
-                    <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 space-y-1 text-xs">
-                      <div className="flex items-center text-slate-700">
-                        <UserCheck className="w-3.5 h-3.5 text-[#1e3a5f] mr-1.5 shrink-0" />
-                        <span className="font-medium text-slate-900 truncate">{esc.nomeAdmin || 'Admin não definido'}</span>
+                    <div className="bg-[var(--atlas-surface-hover)] p-3 rounded-lg border border-[var(--atlas-border)] space-y-1 text-xs">
+                      <div className="flex items-center text-[var(--atlas-text-secondary)]">
+                        <UserCheck className="w-3.5 h-3.5 text-[var(--atlas-navy)] mr-1.5 shrink-0" />
+                        <span className="font-medium text-[var(--atlas-text)] truncate">{esc.nomeAdmin || 'Admin não definido'}</span>
                       </div>
-                      <div className="flex items-center text-slate-500">
-                        <Mail className="w-3.5 h-3.5 text-slate-400 mr-1.5 shrink-0" />
+                      <div className="flex items-center text-[var(--atlas-text-secondary)]">
+                        <Mail className="w-3.5 h-3.5 text-[var(--atlas-text-muted)] mr-1.5 shrink-0" />
                         <span className="truncate">{esc.emailAdmin || 'E-mail não informado'}</span>
                       </div>
                     </div>
 
                     {/* Stats bar */}
                     <div className="flex items-center justify-between text-xs pt-1">
-                      <span className="text-slate-500 font-medium">Clientes Vinculados:</span>
-                      <span className="px-2.5 py-0.5 bg-[#f1efe8] text-[#1e3a5f] font-bold rounded-full border border-[#e5e2d9]">
+                      <span className="text-[var(--atlas-text-secondary)] font-medium">Clientes Vinculados:</span>
+                      <span className="px-2.5 py-0.5 bg-[#f1efe8] text-[var(--atlas-navy)] font-bold rounded-full border border-[#e5e2d9]">
                         {numClientes} cliente{numClientes !== 1 ? 's' : ''}
                       </span>
                     </div>
                   </div>
 
                   {/* Card Actions Footer */}
-                  <div className="bg-slate-50 px-5 py-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                  <div className="bg-[var(--atlas-surface-hover)] px-5 py-3 border-t border-[var(--atlas-border)] flex items-center justify-between gap-2">
                     <button
                       onClick={() => setSelectedEscritorioForClients(esc)}
-                      className="px-3 py-1.5 bg-[#f1efe8] hover:bg-[#e5e2d9] text-[#1e3a5f] rounded-lg text-xs font-bold transition-colors flex items-center space-x-1"
+                      className="px-3 py-1.5 bg-[#f1efe8] hover:bg-[#e5e2d9] text-[var(--atlas-navy)] rounded-lg text-xs font-bold transition-colors flex items-center space-x-1"
                       title="Ver Clientes do Escritório"
                     >
                       <Eye className="w-3.5 h-3.5" />
@@ -1520,7 +1516,7 @@ export function AdminPanelView() {
                     <div className="flex items-center space-x-1">
                       <button
                         onClick={() => handleOpenNewClienteModal(esc)}
-                        className="p-1.5 text-slate-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                        className="p-1.5 text-[var(--atlas-text-secondary)] hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
                         title="Adicionar Cliente a este Escritório"
                       >
                         <UserPlus className="w-4 h-4" />
@@ -1528,7 +1524,7 @@ export function AdminPanelView() {
 
                       <button
                         onClick={() => handleStartEditEscritorio(esc)}
-                        className="p-1.5 text-slate-600 hover:text-[#1e3a5f] hover:bg-[#f1efe8] rounded-lg transition-colors"
+                        className="p-1.5 text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-navy)] hover:bg-[#f1efe8] rounded-lg transition-colors"
                         title="Editar Escritório"
                       >
                         <Edit3 className="w-4 h-4" />
@@ -1546,7 +1542,7 @@ export function AdminPanelView() {
 
                       <button
                         onClick={() => handleDeleteEscritorio(esc.id)}
-                        className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        className="p-1.5 text-[var(--atlas-text-muted)] hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                         title="Remover Escritório"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -1558,10 +1554,10 @@ export function AdminPanelView() {
             })}
 
             {filteredEscritorios.length === 0 && (
-              <div className="col-span-full p-12 text-center bg-white rounded-xl border border-slate-200">
-                <Building2 className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                <h3 className="text-base font-bold text-slate-800">Nenhum escritório encontrado</h3>
-                <p className="text-slate-500 text-xs mt-1">Tente ajustar o termo de busca ou cadastre um novo escritório contábil.</p>
+              <div className="col-span-full p-12 text-center bg-[var(--atlas-surface)] rounded-xl border border-[var(--atlas-border)]">
+                <Building2 className="w-12 h-12 text-[var(--atlas-text-muted)] mx-auto mb-3" />
+                <h3 className="text-base font-bold text-[var(--atlas-text)]">Nenhum escritório encontrado</h3>
+                <p className="text-[var(--atlas-text-secondary)] text-xs mt-1">Tente ajustar o termo de busca ou cadastre um novo escritório contábil.</p>
               </div>
             )}
           </div>
@@ -1570,17 +1566,17 @@ export function AdminPanelView() {
 
       {/* TAB 2: VISÃO GERAL DE TODOS OS CLIENTES */}
       {activeTab === 'clientes' && (
-        <div className="space-y-4 bg-white p-5 rounded-xl border border-slate-200 shadow-2xs">
+        <div className="space-y-4 bg-[var(--atlas-surface)] p-5 rounded-xl border border-[var(--atlas-border)] shadow-xs">
           {/* Filter Toolbar */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="relative">
-              <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+              <Search className="w-4 h-4 absolute left-3 top-3 text-[var(--atlas-text-muted)]" />
               <input
                 type="text"
                 placeholder="Buscar por cliente, CNPJ ou UF..."
                 value={searchCliente}
                 onChange={e => setSearchCliente(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+                className="w-full pl-9 pr-4 py-2 border border-[var(--atlas-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--atlas-navy)]"
               />
             </div>
 
@@ -1588,7 +1584,7 @@ export function AdminPanelView() {
               <select
                 value={filterEscritorio}
                 onChange={e => setFilterEscritorio(e.target.value)}
-                className="w-full p-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+                className="w-full p-2 border border-[var(--atlas-border)] rounded-lg text-sm bg-[var(--atlas-surface)] focus:outline-none focus:ring-2 focus:ring-[var(--atlas-navy)]"
               >
                 <option value="todos">Todos os Escritórios Contábeis</option>
                 {escritorios.map(e => (
@@ -1601,7 +1597,7 @@ export function AdminPanelView() {
               <select
                 value={filterRegime}
                 onChange={e => setFilterRegime(e.target.value)}
-                className="w-full p-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+                className="w-full p-2 border border-[var(--atlas-border)] rounded-lg text-sm bg-[var(--atlas-surface)] focus:outline-none focus:ring-2 focus:ring-[var(--atlas-navy)]"
               >
                 <option value="todos">Todos os Regimes Tributários</option>
                 <option value="Lucro Real">Lucro Real</option>
@@ -1613,9 +1609,9 @@ export function AdminPanelView() {
           </div>
 
           {/* Clientes Table */}
-          <div className="overflow-x-auto border border-slate-100 rounded-lg">
-            <table className="w-full text-left text-xs text-slate-700">
-              <thead className="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200">
+          <div className="overflow-x-auto border border-[var(--atlas-border)] rounded-lg">
+            <table className="w-full text-left text-xs text-[var(--atlas-text-secondary)]">
+              <thead className="bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] font-bold uppercase tracking-wider border-b border-[var(--atlas-border)]">
                 <tr>
                   <th className="p-3">Razão Social / Cliente</th>
                   <th className="p-3">CNPJ / UF</th>
@@ -1624,26 +1620,26 @@ export function AdminPanelView() {
                   <th className="p-3 text-right">Ações</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-[var(--atlas-border)]">
                 {filteredAllClientes.map(({ cliente, escritorioNome, escritorioId }, idx) => (
-                  <tr key={`${escritorioId}_${cliente.id}_${idx}`} className="hover:bg-slate-50/80 transition-colors">
+                  <tr key={`${escritorioId}_${cliente.id}_${idx}`} className="hover:bg-[var(--atlas-surface-hover)]/80 transition-colors">
                     <td className="p-3">
-                      <div className="font-bold text-slate-900 text-sm">{cliente.nome}</div>
-                      <div className="text-[11px] text-slate-500">{cliente.email || 'Sem e-mail cadastrado'}</div>
+                      <div className="font-bold text-[var(--atlas-text)] text-sm">{cliente.nome}</div>
+                      <div className="text-xs text-[var(--atlas-text-secondary)]">{cliente.email || 'Sem e-mail cadastrado'}</div>
                     </td>
                     <td className="p-3 font-mono">
                       <div>{cliente.cnpj || 'N/I'}</div>
-                      <span className="px-1.5 py-0.5 text-[10px] bg-slate-100 text-slate-600 rounded font-semibold uppercase">{cliente.uf || 'SP'}</span>
+                      <span className="px-1.5 py-0.5 text-xs bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] rounded font-semibold uppercase">{cliente.uf || 'SP'}</span>
                     </td>
                     <td className="p-3">
-                      <div className="flex items-center space-x-1.5 text-slate-800 font-semibold">
-                        <Building2 className="w-3.5 h-3.5 text-[#1e3a5f]" />
+                      <div className="flex items-center space-x-1.5 text-[var(--atlas-text)] font-semibold">
+                        <Building2 className="w-3.5 h-3.5 text-[var(--atlas-navy)]" />
                         <span>{escritorioNome}</span>
                       </div>
                     </td>
                     <td className="p-3">
-                      <span className={`px-2 py-0.5 font-bold rounded-md text-[11px] ${
-                        cliente.regimeTributario === 'Lucro Real' ? 'bg-[#f1efe8] text-[#1e3a5f] border border-[#e5e2d9]' :
+                      <span className={`px-2 py-0.5 font-bold rounded-md text-xs ${
+                        cliente.regimeTributario === 'Lucro Real' ? 'bg-[#f1efe8] text-[var(--atlas-navy)] border border-[#e5e2d9]' :
                         cliente.regimeTributario === 'Lucro Presumido' ? 'bg-blue-50 text-blue-700 border border-blue-200' :
                         'bg-emerald-50 text-emerald-700 border border-emerald-200'
                       }`}>
@@ -1653,14 +1649,14 @@ export function AdminPanelView() {
                     <td className="p-3 text-right space-x-2">
                       <button
                         onClick={() => handleOpenEditClienteModal(cliente, escritorioId)}
-                        className="p-1.5 text-slate-500 hover:text-[#1e3a5f] hover:bg-[#f1efe8] rounded-lg"
+                        className="p-1.5 text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-navy)] hover:bg-[#f1efe8] rounded-lg"
                         title="Editar Cliente"
                       >
                         <Edit3 className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDeleteCliente(cliente.id, escritorioId)}
-                        className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
+                        className="p-1.5 text-[var(--atlas-text-muted)] hover:text-red-600 hover:bg-red-50 rounded-lg"
                         title="Remover Cliente"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -1671,7 +1667,7 @@ export function AdminPanelView() {
 
                 {filteredAllClientes.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="p-8 text-center text-slate-500">
+                    <td colSpan={5} className="p-8 text-center text-[var(--atlas-text-secondary)]">
                       Nenhum cliente cadastrado com os filtros selecionados.
                     </td>
                   </tr>
@@ -1684,18 +1680,18 @@ export function AdminPanelView() {
 
       {/* TAB 3: GESTÃO DE USUÁRIOS & VÍNCULOS DE ESCRITÓRIO */}
       {activeTab === 'usuarios' && (
-        <div className="space-y-4 bg-white p-5 rounded-xl border border-slate-200 shadow-2xs">
+        <div className="space-y-4 bg-[var(--atlas-surface)] p-5 rounded-xl border border-[var(--atlas-border)] shadow-xs">
           {/* Controls Bar */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 flex-1">
               <div className="relative">
-                <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+                <Search className="w-4 h-4 absolute left-3 top-3 text-[var(--atlas-text-muted)]" />
                 <input
                   type="text"
                   placeholder="Buscar por nome, e-mail ou escritório..."
                   value={searchUsuario}
                   onChange={e => setSearchUsuario(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+                  className="w-full pl-9 pr-4 py-2 border border-[var(--atlas-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--atlas-navy)]"
                 />
               </div>
 
@@ -1703,7 +1699,7 @@ export function AdminPanelView() {
                 <select
                   value={filterUsuarioEscritorio}
                   onChange={e => setFilterUsuarioEscritorio(e.target.value)}
-                  className="w-full p-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+                  className="w-full p-2 border border-[var(--atlas-border)] rounded-lg text-sm bg-[var(--atlas-surface)] focus:outline-none focus:ring-2 focus:ring-[var(--atlas-navy)]"
                 >
                   <option value="todos">Todos os Escritórios Contábeis</option>
                   {escritorios.map(e => (
@@ -1716,7 +1712,7 @@ export function AdminPanelView() {
                 <select
                   value={filterUsuarioPapel}
                   onChange={e => setFilterUsuarioPapel(e.target.value)}
-                  className="w-full p-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+                  className="w-full p-2 border border-[var(--atlas-border)] rounded-lg text-sm bg-[var(--atlas-surface)] focus:outline-none focus:ring-2 focus:ring-[var(--atlas-navy)]"
                 >
                   <option value="todos">Todos os Papéis</option>
                   <option value="super_admin">Super Admin</option>
@@ -1728,7 +1724,7 @@ export function AdminPanelView() {
 
             <button
               onClick={handleOpenNewUsuarioModal}
-              className="px-4 py-2 bg-[#0f6e56] hover:bg-[#0c5945] text-white rounded-lg text-xs font-bold shadow-2xs transition-all flex items-center justify-center space-x-1.5 shrink-0"
+              className="px-4 py-2 bg-[var(--atlas-accent)] hover:bg-[#0c5945] text-white rounded-lg text-xs font-bold shadow-xs transition-all flex items-center justify-center space-x-1.5 shrink-0"
             >
               <UserPlus className="w-4 h-4" />
               <span>Convidar / Cadastrar Usuário</span>
@@ -1736,9 +1732,9 @@ export function AdminPanelView() {
           </div>
 
           {/* Users Table */}
-          <div className="overflow-x-auto border border-slate-100 rounded-lg mt-3">
-            <table className="w-full text-left text-xs text-slate-700">
-              <thead className="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200">
+          <div className="overflow-x-auto border border-[var(--atlas-border)] rounded-lg mt-3">
+            <table className="w-full text-left text-xs text-[var(--atlas-text-secondary)]">
+              <thead className="bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] font-bold uppercase tracking-wider border-b border-[var(--atlas-border)]">
                 <tr>
                   <th className="p-3">Usuário / E-mail</th>
                   <th className="p-3">Escritório Vinculado</th>
@@ -1747,19 +1743,20 @@ export function AdminPanelView() {
                   <th className="p-3 text-right">Ações de Vínculo</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-[var(--atlas-border)]">
                 {filteredUsuarios.map(usr => (
-                  <tr key={usr.id || usr.uid} className="hover:bg-slate-50/80 transition-colors">
+                  <tr key={usr.id || usr.uid} className="hover:bg-[var(--atlas-surface-hover)]/80 transition-colors">
                     <td className="p-3">
-                      <div className="font-bold text-slate-900">{usr.nome || 'Sem Nome'}</div>
-                      <div className="text-[11px] text-slate-500">{usr.email}</div>
+                      <div className="font-bold text-[var(--atlas-text)]">{usr.nome || 'Sem Nome'}</div>
+                      <div className="text-xs text-[var(--atlas-text-secondary)]">{usr.email}</div>
                     </td>
                     <td className="p-3">
                       <div className="flex items-center space-x-2">
                         <select
+                          disabled={!isSuperAdminUser}
                           value={usr.escritorioId || ''}
                           onChange={(e) => handleUpdateUsuarioBinding(usr.uid || usr.id, e.target.value)}
-                          className="p-1.5 border border-slate-200 rounded-md text-xs font-medium bg-white hover:border-slate-300 focus:ring-1 focus:ring-[#1e3a5f]"
+                          className="p-1.5 border border-[var(--atlas-border)] rounded-md text-xs font-medium bg-[var(--atlas-surface)] hover:border-[var(--atlas-border)] focus:ring-1 focus:ring-[var(--atlas-navy)] disabled:bg-[var(--atlas-surface-hover)] disabled:text-[var(--atlas-text-secondary)]"
                         >
                           <option value="">Sem Escritório (Global)</option>
                           {escritorios.map(esc => (
@@ -1769,17 +1766,17 @@ export function AdminPanelView() {
                       </div>
                     </td>
                     <td className="p-3">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ${
+                      <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wide ${
                         usr.papel === 'super_admin' ? 'bg-purple-100 text-purple-800' :
                         usr.papel === 'admin_escritorio' ? 'bg-blue-100 text-blue-800' :
-                        'bg-slate-100 text-slate-700'
+                        'bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)]'
                       }`}>
                         {usr.papel === 'super_admin' ? 'Super Admin' :
                          usr.papel === 'admin_escritorio' ? 'Admin Escritório' : 'Colaborador'}
                       </span>
                     </td>
                     <td className="p-3">
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
                         usr.ativo !== false ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'
                       }`}>
                         {usr.ativo !== false ? 'Ativo' : 'Inativo'}
@@ -1789,7 +1786,7 @@ export function AdminPanelView() {
                       <div className="flex items-center justify-end space-x-2">
                         <button
                           onClick={() => handleGerarLinkConvite(usr.uid || usr.id)}
-                          className="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded text-[11px] font-semibold transition-colors flex items-center space-x-1"
+                          className="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded text-xs font-semibold transition-colors flex items-center space-x-1"
                           title="Gerar e Copiar Link de Primeiro Acesso"
                         >
                           {copiedLinkId === (usr.uid || usr.id) ? (
@@ -1807,7 +1804,7 @@ export function AdminPanelView() {
 
                         <button
                           onClick={() => handleOpenEditUsuarioModal(usr)}
-                          className="p-1.5 text-slate-600 hover:text-[#1e3a5f] hover:bg-slate-100 rounded transition-colors"
+                          className="p-1.5 text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-navy)] hover:bg-[var(--atlas-surface-hover)] rounded transition-colors"
                           title="Editar Dados do Usuário"
                         >
                           <Edit3 className="w-3.5 h-3.5" />
@@ -1815,7 +1812,7 @@ export function AdminPanelView() {
 
                         <button
                           onClick={() => handleDeleteUsuario(usr.uid || usr.id, usr.nome || usr.email)}
-                          className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                          className="p-1.5 text-[var(--atlas-text-muted)] hover:text-red-600 hover:bg-red-50 rounded transition-colors"
                           title="Remover e Desvincular Usuário"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -1827,7 +1824,7 @@ export function AdminPanelView() {
 
                 {filteredUsuarios.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="p-8 text-center text-slate-400 font-medium">
+                    <td colSpan={5} className="p-8 text-center text-[var(--atlas-text-muted)] font-medium">
                       Nenhum usuário encontrado com os filtros selecionados.
                     </td>
                   </tr>
@@ -1836,7 +1833,7 @@ export function AdminPanelView() {
             </table>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-slate-100">
+          <div className="mt-6 pt-4 border-t border-[var(--atlas-border)]">
             <UserHierarchyCard />
           </div>
         </div>
@@ -1846,26 +1843,26 @@ export function AdminPanelView() {
       {activeTab === 'logs' && (
         <div className="space-y-6">
           {/* Sub-Header / Controls Bar */}
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs space-y-4">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+          <div className="bg-[var(--atlas-surface)] p-5 rounded-xl border border-[var(--atlas-border)] shadow-xs space-y-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[var(--atlas-border)] pb-4">
               <div>
-                <h3 className="text-base font-bold text-slate-900 flex items-center space-x-2">
-                  <BarChart2 className="w-5 h-5 text-[#1e3a5f]" />
+                <h3 className="text-base font-bold text-[var(--atlas-text)] flex items-center space-x-2">
+                  <BarChart2 className="w-5 h-5 text-[var(--atlas-navy)]" />
                   <span>Relatórios de Acesso, Produtividade & Conferência</span>
                 </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-[var(--atlas-text-secondary)] mt-0.5">
                   Relatório auditável restrito a Administradores do Sistema.
                 </p>
               </div>
 
               {/* Sub-Tab Switcher */}
-              <div className="flex items-center bg-slate-100 p-1 rounded-lg">
+              <div className="flex items-center bg-[var(--atlas-surface-hover)] p-1 rounded-lg">
                 <button
                   onClick={() => setReportSubTab('logins')}
                   className={`px-4 py-2 rounded-md text-xs font-bold transition-all flex items-center space-x-2 ${
                     reportSubTab === 'logins'
-                      ? 'bg-white text-[#1e3a5f] shadow-2xs'
-                      : 'text-slate-600 hover:text-slate-900'
+                      ? 'bg-[var(--atlas-surface)] text-[var(--atlas-navy)] shadow-xs'
+                      : 'text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)]'
                   }`}
                 >
                   <LogIn className="w-3.5 h-3.5" />
@@ -1876,8 +1873,8 @@ export function AdminPanelView() {
                   onClick={() => setReportSubTab('conferencias')}
                   className={`px-4 py-2 rounded-md text-xs font-bold transition-all flex items-center space-x-2 ${
                     reportSubTab === 'conferencias'
-                      ? 'bg-white text-[#0f6e56] shadow-2xs'
-                      : 'text-slate-600 hover:text-slate-900'
+                      ? 'bg-[var(--atlas-surface)] text-[var(--atlas-accent)] shadow-xs'
+                      : 'text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-text)]'
                   }`}
                 >
                   <Clock className="w-3.5 h-3.5" />
@@ -1890,7 +1887,7 @@ export function AdminPanelView() {
             <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
               <div className="flex flex-1 flex-col sm:flex-row gap-2">
                 <div className="relative flex-1">
-                  <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
+                  <Search className="w-4 h-4 absolute left-3 top-2.5 text-[var(--atlas-text-muted)]" />
                   <input
                     type="text"
                     placeholder={
@@ -1900,10 +1897,10 @@ export function AdminPanelView() {
                     }
                     value={reportSearch}
                     onChange={e => setReportSearch(e.target.value)}
-                    className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+                    className="w-full pl-9 pr-4 py-2 border border-[var(--atlas-border)] rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-[var(--atlas-navy)]"
                   />
                   {reportSearch && (
-                    <button onClick={() => setReportSearch('')} className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
+                    <button onClick={() => setReportSearch('')} className="absolute right-3 top-2.5 text-[var(--atlas-text-muted)] hover:text-[var(--atlas-text-secondary)]">
                       <X className="w-3.5 h-3.5" />
                     </button>
                   )}
@@ -1913,7 +1910,7 @@ export function AdminPanelView() {
                 <select
                   value={reportDateFilter}
                   onChange={e => setReportDateFilter(e.target.value as any)}
-                  className="px-3 py-2 border border-slate-200 rounded-lg text-xs bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+                  className="px-3 py-2 border border-[var(--atlas-border)] rounded-lg text-xs bg-[var(--atlas-surface)] text-[var(--atlas-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--atlas-navy)]"
                 >
                   <option value="todos">Período: Todos</option>
                   <option value="hoje">Período: Hoje</option>
@@ -1926,7 +1923,7 @@ export function AdminPanelView() {
                   <select
                     value={reportOfficeFilter}
                     onChange={e => setReportOfficeFilter(e.target.value)}
-                    className="px-3 py-2 border border-slate-200 rounded-lg text-xs bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+                    className="px-3 py-2 border border-[var(--atlas-border)] rounded-lg text-xs bg-[var(--atlas-surface)] text-[var(--atlas-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--atlas-navy)]"
                   >
                     <option value="todos">Todos os Escritórios</option>
                     {escritorios.map(e => (
@@ -1949,7 +1946,7 @@ export function AdminPanelView() {
 
                 <button
                   onClick={reportSubTab === 'logins' ? handleExportLoginsPDF : handleExportConferenciasPDF}
-                  className="px-3 py-2 bg-[#1e3a5f] hover:bg-[#142c47] text-white rounded-lg text-xs font-semibold transition-all flex items-center space-x-1.5 shadow-2xs"
+                  className="px-3 py-2 bg-[var(--atlas-navy)] hover:bg-[var(--atlas-navy-dark)] text-white rounded-lg text-xs font-semibold transition-all flex items-center space-x-1.5 shadow-xs"
                   title="Exportar Relatório PDF formatado"
                 >
                   <Download className="w-4 h-4" />
@@ -1964,32 +1961,32 @@ export function AdminPanelView() {
             <div className="space-y-4">
               {/* KPI Cards for Logins */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between">
+                <div className="bg-[var(--atlas-surface)] p-4 rounded-xl border border-[var(--atlas-border)] shadow-xs flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total de Logins</p>
-                    <span className="text-2xl font-black text-slate-900 mt-1 block">{filteredLogins.length}</span>
+                    <p className="text-xs font-semibold text-[var(--atlas-text-secondary)] uppercase tracking-wider">Total de Logins</p>
+                    <span className="text-2xl font-black text-[var(--atlas-text)] mt-1 block">{filteredLogins.length}</span>
                   </div>
-                  <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
-                    <LogIn className="w-5 h-5 text-[#1e3a5f]" />
+                  <div className="w-10 h-10 bg-[var(--atlas-surface-hover)] rounded-lg flex items-center justify-center">
+                    <LogIn className="w-5 h-5 text-[var(--atlas-navy)]" />
                   </div>
                 </div>
 
-                <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between">
+                <div className="bg-[var(--atlas-surface)] p-4 rounded-xl border border-[var(--atlas-border)] shadow-xs flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Usuários Distintos</p>
-                    <span className="text-2xl font-black text-slate-900 mt-1 block">
+                    <p className="text-xs font-semibold text-[var(--atlas-text-secondary)] uppercase tracking-wider">Usuários Distintos</p>
+                    <span className="text-2xl font-black text-[var(--atlas-text)] mt-1 block">
                       {new Set(filteredLogins.map(l => l.userEmail || l.userId)).size}
                     </span>
                   </div>
                   <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center">
-                    <Users className="w-5 h-5 text-[#0f6e56]" />
+                    <Users className="w-5 h-5 text-[var(--atlas-accent)]" />
                   </div>
                 </div>
 
-                <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between">
+                <div className="bg-[var(--atlas-surface)] p-4 rounded-xl border border-[var(--atlas-border)] shadow-xs flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Status do Filtro</p>
-                    <span className="text-xs font-bold text-slate-700 mt-1 block">
+                    <p className="text-xs font-semibold text-[var(--atlas-text-secondary)] uppercase tracking-wider">Status do Filtro</p>
+                    <span className="text-xs font-bold text-[var(--atlas-text-secondary)] mt-1 block">
                       {reportDateFilter === 'todos' ? 'Todo o histórico' : reportDateFilter}
                     </span>
                   </div>
@@ -2000,10 +1997,10 @@ export function AdminPanelView() {
               </div>
 
               {/* Logins Table */}
-              <div className="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
+              <div className="bg-[var(--atlas-surface)] rounded-xl border border-[var(--atlas-border)] shadow-xs overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs">
-                    <thead className="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 uppercase tracking-wider">
+                    <thead className="bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] font-bold border-b border-[var(--atlas-border)] uppercase tracking-wider">
                       <tr>
                         <th className="p-3.5">Usuário / Identificação</th>
                         <th className="p-3.5">Papel / Nível</th>
@@ -2012,43 +2009,43 @@ export function AdminPanelView() {
                         <th className="p-3.5 text-center">Status</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100">
+                    <tbody className="divide-y divide-[var(--atlas-border)]">
                       {filteredLogins.map((item, idx) => (
-                        <tr key={item.id || idx} className="hover:bg-slate-50/80 transition-colors">
+                        <tr key={item.id || idx} className="hover:bg-[var(--atlas-surface-hover)]/80 transition-colors">
                           <td className="p-3.5">
                             <div className="flex items-center space-x-2.5">
-                              <div className="w-7 h-7 bg-slate-100 text-[#1e3a5f] font-bold rounded-full flex items-center justify-center text-xs border border-slate-200">
+                              <div className="w-7 h-7 bg-[var(--atlas-surface-hover)] text-[var(--atlas-navy)] font-bold rounded-full flex items-center justify-center text-xs border border-[var(--atlas-border)]">
                                 {(item.userNome || item.userEmail || 'U').charAt(0).toUpperCase()}
                               </div>
                               <div>
-                                <p className="font-bold text-slate-900">{item.userNome || 'Usuário do Sistema'}</p>
-                                <p className="text-[11px] text-slate-500">{item.userEmail || 'email@dominio.com'}</p>
+                                <p className="font-bold text-[var(--atlas-text)]">{item.userNome || 'Usuário do Sistema'}</p>
+                                <p className="text-xs text-[var(--atlas-text-secondary)]">{item.userEmail || 'email@dominio.com'}</p>
                               </div>
                             </div>
                           </td>
 
                           <td className="p-3.5">
-                            <span className={`px-2 py-0.5 rounded-md font-bold text-[10px] uppercase inline-block ${
+                            <span className={`px-2 py-0.5 rounded-md font-bold text-xs uppercase inline-block ${
                               item.papel === 'super_admin'
                                 ? 'bg-purple-100 text-purple-800 border border-purple-200'
                                 : item.papel === 'admin_escritorio'
                                 ? 'bg-blue-100 text-blue-800 border border-blue-200'
-                                : 'bg-slate-100 text-slate-700 border border-slate-200'
+                                : 'bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] border border-[var(--atlas-border)]'
                             }`}>
                               {item.papel === 'super_admin' ? 'Super Admin' : item.papel === 'admin_escritorio' ? 'Admin Escritório' : 'Colaborador'}
                             </span>
                           </td>
 
-                          <td className="p-3.5 text-slate-700 font-medium">
+                          <td className="p-3.5 text-[var(--atlas-text-secondary)] font-medium">
                             {item.escritorioNome || item.escritorioId || 'Escritório Modelo'}
                           </td>
 
-                          <td className="p-3.5 font-mono text-slate-600">
+                          <td className="p-3.5 font-mono text-[var(--atlas-text-secondary)]">
                             {item.data ? new Date(item.data).toLocaleString('pt-BR') : 'Data recente'}
                           </td>
 
                           <td className="p-3.5 text-center">
-                            <span className="inline-flex items-center space-x-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full font-bold text-[10px] border border-emerald-200">
+                            <span className="inline-flex items-center space-x-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full font-bold text-xs border border-emerald-200">
                               <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                               <span>Autenticado</span>
                             </span>
@@ -2058,7 +2055,7 @@ export function AdminPanelView() {
 
                       {filteredLogins.length === 0 && (
                         <tr>
-                          <td colSpan={5} className="p-8 text-center text-slate-400 font-medium">
+                          <td colSpan={5} className="p-8 text-center text-[var(--atlas-text-muted)] font-medium">
                             Nenhum registro de login encontrado com os parâmetros selecionados.
                           </td>
                         </tr>
@@ -2075,32 +2072,32 @@ export function AdminPanelView() {
             <div className="space-y-4">
               {/* KPI Cards for Conferences */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between">
+                <div className="bg-[var(--atlas-surface)] p-4 rounded-xl border border-[var(--atlas-border)] shadow-xs flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Conferências Realizadas</p>
-                    <span className="text-2xl font-black text-slate-900 mt-1 block">{totalConferenciasCount}</span>
+                    <p className="text-xs font-semibold text-[var(--atlas-text-secondary)] uppercase tracking-wider">Conferências Realizadas</p>
+                    <span className="text-2xl font-black text-[var(--atlas-text)] mt-1 block">{totalConferenciasCount}</span>
                   </div>
                   <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center">
-                    <FileCode className="w-5 h-5 text-[#0f6e56]" />
+                    <FileCode className="w-5 h-5 text-[var(--atlas-accent)]" />
                   </div>
                 </div>
 
-                <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between">
+                <div className="bg-[var(--atlas-surface)] p-4 rounded-xl border border-[var(--atlas-border)] shadow-xs flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Tempo Total Consumido</p>
-                    <span className="text-xl font-black text-slate-900 mt-1 block">
+                    <p className="text-xs font-semibold text-[var(--atlas-text-secondary)] uppercase tracking-wider">Tempo Total Consumido</p>
+                    <span className="text-xl font-black text-[var(--atlas-text)] mt-1 block">
                       {formatTempoConferencia(totalConferenciaSegundos)}
                     </span>
                   </div>
                   <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
-                    <Clock className="w-5 h-5 text-[#1e3a5f]" />
+                    <Clock className="w-5 h-5 text-[var(--atlas-navy)]" />
                   </div>
                 </div>
 
-                <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between">
+                <div className="bg-[var(--atlas-surface)] p-4 rounded-xl border border-[var(--atlas-border)] shadow-xs flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Tempo Médio / Arquivo</p>
-                    <span className="text-xl font-black text-slate-900 mt-1 block">
+                    <p className="text-xs font-semibold text-[var(--atlas-text-secondary)] uppercase tracking-wider">Tempo Médio / Arquivo</p>
+                    <span className="text-xl font-black text-[var(--atlas-text)] mt-1 block">
                       {formatTempoConferencia(avgConferenciaSegundos)}
                     </span>
                   </div>
@@ -2109,24 +2106,24 @@ export function AdminPanelView() {
                   </div>
                 </div>
 
-                <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between">
+                <div className="bg-[var(--atlas-surface)] p-4 rounded-xl border border-[var(--atlas-border)] shadow-xs flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Empresa Mais Auditada</p>
-                    <span className="text-xs font-bold text-slate-900 mt-1 block truncate max-w-[140px]" title={empresaMaisAuditada}>
+                    <p className="text-xs font-semibold text-[var(--atlas-text-secondary)] uppercase tracking-wider">Empresa Mais Auditada</p>
+                    <span className="text-xs font-bold text-[var(--atlas-text)] mt-1 block truncate max-w-[140px]" title={empresaMaisAuditada}>
                       {empresaMaisAuditada}
                     </span>
                   </div>
-                  <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
-                    <Building className="w-5 h-5 text-slate-700" />
+                  <div className="w-10 h-10 bg-[var(--atlas-surface-hover)] rounded-lg flex items-center justify-center">
+                    <Building className="w-5 h-5 text-[var(--atlas-text-secondary)]" />
                   </div>
                 </div>
               </div>
 
               {/* Conferences Table */}
-              <div className="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
+              <div className="bg-[var(--atlas-surface)] rounded-xl border border-[var(--atlas-border)] shadow-xs overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs">
-                    <thead className="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 uppercase tracking-wider">
+                    <thead className="bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] font-bold border-b border-[var(--atlas-border)] uppercase tracking-wider">
                       <tr>
                         <th className="p-3.5">Nome da Empresa</th>
                         <th className="p-3.5">Arquivo Conferido</th>
@@ -2137,7 +2134,7 @@ export function AdminPanelView() {
                         <th className="p-3.5">Auditor Responsável</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100">
+                    <tbody className="divide-y divide-[var(--atlas-border)]">
                       {filteredConferencias.map((item, idx) => {
                         const inicioTimeStr = item.primeiroAcesso 
                           ? new Date(item.primeiroAcesso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
@@ -2148,25 +2145,25 @@ export function AdminPanelView() {
                           : (item.data ? new Date(item.data).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '14:05:00');
 
                         return (
-                          <tr key={item.id || idx} className="hover:bg-slate-50/80 transition-colors">
+                          <tr key={item.id || idx} className="hover:bg-[var(--atlas-surface-hover)]/80 transition-colors">
                             <td className="p-3.5">
                               <div className="flex items-center space-x-2">
-                                <Building2 className="w-4 h-4 text-[#1e3a5f] shrink-0" />
-                                <span className="font-bold text-slate-900">{item.empresaNome || 'Empresa Cliente'}</span>
+                                <Building2 className="w-4 h-4 text-[var(--atlas-navy)] shrink-0" />
+                                <span className="font-bold text-[var(--atlas-text)]">{item.empresaNome || 'Empresa Cliente'}</span>
                               </div>
                             </td>
 
                             <td className="p-3.5">
-                              <span className="font-mono text-slate-700 bg-slate-100 px-2 py-0.5 rounded text-[11px] border border-slate-200 block truncate max-w-[170px]" title={item.arquivoNome}>
+                              <span className="font-mono text-[var(--atlas-text-secondary)] bg-[var(--atlas-surface-hover)] px-2 py-0.5 rounded text-xs border border-[var(--atlas-border)] block truncate max-w-[170px]" title={item.arquivoNome}>
                                 {item.arquivoNome || 'SPED_EFD.txt'}
                               </span>
                             </td>
 
-                            <td className="p-3.5 font-mono text-slate-600 text-[11px]">
+                            <td className="p-3.5 font-mono text-[var(--atlas-text-secondary)] text-xs">
                               {inicioTimeStr}
                             </td>
 
-                            <td className="p-3.5 font-mono text-slate-600 text-[11px]">
+                            <td className="p-3.5 font-mono text-[var(--atlas-text-secondary)] text-xs">
                               {conclusaoTimeStr}
                             </td>
 
@@ -2178,15 +2175,15 @@ export function AdminPanelView() {
                             </td>
 
                             <td className="p-3.5 max-w-xs">
-                              <p className="text-slate-700 font-medium text-xs leading-relaxed">
+                              <p className="text-[var(--atlas-text-secondary)] font-medium text-xs leading-relaxed">
                                 {item.resumo || 'Conferência e auditoria de escrituração fiscal'}
                               </p>
                             </td>
 
                             <td className="p-3.5">
                               <div>
-                                <p className="font-bold text-slate-800">{item.userNome || 'Auditor'}</p>
-                                <p className="text-[11px] text-slate-500">{item.userEmail || ''}</p>
+                                <p className="font-bold text-[var(--atlas-text)]">{item.userNome || 'Auditor'}</p>
+                                <p className="text-xs text-[var(--atlas-text-secondary)]">{item.userEmail || ''}</p>
                               </div>
                             </td>
                           </tr>
@@ -2195,7 +2192,7 @@ export function AdminPanelView() {
 
                       {filteredConferencias.length === 0 && (
                         <tr>
-                          <td colSpan={7} className="p-8 text-center text-slate-400 font-medium">
+                          <td colSpan={7} className="p-8 text-center text-[var(--atlas-text-muted)] font-medium">
                             Nenhuma conferência encontrada com os filtros selecionados.
                           </td>
                         </tr>
@@ -2212,20 +2209,20 @@ export function AdminPanelView() {
       {/* DRAWER / MODAL: GERENCIAR CLIENTES DO ESCRITÓRIO SELECIONADO */}
       {selectedEscritorioForClients && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex justify-end">
-          <div className="w-full max-w-2xl bg-white h-full shadow-md flex flex-col justify-between overflow-hidden animate-in slide-in-from-right duration-200">
+          <div className="w-full max-w-2xl bg-[var(--atlas-surface)] h-full shadow-md flex flex-col justify-between overflow-hidden animate-in slide-in-from-right duration-200">
             {/* Drawer Header */}
-            <div className="p-6 bg-[#1e3a5f] text-white flex items-center justify-between">
+            <div className="p-6 bg-[var(--atlas-navy)] text-white flex items-center justify-between">
               <div>
-                <span className="px-2 py-0.5 text-[10px] font-bold uppercase rounded bg-white/20 text-white">
+                <span className="px-2 py-0.5 text-xs font-bold uppercase rounded bg-[var(--atlas-surface)]/20 text-white">
                   Clientes do Escritório
                 </span>
                 <h2 className="text-xl font-bold tracking-tight mt-1">{selectedEscritorioForClients.nome}</h2>
-                <p className="text-xs text-slate-300 font-mono">CNPJ: {selectedEscritorioForClients.cnpj || 'Não cadastrado'}</p>
+                <p className="text-xs text-[var(--atlas-text-muted)] font-mono">CNPJ: {selectedEscritorioForClients.cnpj || 'Não cadastrado'}</p>
               </div>
 
               <button 
                 onClick={() => setSelectedEscritorioForClients(null)}
-                className="p-2 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                className="p-2 text-[var(--atlas-text-muted)] hover:text-white hover:bg-[var(--atlas-surface)]/10 rounded-lg transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -2234,13 +2231,13 @@ export function AdminPanelView() {
             {/* Drawer Content */}
             <div className="p-6 flex-1 overflow-y-auto space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="font-bold text-slate-900 text-sm">
+                <h3 className="font-bold text-[var(--atlas-text)] text-sm">
                   Lista de Clientes ({selectedEscritorioForClients.clientes?.length || 0})
                 </h3>
 
                 <button
                   onClick={() => handleOpenNewClienteModal(selectedEscritorioForClients)}
-                  className="px-3 py-1.5 bg-[#0f6e56] hover:bg-[#0c5945] text-white rounded-lg text-xs font-bold transition-colors flex items-center space-x-1"
+                  className="px-3 py-1.5 bg-[var(--atlas-accent)] hover:bg-[#0c5945] text-white rounded-lg text-xs font-bold transition-colors flex items-center space-x-1"
                 >
                   <PlusCircle className="w-4 h-4" />
                   <span>Adicionar Cliente</span>
@@ -2249,18 +2246,18 @@ export function AdminPanelView() {
 
               <div className="space-y-3">
                 {selectedEscritorioForClients.clientes?.map((cli, idx) => (
-                  <div key={`${selectedEscritorioForClients.id}_${cli.id}_${idx}`} className="p-4 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-between">
+                  <div key={`${selectedEscritorioForClients.id}_${cli.id}_${idx}`} className="p-4 bg-[var(--atlas-surface-hover)] rounded-lg border border-[var(--atlas-border)] flex items-center justify-between">
                     <div>
-                      <h4 className="font-bold text-slate-900 text-sm">{cli.nome}</h4>
-                      <div className="flex items-center space-x-2 text-xs text-slate-500 mt-0.5 font-mono">
+                      <h4 className="font-bold text-[var(--atlas-text)] text-sm">{cli.nome}</h4>
+                      <div className="flex items-center space-x-2 text-xs text-[var(--atlas-text-secondary)] mt-0.5 font-mono">
                         <span>CNPJ: {cli.cnpj || 'N/I'}</span>
                         <span>•</span>
                         <span className="uppercase">{cli.uf}</span>
                         <span>•</span>
-                        <span className="font-sans font-semibold text-[#1e3a5f]">{cli.regimeTributario}</span>
+                        <span className="font-sans font-semibold text-[var(--atlas-navy)]">{cli.regimeTributario}</span>
                       </div>
                       {(cli.email || cli.telefone) && (
-                        <p className="text-[11px] text-slate-400 mt-1">
+                        <p className="text-xs text-[var(--atlas-text-muted)] mt-1">
                           {cli.email} {cli.telefone ? `| ${cli.telefone}` : ''}
                         </p>
                       )}
@@ -2269,14 +2266,14 @@ export function AdminPanelView() {
                     <div className="flex items-center space-x-1">
                       <button
                         onClick={() => handleOpenEditClienteModal(cli, selectedEscritorioForClients.id)}
-                        className="p-1.5 text-slate-600 hover:text-[#1e3a5f] hover:bg-[#f1efe8] rounded-lg"
+                        className="p-1.5 text-[var(--atlas-text-secondary)] hover:text-[var(--atlas-navy)] hover:bg-[#f1efe8] rounded-lg"
                         title="Editar Cliente"
                       >
                         <Edit3 className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDeleteCliente(cli.id, selectedEscritorioForClients.id)}
-                        className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
+                        className="p-1.5 text-[var(--atlas-text-muted)] hover:text-red-600 hover:bg-red-50 rounded-lg"
                         title="Excluir Cliente"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -2286,20 +2283,20 @@ export function AdminPanelView() {
                 ))}
 
                 {(!selectedEscritorioForClients.clientes || selectedEscritorioForClients.clientes.length === 0) && (
-                  <div className="p-8 text-center text-slate-500 bg-slate-50 rounded-lg border border-dashed border-slate-200">
-                    <Users className="w-8 h-8 mx-auto text-slate-300 mb-2" />
+                  <div className="p-8 text-center text-[var(--atlas-text-secondary)] bg-[var(--atlas-surface-hover)] rounded-lg border border-dashed border-[var(--atlas-border)]">
+                    <Users className="w-8 h-8 mx-auto text-[var(--atlas-text-muted)] mb-2" />
                     <p className="text-xs font-semibold">Nenhum cliente cadastrado neste escritório contábil.</p>
-                    <p className="text-[11px] text-slate-400 mt-1">Clique acima em "Adicionar Cliente" para registrar a primeira empresa.</p>
+                    <p className="text-xs text-[var(--atlas-text-muted)] mt-1">Clique acima em "Adicionar Cliente" para registrar a primeira empresa.</p>
                   </div>
                 )}
               </div>
             </div>
 
             {/* Drawer Footer */}
-            <div className="p-4 bg-slate-50 border-t border-slate-200 flex justify-end">
+            <div className="p-4 bg-[var(--atlas-surface-hover)] border-t border-[var(--atlas-border)] flex justify-end">
               <button
                 onClick={() => setSelectedEscritorioForClients(null)}
-                className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-bold transition-colors"
+                className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-[var(--atlas-text-secondary)] rounded-lg text-xs font-bold transition-colors"
               >
                 Fechar
               </button>
@@ -2311,62 +2308,62 @@ export function AdminPanelView() {
       {/* MODAL: CRIAR / EDITAR ESCRITÓRIO */}
       {showNewEscritorioModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl max-w-lg w-full shadow-md overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-            <div className="p-6 bg-[#1e3a5f] text-white flex items-center justify-between">
+          <div className="bg-[var(--atlas-surface)] rounded-xl max-w-lg w-full shadow-md overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div className="p-6 bg-[var(--atlas-navy)] text-white flex items-center justify-between">
               <h3 className="font-bold text-lg flex items-center space-x-2">
                 <Building2 className="w-5 h-5 text-emerald-300" />
                 <span>{editingEscritorio ? 'Editar Escritório Contábil' : 'Novo Escritório Contábil'}</span>
               </h3>
-              <button onClick={() => setShowNewEscritorioModal(false)} className="text-slate-300 hover:text-white">
+              <button onClick={() => setShowNewEscritorioModal(false)} className="text-[var(--atlas-text-muted)] hover:text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <form onSubmit={handleSaveEscritorio} className="p-6 space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Nome do Escritório *</label>
+                <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] uppercase mb-1">Nome do Escritório *</label>
                 <input
                   required
                   type="text"
                   value={escNome}
                   onChange={e => setEscNome(e.target.value)}
                   placeholder="Ex: Alfa Contabilidade & Consultoria"
-                  className="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e3a5f]"
+                  className="w-full p-2.5 border border-[var(--atlas-border)] rounded-lg text-sm focus:ring-2 focus:ring-[var(--atlas-navy)]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1">CNPJ do Escritório</label>
+                <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] uppercase mb-1">CNPJ do Escritório</label>
                 <input
                   type="text"
                   value={escCnpj}
                   onChange={e => setEscCnpj(e.target.value)}
                   placeholder="00.000.000/0001-00"
-                  className="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e3a5f]"
+                  className="w-full p-2.5 border border-[var(--atlas-border)] rounded-lg text-sm focus:ring-2 focus:ring-[var(--atlas-navy)]"
                 />
               </div>
 
-              <hr className="border-slate-200 my-2" />
+              <hr className="border-[var(--atlas-border)] my-2" />
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Nome do Administrador do Escritório</label>
+                <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] uppercase mb-1">Nome do Administrador do Escritório</label>
                 <input
                   type="text"
                   value={escNomeAdmin}
                   onChange={e => setEscNomeAdmin(e.target.value)}
                   placeholder="Ex: Roberto Alves"
-                  className="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e3a5f]"
+                  className="w-full p-2.5 border border-[var(--atlas-border)] rounded-lg text-sm focus:ring-2 focus:ring-[var(--atlas-navy)]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1">E-mail do Administrador Inicial</label>
+                <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] uppercase mb-1">E-mail do Administrador Inicial</label>
                 <input
                   type="email"
                   value={escEmailAdmin}
                   onChange={e => setEscEmailAdmin(e.target.value)}
                   placeholder="admin@alfacontab.com.br"
-                  className="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e3a5f]"
+                  className="w-full p-2.5 border border-[var(--atlas-border)] rounded-lg text-sm focus:ring-2 focus:ring-[var(--atlas-navy)]"
                 />
               </div>
 
@@ -2382,14 +2379,14 @@ export function AdminPanelView() {
                 <button
                   type="button"
                   onClick={() => setShowNewEscritorioModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold"
+                  className="px-4 py-2 bg-[var(--atlas-surface-hover)] hover:bg-[var(--atlas-border)] text-[var(--atlas-text-secondary)] rounded-lg text-xs font-bold"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={submittingEsc}
-                  className="px-5 py-2 bg-[#1e3a5f] hover:bg-[#142c47] text-white rounded-lg text-xs font-bold disabled:opacity-50"
+                  className="px-5 py-2 bg-[var(--atlas-navy)] hover:bg-[var(--atlas-navy-dark)] text-white rounded-lg text-xs font-bold disabled:opacity-50"
                 >
                   {submittingEsc ? 'Gravando...' : editingEscritorio ? 'Salvar Alterações' : 'Cadastrar Escritório'}
                 </button>
@@ -2402,64 +2399,64 @@ export function AdminPanelView() {
       {/* MODAL: CADASTRO / EDIÇÃO DE CLIENTE */}
       {showClienteModal && targetEscritorioForNewClient && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl max-w-lg w-full shadow-md overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-            <div className="p-6 bg-[#1e3a5f] text-white flex items-center justify-between">
+          <div className="bg-[var(--atlas-surface)] rounded-xl max-w-lg w-full shadow-md overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div className="p-6 bg-[var(--atlas-navy)] text-white flex items-center justify-between">
               <div>
-                <span className="text-[10px] uppercase font-bold text-slate-300">Vinculado a: {targetEscritorioForNewClient.nome}</span>
+                <span className="text-xs uppercase font-bold text-[var(--atlas-text-muted)]">Vinculado a: {targetEscritorioForNewClient.nome}</span>
                 <h3 className="font-bold text-lg flex items-center space-x-2">
                   <UserPlus className="w-5 h-5 text-emerald-400" />
                   <span>{editingCliente ? 'Editar Cliente' : 'Novo Cliente do Escritório'}</span>
                 </h3>
               </div>
-              <button onClick={() => setShowClienteModal(false)} className="text-slate-300 hover:text-white">
+              <button onClick={() => setShowClienteModal(false)} className="text-[var(--atlas-text-muted)] hover:text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <form onSubmit={handleSaveCliente} className="p-6 space-y-3">
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Razão Social / Nome Empresa *</label>
+                <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] uppercase mb-1">Razão Social / Nome Empresa *</label>
                 <input
                   required
                   type="text"
                   value={cliNome}
                   onChange={e => setCliNome(e.target.value)}
                   placeholder="Ex: Comercial Silva LTDA"
-                  className="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e3a5f]"
+                  className="w-full p-2 border border-[var(--atlas-border)] rounded-lg text-sm focus:ring-2 focus:ring-[var(--atlas-navy)]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 uppercase mb-1">CNPJ</label>
+                  <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] uppercase mb-1">CNPJ</label>
                   <input
                     type="text"
                     value={cliCnpj}
                     onChange={e => setCliCnpj(e.target.value)}
                     placeholder="00.000.000/0001-00"
-                    className="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e3a5f]"
+                    className="w-full p-2 border border-[var(--atlas-border)] rounded-lg text-sm focus:ring-2 focus:ring-[var(--atlas-navy)]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 uppercase mb-1">UF / Estado</label>
+                  <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] uppercase mb-1">UF / Estado</label>
                   <input
                     type="text"
                     value={cliUf}
                     onChange={e => setCliUf(e.target.value.toUpperCase())}
                     maxLength={2}
                     placeholder="SP"
-                    className="w-full p-2 border border-slate-300 rounded-lg text-sm uppercase focus:ring-2 focus:ring-[#1e3a5f]"
+                    className="w-full p-2 border border-[var(--atlas-border)] rounded-lg text-sm uppercase focus:ring-2 focus:ring-[var(--atlas-navy)]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Regime Tributário</label>
+                <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] uppercase mb-1">Regime Tributário</label>
                 <select
                   value={cliRegime}
                   onChange={e => setCliRegime(e.target.value as RegimeTributario)}
-                  className="w-full p-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-[#1e3a5f]"
+                  className="w-full p-2 border border-[var(--atlas-border)] rounded-lg text-sm bg-[var(--atlas-surface)] focus:ring-2 focus:ring-[var(--atlas-navy)]"
                 >
                   <option value="Lucro Real">Lucro Real</option>
                   <option value="Lucro Presumido">Lucro Presumido</option>
@@ -2470,24 +2467,24 @@ export function AdminPanelView() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 uppercase mb-1">E-mail</label>
+                  <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] uppercase mb-1">E-mail</label>
                   <input
                     type="email"
                     value={cliEmail}
                     onChange={e => setCliEmail(e.target.value)}
                     placeholder="fiscal@empresa.com"
-                    className="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e3a5f]"
+                    className="w-full p-2 border border-[var(--atlas-border)] rounded-lg text-sm focus:ring-2 focus:ring-[var(--atlas-navy)]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Telefone</label>
+                  <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] uppercase mb-1">Telefone</label>
                   <input
                     type="text"
                     value={cliTelefone}
                     onChange={e => setCliTelefone(e.target.value)}
                     placeholder="(11) 99999-0000"
-                    className="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e3a5f]"
+                    className="w-full p-2 border border-[var(--atlas-border)] rounded-lg text-sm focus:ring-2 focus:ring-[var(--atlas-navy)]"
                   />
                 </div>
               </div>
@@ -2504,14 +2501,14 @@ export function AdminPanelView() {
                 <button
                   type="button"
                   onClick={() => setShowClienteModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold"
+                  className="px-4 py-2 bg-[var(--atlas-surface-hover)] hover:bg-[var(--atlas-border)] text-[var(--atlas-text-secondary)] rounded-lg text-xs font-bold"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={submittingCli}
-                  className="px-5 py-2 bg-[#0f6e56] hover:bg-[#0c5945] text-white rounded-lg text-xs font-bold disabled:opacity-50"
+                  className="px-5 py-2 bg-[var(--atlas-accent)] hover:bg-[#0c5945] text-white rounded-lg text-xs font-bold disabled:opacity-50"
                 >
                   {submittingCli ? 'Gravando...' : editingCliente ? 'Salvar Alterações' : 'Cadastrar Cliente'}
                 </button>
@@ -2524,32 +2521,32 @@ export function AdminPanelView() {
       {/* MODAL: CADASTRO / VÍNCULO DE USUÁRIO */}
       {showNewUsuarioModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl max-w-md w-full shadow-md overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-            <div className="p-5 bg-[#1e3a5f] text-white flex items-center justify-between">
+          <div className="bg-[var(--atlas-surface)] rounded-xl max-w-md w-full shadow-md overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div className="p-5 bg-[var(--atlas-navy)] text-white flex items-center justify-between">
               <h3 className="font-bold text-base flex items-center space-x-2">
                 <UserPlus className="w-5 h-5 text-emerald-400" />
                 <span>{editingUsuario ? 'Editar Usuário e Vínculo' : 'Convidar / Cadastrar Novo Usuário'}</span>
               </h3>
-              <button onClick={() => setShowNewUsuarioModal(false)} className="text-slate-300 hover:text-white">
+              <button onClick={() => setShowNewUsuarioModal(false)} className="text-[var(--atlas-text-muted)] hover:text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <form onSubmit={handleSaveUsuario} className="p-6 space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Nome Completo *</label>
+                <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] uppercase mb-1">Nome Completo *</label>
                 <input
                   required
                   type="text"
                   value={userFormNome}
                   onChange={e => setUserFormNome(e.target.value)}
                   placeholder="Ex: Maria Oliveira"
-                  className="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e3a5f]"
+                  className="w-full p-2.5 border border-[var(--atlas-border)] rounded-lg text-sm focus:ring-2 focus:ring-[var(--atlas-navy)]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1">E-mail de Acesso *</label>
+                <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] uppercase mb-1">E-mail de Acesso *</label>
                 <input
                   required
                   disabled={!!editingUsuario}
@@ -2557,17 +2554,18 @@ export function AdminPanelView() {
                   value={userFormEmail}
                   onChange={e => setUserFormEmail(e.target.value)}
                   placeholder="maria@escritorio.com.br"
-                  className="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e3a5f] disabled:bg-slate-100 disabled:text-slate-500"
+                  className="w-full p-2.5 border border-[var(--atlas-border)] rounded-lg text-sm focus:ring-2 focus:ring-[var(--atlas-navy)] disabled:bg-[var(--atlas-surface-hover)] disabled:text-[var(--atlas-text-secondary)]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Escritório Contábil de Destino *</label>
+                <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] uppercase mb-1">Escritório Contábil de Destino *</label>
                 <select
                   required
+                  disabled={!isSuperAdminUser}
                   value={userFormEscritorioId}
                   onChange={e => setUserFormEscritorioId(e.target.value)}
-                  className="w-full p-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-[#1e3a5f]"
+                  className="w-full p-2.5 border border-[var(--atlas-border)] rounded-lg text-sm bg-[var(--atlas-surface)] focus:ring-2 focus:ring-[var(--atlas-navy)] disabled:bg-[var(--atlas-surface-hover)] disabled:text-[var(--atlas-text-secondary)]"
                 >
                   <option value="">Selecione o Escritório...</option>
                   {escritorios.map(esc => (
@@ -2577,11 +2575,11 @@ export function AdminPanelView() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Papel / Perfil de Acesso *</label>
+                <label className="block text-xs font-bold text-[var(--atlas-text-secondary)] uppercase mb-1">Papel / Perfil de Acesso *</label>
                 <select
                   value={userFormPapel}
                   onChange={e => setUserFormPapel(e.target.value as any)}
-                  className="w-full p-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-[#1e3a5f]"
+                  className="w-full p-2.5 border border-[var(--atlas-border)] rounded-lg text-sm bg-[var(--atlas-surface)] focus:ring-2 focus:ring-[var(--atlas-navy)]"
                 >
                   <option value="colaborador">Colaborador (Acesso do Escritório)</option>
                   <option value="admin_escritorio">Admin do Escritório (Gestão Interna)</option>
@@ -2603,14 +2601,14 @@ export function AdminPanelView() {
                 <button
                   type="button"
                   onClick={() => setShowNewUsuarioModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold"
+                  className="px-4 py-2 bg-[var(--atlas-surface-hover)] hover:bg-[var(--atlas-border)] text-[var(--atlas-text-secondary)] rounded-lg text-xs font-bold"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={submittingUser}
-                  className="px-5 py-2 bg-[#1e3a5f] hover:bg-[#142c47] text-white rounded-lg text-xs font-bold disabled:opacity-50"
+                  className="px-5 py-2 bg-[var(--atlas-navy)] hover:bg-[var(--atlas-navy-dark)] text-white rounded-lg text-xs font-bold disabled:opacity-50"
                 >
                   {submittingUser ? 'Enviando...' : editingUsuario ? 'Salvar Vínculo' : 'Cadastrar e Convidar'}
                 </button>
