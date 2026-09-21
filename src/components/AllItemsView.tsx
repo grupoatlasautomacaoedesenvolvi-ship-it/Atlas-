@@ -2270,7 +2270,7 @@ export function AllItemsView({
                   const isMatrizAliqDiff = expAliq !== undefined && expAliq !== null ? Math.abs(curAliq - expAliq) > 0.01 : false;
 
                   return (
-                    <div key={key} className={`atlas-list-row transition-all border-b border-[var(--atlas-border)] ${rowBg}`}>
+                    <div key={key} className={`c170-item-row transition-all border-b border-[var(--atlas-border)] ${rowBg}`}>
                       <div className="px-2 py-3 text-center border-r border-[var(--atlas-border)]/30">
                         <button onClick={() => toggleSelectItem(doc.id, item.numItem)} className="text-[var(--atlas-text-muted)] hover:text-[var(--atlas-navy)] transition-colors">
                           {isSelected ? <CheckSquare className="w-4 h-4 text-[var(--atlas-navy)]" /> : <Square className="w-4 h-4" />}
@@ -2485,7 +2485,7 @@ export function AllItemsView({
                       </div>
 
                       {/* ICMS Column */}
-                      <div className="px-1.5 py-1.5 text-right whitespace-nowrap font-mono text-xs">
+                      <div className="px-2 py-3 text-right whitespace-nowrap font-mono text-xs border-r border-[var(--atlas-border)]/30">
                         {inlineEditingKey === key ? (
                           <div className="space-y-1">
                             <div className="flex items-center justify-end gap-1">
