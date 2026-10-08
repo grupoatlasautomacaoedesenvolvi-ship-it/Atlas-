@@ -14,7 +14,8 @@ import {
   AlertCircle,
   Clock,
   Filter,
-  Check
+  Check,
+  LifeBuoy
 } from 'lucide-react';
 
 interface NotificationCenterProps {
@@ -56,6 +57,8 @@ export function NotificationCenter({
         return <Database className="w-4 h-4 text-[var(--atlas-navy)]" />;
       case 'export':
         return <FileText className="w-4 h-4 text-teal-600" />;
+      case 'support':
+        return <LifeBuoy className="w-4 h-4 text-indigo-600" />;
       default:
         return <Info className="w-4 h-4 text-[var(--atlas-text-secondary)]" />;
     }
@@ -68,6 +71,7 @@ export function NotificationCenter({
       case 'audit': return 'bg-amber-50 text-amber-700 border-amber-200';
       case 'rule': return 'bg-[#f1efe8] text-[var(--atlas-navy)] border-[#e5e2d9]';
       case 'export': return 'bg-teal-50 text-teal-700 border-teal-200';
+      case 'support': return 'bg-indigo-50 text-indigo-700 border-indigo-200';
       default: return 'bg-[var(--atlas-surface-hover)] text-[var(--atlas-text-secondary)] border-[var(--atlas-border)]';
     }
   };
@@ -79,6 +83,7 @@ export function NotificationCenter({
       case 'audit': return 'Auditoria Fiscal';
       case 'rule': return 'Matriz / Regras';
       case 'export': return 'Exportação';
+      case 'support': return 'Suporte';
       default: return 'Sistema';
     }
   };

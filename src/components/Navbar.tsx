@@ -12,6 +12,7 @@ import {
   Calculator, 
   Search, 
   TrendingUp, 
+  CreditCard,
   Boxes,
   ChevronDown,
   ChevronRight,
@@ -30,7 +31,8 @@ import {
   BrainCircuit,
   Cloud,
   Upload,
-  Download
+  Download,
+  LifeBuoy
 } from 'lucide-react';
 import { useAuth } from '../lib/auth';
 import { backupLocalStorageToCloud, restoreLocalStorageFromCloud } from '../lib/syncBackupService';
@@ -57,6 +59,7 @@ interface NavItem {
 
 export function Navbar({ activeTab, setActiveTab, hasSped, hasXmlTerceiros, hasXmlProprio, hasXmlNfce }: NavbarProps) {
   const { signOut, userData } = useAuth();
+  const [unreadSupportCount, setUnreadSupportCount] = useState(0);
 
   // Navigation States
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -70,6 +73,35 @@ export function Navbar({ activeTab, setActiveTab, hasSped, hasXmlTerceiros, hasX
   const [openEstoque, setOpenEstoque] = useState(true);
   const [openConsultas, setOpenConsultas] = useState(true);
   const [openConfig, setOpenConfig] = useState(false);
+
+  // Fetch unread support count
+  useEffect(() => {
+    if (!userData) return;
+    const fetchUnread = async () => {
+      try {
+        const token = localStorage.getItem('atlas_auth_token');
+        const res = await fetch('/api/suporte/chamados', {
+          headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.chamados) {
+            const isSuper = userData.papel === 'super_admin';
+            const count = data.chamados.filter((c: any) => 
+              isSuper ? c.naoLidoPeloSuporte : c.naoLidoPeloAutor
+            ).length;
+            setUnreadSupportCount(count);
+          }
+        }
+      } catch (err) {
+        console.warn('Erro ao buscar contagem de suporte:', err);
+      }
+    };
+
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 180000); // a cada 3 min
+    return () => clearInterval(interval);
+  }, [userData]);
 
   const handleManualBackup = async () => {
     setSyncing(true);
@@ -107,7 +139,7 @@ export function Navbar({ activeTab, setActiveTab, hasSped, hasXmlTerceiros, hasX
 
   // Auto-expand module containing active tab
   useEffect(() => {
-    if (['clientes', 'robo_fiscal', 'robo_dashboard', 'aprendizado', 'upload', 'sped_raw', 'xml_terceiros', 'xml_proprio', 'xml_nfce', 'advanced_audit', 'all_items', 'sequence_gaps', 'omissas', 'reports'].includes(activeTab)) {
+    if (['clientes', 'robo_fiscal', 'robo_dashboard', 'aprendizado', 'upload', 'sped_raw', 'installments', 'xml_terceiros', 'xml_proprio', 'xml_nfce', 'advanced_audit', 'all_items', 'sequence_gaps', 'omissas', 'reports', 'suporte', 'suporte_admin'].includes(activeTab)) {
       setOpenSped(true);
     } else if (['stock_engineering'].includes(activeTab)) {
       setOpenEstoque(true);
@@ -128,6 +160,14 @@ export function Navbar({ activeTab, setActiveTab, hasSped, hasXmlTerceiros, hasX
       // INÍCIO / PAINEL GERAL
       { id: 'home', label: 'Painel Inicial', icon: LayoutDashboard, iconColor: 'text-[var(--atlas-navy)]', category: 'inicio', badge: { text: 'Início', variant: 'navy' } },
       { id: 'minhas_rotinas', label: 'Minhas Rotinas', icon: CheckCircle2, iconColor: 'text-[var(--atlas-accent)]', category: 'inicio' },
+      { 
+        id: isSuperAdmin ? 'suporte_admin' : 'suporte', 
+        label: isSuperAdmin ? 'Painel de Suporte' : 'Meus Chamados', 
+        icon: LifeBuoy, 
+        iconColor: 'text-indigo-600', 
+        category: 'inicio',
+        badge: unreadSupportCount > 0 ? { text: String(unreadSupportCount), variant: 'danger' } : undefined
+      },
 
       // CLIENTES & PASTA & ROBÔ
       { id: 'clientes', label: 'Clientes & Pastas', icon: Building2, iconColor: 'text-[var(--atlas-accent)]', category: 'sped', badge: { text: 'Nuvem', variant: 'accent' } },
@@ -141,6 +181,7 @@ export function Navbar({ activeTab, setActiveTab, hasSped, hasXmlTerceiros, hasX
       { id: 'all_items', label: 'Itens C170', icon: Layers, iconColor: 'text-[var(--atlas-text-secondary)]', category: 'sped', requiresSped: true },
       { id: 'sequence_gaps', label: 'Quebra de Sequência', icon: ListOrdered, iconColor: 'text-[var(--atlas-warning)]', category: 'sped', requiresSped: true },
       { id: 'omissas', label: 'Notas Omissas', icon: FileText, iconColor: 'text-[var(--atlas-danger)]', category: 'sped' },
+      { id: 'installments', label: 'Parcelas e Faturas', icon: CreditCard, iconColor: 'text-[var(--atlas-info)]', category: 'sped', requiresSped: true },
       { id: 'sped_raw', label: 'Arquivo SPED Bruto', icon: Database, iconColor: 'text-[var(--atlas-text-secondary)]', category: 'sped', requiresSped: true },
       { id: 'reports', label: 'Relatório Final', icon: FileSpreadsheet, iconColor: 'text-[var(--atlas-text-secondary)]', category: 'sped', requiresSped: true },
       ...(hasXmlTerceiros ? [{ id: 'xml_terceiros', label: 'XML Terceiros', icon: Archive, iconColor: 'text-[var(--atlas-warning)]', category: 'sped' as const, badge: { text: 'XML', variant: 'warning' as const } }] : []),

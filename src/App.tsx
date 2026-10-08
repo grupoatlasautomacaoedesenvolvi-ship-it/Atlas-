@@ -23,12 +23,16 @@ import { DifalCalculatorView } from './components/DifalCalculatorView';
 import { RegimeSimulatorView } from './components/RegimeSimulatorView';
 import { NcmLookupView } from './components/NcmLookupView';
 import { ClientesView } from './components/ClientesView';
+import { InstallmentsView } from './components/InstallmentsView';
 import { RoboFiscalView } from './components/RoboFiscalView';
 import { AprendizadoView } from './components/AprendizadoView';
 import { RoboDashboardView } from './components/RoboDashboardView';
 import { AiOrchestratorView } from './components/AiOrchestratorView';
 import { HomeDashboardView } from './components/HomeDashboardView';
 import { MinhasRotinasView } from './components/MinhasRotinasView';
+import { SuporteView } from './components/SuporteView';
+import { SuporteAdminView } from './components/SuporteAdminView';
+import { SupportFloatingButton } from './components/SupportFloatingButton';
 import { verificarEProcessarArquivosSalvos, getRoboLogs } from './lib/roboFiscalService';
 import { fetchClientes } from './lib/clientService';
 import { Cliente } from './types';
@@ -36,7 +40,7 @@ import { convertXmlToSpedDocument } from './lib/missingNotesHelper';
 import { LoginView } from './components/LoginView';
 import { useAuth } from './lib/auth';
 import { db, safeWrite } from './lib/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, query, where, onSnapshot, limit, orderBy } from 'firebase/firestore';
 import { exportSped } from './lib/spedExporter';
 import { executarAuditoriaUnificada } from './lib/auditEngine';
 import { fetchSpedXmlCloud, saveSpedXmlCloud } from './lib/spedXmlSyncService';
@@ -44,6 +48,56 @@ import { trackLoginEvent, trackEvent as trackLibEvent } from './lib/tracking';
 
 export default function App() {
   const { user, userData, loading } = useAuth();
+
+  // Monitorar chamados de suporte em tempo real para notificações
+  React.useEffect(() => {
+    if (!userData || !user) return;
+
+    const isSuper = userData.papel === 'super_admin';
+    const chamadosRef = collection(db, 'chamados');
+    
+    // Query: se super admin vê tudo, senão vê só os próprios
+    const q = isSuper 
+      ? query(chamadosRef, orderBy('atualizadoEm', 'desc'), limit(20))
+      : query(chamadosRef, where('autorUid', '==', user.uid), orderBy('atualizadoEm', 'desc'), limit(10));
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === 'modified' || change.type === 'added') {
+          const data = change.doc.data();
+          const id = change.doc.id;
+
+          // Evitar notificar a própria ação
+          // Se sou super admin e a última atualização foi lida pelo suporte, não notifico eu mesmo
+          // Se sou usuário e a última atualização foi lida pelo autor, não notifico eu mesmo
+          
+          if (isSuper) {
+            if (data.naoLidoPeloSuporte) {
+              addNotification(
+                'Suporte: Nova Atividade',
+                `O chamado ${data.protocolo} (${data.titulo}) recebeu uma atualização de um usuário.`,
+                'support',
+                'suporte_admin'
+              );
+            }
+          } else {
+            if (data.naoLidoPeloAutor) {
+              addNotification(
+                'Suporte: Nova Resposta',
+                `Seu chamado ${data.protocolo} foi respondido ou teve o status alterado para ${data.status}.`,
+                'support',
+                'suporte'
+              );
+            }
+          }
+        }
+      });
+    }, (error) => {
+      console.warn('Erro listener suporte:', error);
+    });
+
+    return () => unsubscribe();
+  }, [userData, user]);
   
   const trackUsageEvent = async (tipo: string) => {
     if (userData && userData.papel !== 'super_admin' && userData.escritorioId) {
@@ -1235,6 +1289,117 @@ export default function App() {
     alert('Recálculo dos blocos C100 e C190 Concluído!\n\n✓ Totais das notas fiscais (C100) atualizados com a soma dos itens (C170).\n✓ Registros analíticos C190 recalculados com precisão.\n✓ Duplicidades no C190 (mesmo CST, CFOP e Alíquota) foram identificadas e consolidadas em um único registro.');
   };
 
+  const handleSetInstallments = (invoices: any[]) => {
+    if (!spedData) {
+      alert('Por favor, carregue o arquivo SPED primeiro para vincular as parcelas.');
+      return;
+    }
+    const newData = { ...spedData, invoices: [...(spedData.invoices || []), ...invoices] };
+    handleSetSpedData(newData, true);
+    setActiveTab('installments');
+  };
+
+  const handleClearInstallments = () => {
+    if (!spedData) return;
+    const newData = { ...spedData, invoices: [] };
+    handleSetSpedData(newData, true);
+  };
+
+  const handleCrossReferenceXmlFinancial = () => {
+    if (!spedData) return;
+    
+    const allXmls = [...xmlTerceiros, ...xmlProprio, ...xmlNfce];
+    const xmlMap = new Map<string, XmlRecord>();
+    allXmls.forEach(x => {
+      if (x.chvNfe) xmlMap.set(x.chvNfe.replace(/\D/g, ''), x);
+    });
+
+    let matchCount = 0;
+    const newDocs = spedData.documents.map(doc => {
+      const cleanChv = (doc.chvNfe || '').replace(/\D/g, '');
+      const xml = xmlMap.get(cleanChv);
+      
+      if (xml) {
+        matchCount++;
+        
+        // Determinar IND_PGTO (Indicador de Pagamento)
+        // SPED C100: 0=Vista, 1=Prazo, 2=Outros, 9=Sem Pagamento
+        let indPgto = '2'; 
+        
+        if (xml.payments && xml.payments.length > 0) {
+          // No XML 4.0: 0=à vista, 1=a prazo
+          const xmlIndPag = xml.payments[0].indPag;
+          if (xmlIndPag === '0') indPgto = '0';
+          else if (xmlIndPag === '1') indPgto = '1';
+          else if (xmlIndPag === '9') indPgto = '9';
+          else indPgto = '2';
+        } else if (xml.installments && xml.installments.length > 0) {
+          indPgto = '1'; // Se tem duplicatas, é a prazo
+        } else {
+          // Heurística fallback
+          indPgto = '0'; // Se não tem info de parcelas nem pagamentos detalhados, assume vista ou outros
+        }
+
+        const invoice = {
+          indEmit: xml.tpNF === '1' ? '0' : '1',
+          codPart: doc.emitenteOrDest,
+          codMod: xml.mod,
+          serie: xml.serie,
+          numDoc: xml.nNF,
+          dtEmis: (xml.dhEmi || '').substring(0, 10).replace(/-/g, ''),
+          vlTit: xml.vFatOrig || xml.vNF,
+          vlDesc: xml.vFatDesc || 0,
+          vlLiq: xml.vFatLiq || xml.vNF,
+          installments: (xml.installments || []).map(p => ({
+            numParc: p.nDup,
+            dtVcto: p.dVenc,
+            vlParc: p.vDup
+          }))
+        };
+
+        return { ...doc, indPgto, invoice };
+      }
+      return doc;
+    });
+
+    // Update rawLines if necessary
+    const newRawLines = spedData.rawLines ? [...spedData.rawLines] : [];
+    if (newRawLines.length > 0) {
+      newDocs.forEach(doc => {
+        if (doc.numeroLinhaOriginal !== undefined && doc.numeroLinhaOriginal >= 0) {
+          const line = newRawLines[doc.numeroLinhaOriginal];
+          if (line && line.reg === 'C100') {
+            const fields = line.content.split('|');
+            // IND_PGTO é o campo 13 (index 13 no array splitado por '|')
+            if (doc.indPgto !== undefined && fields[13] !== doc.indPgto) {
+              fields[13] = doc.indPgto;
+              newRawLines[doc.numeroLinhaOriginal] = { ...line, content: fields.join('|') };
+            }
+          }
+        }
+      });
+    }
+
+    // Extract all invoices for the dedicated view
+    const allInvoices = newDocs.filter(d => !!d.invoice).map(d => d.invoice!);
+
+    const updatedSpedData = {
+      ...spedData,
+      documents: newDocs,
+      rawLines: newRawLines,
+      invoices: allInvoices
+    };
+
+    handleSetSpedData(updatedSpedData, true);
+    addNotification(
+      'Cruzamento Financeiro Concluído',
+      `Cruzamento de XML concluído: ${matchCount} notas tiveram informações de parcelas e pagamento sincronizadas com o SPED.`,
+      'audit'
+    );
+    alert(`Sucesso! ${matchCount} documentos foram atualizados com informações financeiras dos XMLs.`);
+    setActiveTab('installments');
+  };
+
   const handleExportSped = () => {
     if (!spedData) return;
     console.log('[SPED Export Verification] Executando camada de verificação extra e recálculo de hierarquia antes da exportação...');
@@ -1562,6 +1727,10 @@ export default function App() {
             xmlTerceirosCount={xmlTerceiros.length}
             xmlProprioCount={xmlProprio.length}
             xmlNfceCount={xmlNfce.length}
+            installmentsCount={spedData?.invoices?.length || 0}
+            onInstallmentsLoaded={handleSetInstallments}
+            onClearInstallments={handleClearInstallments}
+            addNotification={addNotification}
           />
         )}
 
@@ -1676,6 +1845,13 @@ export default function App() {
           />
         )}
 
+        {activeTab === 'installments' && spedData && (
+          <InstallmentsView
+            spedData={spedData}
+            onCrossReferenceXml={handleCrossReferenceXmlFinancial}
+          />
+        )}
+
         {activeTab === 'xml_terceiros' && (
           <XmlView
             title="XMLs de Terceiros"
@@ -1699,7 +1875,16 @@ export default function App() {
             xmlRecords={xmlNfce}
           />
         )}
+
+        {activeTab === 'suporte' && (
+          <SuporteView />
+        )}
+
+        {activeTab === 'suporte_admin' && (
+          <SuporteAdminView />
+        )}
         </main>
+        <SupportFloatingButton />
       </div>
     </div>
   );

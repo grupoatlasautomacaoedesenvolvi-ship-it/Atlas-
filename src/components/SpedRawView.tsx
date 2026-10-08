@@ -37,11 +37,11 @@ export function SpedRawView({ spedData, onSyncTotals }: SpedRawViewProps) {
           <h1 className="text-3xl font-bold text-[var(--atlas-navy)] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
             Registros Brutos
           </h1>
-          <p className="text-sm text-[var(--atlas-text-secondary)] mt-2">Visualização técnica fiel aos registros originais (0000, 0200, C100, C170, C190)</p>
+          <p className="text-sm text-[var(--atlas-text-secondary)] mt-2">Visualização técnica fiel aos registros originais (0000, 0200, C100, C140, C141, C170, C190)</p>
         </div>
 
         <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
-          {['ALL', '0000', '0200', 'C100', 'C170', 'C190'].map(reg => (
+          {['ALL', '0000', '0200', 'C100', 'C140', 'C141', 'C170', 'C190'].map(reg => (
             <button
               key={reg}
               onClick={() => setSelectedReg(reg)}

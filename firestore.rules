@@ -71,5 +71,20 @@ service cloud.firestore {
       allow create: if isSignedIn() && request.resource.data.escritorioId == meuEscritorio();
       allow update, delete: if false;
     }
+
+    // Suporte: Ficam FORA de /escritorios para o super_admin ler sem acessar dados fiscais.
+    // Toda escrita é feita pelo backend (Admin SDK).
+    match /chamados/{chamadoId} {
+      allow read: if isSignedIn() && (ehSuperAdmin() || resource.data.autorUid == request.auth.uid);
+      allow write: if false;
+
+      match /mensagens/{msgId} {
+        allow read: if isSignedIn() && (
+          ehSuperAdmin() ||
+          get(/databases/$(database)/documents/chamados/$(chamadoId)).data.autorUid == request.auth.uid
+        );
+        allow write: if false;
+      }
+    }
   }
 }

@@ -451,6 +451,266 @@ export async function createApp() {
     }
   });
 
+  // ============ Módulo Suporte ============
+
+  // POST /api/suporte/chamados → cria chamado
+  app.post('/api/suporte/chamados', requireAuth, async (req: AuthRequest, res) => {
+    try {
+      const { tipo, titulo, descricao, telaOrigem, anexoBase64, versaoApp } = req.body;
+
+      if (!tipo || !titulo || !descricao) {
+        return res.status(400).json({ error: 'Tipo, título e descrição são obrigatórios.' });
+      }
+      if (titulo.length > 120) return res.status(400).json({ error: 'Título muito longo (máx 120).' });
+      if (descricao.length > 5000) return res.status(400).json({ error: 'Descrição muito longa (máx 5000).' });
+      if (anexoBase64 && anexoBase64.length > 410000) return res.status(400).json({ error: 'Anexo muito grande (máx 300KB).' });
+
+      const { getNextProtocol, notifyNewTicket } = await import('./suporteService');
+      const protocolo = await getNextProtocol();
+      
+      let escritorioNome = 'Não informado';
+      if (req.escritorioId) {
+        const escDoc = await adminDb.collection('escritorios').doc(req.escritorioId).get();
+        if (escDoc.exists) escritorioNome = escDoc.data()?.nome || escritorioNome;
+      }
+
+      const agora = new Date().toISOString();
+      const chamado: any = {
+        protocolo,
+        tipo,
+        titulo,
+        descricao,
+        telaOrigem: telaOrigem || 'Desconhecida',
+        anexoBase64: anexoBase64 || null,
+        status: 'ABERTO',
+        autorUid: req.user!.uid,
+        autorNome: req.user!.name || req.user!.displayName || 'Usuário',
+        autorEmail: req.user!.email || '',
+        escritorioId: req.escritorioId || 'sem-vinculo',
+        escritorioNome,
+        versaoApp: versaoApp || '1.0.0',
+        criadoEm: agora,
+        atualizadoEm: agora,
+        naoLidoPeloAutor: false,
+        naoLidoPeloSuporte: true,
+        aguardandoRespostaDesde: agora
+      };
+
+      const ref = await adminDb.collection('chamados').add(chamado);
+      chamado.id = ref.id;
+
+      // Notificação assíncrona
+      notifyNewTicket(chamado).catch(e => console.error('Erro notificação novo chamado:', e));
+
+      res.json({ success: true, chamado });
+    } catch (err: any) {
+      console.error('Erro criar chamado:', err);
+      res.status(500).json({ error: 'Erro ao abrir chamado.' });
+    }
+  });
+
+  // GET /api/suporte/chamados → lista chamados
+  app.get('/api/suporte/chamados', requireAuth, async (req: AuthRequest, res) => {
+    try {
+      const { tipo, status, prioridade, escritorioId } = req.query;
+      const ehSuperAdmin = req.papel === 'super_admin';
+
+      let query: any = adminDb.collection('chamados');
+
+      if (!ehSuperAdmin) {
+        query = query.where('autorUid', '==', req.user!.uid);
+      } else {
+        // Filtros exclusivos super_admin
+        if (tipo) query = query.where('tipo', '==', tipo);
+        if (status) query = query.where('status', '==', status);
+        if (prioridade) query = query.where('prioridade', '==', prioridade);
+        if (escritorioId) query = query.where('escritorioId', '==', escritorioId);
+      }
+
+      const snapshot = await query.get();
+      const chamados = snapshot.docs.map((d: any) => ({ id: d.id, ...d.data() }));
+      
+      // Ordenação manual se necessário, ou confiar na query. Aqui vamos ordenar por data
+      chamados.sort((a: any, b: any) => new Date(b.criadoEm).getTime() - new Date(a.criadoEm).getTime());
+
+      res.json({ success: true, chamados });
+    } catch (err: any) {
+      res.status(500).json({ error: 'Erro ao listar chamados.' });
+    }
+  });
+
+  // GET /api/suporte/chamados/:id → detalhe + mensagens
+  app.get('/api/suporte/chamados/:id', requireAuth, async (req: AuthRequest, res) => {
+    try {
+      const { id } = req.params;
+      const doc = await adminDb.collection('chamados').doc(id).get();
+
+      if (!doc.exists) return res.status(404).json({ error: 'Chamado não encontrado.' });
+      
+      const chamado = doc.data();
+      const ehSuperAdmin = req.papel === 'super_admin';
+      if (!ehSuperAdmin && chamado?.autorUid !== req.user!.uid) {
+        return res.status(403).json({ error: 'Acesso negado a este chamado.' });
+      }
+
+      const msgSnapshot = await adminDb.collection('chamados').doc(id).collection('mensagens').orderBy('criadoEm', 'asc').get();
+      const mensagens = msgSnapshot.docs.map((d: any) => ({ id: d.id, ...d.data() }));
+
+      res.json({ success: true, chamado: { id: doc.id, ...chamado }, mensagens });
+    } catch (err: any) {
+      res.status(500).json({ error: 'Erro ao buscar detalhes do chamado.' });
+    }
+  });
+
+  // POST /api/suporte/chamados/:id/mensagens → adiciona mensagem
+  app.post('/api/suporte/chamados/:id/mensagens', requireAuth, async (req: AuthRequest, res) => {
+    try {
+      const { id } = req.params;
+      const { texto, anexoBase64 } = req.body;
+
+      if (!texto) return res.status(400).json({ error: 'Texto da mensagem é obrigatório.' });
+      if (texto.length > 5000) return res.status(400).json({ error: 'Texto muito longo (máx 5000).' });
+      if (anexoBase64 && anexoBase64.length > 410000) return res.status(400).json({ error: 'Anexo muito grande.' });
+
+      const chamRef = adminDb.collection('chamados').doc(id);
+      const doc = await chamRef.get();
+      if (!doc.exists) return res.status(404).json({ error: 'Chamado não encontrado.' });
+
+      const chamado = doc.data() as any;
+      const ehSuperAdmin = req.papel === 'super_admin';
+      const ehAutor = chamado.autorUid === req.user!.uid;
+
+      if (!ehSuperAdmin && !ehAutor) {
+        return res.status(403).json({ error: 'Acesso negado.' });
+      }
+
+      const agora = new Date().toISOString();
+      const novaMsg: MensagemChamado = {
+        id: '', // será preenchido
+        autorUid: req.user!.uid,
+        autorNome: req.user!.name || req.user!.displayName || 'Usuário',
+        autorPapel: req.papel as any,
+        texto,
+        anexoBase64: anexoBase64 || undefined,
+        criadoEm: agora
+      };
+
+      const msgRef = await chamRef.collection('mensagens').add(novaMsg);
+      novaMsg.id = msgRef.id;
+
+      const updateData: any = { atualizadoEm: agora };
+      const { notifyUserResponse, notifyAdminResponse } = await import('./suporteService');
+
+      if (ehSuperAdmin) {
+        updateData.status = 'RESPONDIDO';
+        updateData.naoLidoPeloAutor = true;
+        updateData.aguardandoRespostaDesde = null;
+        notifyAdminResponse(chamado, texto).catch(e => console.error('Erro notif admin resp:', e));
+      } else {
+        if (chamado.status === 'RESPONDIDO') updateData.status = 'EM_ANALISE';
+        updateData.naoLidoPeloSuporte = true;
+        if (!chamado.aguardandoRespostaDesde) {
+          updateData.aguardandoRespostaDesde = agora;
+        }
+        notifyUserResponse(chamado, texto).catch(e => console.error('Erro notif user resp:', e));
+      }
+
+      await chamRef.update(updateData);
+      res.json({ success: true, mensagem: novaMsg });
+    } catch (err: any) {
+      res.status(500).json({ error: 'Erro ao enviar mensagem.' });
+    }
+  });
+
+  // PATCH /api/suporte/chamados/:id → SOMENTE super_admin: altera status e prioridade
+  app.patch('/api/suporte/chamados/:id', requireAuth, async (req: AuthRequest, res) => {
+    try {
+      if (req.papel !== 'super_admin') return res.status(403).json({ error: 'Apenas suporte pode alterar metadados.' });
+      
+      const { id } = req.params;
+      const { status, prioridade } = req.body;
+      const updateData: any = { atualizadoEm: new Date().toISOString() };
+      
+      if (status) updateData.status = status;
+      if (prioridade) updateData.prioridade = prioridade;
+
+      const chamRef = adminDb.collection('chamados').doc(id);
+      const doc = await chamRef.get();
+      if (!doc.exists) return res.status(404).json({ error: 'Chamado não encontrado.' });
+      
+      const chamadoAntes = doc.data() as any;
+
+      // Se virou RESOLVIDO ou FECHADO, zera o tempo de espera
+      if (status === 'RESOLVIDO' || status === 'FECHADO') {
+        updateData.aguardandoRespostaDesde = null;
+      }
+
+      await chamRef.update(updateData);
+
+      const { notifyStatusChange } = await import('./suporteService');
+      if (status && status !== chamadoAntes.status) {
+        notifyStatusChange({ ...chamadoAntes, status }).catch(e => console.error('Erro notif status:', e));
+      }
+
+      res.json({ success: true });
+    } catch (err: any) {
+      res.status(500).json({ error: 'Erro ao atualizar chamado.' });
+    }
+  });
+
+  // POST /api/suporte/chamados/:id/resolver → o autor pode marcar como RESOLVIDO
+  app.post('/api/suporte/chamados/:id/resolver', requireAuth, async (req: AuthRequest, res) => {
+    try {
+      const { id } = req.params;
+      const chamRef = adminDb.collection('chamados').doc(id);
+      const doc = await chamRef.get();
+      
+      if (!doc.exists) return res.status(404).json({ error: 'Chamado não encontrado.' });
+      const chamado = doc.data();
+      if (chamado?.autorUid !== req.user!.uid && req.papel !== 'super_admin') {
+        return res.status(403).json({ error: 'Acesso negado.' });
+      }
+
+      await chamRef.update({
+        status: 'RESOLVIDO',
+        aguardandoRespostaDesde: null,
+        atualizadoEm: new Date().toISOString()
+      });
+
+      res.json({ success: true });
+    } catch (err: any) {
+      res.status(500).json({ error: 'Erro ao marcar como resolvido.' });
+    }
+  });
+
+  // POST /api/suporte/chamados/:id/lido → zera o "não lido" de quem chamou
+  app.post('/api/suporte/chamados/:id/lido', requireAuth, async (req: AuthRequest, res) => {
+    try {
+      const { id } = req.params;
+      const chamRef = adminDb.collection('chamados').doc(id);
+      const doc = await chamRef.get();
+      
+      if (!doc.exists) return res.status(404).json({ error: 'Chamado não encontrado.' });
+      const chamado = doc.data();
+      
+      const updateData: any = {};
+      if (req.papel === 'super_admin') {
+        updateData.naoLidoPeloSuporte = false;
+      }
+      if (chamado?.autorUid === req.user!.uid) {
+        updateData.naoLidoPeloAutor = false;
+      }
+
+      if (Object.keys(updateData).length > 0) {
+        await chamRef.update(updateData);
+      }
+
+      res.json({ success: true });
+    } catch (err: any) {
+      res.status(500).json({ error: 'Erro ao marcar como lido.' });
+    }
+  });
+
   // Rota de IA / Orquestração Fiscal
   app.post('/api/ai/orchestrate', requireAuth, async (req: AuthRequest, res) => {
     try {

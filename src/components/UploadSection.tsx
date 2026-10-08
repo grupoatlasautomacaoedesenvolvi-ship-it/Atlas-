@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Upload, FileCheck, ArrowRight, FileCode, Archive, FilePlus, AlertCircle, CheckCircle2, Sparkles, RefreshCw, Loader2 } from 'lucide-react';
+import { Upload, FileCheck, ArrowRight, FileCode, Archive, FilePlus, AlertCircle, CheckCircle2, Sparkles, RefreshCw, Loader2, CreditCard } from 'lucide-react';
 import { SpedData, XmlRecord, XmlCategoria } from '../types';
 import { parseSpedContent, parseXmlFiles } from '../lib/clientParser';
 import { trackConferenciaEvent } from '../lib/tracking';
@@ -19,9 +19,13 @@ interface UploadSectionProps {
   xmlTerceirosCount: number;
   xmlProprioCount: number;
   xmlNfceCount: number;
+  installmentsCount?: number;
+  onInstallmentsLoaded?: (invoices: any[]) => void;
+  onClearInstallments?: () => void;
   spedData?: SpedData | null;
   allXmlRecords?: XmlRecord[];
   onAppendXmlRecords?: (records: XmlRecord[]) => void;
+  addNotification?: (title: string, message: string, type: any) => void;
 }
 
 const SAMPLE_SPED_CONTENT = `|0000|016|0|01012023|31012023|ATLAS COMERCIO DE COMBUSTIVEIS LTDA|12345678000199||SP|123456789|123456|3550308||3|1|
@@ -54,9 +58,13 @@ export function UploadSection({
   xmlTerceirosCount,
   xmlProprioCount,
   xmlNfceCount,
+  installmentsCount = 0,
+  onInstallmentsLoaded,
+  onClearInstallments,
   spedData,
   allXmlRecords = [],
-  onAppendXmlRecords
+  onAppendXmlRecords,
+  addNotification
 }: UploadSectionProps) {
   const { userData } = useAuth();
   const [spedFileName, setSpedFileName] = useState<string | null>(spedLoaded ? 'Arquivo SPED Carregado' : null);
@@ -66,6 +74,7 @@ export function UploadSection({
   const [xmlLoadings, setXmlLoadings] = useState<Record<string, boolean>>({});
   const [xmlProgress, setXmlProgress] = useState<Record<string, { pct: number; text: string }>>({});
   const [loadingMissingXmls, setLoadingMissingXmls] = useState(false);
+  const [loadingInstallments, setLoadingInstallments] = useState(false);
   const [missingXmlProgressText, setMissingXmlProgressText] = useState('');
   const [lastCapturedCount, setLastCapturedCount] = useState<number | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -220,6 +229,30 @@ export function UploadSection({
     } finally {
       setLoadingMissingXmls(false);
       setMissingXmlProgressText('');
+      if (e.target) e.target.value = '';
+    }
+  };
+
+  const handleInstallmentsUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setLoadingInstallments(true);
+
+    try {
+      const text = await file.text();
+      // Podemos reutilizar o parseSpedContent pois ele já identifica C140/C141
+      const result = await parseSpedContent(text);
+      if (result.invoices && result.invoices.length > 0) {
+        onInstallmentsLoaded?.(result.invoices);
+        addNotification?.('Importação de Parcelas', `${result.invoices.length} faturas carregadas de arquivo avulso.`, 'import');
+      } else {
+        alert('Nenhum registro de parcela (C140/C141) encontrado no arquivo selecionado.');
+      }
+    } catch (err) {
+      console.error('Erro ao processar arquivo de parcelas:', err);
+      alert('Erro ao processar arquivo de parcelas.');
+    } finally {
+      setLoadingInstallments(false);
       if (e.target) e.target.value = '';
     }
   };
@@ -474,6 +507,49 @@ export function UploadSection({
               <label className="atlas-btn atlas-btn-accent py-1.5 px-4 text-xs cursor-pointer">
                 <span>{xmlNfceCount > 0 ? 'Adicionar XML/ZIP' : 'Enviar XML/ZIP'}</span>
                 <input type="file" accept=".xml,.zip" multiple onChange={(e) => handleXmlUpload(e, 'XML_NFCE')} className="hidden" />
+              </label>
+            </div>
+          </div>
+
+          {/* LINHA 5: Arquivo de Parcelas (C140/C141) */}
+          <div className="atlas-list-row justify-between flex-col md:flex-row md:items-center gap-4">
+            <div className="flex items-center space-x-4 min-w-0">
+              <div className="p-2.5 rounded-lg bg-[var(--atlas-info-bg)] text-[var(--atlas-info)] shrink-0 border border-[var(--atlas-info)]/20">
+                <CreditCard className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <h3 className="font-bold text-[var(--atlas-text)] text-xs">Arquivo de Parcelas (C140/C141)</h3>
+                  {installmentsCount > 0 ? (
+                    <span className="atlas-pill atlas-pill-info">{installmentsCount} faturas</span>
+                  ) : (
+                    <span className="atlas-pill atlas-pill-info">Opcional</span>
+                  )}
+                </div>
+                <p className="text-[var(--atlas-text-secondary)] text-xs truncate mt-0.5">
+                  Importe dados financeiros (C140/C141) de um arquivo TXT separado do SPED.
+                </p>
+                {loadingInstallments && (
+                  <div className="mt-2 text-xs text-[var(--atlas-info)] font-medium flex items-center gap-2">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Processando parcelas...</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2 shrink-0 self-end md:self-auto">
+              {installmentsCount > 0 && onClearInstallments && (
+                <button
+                  onClick={onClearInstallments}
+                  className="atlas-btn atlas-btn-secondary py-1.5 px-3 text-xs text-[var(--atlas-danger)] hover:border-[var(--atlas-danger)]"
+                >
+                  Remover
+                </button>
+              )}
+              <label className="atlas-btn atlas-btn-secondary py-1.5 px-4 text-xs cursor-pointer border-[var(--atlas-info)] text-[var(--atlas-info)] hover:bg-[var(--atlas-info-bg)]">
+                <span>{installmentsCount > 0 ? 'Substituir Parcelas' : 'Importar Parcelas'}</span>
+                <input type="file" accept=".txt" onChange={handleInstallmentsUpload} className="hidden" />
               </label>
             </div>
           </div>

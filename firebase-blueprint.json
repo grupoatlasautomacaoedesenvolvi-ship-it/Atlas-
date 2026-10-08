@@ -102,6 +102,47 @@
         "timestamp": { "type": "string" }
       },
       "required": ["tipo", "escritorioId", "timestamp"]
+    },
+    "ChamadoSuporte": {
+      "title": "ChamadoSuporte",
+      "description": "Support ticket created by user",
+      "type": "object",
+      "properties": {
+        "protocolo": { "type": "string" },
+        "tipo": { "type": "string", "enum": ["SUGESTAO", "RECLAMACAO", "ERRO", "DUVIDA"] },
+        "titulo": { "type": "string", "maxLength": 120 },
+        "descricao": { "type": "string", "maxLength": 5000 },
+        "telaOrigem": { "type": "string" },
+        "anexoBase64": { "type": "string", "maxLength": 410000 },
+        "status": { "type": "string", "enum": ["ABERTO", "EM_ANALISE", "RESPONDIDO", "RESOLVIDO", "FECHADO"] },
+        "prioridade": { "type": "string", "enum": ["BAIXA", "MEDIA", "ALTA", "CRITICA"] },
+        "autorUid": { "type": "string" },
+        "autorNome": { "type": "string" },
+        "autorEmail": { "type": "string" },
+        "escritorioId": { "type": "string" },
+        "escritorioNome": { "type": "string" },
+        "versaoApp": { "type": "string" },
+        "criadoEm": { "type": "string" },
+        "atualizadoEm": { "type": "string" },
+        "naoLidoPeloAutor": { "type": "boolean" },
+        "naoLidoPeloSuporte": { "type": "boolean" },
+        "aguardandoRespostaDesde": { "type": ["string", "null"] }
+      },
+      "required": ["protocolo", "tipo", "titulo", "descricao", "status", "autorUid", "escritorioId", "criadoEm"]
+    },
+    "MensagemChamado": {
+      "title": "MensagemChamado",
+      "description": "Message within a support ticket",
+      "type": "object",
+      "properties": {
+        "autorUid": { "type": "string" },
+        "autorNome": { "type": "string" },
+        "autorPapel": { "type": "string", "enum": ["super_admin", "admin_escritorio", "colaborador"] },
+        "texto": { "type": "string", "maxLength": 5000 },
+        "anexoBase64": { "type": "string", "maxLength": 410000 },
+        "criadoEm": { "type": "string" }
+      },
+      "required": ["autorUid", "autorNome", "autorPapel", "texto", "criadoEm"]
     }
   },
   "firestore": {
@@ -148,6 +189,14 @@
     "/eventosUso/{eventoId}": {
       "schema": { "$ref": "#/entities/EventoUso" },
       "description": "Platform usage events"
+    },
+    "/chamados/{chamadoId}": {
+      "schema": { "$ref": "#/entities/ChamadoSuporte" },
+      "description": "Support tickets collection"
+    },
+    "/chamados/{chamadoId}/mensagens/{mensagemId}": {
+      "schema": { "$ref": "#/entities/MensagemChamado" },
+      "description": "Messages within a support ticket"
     }
   }
 }

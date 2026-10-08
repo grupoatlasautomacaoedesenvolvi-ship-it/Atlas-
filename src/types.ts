@@ -29,9 +29,31 @@ export interface SpedItem {
   isModified?: boolean;
 }
 
+export interface SpedInstallment {
+  numParc: string;
+  dtVcto: string;
+  vlParc: number;
+  numeroLinhaOriginal?: number;
+}
+
+export interface SpedInvoice {
+  indEmit: string;
+  codPart: string;
+  codMod: string;
+  serie: string;
+  numDoc: string;
+  dtEmis: string;
+  vlTit: number;
+  vlDesc: number;
+  vlLiq: number;
+  installments: SpedInstallment[];
+  numeroLinhaOriginal?: number;
+}
+
 export interface SpedDocument {
   id: string;
   indOper: string;
+  indPgto?: string; // 0=Vista, 1=Prazo, 2=Outros/Nenhum
   numDoc: string;
   serie: string;
   chvNfe: string;
@@ -45,6 +67,7 @@ export interface SpedDocument {
   codSit: string;
   codMod: string;
   items: SpedItem[];
+  invoice?: SpedInvoice;
   numeroLinhaOriginal: number;
 }
 
@@ -129,6 +152,7 @@ export interface SpedData {
   c190Raw?: { docId: string; cstIcms: string; cfop: string; aliqIcms: number; vlOpr: number; vlBcIcms: number; vlIcms: number }[];
   items0200?: Sped0200Item[];
   blocoH?: SpedBlocoH;
+  invoices?: SpedInvoice[];
 }
 
 export type XmlCategoria = 'XML_TERCEIROS' | 'XML_PROPRIO' | 'XML_NFCE';
@@ -147,6 +171,18 @@ export interface XmlItem {
   pIcms: number;
   vIcms: number;
   vFcp: number;
+}
+
+export interface XmlInstallment {
+  nDup: string;
+  dVenc: string;
+  vDup: number;
+}
+
+export interface XmlPayment {
+  indPag: string; // 0=Vista, 1=Prazo
+  tPag: string;
+  vPag: number;
 }
 
 export interface XmlRecord {
@@ -171,6 +207,13 @@ export interface XmlRecord {
   tpEvento?: string;
   isCancelada?: boolean;
   isTerceiros?: boolean;
+  // Financeiro
+  vFatOrig?: number;
+  vFatDesc?: number;
+  vFatLiq?: number;
+  nFat?: string;
+  installments?: XmlInstallment[];
+  payments?: XmlPayment[];
 }
 
 export interface StateTaxRule {
@@ -300,7 +343,7 @@ export interface DecisaoNotaOmissa {
   decididoEm: string;
 }
 
-export type NotificationType = 'system' | 'edit' | 'import' | 'audit' | 'export' | 'rule';
+export type NotificationType = 'system' | 'edit' | 'import' | 'audit' | 'export' | 'rule' | 'support';
 
 export interface AppNotification {
   id: string;
@@ -545,6 +588,41 @@ export interface Rotina {
   visibilidade: RotinaVisibilidade;
   criadoEm: string;
   atualizadoEm: string;
+}
+
+// ============ Suporte ============
+
+export interface ChamadoSuporte {
+  id: string;
+  protocolo: string;            // ex.: SUP-2026-000123, sequencial
+  tipo: 'SUGESTAO' | 'RECLAMACAO' | 'ERRO' | 'DUVIDA';
+  titulo: string;
+  descricao: string;
+  telaOrigem: string;           // aba ativa no momento da abertura
+  anexoBase64?: string;         // print opcional, < 300 KB
+  status: 'ABERTO' | 'EM_ANALISE' | 'RESPONDIDO' | 'RESOLVIDO' | 'FECHADO';
+  prioridade?: 'BAIXA' | 'MEDIA' | 'ALTA' | 'CRITICA';   // definida SOMENTE pelo super_admin
+  autorUid: string;
+  autorNome: string;
+  autorEmail: string;
+  escritorioId: string;
+  escritorioNome: string;
+  versaoApp: string;
+  criadoEm: string;
+  atualizadoEm: string;
+  naoLidoPeloAutor: boolean;
+  naoLidoPeloSuporte: boolean;
+  aguardandoRespostaDesde?: string | null;
+}
+
+export interface MensagemChamado {
+  id: string;
+  autorUid: string;
+  autorNome: string;
+  autorPapel: 'super_admin' | 'admin_escritorio' | 'colaborador';
+  texto: string;
+  anexoBase64?: string;
+  criadoEm: string;
 }
 
 

@@ -32,7 +32,11 @@ export function exportSped(spedData: SpedData, achadosAprovados: Achado[]): Resu
     return { textoCorrigido: '', relatorio: [], erros: ['SPED sem texto original preservado — não é possível exportar com segurança.'] };
   }
 
-  let linhas = spedData.rawLines.map(l => l.content);
+  // Filtrar C140 e C141 do arquivo principal conforme solicitado (validador não aceita no SPED principal)
+  let linhas = spedData.rawLines
+    .filter(l => l.reg !== 'C140' && l.reg !== 'C141')
+    .map(l => l.content);
+  
   const relatorio: AlteracaoAplicada[] = [];
   const docIdsAfetados = new Set<string>();
 
@@ -795,4 +799,53 @@ export function exportSped(spedData: SpedData, achadosAprovados: Achado[]): Resu
   linhas = [...nonBlock9Lines, ...newBlock9Lines];
 
   return { textoCorrigido: linhas.join('\r\n') + '\r\n', relatorio, erros: [] };
+}
+
+export function exportInstallments(spedData: SpedData): string {
+  if (!spedData.invoices || spedData.invoices.length === 0) return '';
+
+  const lines: string[] = [];
+  
+  // Header mínimo para um arquivo de parcelas se for ser validado separadamente (ou apenas listagem)
+  // Como o usuário disse que o validador não aceita no SPED, talvez eles precisem de um arquivo
+  // que siga a estrutura de blocos do SPED mas contenha APENAS o financeiro.
+  
+  lines.push(`|0000|016|0|${spedData.header.dtIni}|${spedData.header.dtFin}|${spedData.header.nome}|${spedData.header.cnpj}||${spedData.header.uf}|||||3|1|`);
+  lines.push(`|C001|0|`);
+
+  for (const inv of spedData.invoices) {
+    const vlTit = formatarComoOriginal(inv.vlTit);
+    const vlDesc = formatarComoOriginal(inv.vlDesc);
+    const vlLiq = formatarComoOriginal(inv.vlLiq);
+    
+    // Precisamos de um C100 pai fictício se o validador exigir hierarquia
+    // Mas se for apenas para transporte de dados, o C140/C141 basta.
+    // Vamos incluir o C100 mínimo para manter a integridade do layout SPED.
+    lines.push(`|C100|0|1|${inv.codPart}|${inv.codMod}|00|${inv.serie}|${inv.numDoc}||${inv.dtEmis}||${vlTit}||0,00|0,00|${vlTit}||0,00|0,00|0,00|0,00|0,00|0,00|0,00|0,00|0,00|0,00|0,00|0,00|`);
+    
+    lines.push(`|C140|${inv.indEmit}|${inv.codPart}|${inv.codMod}|${inv.serie}|${inv.numDoc}|${inv.dtEmis}|${vlTit}|${vlDesc}|${vlLiq}|`);
+    
+    for (const p of inv.installments) {
+      const vlParc = formatarComoOriginal(p.vlParc);
+      lines.push(`|C141|${p.numParc}|${p.dtVcto}|${vlParc}|`);
+    }
+  }
+
+  lines.push(`|C990|${lines.length}|`);
+  lines.push(`|9001|0|`);
+  lines.push(`|9900|0000|1|`);
+  lines.push(`|9900|C001|1|`);
+  lines.push(`|9900|C100|${spedData.invoices.length}|`);
+  lines.push(`|9900|C140|${spedData.invoices.length}|`);
+  const totalC141 = spedData.invoices.reduce((acc, inv) => acc + inv.installments.length, 0);
+  lines.push(`|9900|C141|${totalC141}|`);
+  lines.push(`|9900|C990|1|`);
+  lines.push(`|9900|9001|1|`);
+  lines.push(`|9900|9900|10|`);
+  lines.push(`|9900|9990|1|`);
+  lines.push(`|9900|9999|1|`);
+  lines.push(`|9990|13|`);
+  lines.push(`|9999|${lines.length + 1}|`);
+
+  return lines.join('\r\n') + '\r\n';
 }

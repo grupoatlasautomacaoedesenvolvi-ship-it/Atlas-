@@ -1,4 +1,4 @@
-import { SpedData, SpedDocument, SpedItem, SpedHeader, SpedC190Reconciliation, SpedApuracao, XmlRecord, XmlItem, Sped0200Item, SpedH010Item, SpedBlocoH } from '../types';
+import { SpedData, SpedDocument, SpedItem, SpedHeader, SpedC190Reconciliation, SpedApuracao, XmlRecord, XmlItem, Sped0200Item, SpedH010Item, SpedBlocoH, XmlInstallment, XmlPayment } from '../types';
 import JSZip from 'jszip';
 
 export function extractCnpjFromChave(chvNfe: string): { cnpjEmit: string; chaveValida: boolean } {
@@ -129,6 +129,42 @@ export function parseXmlDocument(xmlText: string): XmlRecord | null {
       });
     }
 
+    // Financeiro: Fatura e Duplicatas
+    const cobr = doc.getElementsByTagName('cobr')[0];
+    let vFatOrig, vFatDesc, vFatLiq, nFat;
+    const installments: XmlInstallment[] = [];
+    if (cobr) {
+      const fat = cobr.getElementsByTagName('fat')[0];
+      if (fat) {
+        nFat = getDescendantText(fat, ['nFat']);
+        vFatOrig = parseFloat(getDescendantText(fat, ['vOrig']).replace(',', '.')) || 0;
+        vFatDesc = parseFloat(getDescendantText(fat, ['vDesc']).replace(',', '.')) || 0;
+        vFatLiq = parseFloat(getDescendantText(fat, ['vLiq']).replace(',', '.')) || 0;
+      }
+      const dups = cobr.getElementsByTagName('dup');
+      for (let i = 0; i < dups.length; i++) {
+        installments.push({
+          nDup: getDescendantText(dups[i], ['nDup']),
+          dVenc: getDescendantText(dups[i], ['dVenc']).replace(/-/g, ''), // YYYYMMDD -> format expected by SPED
+          vDup: parseFloat(getDescendantText(dups[i], ['vDup']).replace(',', '.')) || 0
+        });
+      }
+    }
+
+    // Formas de Pagamento
+    const pag = doc.getElementsByTagName('pag')[0];
+    const payments: XmlPayment[] = [];
+    if (pag) {
+      const detPags = pag.getElementsByTagName('detPag');
+      for (let i = 0; i < detPags.length; i++) {
+        payments.push({
+          indPag: getDescendantText(detPags[i], ['indPag']) || '0',
+          tPag: getDescendantText(detPags[i], ['tPag']),
+          vPag: parseFloat(getDescendantText(detPags[i], ['vPag']).replace(',', '.')) || 0
+        });
+      }
+    }
+
     return {
       id: chvNfe || crypto.randomUUID(),
       chvNfe,
@@ -149,7 +185,14 @@ export function parseXmlDocument(xmlText: string): XmlRecord | null {
       cStat,
       xMotivo,
       tpEvento,
-      isCancelada
+      isCancelada,
+      // Financeiro
+      vFatOrig,
+      vFatDesc,
+      vFatLiq,
+      nFat,
+      installments,
+      payments
     };
   } catch (err) {
     console.error('Error parsing XML document:', err);
@@ -196,6 +239,7 @@ export async function parseSpedContent(
   const documentsMap = new Map<string, SpedDocument>();
   const c190RawList: { docId: string; cstIcms: string; cfop: string; aliqIcms: number; vlOpr: number; vlBcIcms: number; vlIcms: number; numeroLinhaOriginal: number }[] = [];
   const rawLines: { reg: string; content: string }[] = [];
+  const allInvoices: any[] = [];
 
   let currentDocId = '';
   let rawLineIndex = 0;
@@ -315,6 +359,35 @@ export async function parseSpedContent(
           items: [],
           numeroLinhaOriginal: currentRawIndex
         });
+      } else if (reg === 'C140' && currentDocId) {
+        const invoice = {
+          indEmit: fields[2] || '',
+          codPart: fields[3] || '',
+          codMod: fields[4] || '',
+          serie: fields[5] || '',
+          numDoc: fields[6] || '',
+          dtEmis: fields[7] || '',
+          vlTit: parseNum(fields[8]),
+          vlDesc: parseNum(fields[9]),
+          vlLiq: parseNum(fields[10]),
+          installments: [],
+          numeroLinhaOriginal: currentRawIndex
+        };
+        const docObj = documentsMap.get(currentDocId);
+        if (docObj) {
+          docObj.invoice = invoice;
+          allInvoices.push(invoice);
+        }
+      } else if (reg === 'C141' && currentDocId) {
+        const docObj = documentsMap.get(currentDocId);
+        if (docObj && docObj.invoice) {
+          docObj.invoice.installments.push({
+            numParc: fields[2] || '',
+            dtVcto: fields[3] || '',
+            vlParc: parseNum(fields[4]),
+            numeroLinhaOriginal: currentRawIndex
+          });
+        }
       } else if (reg === 'C170' && currentDocId) {
         const numItem = fields[2] || '1';
         const codItem = fields[3] || '';
@@ -487,7 +560,8 @@ export async function parseSpedContent(
     rawLines,
     c190Raw: c190RawList,
     items0200: items0200List,
-    blocoH: blocoHData
+    blocoH: blocoHData,
+    invoices: allInvoices
   };
 }
 
