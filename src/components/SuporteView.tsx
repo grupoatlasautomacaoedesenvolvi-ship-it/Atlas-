@@ -31,13 +31,16 @@ export function SuporteView() {
 
   const fetchChamados = async () => {
     try {
-      const token = localStorage.getItem('atlas_auth_token');
+      const { auth } = await import('../lib/firebase');
+      const token = await auth.currentUser?.getIdToken();
       const res = await fetch('/api/suporte/chamados', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      const data = await res.json();
       if (res.ok) {
-        const data = await res.json();
         setChamados(data.chamados);
+      } else {
+        console.warn(`Erro ${res.status} ao listar chamados:`, data.error);
       }
     } catch (err) {
       console.error(err);
@@ -49,12 +52,13 @@ export function SuporteView() {
   const fetchDetails = async (id: string) => {
     setLoadingDetails(true);
     try {
-      const token = localStorage.getItem('atlas_auth_token');
+      const { auth } = await import('../lib/firebase');
+      const token = await auth.currentUser?.getIdToken();
       const res = await fetch(`/api/suporte/chamados/${id}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      const data = await res.json();
       if (res.ok) {
-        const data = await res.json();
         setSelectedChamado(data.chamado);
         setMensagens(data.mensagens);
         
@@ -65,6 +69,8 @@ export function SuporteView() {
             headers: { 'Authorization': `Bearer ${token}` }
           });
         }
+      } else {
+        alert(`Erro ${res.status}: ${data.error || 'Erro ao buscar detalhes.'}`);
       }
     } catch (err) {
       console.error(err);
@@ -98,7 +104,8 @@ export function SuporteView() {
 
     setLoadingMsg(true);
     try {
-      const token = localStorage.getItem('atlas_auth_token');
+      const { auth } = await import('../lib/firebase');
+      const token = await auth.currentUser?.getIdToken();
       const res = await fetch(`/api/suporte/chamados/${selectedId}/mensagens`, {
         method: 'POST',
         headers: {
@@ -108,14 +115,16 @@ export function SuporteView() {
         body: JSON.stringify({ texto: newMsg, anexoBase64: msgAnexo })
       });
 
+      const data = await res.json();
       if (res.ok) {
-        const data = await res.json();
         setMensagens([...mensagens, data.mensagem]);
         setNewMsg('');
         setMsgAnexo(null);
+      } else {
+        alert(`Erro ${res.status}: ${data.error || 'Erro ao enviar mensagem.'}`);
       }
-    } catch (err) {
-      alert('Erro ao enviar mensagem.');
+    } catch (err: any) {
+      alert(`Erro de conexão: ${err.message}`);
     } finally {
       setLoadingMsg(false);
     }
@@ -126,14 +135,18 @@ export function SuporteView() {
     if (!confirm('Deseja marcar este chamado como resolvido?')) return;
 
     try {
-      const token = localStorage.getItem('atlas_auth_token');
+      const { auth } = await import('../lib/firebase');
+      const token = await auth.currentUser?.getIdToken();
       const res = await fetch(`/api/suporte/chamados/${selectedId}/resolver`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      const data = await res.json();
       if (res.ok) {
         fetchDetails(selectedId);
         fetchChamados();
+      } else {
+        alert(`Erro ${res.status}: ${data.error || 'Erro ao resolver.'}`);
       }
     } catch (err) {
       console.error(err);

@@ -499,13 +499,19 @@ export async function createApp() {
       const ref = await adminDb.collection('chamados').add(chamado);
       chamado.id = ref.id;
 
-      // Notificação assíncrona
-      notifyNewTicket(chamado).catch(e => console.error('Erro notificação novo chamado:', e));
+      // Notificação assíncrona (não bloqueante)
+      if (typeof notifyNewTicket === 'function') {
+        notifyNewTicket(chamado).catch(e => console.error('[Suporte API] Erro notificação novo chamado:', e));
+      }
 
       res.json({ success: true, chamado });
     } catch (err: any) {
-      console.error('Erro criar chamado:', err);
-      res.status(500).json({ error: 'Erro ao abrir chamado.' });
+      console.error(`[Suporte API] Erro ao criar chamado (UID: ${req.user?.uid}):`, err);
+      res.status(500).json({ 
+        error: 'Erro interno ao abrir chamado.',
+        details: err.message,
+        code: 'CREATE_TICKET_ERROR'
+      });
     }
   });
 
@@ -605,20 +611,25 @@ export async function createApp() {
         updateData.status = 'RESPONDIDO';
         updateData.naoLidoPeloAutor = true;
         updateData.aguardandoRespostaDesde = null;
-        notifyAdminResponse(chamado, texto).catch(e => console.error('Erro notif admin resp:', e));
+        if (typeof notifyAdminResponse === 'function') {
+          notifyAdminResponse(chamado, texto).catch(e => console.error('[Suporte API] Erro notif admin resp:', e));
+        }
       } else {
         if (chamado.status === 'RESPONDIDO') updateData.status = 'EM_ANALISE';
         updateData.naoLidoPeloSuporte = true;
         if (!chamado.aguardandoRespostaDesde) {
           updateData.aguardandoRespostaDesde = agora;
         }
-        notifyUserResponse(chamado, texto).catch(e => console.error('Erro notif user resp:', e));
+        if (typeof notifyUserResponse === 'function') {
+          notifyUserResponse(chamado, texto).catch(e => console.error('[Suporte API] Erro notif user resp:', e));
+        }
       }
 
       await chamRef.update(updateData);
       res.json({ success: true, mensagem: novaMsg });
     } catch (err: any) {
-      res.status(500).json({ error: 'Erro ao enviar mensagem.' });
+      console.error(`[Suporte API] Erro ao enviar mensagem (UID: ${req.user?.uid}, Chamado: ${req.params.id}):`, err);
+      res.status(500).json({ error: 'Erro ao enviar mensagem.', details: err.message });
     }
   });
 

@@ -20,7 +20,9 @@ export function SupportFloatingButton() {
 
     setLoading(true);
     try {
-      const token = localStorage.getItem('atlas_auth_token');
+      const { auth } = await import('../lib/firebase');
+      const token = await auth.currentUser?.getIdToken();
+      
       const res = await fetch('/api/suporte/chamados', {
         method: 'POST',
         headers: {
@@ -37,15 +39,15 @@ export function SupportFloatingButton() {
         })
       });
 
+      const data = await res.json();
       if (res.ok) {
-        const data = await res.json();
         setProtocolo(data.chamado.protocolo);
         setStep('success');
       } else {
-        alert('Erro ao enviar chamado. Tente novamente mais tarde.');
+        alert(`Erro ${res.status}: ${data.error || 'Erro ao enviar chamado.'}`);
       }
-    } catch (err) {
-      alert('Erro de conexão.');
+    } catch (err: any) {
+      alert(`Erro de conexão: ${err.message}`);
     } finally {
       setLoading(false);
     }

@@ -4,22 +4,27 @@ import { ChamadoSuporte, MensagemChamado } from '../types';
 
 export async function getNextProtocol(): Promise<string> {
   const year = new Date().getFullYear();
-  const counterRef = adminDb.collection('config').doc('suporte_counter');
+  const counterRef = adminDb.collection('config').doc('suporteContador');
   
-  return await adminDb.runTransaction(async (transaction) => {
-    const doc = await transaction.get(counterRef);
-    let nextNum = 1;
-    
-    if (doc.exists) {
-      const data = doc.data();
-      if (data && data.year === year) {
-        nextNum = (data.lastNum || 0) + 1;
+  try {
+    return await adminDb.runTransaction(async (transaction) => {
+      const doc = await transaction.get(counterRef);
+      let nextNum = 1;
+      
+      if (doc.exists) {
+        const data = doc.data();
+        if (data && data.year === year) {
+          nextNum = (data.lastNum || 0) + 1;
+        }
       }
-    }
-    
-    transaction.set(counterRef, { year, lastNum: nextNum });
-    return `SUP-${year}-${String(nextNum).padStart(6, '0')}`;
-  });
+      
+      transaction.set(counterRef, { year, lastNum: nextNum });
+      return `SUP-${year}-${String(nextNum).padStart(6, '0')}`;
+    });
+  } catch (err) {
+    console.error('[Suporte Service] Transaction for protocol failed, using fallback:', err);
+    return `SUP-${year}-${Date.now()}`;
+  }
 }
 
 export async function sendSupportEmail(options: {
