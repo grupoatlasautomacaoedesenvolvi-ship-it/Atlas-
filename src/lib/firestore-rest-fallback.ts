@@ -34,7 +34,11 @@ export function convertToRestFields(obj: Record<string, any>): Record<string, an
     if (val === null) {
       fields[key] = { nullValue: null };
     } else if (typeof val === 'string') {
-      fields[key] = { stringValue: val };
+      if (val.includes('/documents/') && val.split('/').length >= 6) {
+        fields[key] = { referenceValue: val };
+      } else {
+        fields[key] = { stringValue: val };
+      }
     } else if (typeof val === 'number') {
       if (Number.isInteger(val)) fields[key] = { integerValue: String(val) };
       else fields[key] = { doubleValue: val };
@@ -80,11 +84,20 @@ export async function fetchDocWithFallback(path: string, token?: string): Promis
           }
         }
       } catch (restErr) {
-        // ignore rest error
+        // ignore
       }
     }
-    const errStr = String(err?.message || err);
-    if (errStr.includes('PERMISSION_DENIED') || errStr.includes('7') || errStr.includes('RESOURCE_EXHAUSTED') || errStr.includes('Quota exceeded') || errStr.includes('Could not load') || errStr.includes('CredentialImplementationError')) {
+    const errStr = String(err?.message || err || '');
+    const shouldSwallow = 
+      errStr.includes('PERMISSION_DENIED') || 
+      errStr.includes('7') || 
+      errStr.includes('Missing or insufficient permissions') ||
+      errStr.includes('RESOURCE_EXHAUSTED') || 
+      errStr.includes('Quota exceeded') || 
+      errStr.includes('Could not load') || 
+      errStr.includes('CredentialImplementationError');
+
+    if (shouldSwallow) {
       return null;
     }
     throw err;
@@ -111,12 +124,21 @@ export async function setDocWithFallback(path: string, data: Record<string, any>
         });
         if (res.ok) return;
       } catch (restErr) {
-        // ignore rest error
+        // ignore
       }
     }
-    const errStr = String(err?.message || err);
-    if (errStr.includes('PERMISSION_DENIED') || errStr.includes('7') || errStr.includes('RESOURCE_EXHAUSTED') || errStr.includes('Quota exceeded') || errStr.includes('Missing or insufficient permissions') || errStr.includes('Could not load') || errStr.includes('CredentialImplementationError')) {
-      return; // swallow error gracefully in fallback mode
+    const errStr = String(err?.message || err || '');
+    const shouldSwallow = 
+      errStr.includes('PERMISSION_DENIED') || 
+      errStr.includes('7') || 
+      errStr.includes('Missing or insufficient permissions') ||
+      errStr.includes('RESOURCE_EXHAUSTED') || 
+      errStr.includes('Quota exceeded') || 
+      errStr.includes('Could not load') || 
+      errStr.includes('CredentialImplementationError');
+
+    if (shouldSwallow) {
+      return;
     }
     throw err;
   }
@@ -146,33 +168,75 @@ export async function deleteDocWithFallback(path: string, token?: string): Promi
   }
 }
 
-export async function queryCollectionWithFallback(path: string, token?: string): Promise<Array<{ id: string; data: Record<string, any> }>> {
+export async function queryCollectionWithFallback(
+  path: string,
+  token?: string,
+  filters?: Array<{ field: string; op: '==' | '<' | '<=' | '>' | '>=' | 'array-contains'; value: any }>
+): Promise<Array<{ id: string; data: Record<string, any> }>> {
   try {
-    const snap = await adminDb.collection(path).get();
-    return snap.docs.map(doc => ({ id: doc.id, data: doc.data() }));
+    let query: any = adminDb.collection(path);
+    if (filters) {
+      for (const f of filters) {
+        query = query.where(f.field, f.op === '==' ? '==' : f.op, f.value);
+      }
+    }
+    const snap = await query.get();
+    return snap.docs.map((doc: any) => ({ id: doc.id, data: doc.data() }));
   } catch (err: any) {
     if (token) {
       try {
-        const url = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/${firebaseConfig.firestoreDatabaseId}/documents/${path}`;
+        const baseUrl = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/${firebaseConfig.firestoreDatabaseId}/documents`;
+        const url = `${baseUrl}/${path}`;
         const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
         if (res.ok) {
           const json = await res.json();
+          let results: Array<{ id: string; data: Record<string, any> }> = [];
           if (json.documents) {
-            return json.documents.map((docItem: any) => {
+            results = json.documents.map((docItem: any) => {
               const id = docItem.name ? docItem.name.split('/').pop() : '';
               return { id: id || '', data: convertRestFields(docItem.fields || {}) };
             });
           }
+          if (filters && filters.length > 0) {
+            results = results.filter(item => {
+              for (const f of filters) {
+                const val = item.data[f.field];
+                if (f.op === '==') {
+                  if (val !== f.value) return false;
+                } else if (f.op === '<') {
+                  if (!(val < f.value)) return false;
+                } else if (f.op === '<=') {
+                  if (!(val <= f.value)) return false;
+                } else if (f.op === '>') {
+                  if (!(val > f.value)) return false;
+                } else if (f.op === '>=') {
+                  if (!(val >= f.value)) return false;
+                } else if (f.op === 'array-contains') {
+                  if (!Array.isArray(val) || !val.includes(f.value)) return false;
+                }
+              }
+              return true;
+            });
+          }
+          return results;
         }
       } catch (restErr) {
-        // ignore rest error
+        // ignore
       }
     }
-    const errStr = String(err?.message || err);
-    if (errStr.includes('PERMISSION_DENIED') || errStr.includes('7') || errStr.includes('RESOURCE_EXHAUSTED') || errStr.includes('Quota exceeded') || errStr.includes('Could not load') || errStr.includes('CredentialImplementationError')) {
+    const errStr = String(err?.message || err || '');
+    const shouldSwallow = 
+      errStr.includes('PERMISSION_DENIED') || 
+      errStr.includes('7') || 
+      errStr.includes('Missing or insufficient permissions') ||
+      errStr.includes('RESOURCE_EXHAUSTED') || 
+      errStr.includes('Quota exceeded') || 
+      errStr.includes('Could not load') || 
+      errStr.includes('CredentialImplementationError');
+
+    if (shouldSwallow) {
       return [];
     }
     throw err;
   }
 }
-

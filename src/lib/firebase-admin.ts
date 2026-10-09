@@ -25,5 +25,11 @@ const app = getApps().length ? getApps()[0] : initializeApp({
 });
 
 export const adminAuth = getAuth(app);
-export const adminDb = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+
+// Use specific database ID if provided, otherwise default. 
+// Added logging to help diagnose permission issues in the environment.
+const dbId = firebaseConfig.firestoreDatabaseId || '(default)';
+export const adminDb = getFirestore(app, dbId);
+
+console.log(`[Firebase Admin] Initialized for project: ${firebaseConfig.projectId}, database: ${dbId}`);
 

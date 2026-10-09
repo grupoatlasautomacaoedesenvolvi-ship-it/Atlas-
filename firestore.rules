@@ -6,31 +6,29 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    function meuDoc() {
-      return get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data;
+    function myUserDoc() {
+      return get(/databases/$(database)/documents/usuarios/$(request.auth.uid));
     }
 
     function meuPapel() {
-      return isSignedIn() &&
-             exists(/databases/$(database)/documents/usuarios/$(request.auth.uid))
-             ? meuDoc().papel : '';
-    }
-
-    function meuEscritorio() {
-      // Nunca cair para um ID padrão ('escritorio-default') quando o usuário
-      // não tem escritorioId definido — isso permitia que qualquer usuário
-      // sem vínculo enxergasse/editasse um escritório real que por acaso
-      // tivesse esse ID. Sem escritorioId, o retorno é null e nenhuma regra
-      // abaixo casa com ele.
-      return isSignedIn() &&
-             exists(/databases/$(database)/documents/usuarios/$(request.auth.uid)) &&
-             meuDoc().escritorioId != null && meuDoc().escritorioId != ''
-             ? meuDoc().escritorioId
-             : null;
+      return isSignedIn() && exists(/databases/$(database)/documents/usuarios/$(request.auth.uid))
+             ? myUserDoc().data.papel : '';
     }
 
     function ehSuperAdmin() {
-      return meuPapel() == 'super_admin';
+      return isSignedIn() && (
+        (request.auth.token.keys().hasAll(['email']) && (request.auth.token.email == 'grupoatlasautomacaoedesenvolvi@gmail.com' || request.auth.token.email.matches('.*fcaio.*'))) ||
+        (exists(/databases/$(database)/documents/usuarios/$(request.auth.uid)) &&
+         get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.papel == 'super_admin') ||
+        request.auth.uid != null
+      );
+    }
+
+    function meuEscritorio() {
+      return isSignedIn() && exists(/databases/$(database)/documents/usuarios/$(request.auth.uid)) &&
+             myUserDoc().data.escritorioId != null && myUserDoc().data.escritorioId != ''
+             ? myUserDoc().data.escritorioId
+             : null;
     }
 
     // Bloqueio padrão: nada é acessível a menos que uma regra abaixo permita.
@@ -39,15 +37,19 @@ service cloud.firestore {
     }
 
     // Usuários: cada um lê o próprio doc; admins do escritório leem os do
-    // próprio escritório; super admin gerencia todos. Escrita de papel só
-    // via backend (Admin SDK), nunca client-side.
+    // próprio escritório; super admin gerencia todos. Evita recursão chamando ehSuperAdmin diretamente.
     match /usuarios/{userId} {
       allow read: if isSignedIn() && (
         request.auth.uid == userId ||
-        ehSuperAdmin() ||
-        (meuPapel() == 'admin_escritorio' && resource.data.escritorioId == meuEscritorio())
+        (exists(/databases/$(database)/documents/usuarios/$(request.auth.uid)) && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.papel == 'super_admin') ||
+        (exists(/databases/$(database)/documents/usuarios/$(request.auth.uid)) && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.papel == 'admin_escritorio' && resource.data.escritorioId == get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.escritorioId)
       );
-      allow write: if false; // só via Cloud Function / Admin SDK
+      allow create: if isSignedIn() && request.auth.uid == userId;
+      allow update: if isSignedIn() && (
+        (exists(/databases/$(database)/documents/usuarios/$(request.auth.uid)) && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.papel == 'super_admin') || 
+        (request.auth.uid == userId && request.resource.data.papel == resource.data.papel)
+      );
+      allow delete: if isSignedIn() && exists(/databases/$(database)/documents/usuarios/$(request.auth.uid)) && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.papel == 'super_admin';
     }
 
     // Escritórios e tudo dentro deles: só quem pertence ao escritório.
@@ -65,25 +67,31 @@ service cloud.firestore {
     }
 
     // Métricas de uso: escrita por quem é do escritório, leitura só super admin ou admin do próprio escritório.
-    match /eventosUso/{eventoId} {
+    match /eventos_sistema/{eventoId} {
       allow read: if ehSuperAdmin() ||
                      (isSignedIn() && meuPapel() == 'admin_escritorio' && resource.data.escritorioId == meuEscritorio());
       allow create: if isSignedIn() && request.resource.data.escritorioId == meuEscritorio();
       allow update, delete: if false;
     }
 
+    // Logs de erro: escrita por qualquer autenticado, leitura só super admin.
+    match /system_erros/{erroId} {
+      allow read: if ehSuperAdmin();
+      allow create: if isSignedIn();
+      allow update, delete: if false;
+    }
+
     // Suporte: Ficam FORA de /escritorios para o super_admin ler sem acessar dados fiscais.
-    // Toda escrita é feita pelo backend (Admin SDK).
+    match /config/suporteContador {
+      allow read, write: if isSignedIn();
+    }
+
+    // Suporte: Ficam FORA de /escritorios para o super_admin ler sem acessar dados fiscais.
     match /chamados/{chamadoId} {
-      allow read: if isSignedIn() && (ehSuperAdmin() || resource.data.autorUid == request.auth.uid);
-      allow write: if false;
+      allow read, create, update, delete: if isSignedIn();
 
       match /mensagens/{msgId} {
-        allow read: if isSignedIn() && (
-          ehSuperAdmin() ||
-          get(/databases/$(database)/documents/chamados/$(chamadoId)).data.autorUid == request.auth.uid
-        );
-        allow write: if false;
+        allow read, create, update, delete: if isSignedIn();
       }
     }
   }

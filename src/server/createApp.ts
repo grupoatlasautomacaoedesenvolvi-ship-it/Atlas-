@@ -3,6 +3,7 @@ import { adminAuth, adminDb } from '../lib/firebase-admin.ts';
 import { requireAuth, requireInviteAuth, AuthRequest } from '../middleware/auth.ts';
 import { FieldValue } from 'firebase-admin/firestore';
 import { fetchDocWithFallback, setDocWithFallback, deleteDocWithFallback, queryCollectionWithFallback } from '../lib/firestore-rest-fallback.ts';
+import firebaseConfig from '../../firebase-applet-config.json';
 
 export async function createApp() {
   const app = express();
@@ -167,13 +168,15 @@ export async function createApp() {
         return res.status(403).json({ error: 'Acesso negado para listar escritórios.' });
       }
 
-      const allEscritorios = await queryCollectionWithFallback('escritorios', req.token);
-      const filteredEscritorios = allEscritorios.filter(d => {
-        if (ehSuperAdmin) return true;
-        return d.id === req.escritorioId;
-      });
+      const filters: any[] = [];
+      if (ehAdminEscritorio && !ehSuperAdmin) {
+        const dbId = firebaseConfig.firestoreDatabaseId || '(default)';
+        const fullPath = `projects/${firebaseConfig.projectId}/databases/${dbId}/documents/escritorios/${req.escritorioId}`;
+        filters.push({ field: '__name__', op: '==', value: fullPath });
+      }
 
-      const escritorios = filteredEscritorios.map(d => ({
+      const allEscritorios = await queryCollectionWithFallback('escritorios', req.token, filters.length > 0 ? filters : undefined);
+      const escritorios = allEscritorios.map(d => ({
         id: d.id,
         ...d.data
       }));
@@ -194,13 +197,13 @@ export async function createApp() {
         return res.status(403).json({ error: 'Acesso negado para listar usuários.' });
       }
 
-      const allUsers = await queryCollectionWithFallback('usuarios', req.token);
-      const filteredUsers = allUsers.filter(d => {
-        if (ehSuperAdmin) return true;
-        return d.data.escritorioId === req.escritorioId;
-      });
+      const filters: any[] = [];
+      if (ehAdminEscritorio && !ehSuperAdmin) {
+        filters.push({ field: 'escritorioId', op: '==', value: req.escritorioId });
+      }
 
-      const usuarios = filteredUsers.map(d => ({
+      const allUsers = await queryCollectionWithFallback('usuarios', req.token, filters.length > 0 ? filters : undefined);
+      const usuarios = allUsers.map(d => ({
         uid: d.id,
         ...d.data
       }));
@@ -221,13 +224,13 @@ export async function createApp() {
         return res.status(403).json({ error: 'Acesso negado para listar eventos.' });
       }
 
-      const allEventos = await queryCollectionWithFallback('eventos_sistema', req.token);
-      const filteredEventos = allEventos.filter(d => {
-        if (ehSuperAdmin) return true;
-        return d.data.escritorioId === req.escritorioId;
-      });
+      const filters: any[] = [];
+      if (ehAdminEscritorio && !ehSuperAdmin) {
+        filters.push({ field: 'escritorioId', op: '==', value: req.escritorioId });
+      }
 
-      const eventos = filteredEventos.map(d => ({
+      const allEventos = await queryCollectionWithFallback('eventos_sistema', req.token, filters.length > 0 ? filters : undefined);
+      const eventos = allEventos.map(d => ({
         id: d.id,
         ...d.data
       }));
@@ -456,6 +459,10 @@ export async function createApp() {
   // POST /api/suporte/chamados → cria chamado
   app.post('/api/suporte/chamados', requireAuth, async (req: AuthRequest, res) => {
     try {
+      if (!adminDb || !adminAuth) {
+        return res.status(500).json({ error: 'Firebase Admin não inicializado no servidor.', code: 'FIREBASE_NOT_INIT' });
+      }
+
       const { tipo, titulo, descricao, telaOrigem, anexoBase64, versaoApp } = req.body;
 
       if (!tipo || !titulo || !descricao) {
@@ -466,12 +473,12 @@ export async function createApp() {
       if (anexoBase64 && anexoBase64.length > 410000) return res.status(400).json({ error: 'Anexo muito grande (máx 300KB).' });
 
       const { getNextProtocol, notifyNewTicket } = await import('./suporteService');
-      const protocolo = await getNextProtocol();
+      const protocolo = await getNextProtocol(req.token);
       
       let escritorioNome = 'Não informado';
       if (req.escritorioId) {
-        const escDoc = await adminDb.collection('escritorios').doc(req.escritorioId).get();
-        if (escDoc.exists) escritorioNome = escDoc.data()?.nome || escritorioNome;
+        const escDocResult = await fetchDocWithFallback(`escritorios/${req.escritorioId}`, req.token);
+        if (escDocResult) escritorioNome = escDocResult.data?.nome || escritorioNome;
       }
 
       const agora = new Date().toISOString();
@@ -496,7 +503,8 @@ export async function createApp() {
         aguardandoRespostaDesde: agora
       };
 
-      const ref = await adminDb.collection('chamados').add(chamado);
+      const ref = adminDb.collection('chamados').doc();
+      await setDocWithFallback(`chamados/${ref.id}`, chamado, req.token);
       chamado.id = ref.id;
 
       // Notificação assíncrona (não bloqueante)
@@ -515,54 +523,71 @@ export async function createApp() {
     }
   });
 
-  // GET /api/suporte/chamados → lista chamados
-  app.get('/api/suporte/chamados', requireAuth, async (req: AuthRequest, res) => {
-    try {
-      const { tipo, status, prioridade, escritorioId } = req.query;
-      const ehSuperAdmin = req.papel === 'super_admin';
+    // GET /api/suporte/chamados → lista chamados
+    app.get('/api/suporte/chamados', requireAuth, async (req: AuthRequest, res) => {
+      try {
+        if (!adminDb) return res.status(500).json({ error: 'Firestore não inicializado.' });
+        
+        const { tipo, status, prioridade, escritorioId } = req.query;
+        const ehSuperAdmin = req.papel === 'super_admin';
 
-      let query: any = adminDb.collection('chamados');
+        console.log(`[Suporte API] Listando chamados. UID: ${req.user?.uid}, Papel: ${req.papel}, Admin: ${ehSuperAdmin}`);
 
-      if (!ehSuperAdmin) {
-        query = query.where('autorUid', '==', req.user!.uid);
-      } else {
-        // Filtros exclusivos super_admin
-        if (tipo) query = query.where('tipo', '==', tipo);
-        if (status) query = query.where('status', '==', status);
-        if (prioridade) query = query.where('prioridade', '==', prioridade);
-        if (escritorioId) query = query.where('escritorioId', '==', escritorioId);
+        const filters: any[] = [];
+        if (!ehSuperAdmin) {
+          filters.push({ field: 'autorUid', op: '==', value: req.user!.uid });
+        } else {
+          // Filtros super_admin (opcionais na query)
+          if (tipo) filters.push({ field: 'tipo', op: '==', value: tipo });
+          if (status) filters.push({ field: 'status', op: '==', value: status });
+          if (prioridade) filters.push({ field: 'prioridade', op: '==', value: prioridade });
+          if (escritorioId) filters.push({ field: 'escritorioId', op: '==', value: escritorioId });
+        }
+
+        // Usamos queryCollectionWithFallback para garantir que funcione se o Admin SDK falhar
+        const docs = await queryCollectionWithFallback('chamados', req.token, filters.length > 0 ? filters : undefined);
+        
+        console.log(`[Suporte API] Documentos brutos encontrados: ${docs?.length || 0}`);
+
+        let chamadosList = (docs || []).map(d => ({ id: d.id, ...(d.data || {}) }));
+
+        // Ordenação manual: mais novos primeiro
+        chamadosList.sort((a: any, b: any) => {
+          const dateA = new Date(a.criadoEm || 0).getTime();
+          const dateB = new Date(b.criadoEm || 0).getTime();
+          return dateB - dateA;
+        });
+
+        console.log(`[Suporte API] Retornando ${chamadosList.length} chamados após filtros.`);
+
+        res.json({ success: true, chamados: chamadosList });
+      } catch (err: any) {
+        console.error('[Suporte API] Erro fatal ao listar chamados:', err);
+        res.status(500).json({ error: 'Erro ao listar chamados.', details: err.message });
       }
-
-      const snapshot = await query.get();
-      const chamados = snapshot.docs.map((d: any) => ({ id: d.id, ...d.data() }));
-      
-      // Ordenação manual se necessário, ou confiar na query. Aqui vamos ordenar por data
-      chamados.sort((a: any, b: any) => new Date(b.criadoEm).getTime() - new Date(a.criadoEm).getTime());
-
-      res.json({ success: true, chamados });
-    } catch (err: any) {
-      res.status(500).json({ error: 'Erro ao listar chamados.' });
-    }
-  });
+    });
 
   // GET /api/suporte/chamados/:id → detalhe + mensagens
   app.get('/api/suporte/chamados/:id', requireAuth, async (req: AuthRequest, res) => {
     try {
-      const { id } = req.params;
-      const doc = await adminDb.collection('chamados').doc(id).get();
-
-      if (!doc.exists) return res.status(404).json({ error: 'Chamado não encontrado.' });
+      if (!adminDb) return res.status(500).json({ error: 'Firestore não inicializado.' });
       
-      const chamado = doc.data();
+      const { id } = req.params;
+      const docResult = await fetchDocWithFallback(`chamados/${id}`, req.token);
+
+      if (!docResult) return res.status(404).json({ error: 'Chamado não encontrado.' });
+      
+      const chamado = docResult.data;
       const ehSuperAdmin = req.papel === 'super_admin';
       if (!ehSuperAdmin && chamado?.autorUid !== req.user!.uid) {
         return res.status(403).json({ error: 'Acesso negado a este chamado.' });
       }
 
-      const msgSnapshot = await adminDb.collection('chamados').doc(id).collection('mensagens').orderBy('criadoEm', 'asc').get();
-      const mensagens = msgSnapshot.docs.map((d: any) => ({ id: d.id, ...d.data() }));
+      const msgResults = await queryCollectionWithFallback(`chamados/${id}/mensagens`, req.token);
+      const mensagens = msgResults.map(m => ({ id: m.id, ...m.data }));
+      mensagens.sort((a: any, b: any) => new Date(a.criadoEm).getTime() - new Date(b.criadoEm).getTime());
 
-      res.json({ success: true, chamado: { id: doc.id, ...chamado }, mensagens });
+      res.json({ success: true, chamado: { id: docResult.id, ...chamado }, mensagens });
     } catch (err: any) {
       res.status(500).json({ error: 'Erro ao buscar detalhes do chamado.' });
     }
@@ -571,6 +596,8 @@ export async function createApp() {
   // POST /api/suporte/chamados/:id/mensagens → adiciona mensagem
   app.post('/api/suporte/chamados/:id/mensagens', requireAuth, async (req: AuthRequest, res) => {
     try {
+      if (!adminDb) return res.status(500).json({ error: 'Firestore não inicializado.' });
+      
       const { id } = req.params;
       const { texto, anexoBase64 } = req.body;
 
@@ -578,11 +605,10 @@ export async function createApp() {
       if (texto.length > 5000) return res.status(400).json({ error: 'Texto muito longo (máx 5000).' });
       if (anexoBase64 && anexoBase64.length > 410000) return res.status(400).json({ error: 'Anexo muito grande.' });
 
-      const chamRef = adminDb.collection('chamados').doc(id);
-      const doc = await chamRef.get();
-      if (!doc.exists) return res.status(404).json({ error: 'Chamado não encontrado.' });
+      const docResult = await fetchDocWithFallback(`chamados/${id}`, req.token);
+      if (!docResult) return res.status(404).json({ error: 'Chamado não encontrado.' });
 
-      const chamado = doc.data() as any;
+      const chamado = docResult.data as any;
       const ehSuperAdmin = req.papel === 'super_admin';
       const ehAutor = chamado.autorUid === req.user!.uid;
 
@@ -591,7 +617,7 @@ export async function createApp() {
       }
 
       const agora = new Date().toISOString();
-      const novaMsg: MensagemChamado = {
+      const novaMsg: any = {
         id: '', // será preenchido
         autorUid: req.user!.uid,
         autorNome: req.user!.name || req.user!.displayName || 'Usuário',
@@ -601,7 +627,8 @@ export async function createApp() {
         criadoEm: agora
       };
 
-      const msgRef = await chamRef.collection('mensagens').add(novaMsg);
+      const msgRef = adminDb.collection('chamados').doc(id).collection('mensagens').doc();
+      await setDocWithFallback(`chamados/${id}/mensagens/${msgRef.id}`, novaMsg, req.token);
       novaMsg.id = msgRef.id;
 
       const updateData: any = { atualizadoEm: agora };
@@ -625,7 +652,7 @@ export async function createApp() {
         }
       }
 
-      await chamRef.update(updateData);
+      await setDocWithFallback(`chamados/${id}`, updateData, req.token, true);
       res.json({ success: true, mensagem: novaMsg });
     } catch (err: any) {
       console.error(`[Suporte API] Erro ao enviar mensagem (UID: ${req.user?.uid}, Chamado: ${req.params.id}):`, err);
@@ -636,6 +663,8 @@ export async function createApp() {
   // PATCH /api/suporte/chamados/:id → SOMENTE super_admin: altera status e prioridade
   app.patch('/api/suporte/chamados/:id', requireAuth, async (req: AuthRequest, res) => {
     try {
+      if (!adminDb) return res.status(500).json({ error: 'Firestore não inicializado.' });
+      
       if (req.papel !== 'super_admin') return res.status(403).json({ error: 'Apenas suporte pode alterar metadados.' });
       
       const { id } = req.params;
@@ -645,18 +674,17 @@ export async function createApp() {
       if (status) updateData.status = status;
       if (prioridade) updateData.prioridade = prioridade;
 
-      const chamRef = adminDb.collection('chamados').doc(id);
-      const doc = await chamRef.get();
-      if (!doc.exists) return res.status(404).json({ error: 'Chamado não encontrado.' });
+      const docResult = await fetchDocWithFallback(`chamados/${id}`, req.token);
+      if (!docResult) return res.status(404).json({ error: 'Chamado não encontrado.' });
       
-      const chamadoAntes = doc.data() as any;
+      const chamadoAntes = docResult.data as any;
 
       // Se virou RESOLVIDO ou FECHADO, zera o tempo de espera
       if (status === 'RESOLVIDO' || status === 'FECHADO') {
         updateData.aguardandoRespostaDesde = null;
       }
 
-      await chamRef.update(updateData);
+      await setDocWithFallback(`chamados/${id}`, updateData, req.token, true);
 
       const { notifyStatusChange } = await import('./suporteService');
       if (status && status !== chamadoAntes.status) {
@@ -672,21 +700,22 @@ export async function createApp() {
   // POST /api/suporte/chamados/:id/resolver → o autor pode marcar como RESOLVIDO
   app.post('/api/suporte/chamados/:id/resolver', requireAuth, async (req: AuthRequest, res) => {
     try {
-      const { id } = req.params;
-      const chamRef = adminDb.collection('chamados').doc(id);
-      const doc = await chamRef.get();
+      if (!adminDb) return res.status(500).json({ error: 'Firestore não inicializado.' });
       
-      if (!doc.exists) return res.status(404).json({ error: 'Chamado não encontrado.' });
-      const chamado = doc.data();
+      const { id } = req.params;
+      const docResult = await fetchDocWithFallback(`chamados/${id}`, req.token);
+      
+      if (!docResult) return res.status(404).json({ error: 'Chamado não encontrado.' });
+      const chamado = docResult.data;
       if (chamado?.autorUid !== req.user!.uid && req.papel !== 'super_admin') {
         return res.status(403).json({ error: 'Acesso negado.' });
       }
 
-      await chamRef.update({
+      await setDocWithFallback(`chamados/${id}`, {
         status: 'RESOLVIDO',
         aguardandoRespostaDesde: null,
         atualizadoEm: new Date().toISOString()
-      });
+      }, req.token, true);
 
       res.json({ success: true });
     } catch (err: any) {
@@ -697,12 +726,13 @@ export async function createApp() {
   // POST /api/suporte/chamados/:id/lido → zera o "não lido" de quem chamou
   app.post('/api/suporte/chamados/:id/lido', requireAuth, async (req: AuthRequest, res) => {
     try {
-      const { id } = req.params;
-      const chamRef = adminDb.collection('chamados').doc(id);
-      const doc = await chamRef.get();
+      if (!adminDb) return res.status(500).json({ error: 'Firestore não inicializado.' });
       
-      if (!doc.exists) return res.status(404).json({ error: 'Chamado não encontrado.' });
-      const chamado = doc.data();
+      const { id } = req.params;
+      const docResult = await fetchDocWithFallback(`chamados/${id}`, req.token);
+      
+      if (!docResult) return res.status(404).json({ error: 'Chamado não encontrado.' });
+      const chamado = docResult.data;
       
       const updateData: any = {};
       if (req.papel === 'super_admin') {
@@ -713,7 +743,7 @@ export async function createApp() {
       }
 
       if (Object.keys(updateData).length > 0) {
-        await chamRef.update(updateData);
+        await setDocWithFallback(`chamados/${id}`, updateData, req.token, true);
       }
 
       res.json({ success: true });

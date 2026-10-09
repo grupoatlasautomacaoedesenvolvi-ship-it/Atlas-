@@ -100,7 +100,7 @@ export function UserManagementView() {
   const [submittingEdit, setSubmittingEdit] = useState(false);
 
   // Usage Events & Period State for Time Tracking Dashboard
-  const [eventosUso, setEventosUso] = useState<any[]>([]);
+  const [eventos_sistema, setEventosSistema] = useState<any[]>([]);
   const [reportPeriod, setReportPeriod] = useState<'hoje' | '7dias' | '30dias' | 'todos'>('7dias');
 
   useEffect(() => {
@@ -115,26 +115,26 @@ export function UserManagementView() {
           if (res.ok) {
             const data = await res.json();
             if (data.eventos) {
-              setEventosUso(data.eventos);
+              setEventosSistema(data.eventos);
               carregouViaApi = true;
             }
           }
         }
         if (!carregouViaApi) {
-          const evSnap = await getDocs(collection(db, 'eventosUso'));
+          const evSnap = await getDocs(collection(db, 'eventos_sistema'));
           const firestoreEvents = evSnap.docs.map(d => ({ id: d.id, ...d.data() }));
           if (firestoreEvents.length > 0) {
-            setEventosUso(firestoreEvents);
+            setEventosSistema(firestoreEvents);
           } else {
             const local = JSON.parse(localStorage.getItem('atlas_demo_eventos') || '[]');
-            setEventosUso(local);
+            setEventosSistema(local);
           }
         }
       } catch (err) {
         console.warn('Erro ao carregar eventos via API/Firestore, tentando localStorage:', err);
         try {
           const local = JSON.parse(localStorage.getItem('atlas_demo_eventos') || '[]');
-          setEventosUso(local);
+          setEventosSistema(local);
         } catch (e) {
           console.warn('Erro ao carregar eventos do localStorage:', e);
         }
@@ -144,8 +144,8 @@ export function UserManagementView() {
   }, [getIdToken]);
 
   const allEvents = useMemo(() => {
-    return eventosUso;
-  }, [eventosUso]);
+    return eventos_sistema;
+  }, [eventos_sistema]);
 
   const filteredEvents = useMemo(() => {
     const now = Date.now();

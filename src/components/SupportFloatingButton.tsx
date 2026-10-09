@@ -39,7 +39,15 @@ export function SupportFloatingButton() {
         })
       });
 
-      const data = await res.json();
+      const contentType = res.headers.get('content-type');
+      let data: any;
+      if (contentType && contentType.includes('application/json')) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        throw new Error(`Resposta inválida do servidor (HTML). Status: ${res.status}. Início: ${text.substring(0, 150)}`);
+      }
+
       if (res.ok) {
         setProtocolo(data.chamado.protocolo);
         setStep('success');
@@ -47,7 +55,7 @@ export function SupportFloatingButton() {
         alert(`Erro ${res.status}: ${data.error || 'Erro ao enviar chamado.'}`);
       }
     } catch (err: any) {
-      alert(`Erro de conexão: ${err.message}`);
+      alert(`Erro: ${err.message}`);
     } finally {
       setLoading(false);
     }

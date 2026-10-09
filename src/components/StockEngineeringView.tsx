@@ -1364,21 +1364,34 @@ export function StockEngineeringView({
     const currentTotal = itemsToProcess.reduce((acc, i) => acc + i.vlItem, 0);
     const ratio = target / currentTotal;
 
-    // Stock adjustments must strictly modify QUANTITY only, keeping unit prices (vlUnit) fixed from SPED/0200 catalog
+    // Stock adjustments support modifying either QUANTITY (keeping unit price fixed) or UNIT PRICE (keeping quantity fixed)
     const updatedItems: SpedH010Item[] = itemsToProcess.map(i => {
-      const newQtd = Math.max(0.001, Math.round((i.qtd * ratio) * 1000) / 1000);
-      const newVlItem = Math.round((newQtd * i.vlUnit) * 100) / 100;
-      const { h020, h020List } = adjustH020Proportionally(i, newVlItem);
-      return {
-        ...i,
-        qtd: newQtd,
-        vlItem: newVlItem,
-        ...(h020 ? { h020 } : {}),
-        ...(h020List ? { h020List } : {})
-      };
+      if (targetMode === 'vlUnit') {
+        const newVlUnit = Math.round((i.vlUnit * ratio) * 100) / 100;
+        const newVlItem = Math.round((i.qtd * newVlUnit) * 100) / 100;
+        const { h020, h020List } = adjustH020Proportionally(i, newVlItem);
+        return {
+          ...i,
+          vlUnit: newVlUnit,
+          vlItem: newVlItem,
+          ...(h020 ? { h020 } : {}),
+          ...(h020List ? { h020List } : {})
+        };
+      } else {
+        const newQtd = Math.max(0.001, Math.round((i.qtd * ratio) * 1000) / 1000);
+        const newVlItem = Math.round((newQtd * i.vlUnit) * 100) / 100;
+        const { h020, h020List } = adjustH020Proportionally(i, newVlItem);
+        return {
+          ...i,
+          qtd: newQtd,
+          vlItem: newVlItem,
+          ...(h020 ? { h020 } : {}),
+          ...(h020List ? { h020List } : {})
+        };
+      }
     });
 
-    // Cent-exact adjustment to force exact target matching by adjusting item quantity (never unit price)
+    // Cent-exact adjustment to force exact target matching
     let calculatedSum = Math.round(updatedItems.reduce((acc, i) => acc + i.vlItem, 0) * 100) / 100;
     const diff = Math.round((target - calculatedSum) * 100) / 100;
 
@@ -1393,18 +1406,34 @@ export function StockEngineeringView({
       }
       const itemToAdjust = updatedItems[maxIdx];
       const adjustedVlItem = Math.round((itemToAdjust.vlItem + diff) * 100) / 100;
-      const adjustedQtd = itemToAdjust.vlUnit > 0 
-        ? Math.round((adjustedVlItem / itemToAdjust.vlUnit) * 1000) / 1000 
-        : itemToAdjust.qtd;
-      const finalVlItem = Math.round((adjustedQtd * itemToAdjust.vlUnit) * 100) / 100;
-      const { h020, h020List } = adjustH020Proportionally(itemToAdjust, finalVlItem);
-      updatedItems[maxIdx] = {
-        ...itemToAdjust,
-        qtd: adjustedQtd,
-        vlItem: finalVlItem,
-        ...(h020 ? { h020 } : {}),
-        ...(h020List ? { h020List } : {})
-      };
+      
+      if (targetMode === 'vlUnit') {
+        const adjustedVlUnit = itemToAdjust.qtd > 0 
+          ? Math.round((adjustedVlItem / itemToAdjust.qtd) * 100) / 100 
+          : itemToAdjust.vlUnit;
+        const finalVlItem = Math.round((itemToAdjust.qtd * adjustedVlUnit) * 100) / 100;
+        const { h020, h020List } = adjustH020Proportionally(itemToAdjust, finalVlItem);
+        updatedItems[maxIdx] = {
+          ...itemToAdjust,
+          vlUnit: adjustedVlUnit,
+          vlItem: finalVlItem,
+          ...(h020 ? { h020 } : {}),
+          ...(h020List ? { h020List } : {})
+        };
+      } else {
+        const adjustedQtd = itemToAdjust.vlUnit > 0 
+          ? Math.round((adjustedVlItem / itemToAdjust.vlUnit) * 1000) / 1000 
+          : itemToAdjust.qtd;
+        const finalVlItem = Math.round((adjustedQtd * itemToAdjust.vlUnit) * 100) / 100;
+        const { h020, h020List } = adjustH020Proportionally(itemToAdjust, finalVlItem);
+        updatedItems[maxIdx] = {
+          ...itemToAdjust,
+          qtd: adjustedQtd,
+          vlItem: finalVlItem,
+          ...(h020 ? { h020 } : {}),
+          ...(h020List ? { h020List } : {})
+        };
+      }
       calculatedSum = Math.round(updatedItems.reduce((acc, i) => acc + i.vlItem, 0) * 100) / 100;
     }
 
@@ -2341,19 +2370,44 @@ export function StockEngineeringView({
                   </div>
                 </div>
 
-                {/* Tool 2: Target Total Stock Solver */}
+                {/* Tool 2: Target Total Stock Solver with Mode Selector */}
                 <div className={`p-3.5 rounded-xl space-y-2 ${theme.cardSubBg}`}>
                   <div className={`flex items-center justify-between font-bold ${theme.textTitle}`}>
                     <div className="flex items-center space-x-1.5">
                       <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
                       <span>Reajuste por Valor Alvo (R$)</span>
                     </div>
-                    <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-800 border border-emerald-500/30 font-mono text-xs font-bold">
-                      Apenas Quantidade (Qtd)
-                    </span>
+                    <div className="flex items-center space-x-1">
+                      <button
+                        type="button"
+                        onClick={() => setTargetMode('qtd')}
+                        className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold transition-all ${
+                          targetMode === 'qtd'
+                            ? 'bg-emerald-600 text-white shadow-xs'
+                            : 'bg-slate-800 text-[var(--atlas-text-muted)] hover:text-white'
+                        }`}
+                        title="Modifica apenas a Quantidade (mantém Preço Unitário fixo)"
+                      >
+                        Alt. Qtd
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setTargetMode('vlUnit')}
+                        className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold transition-all ${
+                          targetMode === 'vlUnit'
+                            ? 'bg-emerald-600 text-white shadow-xs'
+                            : 'bg-slate-800 text-[var(--atlas-text-muted)] hover:text-white'
+                        }`}
+                        title="Modifica apenas o Preço Unitário (mantém Quantidade fixa)"
+                      >
+                        Alt. Preço Unit.
+                      </button>
+                    </div>
                   </div>
                   <p className={`text-xs ${theme.textMuted}`}>
-                    Recalcula exclusivamente as quantidades de todos os itens do Bloco H para atingir o valor H005 exato, mantendo o preço unitário fixo conforme o SPED.
+                    {targetMode === 'qtd'
+                      ? 'Recalcula proporcionalmente as quantidades (Qtd) mantendo o preço unitário fixo.'
+                      : 'Recalcula proporcionalmente os preços unitários (vlUnit) mantendo a quantidade física fixa.'}
                   </p>
                   <div className="flex flex-wrap items-center gap-1.5 pt-1">
                     <input

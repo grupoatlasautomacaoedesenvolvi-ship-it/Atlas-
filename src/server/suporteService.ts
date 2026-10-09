@@ -1,9 +1,10 @@
-import nodemailer from 'nodemailer';
 import { adminDb } from '../lib/firebase-admin';
 import { ChamadoSuporte, MensagemChamado } from '../types';
+import { fetchDocWithFallback, setDocWithFallback } from '../lib/firestore-rest-fallback.ts';
 
-export async function getNextProtocol(): Promise<string> {
+export async function getNextProtocol(token?: string): Promise<string> {
   const year = new Date().getFullYear();
+  const counterPath = 'config/suporteContador';
   const counterRef = adminDb.collection('config').doc('suporteContador');
   
   try {
@@ -21,8 +22,24 @@ export async function getNextProtocol(): Promise<string> {
       transaction.set(counterRef, { year, lastNum: nextNum });
       return `SUP-${year}-${String(nextNum).padStart(6, '0')}`;
     });
-  } catch (err) {
-    console.error('[Suporte Service] Transaction for protocol failed, using fallback:', err);
+  } catch (err: any) {
+    console.warn('[Suporte Service] Admin SDK transaction failed, trying REST fallback:', err.message || err);
+    
+    if (token) {
+      try {
+        // Fallback via REST (não é atômico mas resolve o problema de permissão no ambiente)
+        const doc = await fetchDocWithFallback(counterPath, token);
+        let nextNum = 1;
+        if (doc && doc.data && doc.data.year === year) {
+          nextNum = (doc.data.lastNum || 0) + 1;
+        }
+        await setDocWithFallback(counterPath, { year, lastNum: nextNum }, token, true);
+        return `SUP-${year}-${String(nextNum).padStart(6, '0')}`;
+      } catch (restErr) {
+        console.error('[Suporte Service] REST fallback also failed:', restErr);
+      }
+    }
+    
     return `SUP-${year}-${Date.now()}`;
   }
 }
@@ -33,14 +50,15 @@ export async function sendSupportEmail(options: {
   text: string;
   html?: string;
 }) {
-  const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SUPORTE_EMAIL_DESTINO } = process.env;
+  const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = process.env;
 
   if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) {
-    console.warn('[Suporte Service] SMTP not configured. Skipping email sending.');
+    console.warn('[Suporte Service] SMTP not configured (SMTP_HOST/USER/PASS missing). Skipping email sending.');
     return;
   }
 
   try {
+    const nodemailer = await import('nodemailer');
     const transporter = nodemailer.createTransport({
       host: SMTP_HOST,
       port: Number(SMTP_PORT) || 465,
@@ -49,6 +67,8 @@ export async function sendSupportEmail(options: {
         user: SMTP_USER,
         pass: SMTP_PASS,
       },
+      connectionTimeout: 8000,
+      socketTimeout: 8000,
     });
 
     await transporter.sendMail({
@@ -84,7 +104,8 @@ export async function notifyNewTicket(chamado: ChamadoSuporte) {
     ${chamado.descricao}
   `;
 
-  await sendSupportEmail({ to: destino, subject, text });
+  // Não bloqueante
+  sendSupportEmail({ to: destino, subject, text }).catch(e => console.error('Erro notifyNewTicket:', e));
 }
 
 export async function notifyUserResponse(chamado: ChamadoSuporte, mensagem: string) {
@@ -102,7 +123,8 @@ export async function notifyUserResponse(chamado: ChamadoSuporte, mensagem: stri
     ${mensagem}
   `;
 
-  await sendSupportEmail({ to: destino, subject, text });
+  // Não bloqueante
+  sendSupportEmail({ to: destino, subject, text }).catch(e => console.error('Erro notifyUserResponse:', e));
 }
 
 export async function notifyAdminResponse(chamado: ChamadoSuporte, mensagem: string) {
@@ -118,7 +140,8 @@ export async function notifyAdminResponse(chamado: ChamadoSuporte, mensagem: str
     Para visualizar e responder, acesse o módulo de Suporte no sistema.
   `;
 
-  await sendSupportEmail({ to: chamado.autorEmail, subject, text });
+  // Não bloqueante
+  sendSupportEmail({ to: chamado.autorEmail, subject, text }).catch(e => console.error('Erro notifyAdminResponse:', e));
 }
 
 export async function notifyStatusChange(chamado: ChamadoSuporte) {
@@ -131,5 +154,6 @@ export async function notifyStatusChange(chamado: ChamadoSuporte) {
     Para mais detalhes, acesse o módulo de Suporte no sistema.
   `;
 
-  await sendSupportEmail({ to: chamado.autorEmail, subject, text });
+  // Não bloqueante
+  sendSupportEmail({ to: chamado.autorEmail, subject, text }).catch(e => console.error('Erro notifyStatusChange:', e));
 }

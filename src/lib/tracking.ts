@@ -52,7 +52,7 @@ export async function trackLoginEvent(userData?: UserData | null) {
 
   try {
     if (!isFirestoreQuotaExceeded()) {
-      await withTimeout(addDoc(collection(db, 'eventosUso'), payload), 5000);
+      await withTimeout(addDoc(collection(db, 'eventos_sistema'), payload), 5000);
     }
   } catch (err) {
     handleFirestoreWriteError(err);
@@ -104,7 +104,7 @@ export async function trackConferenciaEvent({
 
   try {
     if (!isFirestoreQuotaExceeded()) {
-      await withTimeout(addDoc(collection(db, 'eventosUso'), payload), 5000);
+      await withTimeout(addDoc(collection(db, 'eventos_sistema'), payload), 5000);
     }
   } catch (err) {
     handleFirestoreWriteError(err);
@@ -146,7 +146,7 @@ export async function trackEvent(tipo: string, userData?: UserData | null, detai
 
   try {
     if (!isFirestoreQuotaExceeded()) {
-      await withTimeout(addDoc(collection(db, 'eventosUso'), payload), 5000);
+      await withTimeout(addDoc(collection(db, 'eventos_sistema'), payload), 5000);
     }
   } catch (err) {
     handleFirestoreWriteError(err);

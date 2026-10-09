@@ -46,14 +46,27 @@ export function SuporteAdminView() {
       const res = await fetch('/api/suporte/chamados', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      const data = await res.json();
+      
+      const contentType = res.headers.get('content-type');
+      let data: any;
+      if (contentType && contentType.includes('application/json')) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        console.error(`Resposta inválida (HTML) em listar chamados adm. Status: ${res.status}. Início: ${text.substring(0, 150)}`);
+        return;
+      }
+
       if (res.ok) {
-        setChamados(data.chamados);
+        console.log(`[Suporte Admin] Recebidos ${data.chamados?.length || 0} chamados.`);
+        setChamados(data.chamados || []);
       } else {
         console.warn(`Erro ${res.status} ao listar chamados adm:`, data.error);
+        alert(`Erro ${res.status}: ${data.error || 'Erro ao listar chamados.'}`);
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      console.error('[Suporte Admin] Erro fatal fetch:', err);
+      alert(`Erro de conexão: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -67,7 +80,18 @@ export function SuporteAdminView() {
       const res = await fetch(`/api/suporte/chamados/${id}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      const data = await res.json();
+      
+      const contentType = res.headers.get('content-type');
+      let data: any;
+      if (contentType && contentType.includes('application/json')) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        alert(`Erro ${res.status}: Resposta inválida do servidor. Verifique os logs.`);
+        console.error('HTML Response:', text.substring(0, 500));
+        return;
+      }
+
       if (res.ok) {
         setSelectedChamado(data.chamado);
         setMensagens(data.mensagens);
@@ -144,7 +168,16 @@ export function SuporteAdminView() {
         },
         body: JSON.stringify({ texto: newMsg, anexoBase64: msgAnexo })
       });
-      const data = await res.json();
+
+      const contentType = res.headers.get('content-type');
+      let data: any;
+      if (contentType && contentType.includes('application/json')) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        throw new Error(`Resposta inválida (HTML). Status: ${res.status}. ${text.substring(0, 100)}`);
+      }
+
       if (res.ok) {
         setMensagens([...mensagens, data.mensagem]);
         setNewMsg('');
@@ -154,7 +187,7 @@ export function SuporteAdminView() {
         alert(`Erro ${res.status}: ${data.error || 'Erro ao enviar mensagem.'}`);
       }
     } catch (err: any) {
-      alert(`Erro de conexão: ${err.message}`);
+      alert(`Erro: ${err.message}`);
     } finally {
       setLoadingMsg(false);
     }
@@ -318,7 +351,17 @@ export function SuporteAdminView() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {filtered.map(c => {
+                  {filtered.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="px-4 py-12 text-center">
+                        <div className="flex flex-col items-center gap-2 text-slate-400">
+                          <LifeBuoy className="w-8 h-8 opacity-20" />
+                          <p className="text-sm font-medium">Nenhum chamado encontrado com os filtros atuais.</p>
+                          <button onClick={() => { setQ(''); setTipo(''); setStatus(''); setPrioridade(''); setFilter24h(false); }} className="text-xs text-indigo-600 font-bold hover:underline">Limpar Filtros</button>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : filtered.map(c => {
                     const wait = getWaitInfo(c.aguardandoRespostaDesde);
                     return (
                       <tr 

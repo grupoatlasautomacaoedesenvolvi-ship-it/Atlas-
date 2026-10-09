@@ -188,7 +188,7 @@ export function AdminPanelView() {
             }
           }
           if (!carregouViaApi) {
-            const evSnap = await getDocs(collection(db, 'eventosUso'));
+            const evSnap = await getDocs(collection(db, 'eventos_sistema'));
             setEventos(evSnap.docs.map(d => ({ id: d.id, ...d.data() })));
           }
         } catch (evErr) {

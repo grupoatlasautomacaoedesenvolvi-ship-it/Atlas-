@@ -36,7 +36,17 @@ export function SuporteView() {
       const res = await fetch('/api/suporte/chamados', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      const data = await res.json();
+      
+      const contentType = res.headers.get('content-type');
+      let data: any;
+      if (contentType && contentType.includes('application/json')) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        console.error(`Resposta inválida (HTML) em listar chamados. Status: ${res.status}. Início: ${text.substring(0, 150)}`);
+        return;
+      }
+
       if (res.ok) {
         setChamados(data.chamados);
       } else {
@@ -57,7 +67,18 @@ export function SuporteView() {
       const res = await fetch(`/api/suporte/chamados/${id}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      const data = await res.json();
+      
+      const contentType = res.headers.get('content-type');
+      let data: any;
+      if (contentType && contentType.includes('application/json')) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        alert(`Erro ${res.status}: Resposta inválida do servidor. Verifique os logs.`);
+        console.error('HTML Response:', text.substring(0, 500));
+        return;
+      }
+
       if (res.ok) {
         setSelectedChamado(data.chamado);
         setMensagens(data.mensagens);
@@ -115,7 +136,15 @@ export function SuporteView() {
         body: JSON.stringify({ texto: newMsg, anexoBase64: msgAnexo })
       });
 
-      const data = await res.json();
+      const contentType = res.headers.get('content-type');
+      let data: any;
+      if (contentType && contentType.includes('application/json')) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        throw new Error(`Resposta inválida (HTML). Status: ${res.status}. ${text.substring(0, 100)}`);
+      }
+
       if (res.ok) {
         setMensagens([...mensagens, data.mensagem]);
         setNewMsg('');
@@ -124,7 +153,7 @@ export function SuporteView() {
         alert(`Erro ${res.status}: ${data.error || 'Erro ao enviar mensagem.'}`);
       }
     } catch (err: any) {
-      alert(`Erro de conexão: ${err.message}`);
+      alert(`Erro: ${err.message}`);
     } finally {
       setLoadingMsg(false);
     }
